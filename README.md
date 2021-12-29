@@ -2,7 +2,7 @@
 <hr>
 
 **PERHATIAN**
->Saat ini Live Messenger telah saya tinggalkan dan menjadi tidak terawat karena beberapa kesibukan perkuliahan. Perbaikan semua bug yang telah dilaporkan di dalam app sudah saya benahi hingga 25 Desember 2021, namun peerbaikan yang saya lakukan di project yg dihubungkan dengan Netlify. Jika ingin mendapatkan update yg sama, boleh gunakan fitur inspect > source hehe. Silakan gunakan source code ini sekreatif mungkin. Jangan ragu untuk menghubungi saya jika diperlukan. Gunakan fitur-fitur di github juga ya hehe..
+>Saat ini Live Messenger telah saya tinggalkan dan menjadi tidak terawat karena beberapa kesibukan perkuliahan. Perbaikan semua bug yang telah dilaporkan di dalam app sudah saya benahi hingga 25 Desember 2021, namun perbaikan yang saya lakukan hanya terdapat pada project yang terhubung dengan Netlify saja. Jika ingin mendapatkan update yg sama, boleh gunakan fitur inspect > source hehe. Silakan gunakan source code ini sekreatif mungkin. Jangan ragu untuk menghubungi saya jika diperlukan. Gunakan fitur-fitur di github juga ya hehe..
 <hr>
 
 **Fitur-fitur:**
