@@ -1,0 +1,159 @@
+.Profil {
+    background-color: var(--a1);
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow-y: auto;
+}
+
+.Profil .tentang {
+    display: flex;
+    background-color: var(--a2);
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    width: 100%;
+    max-width: 300px;
+    border-radius: 10px;
+}
+
+.Profil .tentang .status {
+    padding: 5px 7px;
+    background: none;
+    color: var(--b1);
+    outline: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+.Profil .tentang .status option {
+    background-color: var(--a2);
+    color: white;
+}
+.Profil .tentang .status.lain {
+    cursor: unset;
+}
+
+.Profil .tentang .foto {
+    cursor: pointer;
+    position: relative;
+    background-image: url(../images/default.jpg);
+    background-position: center;
+    background-size: cover;
+    width: 50vh;
+    height: 50vh;
+    max-width: 125px;
+    max-height: 125px;
+    border-radius: 10px;
+}
+
+.Profil .tentang .foto:hover {
+    opacity: 0.75;
+}
+.Profil .tentang .foto.lain {
+    cursor: unset;
+}
+.Profil .tentang .foto.lain:hover {
+    opacity: unset;
+}
+.Profil .tentang .foto .edit-foto {
+    text-shadow: 0 0 3px black;
+    font-size: 28px;
+    color: white;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+}
+.Profil .tentang .nama {
+    margin-top: 10px;
+}
+.Profil .tentang .bio {
+    margin-top: 8px;
+    max-width: 300px;
+    text-align: center;
+    font-style: italic;
+}
+.Profil .tentang .bio,
+.Profil .tentang .email {
+    margin-bottom: 15px;
+}
+
+
+.Profil .tentang .tombol .btn-1 {
+    margin: 0 5px;
+}
+
+.Profil .tentang .tombol .save {
+    background-color: var(--hijau);
+    color: white;
+}
+.Profil .logout,
+.Profil .tentang .tombol .cancel {
+    background-color: var(--merah);
+    color: white;
+}
+
+.Profil .done,
+.Profil .leave,
+.Profil .follow,
+.Profil .chat {
+margin: 5px 3px;
+color: white;
+}
+
+.Profil .tentang .tulis {
+    background: none;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    padding: 5px 7px;
+    outline: none;
+    color: white;
+    text-align: center;
+}
+
+.Profil .tentang .tulis::placeholder {
+    color: var(--biru);
+}
+.Profil .tentang .fa-edit {
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.Profil .tentang .follower {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.Profil .tentang .follower .pengikut,
+.Profil .tentang .follower .mengikuti {
+    font-family: Share Tech Mono;
+    margin: 0 3px;
+}
+
+.Profil .tentang .tombolan button {
+    width: 80px;
+}
+.Profil .foto .loading {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.Profil .foto .loading i {
+    color: var(--a0);
+    text-shadow: 0 0 5px var(--biru);
+    font-size: 82px;
+    animation: loading 1.25s linear infinite;
+}

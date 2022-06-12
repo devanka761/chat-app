@@ -1,0 +1,65 @@
+.ListChat.Post.Aula {
+    padding: 5px 0;
+}
+.ListChat.Post.Aula .createGrup .inputan input {
+    width: 85%;
+    max-width: 300px;
+    margin-left: 50%;
+    transform: translate(-50%);
+}
+.ListChat .aula-card {
+    text-decoration: none;
+    color: var(--b1);
+    position: relative;
+    background-color: var(--a2);
+    display: flex;
+    width: calc(100% - 20px);
+    max-width: 600px;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.ListChat .aula-card:hover {
+    background-color: var(--biru);
+    color: var(--a0);
+}
+.ListChat .aula-card .kiri {
+    display: flex;
+    align-items: center;
+    width: calc(100% - 60px);
+}
+.ListChat .aula-card .kiri .foto{
+    background-image: url(../images/default.jpg);
+    background-size: cover;
+    width: 85px;
+    height: 85px;
+    margin-right: 10px;
+}
+
+.ListChat .aula-card .kiri .tengah {
+    overflow: hidden;
+}
+
+.ListChat .aula-card .kiri .tengah .title {
+    font-weight: bold;
+    font-size: 22px;
+}
+.ListChat .aula-card .kiri .tengah .desc {
+    text-align: justify;
+}
+.ListChat .aula-card:hover .kiri .tengah .nama {
+    color: var(--a2);
+    font-weight: bold;
+}
+.ListChat .aula-card .kiri .tengah .nama {
+    color: var(--b3);
+    font-family: "Share Tech Mono";
+    font-size: 12px;
+}
+
+.ListChat .aula-card .kanan i {
+    font-size: 30px;
+    margin-right: 20px;
+}

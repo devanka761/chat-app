@@ -1,29 +1,45 @@
-<h1>LIVE MESSENGER</h1>
-<hr>
-
-**PERHATIAN**
->Saat ini Live Messenger telah saya tinggalkan dan menjadi tidak terawat karena beberapa kesibukan perkuliahan. Perbaikan semua bug yang telah dilaporkan di dalam app sudah saya benahi hingga 25 Desember 2021, namun perbaikan yang saya lakukan hanya terdapat pada project yang terhubung dengan Netlify saja. Jika ingin mendapatkan update yg sama, boleh gunakan fitur inspect > source hehe. Silakan gunakan source code ini sekreatif mungkin. Jangan ragu untuk menghubungi saya jika diperlukan. Gunakan fitur-fitur di github juga ya hehe..
-<hr>
-
-**Fitur-fitur:**
-
->1. Mengganti Username, Bio/Tentang, Foto Profil
->2. Chat Pribadi Antar Pengguna
->3. Grup Chat
->4. Global Chat
->5. Feed/Postingan/Story
->6. Pesan suara dan gambar pada chat
->7. Menarik/Menghapus Pesan
->8. Background Chat
->9. Tema (Light/Dark)
->10. Menghapus Akun
-
-**Rencana Selanjutnya:**
->1. Blokir User
->2. Request Friend/Remove Friend/Reject Request
->3. Voice Call & Video Call
->4. Customize Tema Sendiri
-dll
-
-**Link Ke Live Messenger:**
-[LIVE MESSENGER](https://dvnkz-messenger.netlify.app/)
+# CHAT APP v1.22.03
+Last Update: 12/06/2022
+- Demo: [Devanka Chat App](https://dvnkz-messenger.netlify.app/)
+- Support Me: [Donasi Saweria](https://saweria.co/nexuscraft)
+- Subscribe: YouTube [Devanka 761](https://www.youtube.com/c/RG761)
+## FITUR
+1. Private Chat/Global Chat
+    - Pesan Teks,
+    - Pesan Suara,
+    - Pesan Gambar,
+    - Menarik Pesan,
+    - Report User.
+2. [NEW] Grup Chat + Logo (Join Via ID -- Mirip Discord)
+3. [NEW] Follow & Unfollow User
+4. [NEW] Postingan + Like & Comment
+5. [NEW] Random Chat
+6. Login Dengan Google
+7. Username dan DisplayName Google Default
+8. Foto Profil dan Profil Google Default
+9. [NEW] Mode Pencarian Diperbaiki
+10. Tema Gelap & Cerah
+11. Lebih Responsive
+12. Major & Minor Bugs Fixed
+## INSTALASI
+> ### Firebase Project
+> 1. Buat Project di Firebase
+> 2. Nyalakan Realtime Database
+> 3. Nyalakan Storage
+> 4. Nyalakan Authentication (Google)
+> 5. Ambil FirebaseConfig -- Taroh untuk config.js
+> ### Config.js
+> Ganti kode di FirebaseConfig di dalam file config.js:
+> ```javascript
+> const firebaseConfig = {
+>     apiKey: "PUNYA-KAMU",
+>     authDomain: "PUNYA-KAMU",
+>     databaseURL: "PUNYA-KAMU",
+>     projectId: "PUNYA-KAMU",
+>     storageBucket: "PUNYA-KAMU",
+>     messagingSenderId: "PUNYA-KAMU",
+>     appId: "PUNYA-KAMU"
+> };
+> ```
+> ### Bahasa.js
+> Ganti dan sesuaikan dengan yang diinginkan

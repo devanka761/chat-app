@@ -1,0 +1,243 @@
+.ListChat {
+    padding: 15px;
+    display: flex;
+    position: absolute;
+    bottom: 0;
+    top: 70px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.ListChat .kartu {
+    background: linear-gradient(90deg, var(--a2), var(--a2), var(--a2), var(--a3));
+    display: flex;
+    justify-content: space-between;
+    padding: 7px 10px;
+    margin: 3px 0;
+    cursor: pointer;
+    align-items: center;
+}
+.ListChat .kartu:hover {
+    background: linear-gradient(90deg, var(--a4), var(--a3));
+}
+.ListChat .kartu .detail {
+    display: flex;
+    align-items: center;
+}
+
+.ListChat .kartu .detail img {
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.ListChat .kartu .status {
+    color: var(--hijau);
+    text-transform: uppercase;
+}
+
+.ListChat .kartu .status.busy {
+    color: var(--merah);
+}
+.ListChat .kartu .status.idle {
+    color: var(--kuning);
+}
+
+.ListChat .kartu .status.offline {
+    color: var(--b3);
+}
+
+.Chat .head {
+    position: absolute;
+    background-color: var(--a3);
+    left: 0;
+    right: 0;
+    top: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Chat .head .nama {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.Chat .head .nama img {
+    margin-right: 5px;
+    border-radius: 50%;
+}
+
+.Chat .content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 34px;
+    height: calc(100vh - 80px);
+    background-color: var(--a0);
+    overflow-y: auto;
+}
+
+.Chat .foot {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background-color: var(--a0);
+    padding: 3px;
+    display: flex;
+}
+
+.Chat .foot .inputan {
+    width: calc(100% - 40px);
+    display: flex;
+    align-items: center;
+    background-color: var(--a3);
+    border-radius: 20px;
+}
+.Chat .foot .inputan input {
+    width: calc(100% - 80px);
+    outline: none;
+    border: none;
+    padding: 5px 0;
+    background: none;
+    color: var(--b1);
+    font-size: 16px;
+}
+.Chat .foot .inputan input::placeholder {
+    color: var(--b3);
+}
+
+.Chat .foot .tombolan {
+    width: 40px;
+    text-align: center;
+    margin-left: 3px;
+}
+
+.Chat .foot .send {
+    display: none;
+}
+
+.Chat .content .untai .untaian .atas .nick {
+    cursor: pointer;
+}
+.Chat .content .untai .untaian .atas {
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 7px;
+    align-items: center;
+}
+
+.Chat .content .untai .untaian .atas .del {
+    background: none;
+    color: var(--merah);
+    border: none;
+    font-size: 12px;
+}
+
+.Chat .content .untai .untaian .pesan {
+    text-align: justify;
+}
+.Chat .content .untai .untaian .pesan img {
+    width: 100%;
+    max-width: 300px;
+    max-height: 200px;
+}
+.Chat .content .untai .untaian .pesan audio {
+    width: 90vw;
+    max-width: 235px;
+    height: 40px;
+}
+
+.Chat .content .untai .untaian .bawah {
+    margin-top: 7px;
+    display: flex;
+    font-size: 12px;
+}
+.Chat .content .untai .untaian .bawah div {
+    margin: 0 3px;
+}
+.Chat .content .untai.mereka .untaian .bawah {
+    justify-content: right;
+}
+.Chat .content .untai.kita .untaian .bawah {
+    justify-content: left;
+}
+
+.Chat .content .untai.mereka {
+    left: 0;
+    margin-right: auto;
+    margin-left: 7px;
+}
+
+.Chat .content .untai.kita {
+    right: 0;
+    margin-left: auto;
+    margin-right: 7px;
+}
+
+.Chat .content .untai {
+    position: relative;
+    width: fit-content;
+    max-width: 300px;
+    margin: 10px 0;
+}
+
+.Chat .content .untai.kita .untaian {
+    background-color: var(--a2);
+    margin-right: 6px;
+    width: fit-content;
+    max-width: 290px;
+    padding: 7px;
+    border-radius: 10px;
+    color: white;
+}
+.Chat .content .untai.mereka .untaian {
+    background-color: var(--a4);
+    margin-left: 7px;
+    width: fit-content;
+    max-width: 290px;
+    padding: 7px;
+    border-radius: 10px;
+}
+
+.Chat .content .untai.kita .segitiga {
+    color: var(--a2);
+    position: absolute;
+    right: 0;
+    bottom: -3px;
+}
+.Chat .content .untai.mereka .segitiga {
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    color: var(--a4);
+}
+
+.ListChat .nomore {
+    font-size: 12px;
+    text-align: center;
+    padding: 5px 0;
+    color: var(--kuning);
+}
+
+.ListChat.Random .desc{
+    margin-bottom: 15px;
+}
+.ListChat.Random .note i{
+    font-size: 12px;
+    color: var(--kuning);
+    font-family: "Share Tech Mono";
+}
+.ListChat.Random {
+    overflow-y: unset;
+    align-items: center;
+    justify-content: center;
+}
+.ListChat.Random .loading i {
+    font-size: 200px;
+    animation: loading 2s linear infinite;
+}

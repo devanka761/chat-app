@@ -1,0 +1,49 @@
+@media (min-width: 950px) {
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 250px;
+    }
+    .navbar {
+        position: absolute;
+        left: 0;
+        top: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        width: 250px;
+        height: calc(100vh - 40px);
+    }
+    .navbar .bar-1 {
+        height: 100%;
+    }
+    .navbar .bar-1.active {
+        color: var(--biru);
+        border: 1px solid var(--biru);
+    }
+    .ListChat {
+        position: fixed;
+        margin-left: 250px;
+        margin-top: -70px;
+    }
+    .Chat .head,
+    .Chat .content,
+    .Chat .foot {
+        left: 250px;
+    }
+    .ListChat .createGrup {
+        top: 0;
+        left: 250px;
+    }
+    .ListChat .upload {
+        position: fixed;
+        top: 10px;
+    }
+    .Comment {
+        background-color: #000000;
+    }
+}

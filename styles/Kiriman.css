@@ -1,0 +1,231 @@
+.ListChat.Post {
+    position: absolute;
+    display: flex;
+    top: 70px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: auto;
+    padding: 0;
+
+}
+
+.ListChat .Post-Card {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 20px);
+    max-width: 500px;
+    padding: 10px;
+    border-bottom: 1px solid var(--a3);
+}
+.ListChat .Post-Card .atas {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    align-items: center;
+    color: var(--b2);
+}
+.ListChat .Post-Card .atas .foto {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+.ListChat .Post-Card .atas .foto img {
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.ListChat .Post-Card .atas .tanggal .postrash {
+    color: var(--merah);
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.ListChat .Post-Card .postingan {
+    display: flex;
+    justify-content: center;
+    background-color: var(--a0);
+}
+.ListChat .Post-Card .postingan img {
+    max-width: 100%;
+    max-height: 300px;
+}
+.ListChat .Post-Card .data {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    color: var(--b2);
+}
+.ListChat .Post-Card .data .statistik {
+    display: flex;
+}
+.ListChat .Post-Card .data .statistik .like,
+.ListChat .Post-Card .data .statistik .comment {
+    cursor: pointer;
+}
+.ListChat .Post-Card .data .statistik .like {
+    margin-right: 15px;
+}
+.ListChat .Post-Card .tulisan p::-webkit-scrollbar-track {
+    background-color: #555;
+}
+.ListChat .Post-Card .tulisan p {
+    margin: 0;
+    text-align: justify;
+    overflow-y: auto;
+    max-height: 200px;
+}
+.ListChat .upload {
+    position: fixed;
+    top: 80px;
+    color: white;
+    padding: 5px 7px;
+    border: none;
+    border-radius: 4px;
+}
+
+.ListChat.Post .createGrup .pilih {
+    color: white;
+}
+
+.ListChat .createGrup option {
+    background-color: var(--a2);
+    color: white;
+}
+.ListChat .createGrup select {
+    padding: 3px 5px;
+    background: none;
+    color: var(--b1);
+    outline: none;
+    border: none;
+    border-bottom: 2px dashed var(--biru);
+    cursor: pointer;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+.ListChat .createGrup .preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.ListChat .createGrup .preview img {
+    max-width: 200px;
+    max-height: 200px;
+    margin-top: 10px;
+}
+.ListChat .createGrup .preview .loading {
+    position: absolute;
+    margin-top: 50px;
+    font-size: 72px;
+    color: var(--biru);
+    text-shadow: 0 0 5px black;
+    animation: loading 1.25s linear infinite;
+}
+
+.Comment {
+    position: fixed;
+    background-color: transparent;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.Comment .komentar {
+    position: fixed;
+    background-color: var(--a0);
+    left: 50%;
+    top: 0;
+    bottom: 32px;
+    transform: translate(-50%, 0);
+    width: 100vw;
+    max-width: 550px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+.Comment .komentar .comment-card {
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--a2);
+}
+.Comment .komentar .comment-card .depan.pengirim {
+    width: 100%;
+}
+.Comment .komentar .comment-card .depan {
+    display: flex;
+    align-items: center;
+    width: calc(100% - 100px);
+}
+.Comment .komentar .comment-card .depan .foto  img {
+    border-radius: 50%;
+}
+.Comment .komentar .comment-card .depan .foto {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.Comment .komentar .comment-card .depan .tengah .pesan b {
+    cursor: pointer;
+}
+.Comment .komentar .comment-card .depan.pengirim .tengah .pesan {
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.Comment .komentar .comment-card .depan .tengah {
+    font-size: 14px;
+    text-align: justify;
+    margin: 0 5px;
+    width: 100%;
+}
+.Comment .komentar .comment-card .data {
+    display: flex;
+    flex-direction: column;
+    width: 100px;
+    text-align: right;
+}
+.Comment .komentar .comment-card .data i {
+    font-size: 12px;
+    color: var(--merah);
+    cursor: pointer;
+}
+.Comment .komentar .comment-card .data .tanggal,
+.Comment .komentar .comment-card .data .jam {
+    font-family: "Share Tech Mono";
+    font-size: 12px;
+}
+.Comment .inputan {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+}
+.Comment .inputan button {
+    width: 75px;
+    color: white;
+    font-size: 16px;
+}
+.Comment .inputan input::placeholder {
+    color: var(--biru);
+}
+.Comment .inputan input {
+    padding: 0 10px;
+    width: calc(100% - 85px);
+    background-color: var(--a2);
+    color: white;
+    border: none;
+    outline: none;
+}

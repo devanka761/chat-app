@@ -1,0 +1,66 @@
+.ListChat .tombol {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 150px;
+}
+.ListChat .tombol button {
+    color: white;
+    margin: 3px 0;
+}
+
+.ListChat .createGrup {
+    background-color: var(--a1);
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    top: 70px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+.ListChat .createGrup .inputan textarea::placeholder,
+.ListChat .createGrup .inputan input::placeholder {
+    color: var(--biru);
+    text-align: center;
+}
+
+.ListChat .createGrup .inputan textarea {
+    font-size: 16px;
+    width: 85vw;
+    max-width: 400px;
+    background-color: var(--a1);
+    border: none;
+    border-right: 2px solid var(--biru);
+    border-bottom: 2px dashed var(--biru);
+    display: flex;
+    text-align: justify;
+    margin: 10px 0;
+    color: white;
+    padding: 5px 7px;
+    outline: none;
+    resize: none;
+}
+.ListChat .createGrup .inputan input {
+    font-size: 16px;
+    width: 85vw;
+    max-width: 200px;
+    background-color: var(--a1);
+    border: none;
+    border-bottom: 2px dashed var(--biru);
+    border-radius: 20px;
+    text-align: center;
+    margin: 10px 0;
+    color: white;
+    padding: 5px 7px;
+    outline: none;
+}
+
+.ListChat .createGrup .tombolan button {
+    color: white;
+}

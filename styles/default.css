@@ -1,0 +1,140 @@
+@import url('https://cdn.statically.io/gh/devanka761/fa-pro/v6.1.1/all.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Dosis&family=Share+Tech+Mono&display=swap');
+
+:root {
+    --a0: #1e2124;
+    --a1: #282b30;
+    --a2: #36393e;
+    --a3: #424549;
+    --a4: #546a86;
+    --b1: #dedede;
+    --b2: #cccccc;
+    --b3: #aaaaaa;
+    --biru: #6c8dd4;
+    --hijau: #64b180;
+    --merah: #d46c6c;
+    --kuning: #d4c16c;
+}
+
+.merah {
+    background-color: var(--merah);
+}
+.hijau {
+    background-color: var(--hijau);
+}
+.biru {
+    background-color: var(--biru);
+}
+.error {
+    margin: 7px 0;
+    font-family: Share Tech Mono;
+    color: var(--merah);
+}
+
+.hitam {
+    background-color: var(--a0);
+}
+
+.btn-1.clean {
+    background-color: var(--a0);
+    border: 2px solid var(--biru);
+    color: var(--b3);
+}
+
+button {
+    cursor: pointer;
+}
+
+.btn-1 {
+    color: white;
+    border: none;
+    border-radius: 3px;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 5px 10px 7px 10px;
+}
+
+.btn-1:hover {
+    opacity: 0.75;
+}
+
+.btn-1:active {
+    transform: translate(0, 3px);
+}
+
+.btn-2 {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 50%;
+    background-color: var(--biru);
+    color: white;
+    font-size: 18px;
+}
+
+.btn-3 {
+    color: var(--b1);
+    background: none;
+    border: none;
+    width: 40px;
+    font-size: 18px;
+    text-align: center;
+}
+
+marquee {
+    color: white;
+    position: absolute;
+    bottom: 0;
+    font-size: 12px;
+}
+marquee a {
+    color: cyan;
+}
+.light marquee {
+    color: black;
+    font-weight: bold;
+}
+.light marquee a {
+    color: red;
+}
+
+.btn-4 {
+    display: flex;
+    align-items: center;
+    background: none;
+    padding: 7px 10px;
+    font-size: 20px;
+    border: none;
+    color: var(--b1);
+}
+
+* {
+    font-family: 'Dosis';
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+*::-webkit-scrollbar{
+    width: 6px;
+}
+*::-webkit-scrollbar-thumb{
+    background-color: var(--biru);
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+@keyframes loading {
+    0% {
+        transform: rotate(0deg);
+    } 100% {
+        transform: rotate(360deg);
+    }
+}

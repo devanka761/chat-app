@@ -1,0 +1,138 @@
+.light .container {
+    background-color: var(--b3);
+    color: var(--a0);
+}
+
+.light .header {
+    background-color: var(--b1);
+}
+
+.light .header .opsi .opsiBtn button {
+    color: black;
+}
+.light .navbar .bar-1 {
+    background-color: var(--b1);
+    color: var(--a0);
+}
+
+.light .ListChat .kartu {
+    background: var(--b2);
+}
+.light .ListChat .kartu:hover {
+    background: var(--b1);
+}
+.light .kartu .status {
+    color: var(--a0);
+    text-transform: uppercase;
+}
+.light .ListChat .kartu .status.busy ,
+.light .ListChat .kartu .status.idle,
+.light .ListChat .kartu .status.offline,
+.light .btn-4, .light .btn-2, .light .btn-3,
+.light .ListChat .Post-Card .atas,
+.light .ListChat .Post-Card .data {
+    color: var(--a0);
+}
+.light .Chat .head {
+    background-color: var(--b1);
+}
+.light .Chat .content,
+.light .Chat .foot {
+    background-color: var(--b3);
+}
+.light .Chat .foot .inputan {
+    background-color: var(--b2);
+}
+.light .Chat .foot .inputan input {
+    color: black;
+}
+.light .Chat .foot .inputan input::placeholder,
+.light .Profil .tentang .tulis::placeholder {
+    color: var(--a1);
+}
+.light .Chat .content .untai .untaian .atas .del,
+.light .ListChat .Post-Card .atas .tanggal .postrash,
+.light .Comment .komentar .comment-card .data i,
+.light .ListChat.Random .note i {
+    color: red;
+}
+.light .Chat .content .untai.kita .untaian {
+    background-color: var(--b2);
+    color: #1b1b1b;
+}
+.light .Chat .content .untai.mereka .untaian {
+    background-color: var(--biru);
+    color: white;
+}
+.light .Chat .content .untai.kita .segitiga {
+    color: var(--b2);
+}
+
+.light .Chat .content .untai.mereka .segitiga {
+    color: var(--biru);
+}
+
+.light .ListChat .nomore,
+.light .Profil .tentang .status,
+.light .Profil .tentang .tulis {
+    color: black;
+}
+.light .Profil,
+.light .ListChat.Post {
+    background-color: var(--b3);
+}
+.light .Profil .tentang,
+.light .Comment .komentar,
+.light .Library .card,
+.light .ListChat .Post-Card .postingan {
+    background-color: var(--b2);
+}
+.light .Profil .tentang .status option,
+.light .ListChat .createGrup option {
+    background-color: var(--b2);
+    color: black;
+}
+.light .ListChat .createGrup {
+    background-color: var(--b3);
+}
+.light .ListChat .createGrup .inputan input,
+.light .ListChat .createGrup .inputan textarea {
+    background-color: var(--b2);
+    color: black;
+    border: none;
+}
+.light .ListChat .createGrup .inputan input::placeholder,
+.light .ListChat .createGrup .inputan textarea::placeholder,
+.light .Comment .inputan input::placeholder {
+    color: black;
+}
+.light .ListChat .createGrup select {
+    border-color: var(--a0);
+    color: black;
+}
+.light .Comment .komentar .comment-card {
+    border-color: var(--b3);
+}
+.light .btn-1.clean, .light .Library button {
+    background-color: var(--b3);
+    border: 2px solid var(--a3);
+    color: var(--a0);
+}
+.light .Comment .inputan input {
+    background-color: var(--b3);
+    color: black;
+}
+.light .Library .card:hover,
+.light .Library button:hover {
+    border-color: var(--a0);
+    box-shadow: 0 0 5px black;
+}
+.light .Library .card a {
+    color: #743274;
+}
+.light .Library .card a:visited {
+    color: #743274;
+}
+.light .navbar .bar-1.active {
+    color: var(--biru);
+}
