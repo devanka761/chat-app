@@ -43,6 +43,7 @@
 .Landing .Desc {
     color: var(--b3);
     margin-bottom: 10px;
+    text-align: center;
 }
 
 .Landing .Tombol {
