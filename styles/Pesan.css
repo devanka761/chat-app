@@ -70,11 +70,11 @@
 }
 
 .Chat .content {
-    position: absolute;
+    position: fixed;
     left: 0;
     right: 0;
     top: 34px;
-    height: calc(100vh - 80px);
+    bottom: 40px;
     background-color: var(--a0);
     overflow-y: auto;
 }
