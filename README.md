@@ -26,7 +26,7 @@ Last Update: 20/06/2022
 > 1. Buat Project di Firebase
 > 2. Nyalakan Realtime Database
 > 3. Nyalakan Storage
-> 4. Nyalakan Authentication (Google)
+> 4. Nyalakan Authentication (Google & Email)
 > 5. Ambil FirebaseConfig -- Taroh untuk config.js
 > ### Config.js
 > Ganti kode di FirebaseConfig di dalam file config.js:
