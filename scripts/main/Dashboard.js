@@ -235,8 +235,8 @@ class Dashboard {
         await userRef.once("value", (key) => {
             // PERBARUI BEBERAPA DATA KHUSUS YANG BERHUBUNGAN DENGAN PROVIDER SAJA
             userRef.update({
-                displayName: auth.currentUser.displayName,
-                photo: auth.currentUser.photoURL,
+                displayName: auth.currentUser.displayName || "user"+new Date().getTime(), // HANDLER DISPLAYNAME UNTUK LOGIN EMAIL
+                photo: auth.currentUser.photoURL || "./images/default.jpg", // HANDLER PHOTO UNTUK LOGIN EMAIL
                 email: auth.currentUser.email,
             });
 

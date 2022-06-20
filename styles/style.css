@@ -82,6 +82,27 @@
     color: var(--biru);
 }
 
+.Landing .Tombol input::placeholder {
+    text-align: center;
+}
+.Landing .Tombol input {
+    background-color: var(--a0);
+    padding: 5px 7px;
+    border: none;
+    margin-bottom: 8px;
+    color: white;
+    outline: none;
+    /* width: 150px; */
+}
+.Landing .reg {
+    text-align: center;
+    margin-top: 15px;
+}
+.Landing .reg span {
+    color: var(--biru);
+    cursor: pointer;
+    text-decoration: underline;
+}
 .header {
     background-color: var(--a3);
     display: flex;
