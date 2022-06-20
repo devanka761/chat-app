@@ -1,5 +1,5 @@
-# CHAT APP v1.22.03
-Last Update: 12/06/2022
+# CHAT APP v1.25.12
+Last Update: 20/06/2022
 - Demo: [Devanka Chat App](https://dvnkz-messenger.netlify.app/)
 - Support Me: [Donasi Saweria](https://saweria.co/nexuscraft)
 - Subscribe: YouTube [Devanka 761](https://www.youtube.com/c/RG761)
@@ -14,7 +14,7 @@ Last Update: 12/06/2022
 3. [NEW] Follow & Unfollow User
 4. [NEW] Postingan + Like & Comment
 5. [NEW] Random Chat
-6. Login Dengan Google
+6. Login Dengan Google || [NEW] Login Dengan Email
 7. Username dan DisplayName Google Default
 8. Foto Profil dan Profil Google Default
 9. [NEW] Mode Pencarian Diperbaiki
