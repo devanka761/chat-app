@@ -303,13 +303,14 @@ class Global {
                         });
                         const element = this.element;
                         const reader = new FileReader(); // FILE READER KURANG LEBIH SAMA CARA KERJA DENGAN BASE64
+                        const noteVN = this.selang.chat.kirimVN; // CONST AGAR LISTENER READER BISA NGEBACA
                         reader.addEventListener("load", function () {
                             // MUNCULIN DIV LOADING
                             const uploading = document.createElement("div");
                             uploading.classList.add("untai", "kita");
                             uploading.innerHTML = (`
                             <div class="untaian">
-                                <div class="pesan">${this.selang.chat.kirimVN}</div>
+                                <div class="pesan">${noteVN}</div>
                             </div>
                             <div class="segitiga">
                                 <i class="fas fa-triangle"></i>
