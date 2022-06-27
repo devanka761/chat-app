@@ -1,5 +1,5 @@
 # CHAT APP v1.25.12
-Last Update: 22/06/2022
+Last Update: 27/06/2022
 - Demo: [Devanka Chat App](https://dvnkz-messenger.netlify.app/)
 - Support Me: [Donasi Saweria](https://saweria.co/nexuscraft)
 - Subscribe: YouTube [Devanka 761](https://www.youtube.com/c/RG761)
