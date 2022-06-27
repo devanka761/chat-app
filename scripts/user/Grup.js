@@ -9,6 +9,7 @@ class Grup {
         this.send = false; // SAMA DENGAN GLOBAL
         this.chunks = []; // SAMA DENGAN GLOBAL
         this.recorder = undefined; // SAMA DEGAN GLOBAL
+        this.reChat = ''; // DIPAKAI UNTUK MEMBALAS
     }
 
     createElement() { // SAMA DENGAN GLOBAL
@@ -83,7 +84,10 @@ class Grup {
                                 <button type="button" class="del" data-del="${data.key}">
                                     <i class="fas fa-trash-can"></i>
                                 </button>
-                                <div>Kamu</div>
+                                <div><button type="button" class="del cputih" data-rep="${data.key}">
+                                    <i class="fa-solid fa-reply"></i>
+                                    </button> Kamu</div>
+                                </div>
                             </div>
                             <div class="pesan"></div>
                             <div class="bawah">
@@ -109,6 +113,14 @@ class Grup {
                     } else {
                         this.list.querySelector(".pesan").innerText = snap.pesan;
                     }
+                    if(typeof(snap.rep) !== "undefined") {
+                        const replyan = snap.rep.substring(0, 30) + '...';
+                        const balesDiv = document.createElement("div");
+                        balesDiv.classList.add("Balas");
+                        balesDiv.innerText = `re: ${replyan}`;
+                        this.list.querySelector(".pesan").prepend(balesDiv);
+                    }
+                    this.list.querySelector(`.atas [data-rep="${data.key}"]`).onclick = () => this.balasChat(this.chatKey, data.key, snap.pesan);
 
                     if(this.list.querySelector(`.atas [data-del="${data.key}"]`)) {
                         this.list.querySelector(`.atas [data-del="${data.key}"]`).onclick = () => Notipin.Confirm({
@@ -126,6 +138,9 @@ class Grup {
                     <div class="untaian">
                         <div class="atas">
                             <div class="nick" data-nama="${data.key}"></div>
+                            <button type="button" class="del cputih" data-rep="${data.key}">
+                                <i class="fa-solid fa-reply"></i>
+                            </button>
                         </div>
                         <div class="pesan">
                         </div>
@@ -153,13 +168,38 @@ class Grup {
                     } else {
                         this.list.querySelector(".pesan").innerText = snap.pesan;
                     }
+                    if(typeof(snap.rep) !== "undefined") {
+                        const replyan = snap.rep.substring(0, 30) + '...';
+                        const balesDiv = document.createElement("div");
+                        balesDiv.classList.add("Balas");
+                        balesDiv.innerText = `re: ${replyan}`;
+                        this.list.querySelector(".pesan").prepend(balesDiv);
+                    }
+                    this.list.querySelector(`.atas [data-rep="${data.key}"]`).onclick = () => this.balasChat(this.chatKey, data.key, snap.pesan);
                 }
                 this.element.querySelector(".content").appendChild(this.list);
             })
             this.scroll();
         })
     }
-
+    balasChat(path, key, pesan) { // SAMA DENGAN GLOBAL
+        const balesBefore = this.element.querySelector(".balasan");
+        if(balesBefore) balesBefore.remove();
+        const bales = document.createElement("div");
+        bales.classList.add("balasan");
+        bales.innerHTML = (`
+            <div class="pesan"></div>
+            <div class="cancel"><i class="fa-solid fa-x"></i></div>
+        `);
+        bales.querySelector(".pesan").innerText = `re:\n${pesan.substring(0, 60) + '...'}`;
+        this.reChat = pesan;
+        bales.querySelector(".cancel").onclick = () => {
+            bales.remove();
+            this.reChat = "";
+            return;
+        };
+        this.element.appendChild(bales);
+    }
     getName(element, uid) { // SAMA DENGAN GLOBAL
         rdb.ref("users/" + uid).once("value", (data) => {
             const nama = data.val().nama?data.val().nama:data.val().displayName;
@@ -181,6 +221,9 @@ class Grup {
                 rdb.ref("grup/" + grupkey + "/chat/" + untaikey).update({
                     pesan: "F?4?@)]CmKb?-{H_R"
                 });
+            }
+            if(typeof(data.val().rep) !== "undefined") {
+                rdb.ref("grup/" + grupkey + "/chat/" + untaikey+"/rep").remove();
             }
         })
     }
@@ -282,14 +325,27 @@ class Grup {
             alert(err);
         }, () => {
             fotoUp.snapshot.ref.getDownloadURL().then(imgURL => {
-                rdb.ref("grup/" + chatkey + "/chat").child(0 - new Date().getTime()).set({
-                    uid: auth.currentUser.uid,
-                    tanggal: tgl,
-                    jam: jam,
-                    pesan: imgURL,
-                    path: `gambarGP/${auth.currentUser.uid}/${file.name}`
-                });
+                if(this.reChat == "") {
+                    rdb.ref("grup/" + chatkey + "/chat").child(0 - new Date().getTime()).set({
+                        uid: auth.currentUser.uid,
+                        tanggal: tgl,
+                        jam: jam,
+                        pesan: imgURL,
+                        path: `gambarGP/${auth.currentUser.uid}/${file.name}`
+                    });
+                } else {
+                    rdb.ref("grup/" + chatkey + "/chat").child(0 - new Date().getTime()).set({
+                        uid: auth.currentUser.uid,
+                        tanggal: tgl,
+                        jam: jam,
+                        pesan: imgURL,
+                        path: `gambarGP/${auth.currentUser.uid}/${file.name}`,
+                        rep: this.reChat
+                    });
+                }
             }).then(() => {
+                const balesBefore = this.element.querySelector(".balasan");
+                if(balesBefore) balesBefore.remove();
                 uploading.remove();
             })
         })
@@ -297,12 +353,25 @@ class Grup {
     }
     
     kirimChat(msg) { // SAMA DENGAN GLOBAL
-        rdb.ref("grup/" + this.uid + "/chat").child(0 - new Date().getTime()).set({
-            uid: auth.currentUser.uid,
-            tanggal: tgl,
-            jam: jam,
-            pesan: msg,
-        });
+        if(this.reChat == "") {
+            rdb.ref("grup/" + this.uid + "/chat").child(0 - new Date().getTime()).set({
+                uid: auth.currentUser.uid,
+                tanggal: tgl,
+                jam: jam,
+                pesan: msg,
+            });
+        } else {
+            rdb.ref("grup/" + this.uid + "/chat").child(0 - new Date().getTime()).set({
+                uid: auth.currentUser.uid,
+                tanggal: tgl,
+                jam: jam,
+                pesan: msg,
+                rep: this.reChat
+            });
+            this.reChat = "";
+        }
+        const balesBefore = this.element.querySelector(".balasan");
+        if(balesBefore) balesBefore.remove();
     }
 
     kirimVN(chatkey) { // SAMA DENGAN GLOBAL
@@ -324,6 +393,8 @@ class Grup {
                     const element = this.element;
                     const reader = new FileReader();
                     const noteVN = this.selang.chat.kirimVN;
+                    const reChat = this.reChat;
+                    this.reChat = "";
                     reader.addEventListener("load", function () {
 
                         const uploading = document.createElement("div");
@@ -345,14 +416,29 @@ class Grup {
                             alert(error.message)
                         }, function () {
                             task.snapshot.ref.getDownloadURL().then(audioUrl => {
-                                rdb.ref("grup/" + chatkey + "/chat").child(0 - new Date().getTime()).set({
-                                    uid: auth.currentUser.uid,
-                                    tanggal: tgl,
-                                    jam: jam,
-                                    pesan: audioUrl,
-                                    path: `suaraGP/${auth.currentUser.uid}/${tgl}.opus`
-                                });
-                            }).then(() => uploading.remove());
+                                if(reChat == "") {
+                                    rdb.ref("grup/" + chatkey + "/chat").child(0 - new Date().getTime()).set({
+                                        uid: auth.currentUser.uid,
+                                        tanggal: tgl,
+                                        jam: jam,
+                                        pesan: audioUrl,
+                                        path: `suaraGP/${auth.currentUser.uid}/${tgl}.opus`
+                                    });
+                                } else {
+                                    rdb.ref("grup/" + chatkey + "/chat").child(0 - new Date().getTime()).set({
+                                        uid: auth.currentUser.uid,
+                                        tanggal: tgl,
+                                        jam: jam,
+                                        pesan: audioUrl,
+                                        path: `suaraGP/${auth.currentUser.uid}/${tgl}.opus`,
+                                        rep: reChat
+                                    });
+                                }
+                            }).then(() => {
+                                uploading.remove();
+                                const balesBefore = element.querySelector(".balasan");
+                                if(balesBefore) balesBefore.remove();
+                            });
                         });
                     }, false);
                     reader.readAsDataURL(blob);

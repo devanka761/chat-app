@@ -21,6 +21,7 @@ Last Update: 22/06/2022
 10. Tema Gelap & Cerah
 11. Lebih Responsive
 12. Major & Minor Bugs Fixed
+13. [NEW] Reply to a specific chat
 ## INSTALASI
 > ### Firebase Project
 > 1. Buat Project di Firebase

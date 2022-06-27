@@ -4,6 +4,7 @@ class Global {
         this.send = false; // DEFAULT BOOLEAN ANTARA TOMBOL SEND / MICROPHONE
         this.chunks = []; // KASIH ARRAY KOSONG BIAR GA UNDEFINED
         this.recorder = undefined; // INI MEMANG DIBUAT UNDEFINED
+        this.reChat = ''; // DIPAKAI UNTUK MEMBALAS
     }
     createElement() { // BIKIN DIV BARU CHAT GLOBAL (COPAS DARI CHAT)
         this.element = document.createElement("div");
@@ -70,7 +71,9 @@ class Global {
                                     <button type="button" class="del" data-del="${data.key}">
                                         <i class="fas fa-trash-can"></i>
                                     </button>
-                                    <div>Kamu</div>
+                                    <div><button type="button" class="del cputih" data-rep="${data.key}">
+                                    <i class="fa-solid fa-reply"></i>
+                                    </button> Kamu</div>
                                 </div>
                                 <div class="pesan"></div>
                                 <div class="bawah">
@@ -97,7 +100,16 @@ class Global {
                             // innerText PESANNYA
                             this.list.querySelector(".pesan").innerText = snap.pesan;
                         }
-
+                        // TAMPILKAN KALO ADA BALASAN
+                        if(typeof(snap.rep) !== "undefined") {
+                            const replyan = snap.rep.substring(0, 30) + '...';
+                            const balesDiv = document.createElement("div");
+                            balesDiv.classList.add("Balas");
+                            balesDiv.innerText = `re: ${replyan}`;
+                            this.list.querySelector(".pesan").prepend(balesDiv);
+                        }
+                        // LISTENER TOMBOL REPLY
+                        this.list.querySelector(`.atas [data-rep="${data.key}"]`).onclick = () => this.balasChat(this.chatKey, data.key, snap.pesan);    
                         if(this.list.querySelector(`.atas [data-del="${data.key}"]`)) { // KALO TOMBOL HAPUSNYA ADA
                             // MAKA MUNCULKAN KONFIRMASI TARIK PESAN
                             this.list.querySelector(`.atas [data-del="${data.key}"]`).onclick = () => Notipin.Confirm({
@@ -116,6 +128,9 @@ class Global {
                         <div class="untaian">
                             <div class="atas">
                                 <div class="nick" data-nama="${data.key}"></div>
+                                <button type="button" class="del cputih" data-rep="${data.key}">
+                                    <i class="fa-solid fa-reply"></i>
+                                </button>
                             </div>
                             <div class="pesan">
                             </div>
@@ -144,6 +159,14 @@ class Global {
                         } else {
                             this.list.querySelector(".pesan").innerText = snap.pesan;
                         }
+                        if(typeof(snap.rep) !== "undefined") {
+                            const replyan = snap.rep.substring(0, 30) + '...';
+                            const balesDiv = document.createElement("div");
+                            balesDiv.classList.add("Balas");
+                            balesDiv.innerText = `re: ${replyan}`;
+                            this.list.querySelector(".pesan").prepend(balesDiv);
+                        }
+                        this.list.querySelector(`.atas [data-rep="${data.key}"]`).onclick = () => this.balasChat(this.chatKey, data.key, snap.pesan);
                     }
                     this.element.querySelector(".content").appendChild(this.list);
                 });
@@ -151,7 +174,27 @@ class Global {
             }
         })
     }
-
+    balasChat(path, key, pesan) {
+        // HAPUS JIKA ADA DIV BALASAN SEBELUMNYA
+        const balesBefore = this.element.querySelector(".balasan");
+        if(balesBefore) balesBefore.remove();
+        // BIKIN DIV BARU UNTUK KETERANGAN MEMBALAS
+        const bales = document.createElement("div");
+        bales.classList.add("balasan");
+        bales.innerHTML = (`
+            <div class="pesan"></div>
+            <div class="cancel"><i class="fa-solid fa-x"></i></div>
+        `);
+        bales.querySelector(".pesan").innerText = `re:\n${pesan.substring(0, 60) + '...'}`;
+        this.reChat = pesan;
+        // JIKA BATAL MEMBALAS, MAKA HAPUS DIVNYA
+        bales.querySelector(".cancel").onclick = () => {
+            bales.remove();
+            this.reChat = "";
+            return;
+        };
+        this.element.appendChild(bales);
+    }
     tarikChat(untaikey) {
         rdb.ref("global/" + untaikey).once("value", (data) => { // FOLDER KEY UNTAIAN YANG DIHAPUS
             if(data.val().pesan.indexOf("/gambarGL") !== -1 || data.val().pesan.indexOf("/suaraGL") !== -1) {
@@ -169,6 +212,9 @@ class Global {
                 rdb.ref("global/" + untaikey).update({
                     pesan: "F?4?@)]CmKb?-{H_R"
                 });
+            }
+            if(typeof(data.val().rep) !== "undefined") {
+                rdb.ref("global/"+untaikey+"/rep").remove();
             }
         })
     }
@@ -274,12 +320,27 @@ class Global {
     }
     kirimChat(msg) {
         // PUSH CHAT KE DATABASE
-        rdb.ref("global").child(new Date().getTime()).set({
-            uid: auth.currentUser.uid,
-            tanggal: tgl,
-            jam: jam,
-            pesan: msg
-        });
+        if(this.reChat == "") {
+            // TAMPA REPLY
+            rdb.ref("global").child(new Date().getTime()).set({
+                uid: auth.currentUser.uid,
+                tanggal: tgl,
+                jam: jam,
+                pesan: msg
+            });
+        } else {
+            // DENGAN REPLY
+            rdb.ref("global").child(new Date().getTime()).set({
+                uid: auth.currentUser.uid,
+                tanggal: tgl,
+                jam: jam,
+                pesan: msg,
+                rep: this.reChat
+            });
+            this.reChat = ""; // KOSONGIN SETELAH TERKIRIM
+        }
+        const balesBefore = this.element.querySelector(".balasan");
+        if(balesBefore) balesBefore.remove();
     }
 
     kirimVN() {
@@ -304,6 +365,8 @@ class Global {
                         const element = this.element;
                         const reader = new FileReader(); // FILE READER KURANG LEBIH SAMA CARA KERJA DENGAN BASE64
                         const noteVN = this.selang.chat.kirimVN; // CONST AGAR LISTENER READER BISA NGEBACA
+                        const reChat = this.reChat; // CONST AGAR LISTENER BISA NGEBACA
+                        this.reChat = ""; // KOSONGIN SETELAH TERBACA
                         reader.addEventListener("load", function () {
                             // MUNCULIN DIV LOADING
                             const uploading = document.createElement("div");
@@ -330,14 +393,29 @@ class Global {
                                 // KALO UDAH SUKSES, CARI LINKNYA
                                 task.snapshot.ref.getDownloadURL().then(audioUrl => {
                                     // PUSH KE CHAT
-                                    rdb.ref("global").child(new Date().getTime()).set({
-                                        uid: auth.currentUser.uid,
-                                        tanggal: tgl,
-                                        jam: jam,
-                                        pesan: audioUrl, // MODEL PESANNYA ADALAH LINK AUDIONYA
-                                        path: `suaraGL/${auth.currentUser.uid}/${tgl}.opus`,
-                                    });
-                                }).then(() => uploading.remove()); // HAPUS DIV LOADING
+                                    if(reChat == "") { // TANPA BALASAN
+                                        rdb.ref("global").child(new Date().getTime()).set({
+                                            uid: auth.currentUser.uid,
+                                            tanggal: tgl,
+                                            jam: jam,
+                                            pesan: audioUrl, // MODEL CHATNYA ADALAH LINK
+                                            path: `suaraGL/${auth.currentUser.uid}/${tgl}.opus`,
+                                        });
+                                    } else { // DENGAN BALASAN
+                                        rdb.ref("global").child(new Date().getTime()).set({
+                                            uid: auth.currentUser.uid,
+                                            tanggal: tgl,
+                                            jam: jam,
+                                            pesan: audioUrl,
+                                            path: `suaraGL/${auth.currentUser.uid}/${tgl}.opus`,
+                                            rep: reChat
+                                        });
+                                    }
+                                }).then(() => {
+                                    uploading.remove(); // HAPUS DIV LOADING
+                                    const balesBefore = element.querySelector(".balasan");
+                                    if(balesBefore) balesBefore.remove(); // HAPUS DIV MEMBALAS
+                                });
                             });
                         }, false);
                         reader.readAsDataURL(blob);
@@ -399,14 +477,28 @@ class Global {
             alert(err);
         }, () => {
             fotoUp.snapshot.ref.getDownloadURL().then(imgURL => {
-                rdb.ref("global").child(new Date().getTime()).set({
-                    uid: auth.currentUser.uid,
-                    tanggal: tgl,
-                    jam: jam,
-                    pesan: imgURL,
-                    path: `gambarGL/${auth.currentUser.uid}/${file.name}`,
-                });
+                if(this.reChat == "") {
+                    rdb.ref("global").child(new Date().getTime()).set({
+                        uid: auth.currentUser.uid,
+                        tanggal: tgl,
+                        jam: jam,
+                        pesan: imgURL,
+                        path: `gambarGL/${auth.currentUser.uid}/${file.name}`,
+                    });
+                } else {
+                    rdb.ref("global").child(new Date().getTime()).set({
+                        uid: auth.currentUser.uid,
+                        tanggal: tgl,
+                        jam: jam,
+                        pesan: imgURL,
+                        path: `gambarGL/${auth.currentUser.uid}/${file.name}`,
+                        rep: this.reChat
+                    });
+                    this.reChat = "";
+                }
             }).then(() => {
+                const balesBefore = this.element.querySelector(".balasan");
+                if(balesBefore) balesBefore.remove();
                 uploading.remove();
             })
         })

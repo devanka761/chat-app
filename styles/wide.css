@@ -46,4 +46,7 @@
     .Comment {
         background-color: #000000;
     }
+    .Chat .balasan {
+        left: 250px;
+    }
 }

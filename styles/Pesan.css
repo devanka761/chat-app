@@ -241,3 +241,27 @@
     font-size: 200px;
     animation: loading 2s linear infinite;
 }
+.Chat .balasan {
+    position: fixed;
+    z-index: 1;
+    color: var(--kuning);
+    background-color: var(--a2);
+    border: 1px solid var(--kuning);
+    bottom: 50px;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    margin: 0 5px;
+    justify-content: space-between;
+}
+.Chat .balasan .cancel {
+    cursor: pointer;
+}
+.untai .Balas {
+    color: var(--kuning);
+    font-style: italic;
+    border-radius: 10px;
+    margin-bottom: 3px;
+}

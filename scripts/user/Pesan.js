@@ -1,9 +1,5 @@
 class Pesan {
-    constructor({
-        uid,
-        nama,
-        foto
-    }) {
+    constructor({ uid, nama, foto }) {
         this.selang = window.Bahasa[userState.last_lang]; // IMPORT DARI BAHASA
         this.uid = uid; // KEY LAWAN CHAT
         this.nama = nama; // NAMA LAWAN CHAT
@@ -13,6 +9,7 @@ class Pesan {
         this.chatKey = ''; // SUPAYA TIDAK UNDEFINED
         this.chunks = []; // SUPAYA TIDAK UNDEFINED
         this.recorder = undefined; // MEMANG DIBUAT SUPAYA UNDEFINED UNTUK DEFAULTNYA :V (WKWK)
+        this.reChat = ''; // DIPAKAI UNTUK MEMBALAS
     }
 
     createElement() {
@@ -139,6 +136,9 @@ class Pesan {
                                 <button type="button" class="del" data-del="${data.key}">
                                     <i class="fas fa-trash-can"></i>
                                 </button>
+                                <button type="button" class="del cputih" data-rep="${data.key}">
+                                    <i class="fa-solid fa-reply"></i>
+                                </button>
                             </div>
                             <div class="pesan"></div>
                             <div class="bawah">
@@ -165,6 +165,17 @@ class Pesan {
                         // innerText PESANNYA
                         this.list.querySelector(".pesan").innerText = snap.pesan;
                     }
+                    
+                    // KALO ADA REPLY, AKAN DITAMPILKAN
+                    if(typeof(snap.rep) !== "undefined") {
+                        const replyan = snap.rep.substring(0, 30) + '...';
+                        const balesDiv = document.createElement("div");
+                        balesDiv.classList.add("Balas");
+                        balesDiv.innerText = `re: ${replyan}`;
+                        this.list.querySelector(".pesan").prepend(balesDiv);
+                    }
+                    // LISTENER TOMBOL REPLY
+                    this.list.querySelector(`.atas [data-rep="${data.key}"]`).onclick = () => this.balasChat(this.chatKey, data.key, snap.pesan);
 
                     if(this.list.querySelector(`.atas [data-del="${data.key}"]`)) {
                         // this.list.querySelector(`.atas [data-del="${data.key}"]`).onclick = () => this.tarikChat(data.key, this.chatKey);
@@ -186,6 +197,11 @@ class Pesan {
                     this.list.setAttribute("data-uid", data.key);
                     this.list.innerHTML = (`
                     <div class="untaian">
+                        <div class="atas">
+                            <button type="button" class="del cputih" data-rep="${data.key}">
+                                <i class="fa-solid fa-reply"></i>
+                            </button>
+                        </div>
                         <div class="pesan">
                         </div>
                         <div class="bawah">
@@ -210,6 +226,14 @@ class Pesan {
                         // innerText PESANNYA
                         this.list.querySelector(".pesan").innerText = snap.pesan;
                     }
+                    if(typeof(snap.rep) !== "undefined") {
+                        const replyan = snap.rep.substring(0, 30) + '...';
+                        const balesDiv = document.createElement("div");
+                        balesDiv.classList.add("Balas");
+                        balesDiv.innerText = `re: ${replyan}`;
+                        this.list.querySelector(".pesan").prepend(balesDiv);
+                    }
+                    this.list.querySelector(`.atas [data-rep="${data.key}"]`).onclick = () => this.balasChat(this.chatKey, data.key, snap.pesan);
                 }
                 // TAMPILKAN CHATNYA DI CONTENT
                 this.element.querySelector(".content").appendChild(this.list);
@@ -217,7 +241,27 @@ class Pesan {
             this.scroll();
         })
     }
-
+    balasChat(path, key, pesan) {
+        // HAPUS JIKA ADA DIV BALASAN SEBELUMNYA
+        const balesBefore = this.element.querySelector(".balasan");
+        if(balesBefore) balesBefore.remove();
+        // BIKIN DIV BARU UNTUK KETERANGAN MEMBALAS
+        const bales = document.createElement("div");
+        bales.classList.add("balasan");
+        bales.innerHTML = (`
+            <div class="pesan"></div>
+            <div class="cancel"><i class="fa-solid fa-x"></i></div>
+        `);
+        bales.querySelector(".pesan").innerText = `re:\n${pesan.substring(0, 60) + '...'}`;
+        this.reChat = pesan;
+        // JIKA BATAL MEMBALAS, MAKA HAPUS DIVNYA
+        bales.querySelector(".cancel").onclick = () => {
+            bales.remove();
+            this.reChat = "";
+            return;
+        };
+        this.element.appendChild(bales);
+    }
     tarikChat(untaikey, chatkey) {
         // BACA KEY UNTAIAN TERSEBUT
         rdb.ref("chat/" + chatkey + "/" + untaikey).once("value", (data) => {
@@ -236,6 +280,9 @@ class Pesan {
                 rdb.ref("chat/" + chatkey + "/" + untaikey).update({
                     pesan: "F?4?@)]CmKb?-{H_R"
                 });
+            }
+            if(typeof(data.val().rep) !== "undefined") {
+                rdb.ref("chat/" + chatkey + "/" + untaikey+"/rep").remove();
             }
         });
     }
@@ -367,14 +414,28 @@ class Pesan {
             alert(err);
         }, () => {
             fotoUp.snapshot.ref.getDownloadURL().then(imgURL => {
-                rdb.ref("chat/" + chatkey).child(new Date().getTime()).set({
-                    uid: auth.currentUser.uid,
-                    tanggal: tgl,
-                    jam: jam,
-                    pesan: imgURL,
-                    path: `gambarCP/${auth.currentUser.uid}/${file.name}`,
-                });
+                if(this.reChat == "") {
+                    rdb.ref("chat/" + chatkey).child(new Date().getTime()).set({
+                        uid: auth.currentUser.uid,
+                        tanggal: tgl,
+                        jam: jam,
+                        pesan: imgURL,
+                        path: `gambarCP/${auth.currentUser.uid}/${file.name}`,
+                    });
+                } else {
+                    rdb.ref("chat/" + chatkey).child(new Date().getTime()).set({
+                        uid: auth.currentUser.uid,
+                        tanggal: tgl,
+                        jam: jam,
+                        pesan: imgURL,
+                        path: `gambarCP/${auth.currentUser.uid}/${file.name}`,
+                        rep: this.reChat
+                    });
+                }
+                this.reChat = "";
             }).then(() => {
+                const balesBefore = this.element.querySelector(".balasan");
+                if(balesBefore) balesBefore.remove();
                 uploading.remove();
             })
         })
@@ -383,12 +444,25 @@ class Pesan {
     }
 
     kirimChat(msg) { // SAMA SEPERTI GLOBAL
-        rdb.ref("chat/" + this.chatKey).child(new Date().getTime()).set({
-            uid: auth.currentUser.uid,
-            tanggal: tgl,
-            jam: jam,
-            pesan: msg
-        });
+        if(this.reChat == "") {
+            rdb.ref("chat/" + this.chatKey).child(new Date().getTime()).set({
+                uid: auth.currentUser.uid,
+                tanggal: tgl,
+                jam: jam,
+                pesan: msg
+            });
+        } else {
+            rdb.ref("chat/" + this.chatKey).child(new Date().getTime()).set({
+                uid: auth.currentUser.uid,
+                tanggal: tgl,
+                jam: jam,
+                pesan: msg,
+                rep: this.reChat
+            });
+            this.reChat = "";
+        }
+        const balesBefore = this.element.querySelector(".balasan");
+        if(balesBefore) balesBefore.remove();
     }
 
     kirimVN(chatkey) { // SAMA SEPERTI GLOBAL
@@ -410,6 +484,8 @@ class Pesan {
                     const element = this.element;
                     const reader = new FileReader();
                     const noteVN = this.selang.chat.kirimVN;
+                    const reChat = this.reChat;
+                    this.reChat = "";
                     reader.addEventListener("load", function () {
                         const uploading = document.createElement("div");
                         uploading.classList.add("untai", "kita");
@@ -430,14 +506,29 @@ class Pesan {
                             console.log(error.message)
                         }, function () {
                             task.snapshot.ref.getDownloadURL().then(audioUrl => {
-                                rdb.ref("chat/" + chatkey).child(new Date().getTime()).set({
-                                    uid: auth.currentUser.uid,
-                                    tanggal: tgl,
-                                    jam: jam,
-                                    pesan: audioUrl,
-                                    path: `suaraCP/${auth.currentUser.uid}/${tgl}.opus`,
-                                });
-                            }).then(() => uploading.remove());
+                                if(reChat == "") {
+                                    rdb.ref("chat/" + chatkey).child(new Date().getTime()).set({
+                                        uid: auth.currentUser.uid,
+                                        tanggal: tgl,
+                                        jam: jam,
+                                        pesan: audioUrl,
+                                        path: `suaraCP/${auth.currentUser.uid}/${tgl}.opus`,
+                                    });
+                                } else {
+                                    rdb.ref("chat/" + chatkey).child(new Date().getTime()).set({
+                                        uid: auth.currentUser.uid,
+                                        tanggal: tgl,
+                                        jam: jam,
+                                        pesan: audioUrl,
+                                        path: `suaraCP/${auth.currentUser.uid}/${tgl}.opus`,
+                                        rep: reChat
+                                    });
+                                }
+                            }).then(() => {
+                                uploading.remove();
+                                const balesBefore = element.querySelector(".balasan");
+                                if(balesBefore) balesBefore.remove();
+                            });
                         });
                     }, false);
                     reader.readAsDataURL(blob);
