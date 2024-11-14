@@ -3,7 +3,7 @@ Last Update: 27/06/2022<br>
 New Update: [Download Here](https://linkvertise.com/69716/kirimin-chat-app/) 23/11/2022 <br>
 Next Update: April - May 2023
 > This source code is outdated, and I decide to make updated one, then using linkvertise (short link with ads). Sorry for that. You can download the source code [here](https://linkvertise.com/69716/kirimin-chat-app/).
-- Demo: [Devanka Chat App](https://kirimin.devanka761.my.id/)
+- Demo: [Devanka Chat App](https://kirimin.devanka.id/)
 - Support Me: [Donasi Saweria](https://saweria.co/devanka)
 - Subscribe: YouTube [Devanka 761](https://www.youtube.com/c/RG761)
 ## FITUR
