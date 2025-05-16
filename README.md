@@ -1,49 +1,61 @@
-# CHAT APP v1.25.12
-Last Update: 27/06/2022<br>
-New Update: [Download Here](https://linkvertise.com/69716/kirimin-chat-app/) 23/11/2022 <br>
-Next Update: April - May 2023
-> This source code is outdated, and I decide to make updated one, then using linkvertise (short link with ads). Sorry for that. You can download the source code [here](https://linkvertise.com/69716/kirimin-chat-app/).
-- Demo: [Devanka Chat App](https://kirimin.devanka.id/)
+# CHAT APP - Kirimin v2.0.0
+> Lastest Update: 16/05/2025<br>
+- Live Demo: [Kirimin](https://kirimin.devanka.id/)
 - Support Me: [Donasi Saweria](https://saweria.co/devanka)
-- Subscribe: YouTube [Devanka 761](https://www.youtube.com/c/RG761)
+- Subscribe: YouTube [Devanka 761](https://www.youtube.com/@devanka761)
 ## FITUR
-1. Private Chat/Global Chat
-    - Pesan Teks,
-    - Pesan Suara,
-    - Pesan Gambar,
-    - Menarik Pesan,
-    - Report User.
-2. [NEW] Grup Chat + Logo (Join Via ID -- Mirip Discord)
-3. [NEW] Follow & Unfollow User
-4. [NEW] Postingan + Like & Comment
-5. [NEW] Random Chat
-6. Login Dengan Google || [NEW] Login Dengan Email
-7. Username dan DisplayName Google Default
-8. Foto Profil dan Profil Google Default
-9. [NEW] Mode Pencarian Diperbaiki
-10. Tema Gelap & Cerah
-11. Lebih Responsive
-12. Major & Minor Bugs Fixed
-13. [NEW] Reply to a specific chat
+1. Perpesanan pribadi, grup, dan global
+2. Dapat mengirim pesan text, gambar, suara, dan file
+3. Video Call &amp; Voice Call
+4. Pertemanan untuk akses khusus pribadi
+5. Untaian pada target balasan pesan
+6. Profil pengguna yang berisi username, displayname, bio, foto profil
+7. Postingan publik (layaknya instagram) beserta jumlah like dan komentar
+8. Notifikasi In-App
+
 ## INSTALASI
-> ### Firebase Project
-> 1. Buat Project di Firebase
-> 2. Nyalakan Realtime Database
-> 3. Nyalakan Storage
-> 4. Nyalakan Authentication (Google & Email)
-> 5. Ambil FirebaseConfig -- Taroh untuk config.js
-> ### Config.js
-> Ganti kode di FirebaseConfig di dalam file config.js:
-> ```javascript
-> const firebaseConfig = {
->     apiKey: "PUNYA-KAMU",
->     authDomain: "PUNYA-KAMU",
->     databaseURL: "PUNYA-KAMU",
->     projectId: "PUNYA-KAMU",
->     storageBucket: "PUNYA-KAMU",
->     messagingSenderId: "PUNYA-KAMU",
->     appId: "PUNYA-KAMU"
-> };
-> ```
-> ### Bahasa.js
-> Ganti dan sesuaikan dengan yang diinginkan
+### Via Fork/Clone
+Install semua dependencies dengan **NPM**
+```shell
+npm install
+```
+### Via Download
+1. Extract dan masuk ke dalam folder `chat-app-main`
+2. Buka terminal dan arahkan ke dalam folder `chat-app-main` tersebut
+3. Install semua dependencies dengan **NPM**
+```shell
+npm install
+```
+
+## KONFIGURASI
+1. Buat file `.env` dan salin isi dari file `.env.example`
+2. Modifikasi file `.env` sesuai dengan kebutuhan config kamu
+
+## JALANKAN
+### A. Development Mode
+Buka 2 terminal atau 1 terminal dengan 2 tab
+1. Watch Client Build
+```shell
+npm run dev:build
+```
+2. Watch Server Start
+```shell
+npm run dev:start
+```
+### B. Production Mode
+
+#### Compile Client Bundle
+```shell
+npm run build
+```
+#### Start Server
+
+##### B.1. Dengan NPM Script
+```shell
+npm run start
+```
+##### B.2. Dengan PM2 Script
+```shell
+pm2 start npm --name "my-chat-app" -- start --max-memory-restart 16G
+```
+> Unit bisa dengan K (Kilobyte), M (Megabyte), G (Gigabyte)

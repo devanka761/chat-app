@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content" />
+    <meta name="author" content="Devanka"/>
+    <meta name="google" content="notranslate" />
+    <meta name="robots" content="noindex,nofollow,notranslate"/>
+
+    <link rel="icon" type="image/png" href="/favicon-48x48.png" sizes="48x48" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.1/css/all.css" />
+    <title><%= 'Invite: ' + uname %></title>
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="btn-menu" data-menu="devanka761" role="button"><i class="fa-solid fa-bars"></i> MENU</div>
+      <div class="nav-list">
+        <a href="/" data-r="devanka761">BACK TO HOMEPAGE</a>
+      </div>
+    </nav>
+    <div class="app">
+      <div class="main invite" id="main">
+        <section class="sect" id="home">
+          <div class="card">
+            <div class="icon">
+              <img class="brd" src="<%= imgsrc + '?access=' + link %>" alt="<%= imgalt %>"/>
+            </div>
+            <div class="title">
+              <h1><%= uname %></h1>
+              <p><%= desc %><%- accept <= -1 ? '<br/><span><i class="fa-duotone fa-circle-check"></i> joined</span>' : '' %></p>
+            </div>
+            <div class="actions">
+              <div class="btn">
+                <% if(accept >= 1) { %>
+                <a href="<%= '/invite/' + type + '/' + link + '/accept' %>" id="btn-accept" data-link="<%= link %>" data-type="<%= type %>" data-id="<%= id %>">JOIN THIS GROUP NOW</a>
+                <% } else if(accept <= -1) { %>
+                <a class="joined" href="<%= '/app?c=1&type=' + type + '&id=' + id %>">GO TO GROUP CHAT</a>
+                <% } else { %>
+                <a href="/">BACK TO HOMEPAGE</a>
+                <% } %>
+              </div>
+            </div>
+          </div>
+          <div class="author">
+            <p><%= id %> | <%= link %></p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </body>
+</html>

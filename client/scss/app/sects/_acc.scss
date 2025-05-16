@@ -1,0 +1,218 @@
+@use "../../variable" as v;
+
+$topheight: 60px;
+
+.acc {
+  position: absolute;
+  top: 0;left: calc(350px + 100px);
+  width: calc(100% - (350px + 100px));
+  height: 100%;
+  background-color: v.$bg;
+  .top {
+    position: absolute;
+    top: 0;left: 0;
+    width: 100%;
+    background-color: v.$bar_bg;
+    color: v.$white;
+    height: $topheight;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.25rem;
+    .btn {
+      position: absolute;
+      left: 10px;
+    }
+    .sec-title {
+      font-weight: bold;
+    }
+  }
+  .top.flex {
+    justify-content: space-between;
+    align-items: center;
+    gap: 0;
+    .left {
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      gap: 10px;
+    }
+    .right {
+      .btn {
+        padding-left: 10px;
+      }
+    }
+  }
+  .wall {
+    position: absolute;
+    top: $topheight;left: 0;
+    width: 100%;
+    height: calc(100% - $topheight);
+    padding: 20px;
+    overflow-y: auto;
+    .chp {
+      width: 100%;
+      margin-bottom: 20px;
+      .outer {
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        overflow: hidden;
+        border: 1px solid v.$sgray;
+        border-radius: 10px;
+        .chp-t {
+          text-align: center;
+          padding: 5px;
+          font-size: 0.9rem;
+          font-style: italic;
+          background-color: v.$card_primary;
+        }
+        .chp-f {
+          text-align: center;
+          padding: 10px;
+          p {
+            word-break: break-all;
+            word-break: break-word;
+            hyphens: auto;
+          }
+          label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+        }
+        .chp-e {
+          text-align: center;
+          padding: 5px;
+          font-size: 0.9rem;
+          background-color: v.$sgray;
+          font-weight: bold;
+          cursor: pointer;
+        }
+        .chp-n {
+          color: v.$yellow;
+          font-style: italic;
+          font-size: 0.9rem;
+          text-align: center;
+          padding: 0 5px;
+          margin-bottom: 5px;
+        }
+      }
+    }
+    .userphoto {
+      .outer-img {
+        border: 1px solid v.$sblurple;
+        position: relative;
+        margin: 0 auto;
+        width: 150px;
+        height: 150px;
+        border-radius: 20px;
+        overflow: hidden;
+        img {
+          width: 150px;
+          height: 150px;
+          object-fit: cover;
+          object-position: center;
+          -o-object-fit: cover;
+          -o-object-position: center;
+        }
+        .btn {
+          position: absolute;
+          bottom: 0;left: 0;
+          width: 100%;
+          margin: 0 auto;
+          text-align: center;
+          padding: 5px;
+          font-size: 1.2rem;
+          background-color: #00000080;
+        }
+      }
+    }
+    .userbio {
+      .outer {
+        .chp-f {
+          width: fit-content;
+          margin: 0 auto;
+          p {
+            text-align: justify;
+            text-align-last: left;
+          }
+        }
+      }
+    }
+    .groupinvite {
+      .chp-f {
+        p {
+          a {
+            text-decoration: none;
+            border-bottom: 1px solid v.$yellow;
+          }
+        }
+      }
+    }
+    .groupmember {
+      .chp-u {
+        ul {
+          list-style: none;
+          li {
+            padding: 10px;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            .left {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              gap: 10px;
+              cursor: pointer;
+              img {
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+                object-fit: cover;
+                object-position: center;
+                -o-object-fit: cover;
+                -o-object-position: center;
+              }
+              .uname {
+                i.fa-user-crown {
+                  font-size: 0.8rem;
+                  color: v.$yellow;
+                  margin-left: 5px;
+                }
+              }
+            }
+            .right {
+              color: v.$cred;
+              cursor: pointer;
+            }
+          }
+          li:last-child {
+            border-bottom: none;
+          }
+          li:has(:hover) {
+            background-color: v.$sgray;
+          }
+        }
+      }
+    }
+    .usersign {
+      text-align: center;
+      a {
+        color: v.$cred;
+        text-decoration: none;
+        border-bottom: 1px solid v.$cred;
+        padding: 0 10px;
+      }
+    }
+    .chp:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

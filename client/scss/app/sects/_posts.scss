@@ -1,0 +1,296 @@
+@use "../../variable" as v;
+@use "./createpost";
+
+$topheight: 60px;
+
+.posts {
+  position: absolute;
+  top: 0;left: calc(350px + 100px);
+  width: calc(100% - (350px + 100px));
+  height: 100%;
+  background-color: v.$bg;
+  .posttitle {
+    position: absolute;
+    top: 0;left: 0;
+    width: 100%;
+    background-color: v.$bar_bg;
+    color: v.$white;
+    height: $topheight;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.25rem;
+    .btn-back {
+      position: absolute;
+      left: 10px;
+    }
+    .btn-filter {
+      position: absolute;
+      right: 10px;
+    }
+    .title {
+      font-weight: bold;
+    }
+  }
+  .postactions {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    .btn {
+      background-color: v.$bar_active;
+      padding: 10px;
+      border-radius: 10px;
+    }
+  }
+  .postlist {
+    position: absolute;
+    top: $topheight;left: 0;
+    width: 100%;
+    height: calc(100% - $topheight);
+    overflow-x: hidden;
+    overflow-y: auto;
+    .card {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      border-bottom: 1px solid v.$sgray;
+      animation: slide_up_in 0.5s;
+      .spinner {
+        font-size: 3rem;
+        color: v.$syellow;
+      }
+      .user-data {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 10px;
+        margin-bottom: 7px;
+        .user {
+          display: flex;
+          justify-content: left;
+          align-items: center;
+          gap: 10px;
+          cursor: pointer;
+          .img {
+            width: 45px;
+            height: 45px;
+            img {
+              width: 100%;
+              height: 100%;
+              border-radius: 50%;
+              object-fit: cover;
+              object-position: center;
+              -o-object-fit: cover;
+              -o-object-position: center;
+            }
+          }
+          .name {
+            .dname {
+              font-size: 1rem;
+            }
+            .uname {
+              font-size: 0.8rem;
+              color: v.$softwhite;
+            }
+          }
+        }
+        .post-delete {
+          color: v.$cred;
+        }
+      }
+      .media {
+        width: 100%;
+        min-height: 100px;
+        background-color: v.$card_primary;
+        overflow: hidden;
+        margin-bottom: 5px;
+        img {
+          margin: 0 auto;
+          max-width: 100%;
+          max-height: 500px;
+        }
+      }
+      .statistics {
+        display: flex;
+        justify-content: left;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 5px;
+        .btn {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 3px;
+        }
+        .btn-like::before {
+          content: "\f004";
+          font-family: "Font Awesome 6 Pro";
+          font-weight: 300;
+          font-size: 1.5rem;
+        }
+        .btn-comment::before {
+          content: "\f075";
+          font-family: "Font Awesome 6 Pro";
+          font-weight: 300;
+          font-size: 1.5rem;
+        }
+      }
+      .text {
+        margin-bottom: 5px;
+        p {
+          word-break: break-all;
+          word-break: break-word;
+          hyphens: auto;
+        }
+      }
+      .timestamp {
+        text-align: right;
+        font-size: 0.8rem;
+        color: v.$softwhite;
+      }
+    }
+    .card.liked {
+      .statistics {
+        .btn-like::before {
+          font-weight: 600;
+          color: v.$sred;
+          animation: 0.25s popup_in;
+        }
+      }
+    }
+    .card:last-child {
+      border-bottom: none;
+      margin-bottom: 45px;
+    }
+  }
+  .postcomments {
+    position: absolute;
+    width: 100%;
+    height: calc(100% - ($topheight + 10px));
+    bottom: 0;left: 0;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    animation: slide_up_in 0.25s;
+    overflow: hidden;
+    .top {
+      width: 100%;
+      height: 55px;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: v.$card_primary;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      .btn-close {
+        font-size: 1.5rem;
+      }
+    }
+    .bottom {
+      width: 100%;
+      height: 45px;
+      background-color: v.$card_primary;
+      .form {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 0 10px;
+        .input {
+          width: calc(100% - 35px);
+          height: 100%;
+          background-color: #00000000;
+          color: v.$white;
+          font-size: 1rem;
+          &::placeholder {
+            color: v.$sgray;
+          }
+        }
+        .btn {
+          width: 35px;
+          height: 35px;
+          border-radius: 50%;
+          background-color: v.$sblurple;
+          color: v.$white;
+          font-size: 1rem;
+        }
+      }
+    }
+    .mid {
+      width: 100%;
+      height: calc(100% - (55px + 45px));
+      background-color: #1e1f22cc;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      overflow-x: hidden;
+      overflow-y: auto;
+      .card {
+        padding: 10px;
+        display: flex;
+        justify-content: left;
+        align-items: start;
+        gap: 7px;
+        .photo {
+          width: 40px;
+          height: 40px;
+          cursor: pointer;
+          img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center;
+            -o-object-fit: cover;
+            -o-object-position: center;
+          }
+        }
+        .data {
+          font-size: 0.9rem;
+          width: calc(100% - 40px);
+          &-user {
+            width: 100%;
+            .username {
+              font-weight: bold;
+              margin-right: 7px;
+              cursor: pointer;
+            }
+            .timestamp {
+              font-size: 0.75rem;
+              color: v.$softwhite;
+            }
+          }
+          &-text {
+            width: 100%;
+            p {
+              word-break: break-all;
+              word-break: break-word;
+              hyphens: auto;
+            }
+          }
+        }
+        &.sending {
+          opacity: 0.55;
+          font-style: italic;
+        }
+        &.me {
+          .data {
+            width: calc(100% - (40px - 20px));
+          }
+          .cmt-actions {
+            width: 20px;
+            color: v.$cred;
+            text-align: center;
+            margin-top: 10px;
+          }
+        }
+      }
+    }
+    &.out {
+      animation: slide_up_out 0.25s forwards;
+    }
+  }
+}

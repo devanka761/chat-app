@@ -1,0 +1,54 @@
+{
+  "name": "thechatest",
+  "version": "0.0.1",
+  "description": "Chat App Using Javascript - Responsive Web Design - Amateur Project",
+  "main": "server/app.js",
+  "scripts": {
+    "start": "node .",
+    "dev:start": "nodemon .",
+    "build": "webpack --config webpack.prod.js",
+    "dev:build": "webpack --config webpack.dev.js"
+  },
+  "keywords": [],
+  "author": "Devanka761 <contact@devanka.id> (https://devanka.id/)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devanka761/message.git"
+  },
+  "bugs": {
+    "url": "https://github.com/devanka761/message/issues"
+  },
+  "homepage": "https://github.com/devanka761/message#readme",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "nodemailer": "^6.9.14",
+    "peer": "^1.0.2",
+    "peerjs": "^1.5.4",
+    "session-file-store": "^1.5.0"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "**.json",
+      "client/**"
+    ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "babel-loader": "^9.2.1",
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.3",
+    "mini-css-extract-plugin": "^2.9.2",
+    "raw-loader": "^4.0.2",
+    "sass": "^1.81.0",
+    "sass-loader": "^16.0.3",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.96.1",
+    "webpack-cli": "^5.1.4"
+  }
+}

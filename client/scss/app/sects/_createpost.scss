@@ -1,0 +1,108 @@
+@use "../../variable" as v;
+
+$topheight: 60px;
+
+.createpost {
+  position: absolute;
+  top: 0;left: calc(350px + 100px);
+  width: calc(100% - (350px + 100px));
+  height: 100%;
+  background-color: v.$bg;
+  .posttitle {
+    position: absolute;
+    top: 0;left: 0;
+    width: 100%;
+    background-color: v.$bar_bg;
+    color: v.$white;
+    height: $topheight;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.25rem;
+    .title {
+      font-weight: bold;
+    }
+  }
+  .postactions {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 65px;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: v.$card_secondary;
+    gap: 10px;
+    .btn {
+      text-align: center;
+      align-content: center;
+      width: calc(100% / 2);
+      padding: 10px;
+      background-color: v.$sblurple;
+      border-radius: 10px;
+      font-weight: bold;
+      text-transform: capitalize;
+      &-cancel-post {
+        background-color: v.$card_primary;
+      }
+    }
+  }
+  .postcontainer {
+    width: 100%;
+    position: absolute;
+    top: $topheight;
+    left: 0;
+    height: calc(100% - ($topheight + 65px));
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 10px;
+    .btn-choose-img {
+      width: fit-content;
+      margin: 0 auto;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      font-weight: bold;
+      background-color: v.$sgreen;
+    }
+    .post-img-preview {
+      margin: 0 auto;
+      margin-bottom: 10px;
+      background-color: v.$card_primary;
+      padding: 10px;
+      width: 100%;
+      max-width: 500px;
+      min-height: 200px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 10px;
+      overflow: hidden;
+      img {
+        max-width: 100%;
+        max-height: 250px;
+      }
+    }
+    .post-text-preview {
+      background-color: v.$card_primary;
+      margin: 0 auto;
+      width: 100%;
+      max-width: 500px;
+      height: 140px;
+      overflow: hidden;
+      border-radius: 10px;
+      textarea {
+        width: 100%;
+        height: 100%;
+        background-color: #00000000;
+        padding: 10px;
+        color: v.$white;
+        &::placeholder {
+          color: v.$sgray;
+        }
+      }
+    }
+  }
+}
