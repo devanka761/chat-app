@@ -1,0 +1,12 @@
+@use "./main";
+@use "./other/properties";
+@use "./pages/Auth";
+@use "./pages/ForceClose";
+@use "./sect/header.scss";
+@use "./pm/pm";
+@use "./pm/header/tabs.scss";
+@use "./pm/center/Chats";
+@use "./pm/content/Empty";
+@use "./pm/content/Account";
+@use "./pm/content/Profile";
+@use "./pm/content/Room";

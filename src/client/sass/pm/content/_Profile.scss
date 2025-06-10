@@ -1,0 +1,141 @@
+@use "../../variables" as v;
+
+.Profile {
+  position: absolute;
+  top: 0;
+  left: calc(350px + 100px);
+  width: calc(100% - (350px + 100px));
+  height: 100%;
+  background-color: v.$bg;
+  .top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: v.$bar_bg;
+    width: 100%;
+    height: 60px;
+    padding: 0 10px;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.25em;
+  }
+  .wall {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 60px);
+    padding: 20px;
+    overflow-y: auto;
+    .chp {
+      margin: 0 auto;
+      max-width: 500px;
+      margin-bottom: 10px;
+    }
+    .chp:last-child {
+      margin-bottom: 0;
+    }
+    .displayname {
+      text-align: center;
+      word-break: break-all;
+      word-break: break-word;
+      hyphens: auto;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+    .img {
+      img {
+        width: 125px;
+        height: 125px;
+        border-radius: 5px;
+        margin: 0 auto;
+        object-fit: cover;
+        object-position: center;
+        -o-object-fit: cover;
+        -o-object-position: center;
+      }
+    }
+    .username {
+      text-align: center;
+      font-size: 1.5em;
+      text-align: center;
+      word-break: break-all;
+      word-break: break-word;
+      hyphens: auto;
+    }
+    .bio {
+      text-align: justify;
+      text-align-last: center;
+      word-break: break-all;
+      word-break: break-word;
+      hyphens: auto;
+    }
+    .bio::before {
+      content: "\f10d";
+      font-family: "Font Awesome 6 Pro";
+      font-weight: 600;
+    }
+    .bio::after {
+      content: "\f10e";
+      font-family: "Font Awesome 6 Pro";
+      font-weight: 600;
+    }
+    .actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      .btn {
+        padding: 10px;
+        font-size: 1.25em;
+        border-radius: 5px;
+        border: 1px solid v.$sgray;
+        background-color: v.$card_secondary;
+        text-align: center;
+        min-width: 100px;
+        i {
+          color: v.$cgreen;
+        }
+      }
+    }
+    .options {
+      .btn,
+      .note {
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+        margin-bottom: 5px;
+      }
+      .btn {
+        background-color: v.$card_primary;
+        border-radius: 5px;
+      }
+      .sg {
+        i {
+          color: v.$cgreen;
+        }
+      }
+      .sb {
+        i {
+          color: v.$blurple;
+        }
+      }
+      .sr {
+        i {
+          color: v.$cred;
+        }
+      }
+      .note {
+        font-style: italic;
+        color: v.$yellow;
+      }
+      .btn:last-child,
+      .note:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
