@@ -1,5 +1,5 @@
 import kelement from "../../helper/kelement"
-import MessageBuilder from "../../main/MessageBuilder"
+import MessageBuilder from "../../properties/MessageBuilder"
 import { IMessageBuilder, IMessageWriter } from "../../types/message.types"
 import Room from "../content/Room"
 
@@ -24,6 +24,10 @@ export default class RoomField {
     this.room.list.add(message)
     this.el.append(message.run(isTemp).toHTML())
     return message
+  }
+  resend(message: MessageBuilder): void {
+    message.clickListener()
+    this.el.append(message.toHTML())
   }
   run(middle: HTMLDivElement) {
     this.middle = middle

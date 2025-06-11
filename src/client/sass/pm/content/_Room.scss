@@ -1,6 +1,10 @@
 @use "../../variables" as v;
 
 $btmheight: 55px;
+$errorplbg: #09122c;
+$errorplcl: #872341;
+$errorcl: #b42751;
+$errorbg: #3d2b31;
 
 .Room {
   position: absolute;
@@ -451,9 +455,6 @@ $btmheight: 55px;
             word-break: break-all;
             word-break: break-word;
             hyphens: auto;
-            .failed {
-              color: v.$sred;
-            }
           }
         }
         .time {
@@ -465,9 +466,24 @@ $btmheight: 55px;
           font-size: 0.8em;
           color: v.$softwhite;
         }
-      }
-      .card:not(.me) {
-        animation: popup_in 0.5s;
+        &.me {
+          margin-left: auto;
+          margin-right: 0;
+          background-color: v.$bar_active;
+        }
+        &.error {
+          background-color: $errorbg;
+          .time {
+            color: v.$cred;
+          }
+          .text p {
+            color: v.$softwhite;
+          }
+        }
+        &.long {
+          width: 100%;
+          max-width: 450px;
+        }
       }
       .card.deleted {
         .attach,
@@ -481,11 +497,6 @@ $btmheight: 55px;
       .card.long {
         width: calc(100% - 40px);
         max-width: 450px;
-      }
-      .card.me {
-        margin-right: 0;
-        margin-left: auto;
-        background-color: v.$bar_active;
       }
       .card.sending {
         animation: popup_in 0.5s;
@@ -676,13 +687,13 @@ $btmheight: 55px;
               color: v.$yellow;
             }
           }
-        }
-        .card.long {
-          width: 100%;
-          max-width: 450px;
-        }
-        .card.me {
-          background-color: v.$bar_active;
+          &.me {
+            background-color: v.$bar_active;
+          }
+          &.long {
+            width: 100%;
+            max-width: 450px;
+          }
         }
       }
       .actions {

@@ -80,6 +80,5 @@ module.exports = {
       }
     ]
   },
-  devtool: false,
   watch: true
 }

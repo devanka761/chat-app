@@ -18,7 +18,7 @@ const statusIcon: TStatusIcon = {
   pending: '<i class="fa-duotone fa-regular fa-clock"></i>',
   sent: '<i class="fa-regular fa-check"></i>',
   read: '<i class="fa-regular fa-check-double"></i>',
-  failed: '<i class="fa-duotone fa-regular fa-triangle-exclamation"></i>'
+  failed: '<i class="fa-regular fa-rotate-left"></i>'
 }
 export default class MessageBuilder {
   private el: HTMLDivElement
@@ -31,12 +31,9 @@ export default class MessageBuilder {
   private textMessage: HTMLParagraphElement
   private textEdidted: HTMLSpanElement
   private sendStatus: HTMLDivElement
-  // constructor({ data, user }: { data: IMessageBuilder; user: UserDB }) {
   constructor(s: IMessageBuilder) {
     this.s = s
     this.user = s.user
-    // this.user = user
-    // this.s = { ...data }
   }
   private createElement(): void {
     this.el = kelement("div", "card")
@@ -142,6 +139,9 @@ export default class MessageBuilder {
     this.renderText()
     this.renderTime()
   }
+  clickListener(): void {
+    this.el.onclick = null
+  }
   get embeded(): IMessageEmbed {
     const embedData: IMessageEmbed = { user: this.user, id: this.s.id }
     if (this.s.type === "deleted") embedData.deleted = true
@@ -156,12 +156,20 @@ export default class MessageBuilder {
     this.s.id = message_id
   }
   setStatus(statusText: TStatusText): void {
-    this.sendStatus.innerHTML = statusIcon[statusText]
     if (statusText === "failed") {
+      this.sendStatus.innerHTML = `${statusIcon[statusText]}`
       this.sendStatus.classList.add("btn")
+      this.el.classList.add("error")
+      this.timestamp.innerHTML = lang.FAILED
     } else {
+      this.setTimeStamp(Date.now())
+      this.sendStatus.innerHTML = statusIcon[statusText]
       this.sendStatus.classList.remove("btn")
+      this.el.classList.remove("error")
     }
+  }
+  setTimeStamp(ts: number): void {
+    this.timestamp.innerHTML = sdate.parseTime(ts)
   }
   toHTML(): HTMLDivElement {
     return this.el

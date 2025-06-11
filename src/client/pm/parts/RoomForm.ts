@@ -2,7 +2,7 @@ import { ss } from "../../helper/escaper"
 import kelement from "../../helper/kelement"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
-import MessageWriter from "../../main/MessageWriter"
+import MessageWriter from "../../properties/MessageWriter"
 import db from "../../manager/db"
 import mediaCheck from "../../manager/mediaCheck"
 import { RoomFormContent } from "../../types/room.types"
@@ -41,8 +41,8 @@ export default class RoomForm {
     this.btnEmoji = kelement("div", "btn btn-emoji", { e: `<i class="fa-solid fa-face-smile"></i>` })
     const eemoji = kelement("div", "emoji", { e: this.btnEmoji })
     this.textarea = kelement("textarea")
-    this.textarea.name = "content-input" + this.room.data.id
-    this.textarea.id = "content-input" + +this.room.data.id
+    this.textarea.name = "content-input"
+    this.textarea.id = "content-input" + this.room.data.id + Date.now().toString(36)
     this.textarea.maxLength = 500
     this.textarea.placeholder = lang.TYPE_HERE
     const etextbox = kelement("div", "textbox", { e: this.textarea })
@@ -98,6 +98,7 @@ export default class RoomForm {
     this.closeAttach()
     this.closeEdit()
     this.textarea.value = ""
+    this.growArea()
   }
   private findFile(imageOnly?: boolean): void {
     const inp = document.createElement("input")

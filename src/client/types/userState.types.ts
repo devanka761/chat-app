@@ -1,4 +1,4 @@
-import { KJSON, PossibleData } from "./helper.types"
+import { KJSON } from "./helper.types"
 
 export interface UserNotif {
   [key: string]: number
@@ -14,6 +14,6 @@ export interface PrimaryClass {
   readonly id: string
   isLocked: boolean
   destroy(): Promise<void>
-  update(...args: PossibleData[]): void | Promise<void>
+  update(...args: unknown[]): void | Promise<void>
   run(): void | Promise<void>
 }

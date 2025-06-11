@@ -5,8 +5,8 @@ import modal from "../../helper/modal"
 import noUser from "../../helper/noUser"
 import setbadge from "../../helper/setbadge"
 import xhr from "../../helper/xhr"
-import { MessagesAPI } from "../../main/MessagesAPI"
-import MessageWriter from "../../main/MessageWriter"
+import { MessagesAPI } from "../../properties/MessagesAPI"
+import MessageWriter from "../../properties/MessageWriter"
 import userState from "../../main/userState"
 import db from "../../manager/db"
 import swiper from "../../manager/swiper"
@@ -16,6 +16,7 @@ import { PrimaryClass } from "../../types/userState.types"
 import RoomField from "../parts/RoomField"
 import RoomForm from "../parts/RoomForm"
 import Profile from "./Profile"
+import MessageBuilder from "../../properties/MessageBuilder"
 
 export default class Room implements PrimaryClass {
   readonly id: string
@@ -134,26 +135,22 @@ export default class Room implements PrimaryClass {
     this.bottom.style.height = `${formHeight}px`
     this.middle.style.height = `calc(100% - (60px + ${formHeight}px))`
   }
-  update(): void | Promise<void> {}
-  async destroy(): Promise<void> {
-    this.el.classList.add("out")
-    await modal.waittime()
-    this.isLocked = false
-    this.el.remove()
-  }
-  async sendMessage(messageWriten: MessageWriter, isTemp?: boolean): Promise<void> {
+  async sendMessage(messageWriten: MessageWriter, isTemp?: boolean, resend?: MessageBuilder): Promise<void> {
     const message = messageWriten.toJSON()
-    const pendingMessage = this.field.send(
-      {
-        ...message,
-        id: Date.now().toString(36),
-        timestamp: Date.now(),
-        userid: db.me.id,
-        user: db.me,
-        roomid: this.chats?.id || this.data.id
-      },
-      isTemp
-    )
+    const pendingMessage = resend
+      ? resend
+      : this.field.send(
+          {
+            ...message,
+            id: Date.now().toString(36),
+            timestamp: Date.now(),
+            userid: db.me.id,
+            user: db.me,
+            roomid: this.chats?.id || this.data.id
+          },
+          isTemp
+        )
+    if (resend) this.field.resend(pendingMessage)
     pendingMessage.setStatus("pending")
     await modal.waittime(1000)
     const sentMessage = await xhr.post(`/x/room/sendMessage/${this.data.type}/${this.data.id}`, message)
@@ -164,13 +161,20 @@ export default class Room implements PrimaryClass {
         await modal.alert(lang[sentMessage.msg] || lang.ERROR)
         this.isLocked = false
       }
+      pendingMessage.toHTML().onclick = async () => {
+        const confResend = await modal.confirm(lang.CONTENT_RESEND)
+        if (!confResend) return
+        this.sendMessage(messageWriten, isTemp, pendingMessage)
+      }
+      return
     }
     pendingMessage.setStatus("sent")
 
     const rep = sentMessage.data
     const repChat = (<unknown>rep?.chat) as ChatDB
     pendingMessage.id = repChat.id
-    const repFirst = rep?.isFirst ? false : true
+    pendingMessage.setTimeStamp(repChat.timestamp)
+    const repFirst = rep?.isFirst ? true : false
     const roomid = rep?.roomid as string
     if (repFirst) {
       db.c.push({
@@ -181,7 +185,25 @@ export default class Room implements PrimaryClass {
     }
     const dbchat = db.c.find((k) => k.id === roomid)
     if (dbchat) dbchat.c.push(repChat)
-    userState.center?.update({ ...repChat }, { ...this.data })
+    if (userState.center?.id === "chats") {
+      userState.center?.update({
+        chat: repChat,
+        users: this.users,
+        roomid: roomid,
+        isFirst: repFirst,
+        roomdata: this.data
+      })
+    }
+  }
+  update(): void | Promise<void> {}
+  async destroy(): Promise<void> {
+    this.el.classList.add("out")
+    await modal.waittime()
+    this.isLocked = false
+    this.el.remove()
+  }
+  get key(): string {
+    return this.data.id
   }
   run(): void {
     userState.content = this

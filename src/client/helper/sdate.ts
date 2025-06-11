@@ -6,15 +6,19 @@ const sdate = {
     t2 = new Date(t2)
     return t1.getFullYear() === t2.getFullYear() && t1.getMonth() === t2.getMonth() && t1.getDate() === t2.getDate()
   },
-  parseTime(ts: number = Date.now()): string {
-    const sameday = sdate.sameday(Date.now(), ts)
-    return sameday ? sdate.time(ts) : sdate.datetime(ts)
-  },
   time(ts: number = Date.now()): string {
     return new Date(ts).toLocaleTimeString(navigator.language, { hour: "2-digit", minute: "2-digit" })
   },
   date(ts: number = Date.now()): string {
     return new Date(ts).toLocaleDateString(navigator.language, { year: "2-digit", month: "2-digit", day: "2-digit" })
+  },
+  parseTime(ts: number = Date.now()): string {
+    const sameday = sdate.sameday(Date.now(), ts)
+    return sameday ? sdate.time(ts) : sdate.datetime(ts)
+  },
+  dateOrTime(ts: number = Date.now()) {
+    const sameday = sdate.sameday(Date.now(), ts)
+    return sameday ? sdate.time(ts) : sdate.date(ts)
   },
   remain(expiryTime: number): string | null {
     const remaining = expiryTime - Date.now()

@@ -85,10 +85,10 @@ export default class Profile implements PrimaryClass {
         name: {
           short: this.user.username,
           full: this.user.displayname
-        }
+        },
+        img: this.user.image,
+        badges: this.user.badges
       }
-      if (this.user.badges) roomDetail.badges = this.user.badges
-      if (this.user.image) roomDetail.img = this.user.image
       swiper(new Room({ data: roomDetail, users: [this.user] }), userState.currcontent)
     }
   }

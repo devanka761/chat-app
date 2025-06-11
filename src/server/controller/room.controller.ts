@@ -9,8 +9,7 @@ import { DBPerKey } from "../types/db.types"
 import { IRepBackRec } from "../types/validate.types"
 
 export function sendMessage(uid: string, room: IRoomFind, s: IMessageWriter): IRepBackRec {
-  // console.log(uid)
-  // console.log(s)
+  let isFirst = false
   const fkey = room.type === "user" ? "c" : "g"
   const cdb = db.ref[fkey]
   let chatkey =
@@ -21,6 +20,7 @@ export function sendMessage(uid: string, room: IRoomFind, s: IMessageWriter): IR
       : Object.keys(cdb).find((k) => k === room.id)
   if (room.type === "group" && !chatkey) return { code: 404 }
   if (room.type === "user" && !chatkey) {
+    isFirst = true
     chatkey = "c" + Date.now().toString(36)
     db.ref.c[chatkey] = {
       u: [uid, room.id],
@@ -33,11 +33,12 @@ export function sendMessage(uid: string, room: IRoomFind, s: IMessageWriter): IR
   const roomChat: { [key: string]: IMessageWriter } = oldChat ? { ...oldChat } : {}
 
   const chat_id = "c" + Date.now().toString(36)
+  s.timestamp = Date.now()
   roomChat[chat_id] = s
 
   db.fileSet(roomkey, room.type, roomChat as DBPerKey)
 
-  return { code: 200, data: { roomid: chatkey as string, chat: { ...normalizeMessage(chat_id, roomChat[chat_id]) } } }
+  return { code: 200, data: { isFirst, roomid: chatkey as string, chat: { ...normalizeMessage(chat_id, roomChat[chat_id]) } } }
 }
 
 export function normalizeMessage(msgid: string, oldmsg: IMessageWriter): ChatDB {
