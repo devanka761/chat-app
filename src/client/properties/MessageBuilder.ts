@@ -4,20 +4,15 @@ import { lang } from "../helper/lang"
 import modal from "../helper/modal"
 import sdate from "../helper/sdate"
 import setbadge from "../helper/setbadge"
+import { transpileChat } from "../main/transpileChat"
 import db from "../manager/db"
 import Room from "../pm/content/Room"
 import { UserDB } from "../types/db.types"
-import { IMessageBuilder, IMessageEmbed, MessageOptionType } from "../types/message.types"
+import { IMessageBuilder, MessageOptionType } from "../types/message.types"
 import { TStatusIcon, TStatusText } from "../types/room.types"
 import MessageWriter from "./MessageWriter"
 import OptionMsgBuilder from "./OptionMsgBuilder"
 
-const mediaIcons: { [key: string]: string } = {
-  file: '<i class="fa-light fa-file"></i>',
-  image: '<i class="fa-light fa-image"></i>',
-  video: '<i class="fa-light fa-film"></i>',
-  audio: '<i class="fa-light fa-music"></i>'
-}
 const statusIcon: TStatusIcon = {
   pending: '<i class="fa-duotone fa-regular fa-clock"></i>',
   sent: '<i class="fa-regular fa-check"></i>',
@@ -47,7 +42,7 @@ export default class MessageBuilder {
   private optmenu: HTMLDivElement
   public room: Room
   private optLocked: boolean
-  constructor(s: IMessageBuilder, room) {
+  constructor(s: IMessageBuilder, room: Room) {
     this.s = s
     this.user = s.user
     this.room = room
@@ -62,31 +57,26 @@ export default class MessageBuilder {
     this.el.append(this.field)
   }
   private renderUser(): void {
-    this.sender = kelement("div", "sender", {
+    this.sender = kelement("div", "chp sender", {
       e: ss(escapeHTML(this.user.username))
     })
     if (this.user.badges) setbadge(this.sender, this.user.badges)
     this.field.append(this.sender)
   }
   private renderReply(): void {
-    if (!this.s.embed) return
-    const embed = this.s.embed
-    const replysender = kelement("div", "name", { e: ss(escapeHTML(embed.user.username)) })
-    const replymsg = kelement("div", "msg")
-    if (embed.type === "deleted") {
-      replymsg.innerHTML = `<i class="fa-solid fa-ban"></i> <i>${embed.user.id === db.me.id ? lang.CONTENT_YOU_DELETED : lang.CONTENT_DELETED}</i>`
-    } else if (embed.type === "audio" || embed.type === "file" || embed.type === "image" || embed.type === "video") {
-      replymsg.innerHTML = mediaIcons[embed.type] || ""
-    }
-
-    if (embed.type === "voice") {
-      replymsg.innerHTML = '<i class="fa-light fa-microphone"></i> Voice Chat'
-    } else if (embed.text) {
-      replymsg.innerHTML += " " + ss(escapeHTML(embed.text), 20)
-    } else {
-      replymsg.innerHTML += " Media"
-    }
+    if (!this.s.reply) return
+    const msgAPI = this.room.list.get(this.s.reply)
+    if (!msgAPI) return
+    const target = msgAPI.json
+    const { user } = target
+    const replysender = kelement("div", "name", { e: ss(escapeHTML(user.username)) })
+    const replymsg = kelement("div", "msg", { e: transpileChat(target, null, true) })
     this.reply = kelement("div", "chp embed", { e: [replysender, replymsg] })
+    this.reply.onclick = () => {
+      const msgHTML = msgAPI.html
+      msgHTML.scrollIntoView()
+      msgAPI.highlight()
+    }
     this.field.append(this.reply)
   }
   private attachImage(eattach: HTMLDivElement, url: string, roomid: string, isTemp: boolean): void {
@@ -221,8 +211,13 @@ export default class MessageBuilder {
   clickListener(...args: MessageOptionType[]): void {
     this.el.onclick = (e) => {
       const { target } = e
-      if (this.optmenu && target instanceof Node && this.optmenu.contains(target)) {
-        return
+      if (target instanceof Node) {
+        if (this.optmenu?.contains(target)) return
+        if (this.s.type === "video" && this.attach?.contains(target)) return
+        if (this.reply?.contains(target)) {
+          this.closeOptmenu()
+          return
+        }
       }
       if (this.optmenu && this.el.contains(this.optmenu)) {
         this.closeOptmenu()
@@ -236,13 +231,6 @@ export default class MessageBuilder {
   }
   getUser(): UserDB {
     return this.user
-  }
-  get embeded(): IMessageEmbed {
-    const embedData: IMessageEmbed = { user: this.user, id: this.s.id }
-    if (this.s.type === "deleted") embedData.deleted = true
-    if (this.s.type === "file" || this.s.type === "image" || this.s.type === "video" || this.s.type === "audio") embedData.media = this.s.type
-    if (this.s.text) embedData.text = this.s.text
-    return embedData
   }
   get id(): string {
     return this.s.id
@@ -266,12 +254,21 @@ export default class MessageBuilder {
   setTimeStamp(ts: number): void {
     this.timestamp.innerHTML = sdate.parseTime(ts)
   }
-  toHTML(): HTMLDivElement {
+  get html(): HTMLDivElement {
     return this.el
+  }
+  get json(): IMessageBuilder {
+    return this.s
   }
   get raw(): MessageWriter {
     const messages = new MessageWriter(this.s)
     return messages
+  }
+  async highlight(): Promise<void> {
+    if (this.el.classList.contains("highlight")) return
+    this.el.classList.add("highlight")
+    await modal.waittime(5000, 5)
+    this.el.classList.remove("highlight")
   }
   run(isTemp?: boolean): this {
     this.init(isTemp || false)

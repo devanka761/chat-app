@@ -1,13 +1,42 @@
 @use "../variables" as v;
 
+@keyframes bgTrans {
+  0% {
+    background-color: #00000000;
+  }
+  20% {
+    background-color: rgba($color: v.$darkcream, $alpha: 0.5);
+  }
+  75% {
+    background-color: rgba($color: v.$darkcream, $alpha: 0.5);
+  }
+  80% {
+    background-color: rgba($color: v.$darkcream, $alpha: 0.3);
+  }
+  85% {
+    background-color: rgba($color: v.$darkcream, $alpha: 0.5);
+  }
+  90% {
+    background-color: rgba($color: v.$darkcream, $alpha: 0.3);
+  }
+  95% {
+    background-color: rgba($color: v.$darkcream, $alpha: 0.5);
+  }
+  100% {
+    background-color: #00000000;
+  }
+}
+
 @keyframes popup_in {
   0% {
     transform: scale(0);
     opacity: 0;
-  } 80% {
+  }
+  80% {
     transform: scale(1.1);
     opacity: 1;
-  } 100% {
+  }
+  100% {
     transform: scale(1);
   }
 }
@@ -15,7 +44,8 @@
   0% {
     transform: scale(1);
     opacity: 1;
-  } 100% {
+  }
+  100% {
     transform: scale(0);
     opacity: 0;
   }
@@ -24,28 +54,32 @@
 @keyframes slide_left_in {
   0% {
     transform: translateX(100%);
-  } 100% {
+  }
+  100% {
     transform: translateX(0);
   }
 }
 @keyframes slide_left_out {
   0% {
     transform: translateX(0);
-  } 100% {
+  }
+  100% {
     transform: translateX(-100%);
   }
 }
 @keyframes slide_right_in {
   0% {
     transform: translateX(-100%);
-  } 100% {
+  }
+  100% {
     transform: translateX(0);
   }
 }
 @keyframes slide_right_out {
   0% {
     transform: translateX(0);
-  } 100% {
+  }
+  100% {
     transform: translateX(100%);
   }
 }
@@ -53,7 +87,8 @@
   0% {
     opacity: 0;
     transform: translateY(100%);
-  } 100% {
+  }
+  100% {
     opacity: 1;
     transform: translateY(0);
   }
@@ -62,7 +97,8 @@
   0% {
     opacity: 1;
     transform: translateY(0);
-  } 100% {
+  }
+  100% {
     opacity: 0;
     transform: translateY(100%);
   }
@@ -71,7 +107,8 @@
   0% {
     opacity: 0;
     transform: translateY(-100%);
-  } 100% {
+  }
+  100% {
     opacity: 1;
     transform: translateY(0);
   }
@@ -80,7 +117,8 @@
   0% {
     opacity: 1;
     transform: translateY(0);
-  } 100% {
+  }
+  100% {
     opacity: 0;
     transform: translateY(-100%);
   }
@@ -89,14 +127,16 @@
 @keyframes pm_move_down {
   0% {
     height: 100%;
-  } 100% {
+  }
+  100% {
     height: calc(100% - 35px);
   }
 }
 @keyframes pm_move_up {
   0% {
     height: calc(100% - 35px);
-  } 100% {
+  }
+  100% {
     height: 100%;
   }
 }

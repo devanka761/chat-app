@@ -55,7 +55,7 @@ export default class Chats implements PrimaryClass {
       const card = new ChatBuilder({ data: roomDetail, users: [user], chat: lastchat })
       card.setUnread(unread).run()
       this.list.add(card)
-      this.card_list.append(card.toHTML())
+      this.card_list.append(card.html)
     })
     this.writeIfEmpty(cdb)
   }
@@ -85,7 +85,7 @@ export default class Chats implements PrimaryClass {
     const card = this.list.get(s.roomdata.id)
     if (card) {
       card.addUnread(1).updateChat(s.chat)
-      this.card_list.prepend(card.toHTML())
+      this.card_list.prepend(card.html)
     }
     this.writeIfEmpty(db.c)
   }

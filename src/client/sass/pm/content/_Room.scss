@@ -534,6 +534,9 @@ $errorbg: #3d2b31;
             }
           }
         }
+        &.highlight {
+          animation: bgTrans 5s;
+        }
       }
     }
   }

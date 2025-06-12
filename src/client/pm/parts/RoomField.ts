@@ -22,15 +22,15 @@ export default class RoomField {
   send(msg: IMessageBuilder, isTemp?: boolean): MessageBuilder {
     const message = new MessageBuilder(msg, this.room)
     this.room.list.add(message)
-    this.el.append(message.run(isTemp).toHTML())
+    this.el.append(message.run(isTemp).html)
     return message
   }
   resend(message: MessageBuilder): void {
     message.clickListener()
-    this.el.append(message.toHTML())
+    this.el.append(message.html)
   }
   remove(message: MessageBuilder): void {
-    const msg = message.toHTML()
+    const msg = message.html
     if (this.el.contains(msg)) {
       this.el.removeChild(msg)
     }

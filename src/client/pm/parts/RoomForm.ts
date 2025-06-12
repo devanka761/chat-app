@@ -1,26 +1,20 @@
-import { ss } from "../../helper/escaper"
 import kelement from "../../helper/kelement"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import MessageWriter from "../../properties/MessageWriter"
 import db from "../../manager/db"
-import mediaCheck from "../../manager/mediaCheck"
-import { RoomFormContent } from "../../types/room.types"
+// import { RoomFormContent } from "../../types/room.types"
 import Room from "../content/Room"
+import ReplyBuilder from "../../properties/ReplyBuilder"
+import AttachmentBuilder from "../../properties/AttachmentBuilder"
 
-const contents: RoomFormContent = {}
+// const contents: RoomFormContent = {}
 let editID: string | null = null
 
-function createAttach() {
-  const attachMedia = kelement("div", "media")
-  const attachClose = kelement("div", "close", { e: `<div class="btn"><i class="fa-duotone fa-circle-x"></i></div>` })
-  const attachCard = kelement("div", "attach", { e: [attachMedia, attachClose] })
-  return { attachCard, attachMedia, attachClose }
-}
 export default class RoomForm {
   readonly id: string
   public isLocked: boolean
-  private room: Room
+  public room: Room
   private bottom: HTMLDivElement
   private el: HTMLDivElement
   private btnEmoji: HTMLDivElement
@@ -30,6 +24,8 @@ export default class RoomForm {
   private textarea: HTMLTextAreaElement
   private canSend: boolean
   private downed: Set<string>
+  public reply: ReplyBuilder | null
+  public attachment: AttachmentBuilder | null
   constructor({ room }) {
     this.id = "roomform"
     this.isLocked = false
@@ -86,16 +82,22 @@ export default class RoomForm {
     const messageWriter: MessageWriter = new MessageWriter()
     messageWriter.setText(this.textarea.value)
     messageWriter.setUserId(<string>db.me.id)
-    if (contents.rep) messageWriter.setReply(contents.rep)
-    if (contents.file) messageWriter.addFile(contents.file)
-    if (contents.voice) messageWriter.addVoice(contents.voice)
+    if (this.reply) messageWriter.setReply(this.reply.id)
+    if (this.attachment && this.attachment.src) {
+      messageWriter.addFile({
+        name: this.attachment.name,
+        src: this.attachment.src
+      })
+    }
+    // if (contents.voice) messageWriter.addVoice(contents.voice)
     if (editID) messageWriter.setEdit(editID)
     messageWriter.setTimeStamp()
     this.room.sendMessage(messageWriter, true)
     this.clearForm()
   }
   private clearForm() {
-    this.closeAttach()
+    this.closeAttachment()
+    this.closeReply()
     this.closeEdit()
     this.textarea.value = ""
     this.growArea()
@@ -106,104 +108,39 @@ export default class RoomForm {
     if (imageOnly) inp.accept = "image/*,video/*,video/x-matroska"
     inp.onchange = async () => {
       this.closeEdit()
-      this.closeAttach()
       if (!inp.files || !inp.files[0]) return
-      const { attachCard, attachMedia, attachClose } = createAttach()
-      this.bottom.prepend(attachCard)
-      this.attDocument(attachMedia, "Loading File ...")
-
-      const file = inp.files[0]
-
-      const filesrc: string = await new Promise((resolve) => {
-        const reader = new FileReader()
-        reader.onload = () => resolve(reader.result?.toString() || "null")
-        reader.readAsDataURL(file)
-      })
-      while (attachMedia.lastChild) attachMedia.lastChild.remove()
-      const fileblob = URL.createObjectURL(file)
-      contents.file = {
-        name: file.name,
-        src: filesrc
-      }
-
-      const mediaExtension = mediaCheck(file.name)
-      if (mediaExtension === "image") {
-        this.attImage(attachMedia, file.name, fileblob)
-      } else if (mediaExtension === "video") {
-        this.attVideo(attachMedia, file.name, fileblob)
-      } else {
-        this.attDocument(attachMedia, file.name)
-      }
-      const repembed = this.bottom.querySelector(".embed")
-      if (repembed) this.bottom.prepend(repembed)
-      this.growArea()
-      attachClose.onclick = () => this.closeAttach()
-      this.focus()
+      this.setAttachment(inp.files[0])
       inp.remove()
     }
     inp.click()
   }
-  setReply(msgid: string): void {}
-  setEdit(msgid: string): void {}
-  private attImage(eattach: HTMLDivElement, filename: string, filesrc: string): void {
-    if (typeof filesrc !== "string") return this.attDocument(eattach, filename)
-    const eimg = kelement("div", "img")
-    const img = new Image()
-    img.alt = filename
-    const ename = kelement("div", "name")
-    ename.innerText = filename
-    img.onerror = async () => {
-      img.remove()
-      eimg.remove()
-      ename.remove()
-      this.attDocument(eattach, filename)
-      this.growArea()
-    }
-    img.onload = () => {
-      this.growArea()
-    }
-    eimg.append(img)
-    eattach.append(eimg, ename)
-    img.src = filesrc
-  }
-  private attVideo(eattach: HTMLDivElement, filename: string, filesrc: string): void {
-    if (typeof filesrc !== "string") return this.attDocument(eattach, filename)
-    const evid = kelement("div", "img")
-    const ename = kelement("div", "name")
-    ename.innerText = filename
-    const vid = kelement("video")
-    vid.volume = 0
-    vid.controls = false
-    vid.onerror = async () => {
-      vid.remove()
-      evid.remove()
-      ename.remove()
-      this.attDocument(eattach, filename)
-      this.growArea()
-    }
-    vid.oncanplay = () => {
-      this.growArea()
-    }
-    evid.append(vid)
-    eattach.append(evid, ename)
-    vid.src = filesrc
-  }
-  private attDocument(eattach: HTMLDivElement, filename: string): void {
-    const p = kelement("p")
-    const docFormat = /\.([a-zA-Z0-9]+)$/
-    const docExt = filename.match(docFormat)?.[1]
-    const extParsed = docExt ? `.${docExt}` : ".dvnkz"
-    const nameParsed = ss(filename, 30).replace(extParsed, "")
-    p.innerText = nameParsed + (docExt ? `.${docExt}` : "")
-    const edoc = kelement("div", "document", { e: p })
-    eattach.append(edoc)
+  private setAttachment(file: File): void {
+    if (this.attachment) this.attachment.close()
+    this.attachment = new AttachmentBuilder({ file: file, form: this })
+    this.attachment.run()
+    this.bottom.prepend(this.attachment.html)
+    if (this.reply) this.bottom.prepend(this.reply.html)
     this.growArea()
   }
-  private closeAttach(): void {
-    const eattach = this.bottom.querySelector(".attach")
-    if (eattach) eattach.remove()
-    delete contents.file
+  closeAttachment(): void {
+    if (!this.attachment) return
+    this.attachment.close()
     this.growArea()
+  }
+  setReply(msgid: string): void {
+    if (this.reply) this.reply.close()
+    this.reply = new ReplyBuilder({ id: msgid, form: this })
+    this.reply.run()
+    this.bottom.prepend(this.reply.html)
+    this.growArea()
+  }
+  closeReply(): void {
+    if (!this.reply) return
+    this.reply.close()
+    this.growArea()
+  }
+  setEdit(msgid: string): void {
+    console.log(msgid)
   }
   private closeEdit(): void {
     const eedit = this.bottom.querySelector(".edit-embed")
@@ -214,18 +151,17 @@ export default class RoomForm {
     editID = null
     this.growArea()
   }
-  private growArea(): void {
-    if (!this.canSend && (this.textarea.value.trim().length > 0 || contents.file?.src)) {
+  growArea(): void {
+    if (!this.canSend && (this.textarea.value.trim().length > 0 || this.attachment?.src)) {
       this.canSend = true
       this.btnVoice.innerHTML = `<i class="fa-solid fa-paper-plane-top"></i>`
-    } else if (this.canSend && this.textarea.value.trim().length < 1 && !contents.file?.src) {
+    } else if (this.canSend && this.textarea.value.trim().length < 1 && !this.attachment?.src) {
       this.canSend = false
       this.btnVoice.innerHTML = `<i class="fa-solid fa-microphone"></i>`
     }
-    const eattach: HTMLDivElement | null = this.bottom.querySelector(".attach")
-    const attachHeight: number = eattach?.offsetHeight || 0
-    const eembed: HTMLDivElement | null = this.bottom.querySelector(".embed")
-    const embedHeight: number = eembed?.offsetHeight || 0
+    // const eattach: HTMLDivElement | null = this.bottom.querySelector(".attach")
+    const attachHeight: number = this.attachment?.html?.offsetHeight || 0
+    const embedHeight: number = this.reply?.html?.offsetHeight || 0
     const mediaHeight: number = attachHeight + embedHeight
 
     this.textarea.style.height = "24px"
