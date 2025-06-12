@@ -6,9 +6,9 @@ import { IRoomFind } from "../../client/types/room.types"
 
 const router: Router = express.Router()
 
-router.use(cdUser, isUser, express.json({ limit: "100KB" }))
+router.use(cdUser, isUser)
 
-router.post("/sendMessage/:chat_type/:chat_id", (req: Request, res: Response) => {
+router.post("/sendMessage/:chat_type/:chat_id", express.json({ limit: "10mb" }), (req: Request, res: Response) => {
   if (req.params.chat_type !== "user" && req.params.chat_type !== "group") {
     res.status(404).json({ ok: false, msg: "ROOM_TYPE_NOT_FOUND" })
     return

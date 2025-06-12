@@ -1,4 +1,4 @@
-import { UserDB } from "./db.types"
+import { ChatDB, UserDB } from "./db.types"
 
 export type IMessageWriterVoice = string
 
@@ -30,9 +30,11 @@ export interface IMessageEmbed {
   deleted?: boolean
   text?: string
 }
-export interface IMessageBuilder extends IMessageWriter {
+export interface IMessageBuilder extends ChatDB {
   roomid: string
   id: string
   user: UserDB
   embed?: IMessageEmbed
 }
+
+export type MessageOptionType = "profile" | "reply" | "edit" | "retry" | "delete" | "cancel"

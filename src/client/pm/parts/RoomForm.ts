@@ -143,6 +143,8 @@ export default class RoomForm {
     }
     inp.click()
   }
+  setReply(msgid: string): void {}
+  setEdit(msgid: string): void {}
   private attImage(eattach: HTMLDivElement, filename: string, filesrc: string): void {
     if (typeof filesrc !== "string") return this.attDocument(eattach, filename)
     const eimg = kelement("div", "img")

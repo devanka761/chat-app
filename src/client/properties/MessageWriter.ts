@@ -1,3 +1,4 @@
+import mediaCheck from "../manager/mediaCheck"
 import { IMessageWriter, IMessageWriterFiles, IMessageWriterType, IMessageWriterVoice } from "../types/message.types"
 
 export default class MessageWriter {
@@ -30,7 +31,7 @@ export default class MessageWriter {
     return this
   }
   addFile(filesrc: IMessageWriterFiles): this {
-    this.data.type = "file"
+    this.data.type = mediaCheck(filesrc.name) || "file"
     this.data.filesrc = filesrc.src
     this.data.filename = filesrc.name
     return this

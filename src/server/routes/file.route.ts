@@ -10,7 +10,19 @@ router.use(isUser)
 router.get("/user/:imgsrc", (req: Request, res: Response) => {
   const { imgsrc } = req.params
   const file = hfile.userFile(imgsrc)
-  if (file) return res.sendFile(file, { root: "./" })
+  if (file) {
+    res.sendFile(file, { root: "./" })
+    return
+  }
+  res.sendStatus(404)
+})
+router.get("/media/:roomid/:filename", (req: Request, res: Response) => {
+  const { roomid, filename } = req.params
+  const file = hfile.roomFile(<string>req.user?.id, roomid, filename)
+  if (file) {
+    res.sendFile(file, { root: "./" })
+    return
+  }
   res.sendStatus(404)
 })
 

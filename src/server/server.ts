@@ -1,6 +1,6 @@
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0"
 import fs from "fs"
-import express, { Application, Request, Response } from "express"
+import express, { Application, NextFunction, Request, Response } from "express"
 import session from "express-session"
 import SessionFileStore, { FileStore } from "session-file-store"
 import { ExpressPeerServer } from "peer"
@@ -50,10 +50,12 @@ app.use("/file", fileRouter)
 
 app.get("/app", (req: Request, res: Response) => {
   res.render("app")
+  return
 })
 
 app.get("/", (req: Request, res: Response) => {
   res.render("home")
+  return
 })
 
 const appService = app.listen(PORT, () => {
@@ -76,5 +78,23 @@ server.on("connection", (c) => {
 app.use("/cloud", server)
 
 app.use("/", (req: Request, res: Response) => {
-  res.json({ ok: false, code: 404, msg: "NOT FOUND" })
+  res.status(404).json({ ok: false, code: 404, msg: "NOT_FOUND" })
+  return
+})
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
+  if (err.type === "entity.too.large") {
+    res.status(413).json({
+      ok: false,
+      code: 413,
+      msg: "CONTENT_TOO_LARGE"
+    })
+    return
+  }
+
+  res.status(500).json({
+    ok: false,
+    code: 500,
+    msg: "ERROR"
+  })
 })

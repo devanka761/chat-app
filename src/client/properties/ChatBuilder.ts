@@ -39,7 +39,7 @@ function transpile_lastchat(s: ChatDB, lastuser?: UserDB): string {
   }
 
   if (s.userid === myId) {
-    const isRead: boolean = (s.watch || []).filter((usrid) => usrid !== myId)?.length >= 1
+    const isRead: boolean = (s.readers || []).filter((usrid) => usrid !== myId)?.length >= 1
     text = `<i class="fa-regular fa-check${isRead ? "-double" : ""}"></i> ` + text
   }
 

@@ -255,310 +255,67 @@ $errorbg: #3d2b31;
       scroll-behavior: smooth;
       scrollbar-width: thin;
       .card {
-        margin-left: 0;
-        margin-right: auto;
-        width: fit-content;
-        max-width: calc(100% - 40px);
-        padding: 10px;
-        border-radius: 10px;
-        background-color: #3f464e;
+        width: 100%;
         margin-top: 5px;
-        .chp {
-          margin-bottom: 3px;
-          &:last-child {
-            margin-bottom: 0;
-          }
-        }
-        .sender {
+        .optmenu {
           width: fit-content;
-          max-width: 100%;
-          font-weight: bold;
+          min-width: 250px;
+          margin-left: 0;
+          margin-top: 20px;
+          margin-right: auto;
+          background-color: v.$black;
+          border-radius: 10px;
           overflow: hidden;
-          cursor: pointer;
-          color: v.$softwhite;
-          font-size: 0.8em;
-          &::before {
-            content: "~";
-            margin-right: 3px;
-          }
-          &:has(.sw) {
-            font-weight: normal;
-          }
-        }
-        .embed {
-          padding: 5px;
-          border-left: 3px solid v.$yellow;
-          background-color: #00000020;
-          border-top-left-radius: 10px;
-          border-bottom-left-radius: 10px;
-          color: v.$yellow;
-          font-size: 0.8em;
-          cursor: pointer;
-        }
-        .attach {
-          .document {
-            color: v.$yellow;
-            padding: 5px 7px;
-            border: 1px solid v.$yellow;
-            border-radius: 5px;
-            width: 100%;
-            cursor: pointer;
-            p {
-              word-break: break-all;
-              word-break: break-word;
-              hyphens: auto;
+          border: 2px solid v.$black;
+          animation: slide_up_in 0.5s;
+          .btn {
+            background-color: v.$black;
+            padding: 10px;
+            &.opt-profile {
+              border-bottom: 1px solid rgba($color: v.$white, $alpha: 0.2);
+              color: v.$cgreen;
             }
-            p::before {
-              content: "\f56d";
-              font-family: "Font Awesome 6 Pro";
-              font-weight: 600;
-              margin-right: 5px;
+            &.opt-delete,
+            &.opt-cancel {
+              color: v.$cred;
+            }
+            &:hover {
+              background-color: rgba($color: v.$white, $alpha: 0.1);
             }
           }
-          .img {
-            background-color: v.$card_secondary;
-            width: 100%;
-            max-height: 300px;
-            border-radius: 5px;
-            overflow: hidden;
-            img,
-            video {
-              max-width: 100%;
-              max-height: 300px;
-              display: block;
-              margin: 0 auto;
-            }
-          }
-          .voice {
-            width: 100%;
-            padding: 0 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            .control {
-              font-size: 1.5em;
-              min-width: 18px;
-              .btn::after {
-                content: "\f04b";
-                font-family: "Font Awesome 6 Pro";
-                font-weight: 600;
-              }
-              .btn.playing::after {
-                content: "\f04c";
-                font-family: "Font Awesome 6 Pro";
-                font-weight: 600;
-              }
-            }
-            .duration {
-              font-family: monospace, monospace;
-            }
-            .range {
-              input[type="range"] {
-                appearance: none;
-                -moz-appearance: none;
-                -webkit-appearance: none;
-                cursor: pointer;
-                background-color: v.$softwhite;
-                height: 5px;
-              }
-              input[type="range"]::-webkit-slider-thumb {
-                appearance: none;
-                -webkit-appearance: none;
-                -moz-appearance: none;
-                background: v.$white;
-                width: 14px;
-                height: 14px;
-                border-radius: 50%;
-              }
-              input[type="range"]::-ms-thumb {
-                background: v.$white;
-                width: 14px;
-                height: 14px;
-                border-radius: 50%;
-              }
-              input[type="range"]::-moz-range-thumb {
-                background: v.$white;
-                width: 14px;
-                height: 14px;
-                border-radius: 50%;
-              }
-              input[type="range"]:active::-webkit-slider-thumb {
-                box-shadow: 0 0 0 5px v.$blurple;
-              }
-              input[type="range"]:active::-webkit-slider-thumb {
-                outline: solid 2px v.$blurple;
-                outline-offset: 3px;
-              }
-              input[type="range"]:active::-moz-range-thumb {
-                box-shadow: 0 0 0 5px v.$blurple;
-              }
-            }
+          &.out {
+            animation: slide_up_out 0.5s forwards;
           }
         }
-        .vc {
-          padding: 10px;
-          border-radius: 10px;
-          background-color: #2b2d3180;
-          display: flex;
-          justify-content: left;
-          align-items: center;
-          .vc-icon {
-            width: 45px;
-            height: 45px;
-            background-color: #90949d20;
-            border-radius: 50%;
-            text-align: center;
-            align-content: center;
-            margin-right: 5px;
-            &::before {
-              font-family: "Font Awesome 6 Pro";
-              font-weight: 600;
-              font-size: 1em;
-            }
-          }
-          .vc-message {
-            color: currentColor;
-            font-size: 0.9em;
-            p:not(:first-child) {
-              color: v.$softwhite;
-            }
-          }
-          &.missed {
-            color: v.$cred;
-            .vc-icon::before {
-              content: "\e226";
-            }
-          }
-          &.rejected {
-            color: v.$cred;
-            .vc-icon::before {
-              content: "\e225";
-            }
-          }
-          &.outgoing {
-            color: v.$cgreen;
-            .vc-icon::before {
-              content: "\e224";
-            }
-          }
-          &.incoming {
-            color: v.$cgreen;
-            .vc-icon::before {
-              content: "\e223";
-            }
-          }
-        }
-        .text {
-          text-align: left;
-          p {
-            word-break: break-all;
-            word-break: break-word;
-            hyphens: auto;
-          }
-        }
-        .time {
-          display: flex;
-          justify-content: end;
-          align-items: center;
-          gap: 10px;
-          text-align: right;
-          font-size: 0.8em;
-          color: v.$softwhite;
-        }
-        &.me {
-          margin-left: auto;
-          margin-right: 0;
-          background-color: v.$bar_active;
-        }
-        &.error {
-          background-color: $errorbg;
-          .time {
-            color: v.$cred;
-          }
-          .text p {
-            color: v.$softwhite;
-          }
-        }
-        &.long {
-          width: 100%;
-          max-width: 450px;
-        }
-      }
-      .card.deleted {
-        .attach,
-        .embed {
-          display: none;
-        }
-        .text {
-          color: v.$softwhite;
-        }
-      }
-      .card.long {
-        width: calc(100% - 40px);
-        max-width: 450px;
-      }
-      .card.sending {
-        animation: popup_in 0.5s;
-      }
-      .card.highlight {
-        animation: bgTrans 1.5s;
-      }
-      .card.me.highlight {
-        animation: bgTrans2 1.5s;
-      }
-      .card:first-child {
-        margin-top: 0;
-      }
-      .card.follow {
-        margin-top: 2px;
-        .sender {
-          display: none;
-        }
-      }
-    }
-  }
-  .chatpop {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #00000080;
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    .box {
-      padding: 10px;
-      animation: popup_in 0.5s;
-      .chatlist {
-        border-bottom: 1px solid v.$softwhite;
-        .card {
-          margin: auto;
+        .field {
+          margin-left: 0;
+          margin-right: auto;
           width: fit-content;
-          max-width: 100%;
+          max-width: calc(100% - 40px);
           padding: 10px;
           border-radius: 10px;
-          background-color: v.$sgray;
-          margin-bottom: 10px;
+          background-color: #3f464e;
+          transform: translate(0);
           .chp {
+            max-width: 425px;
             margin-bottom: 3px;
-          }
-          .chp:last-child {
-            margin-bottom: 0;
+            &:last-child {
+              margin-bottom: 0;
+            }
           }
           .sender {
-            .name {
-              font-weight: bold;
-            }
-            .name::before {
+            width: fit-content;
+            max-width: 100%;
+            font-weight: bold;
+            overflow: hidden;
+            cursor: pointer;
+            color: v.$softwhite;
+            font-size: 0.8em;
+            &::before {
               content: "~";
               margin-right: 3px;
             }
-            .name:has(.sw) {
-              color: v.$softwhite;
+            &:has(.sw) {
               font-weight: normal;
             }
           }
@@ -570,21 +327,22 @@ $errorbg: #3d2b31;
             border-bottom-left-radius: 10px;
             color: v.$yellow;
             font-size: 0.8em;
+            cursor: pointer;
           }
           .attach {
-            margin-top: 5px;
             .document {
+              text-decoration: none;
+              display: block;
               color: v.$yellow;
               padding: 5px 7px;
               border: 1px solid v.$yellow;
               border-radius: 5px;
               width: 100%;
-              p {
-                word-break: break-all;
-                word-break: break-word;
-                hyphens: auto;
-              }
-              p::before {
+              cursor: pointer;
+              word-break: break-all;
+              word-break: break-word;
+              hyphens: auto;
+              &::before {
                 content: "\f56d";
                 font-family: "Font Awesome 6 Pro";
                 font-weight: 600;
@@ -607,7 +365,7 @@ $errorbg: #3d2b31;
             }
             .voice {
               width: 100%;
-              padding-left: 10px;
+              padding: 0 5px;
               display: flex;
               justify-content: space-between;
               align-items: center;
@@ -626,13 +384,17 @@ $errorbg: #3d2b31;
                   font-weight: 600;
                 }
               }
+              .duration {
+                font-family: monospace, monospace;
+              }
               .range {
                 input[type="range"] {
                   appearance: none;
                   -moz-appearance: none;
                   -webkit-appearance: none;
+                  cursor: pointer;
                   background-color: v.$softwhite;
-                  height: 3px;
+                  height: 5px;
                 }
                 input[type="range"]::-webkit-slider-thumb {
                   appearance: none;
@@ -668,64 +430,110 @@ $errorbg: #3d2b31;
               }
             }
           }
+          .vc {
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #2b2d3180;
+            display: flex;
+            justify-content: left;
+            align-items: center;
+            .vc-icon {
+              width: 45px;
+              height: 45px;
+              background-color: #90949d20;
+              border-radius: 50%;
+              text-align: center;
+              align-content: center;
+              margin-right: 5px;
+              &::before {
+                font-family: "Font Awesome 6 Pro";
+                font-weight: 600;
+                font-size: 1em;
+              }
+            }
+            .vc-message {
+              color: currentColor;
+              font-size: 0.9em;
+              p:not(:first-child) {
+                color: v.$softwhite;
+              }
+            }
+            &.missed {
+              color: v.$cred;
+              .vc-icon::before {
+                content: "\e226";
+              }
+            }
+            &.rejected {
+              color: v.$cred;
+              .vc-icon::before {
+                content: "\e225";
+              }
+            }
+            &.outgoing {
+              color: v.$cgreen;
+              .vc-icon::before {
+                content: "\e224";
+              }
+            }
+            &.incoming {
+              color: v.$cgreen;
+              .vc-icon::before {
+                content: "\e223";
+              }
+            }
+          }
           .text {
             text-align: left;
             p {
               word-break: break-all;
               word-break: break-word;
               hyphens: auto;
-              .failed {
-                color: v.$sred;
-              }
             }
           }
           .time {
+            display: flex;
+            justify-content: end;
+            align-items: center;
+            gap: 10px;
             text-align: right;
             font-size: 0.8em;
             color: v.$softwhite;
-            .cy {
-              color: v.$yellow;
-            }
           }
-          &.me {
+        }
+        &.me {
+          .optmenu {
+            margin-left: auto;
+            margin-right: 0;
+          }
+          .field {
+            margin-left: auto;
+            margin-right: 0;
             background-color: v.$bar_active;
           }
-          &.long {
-            width: 100%;
-            max-width: 450px;
+        }
+        &.error {
+          .field {
+            background-color: $errorbg;
+            .time {
+              color: v.$cred;
+            }
+            .text p {
+              color: v.$softwhite;
+            }
           }
         }
-      }
-      .actions {
-        margin-top: 10px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 10px;
-        .btn {
-          padding: 10px;
-          color: v.$white;
-          font-weight: bold;
-          border-radius: 5px;
+        &:first-child {
+          margin-top: 0;
         }
-        .btn-reply {
-          background-color: v.$sgreen;
+        &.follow {
+          margin-top: 2px;
+          .field {
+            .sender {
+              display: none;
+            }
+          }
         }
-        .btn-edit {
-          background-color: v.$syellow;
-        }
-        .btn-delete {
-          background-color: v.$sred;
-        }
-        .btn-cancel {
-          background-color: v.$blurple;
-        }
-      }
-    }
-    &.out {
-      .box {
-        animation: popup_out 0.5s forwards;
       }
     }
   }

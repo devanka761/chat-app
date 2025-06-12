@@ -1,3 +1,4 @@
+import { IMessageWriterType } from "../../client/types/message.types"
 import { PossibleData, TempUserData, TempUserDatum, UserUID } from "./binder.types"
 
 export interface TemporaryAuth {
@@ -8,10 +9,6 @@ export interface TemporaryAuth {
   }
   rate: number
   cd?: number
-}
-
-export type DBPerKey = {
-  [key: string]: string | number | boolean | DBPerKey | (string | number | boolean | DBPerKey)[]
 }
 
 export interface UserProcess {
@@ -37,19 +34,21 @@ export interface User {
 
 export interface ChatObject {
   u: UserUID
-  ts: string
+  ts: number
   w?: string[]
   txt?: string
-  e?: string
+  ty?: IMessageWriterType
+  e?: number
   i?: string
-  d?: string
+  d?: boolean
   r?: string
   v?: string
   vc?: 1 | 0
   rj?: 1 | 0
-  dur?: string
 }
-
+export interface IChatDBAPI {
+  [key: string]: ChatObject
+}
 export interface Chat {
   u: UserUID[]
   f?: 1 | 0

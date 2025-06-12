@@ -27,8 +27,8 @@ export default class Room implements PrimaryClass {
   private users: UserDB[]
   private middle: HTMLDivElement
   private bottom: HTMLDivElement
-  private form: RoomForm
-  private field: RoomField
+  public form: RoomForm
+  public field: RoomField
   public list: MessagesAPI
   constructor(s: { data: RoomDetail; users: UserDB[]; chats?: ChatsDB }) {
     this.id = "room"
@@ -61,7 +61,6 @@ export default class Room implements PrimaryClass {
       </div>
     </div>
     <div class="mid">
-      <div class="chatlist"></div>
     </div>
     <div class="bottom">
     </div>`
@@ -111,25 +110,13 @@ export default class Room implements PrimaryClass {
       chats.c.forEach((ch) => {
         const user: UserDB = ch.userid === db.me.id ? db.me : chats.u.find((usr) => usr.id === ch.userid) || noUser()
         const message = this.field.send({ ...ch, user, roomid: chats.id })
-        if (this.data.type === "user" && ch.watch?.includes(this.data.id)) {
+        if (this.data.type === "user" && ch.readers?.includes(this.data.id)) {
           message.setStatus("read")
         } else {
           message.setStatus("sent")
         }
       })
     }
-
-    // const chatkey = Object.keys(db.c).find((k) => db.c[k].u.find((usr) => usr.id === this.user.id))
-    // if (chatkey) {
-    // Object.keys(db.c[chatkey].c).forEach((k) => {
-    //   const user: UserDB = db.c[chatkey].c[k].userid === db.me.id ? db.me : db.c[chatkey].u.find((usr) => usr.id === db.c[chatkey].c[k].userid) || noUser()
-    //   this.field.send({
-    //     ...db.c[chatkey].c[k],
-    //     roomid: chatkey,
-    //     user
-    //   })
-    // })
-    // }
   }
   resizeMiddle(formHeight: number): void {
     this.bottom.style.height = `${formHeight}px`
@@ -146,7 +133,10 @@ export default class Room implements PrimaryClass {
             timestamp: Date.now(),
             userid: db.me.id,
             user: db.me,
-            roomid: this.chats?.id || this.data.id
+            edited: message.edittime,
+            source: message.filesrc,
+            roomid: this.chats?.id || this.data.id,
+            readers: message.watch
           },
           isTemp
         )
@@ -156,16 +146,12 @@ export default class Room implements PrimaryClass {
     const sentMessage = await xhr.post(`/x/room/sendMessage/${this.data.type}/${this.data.id}`, message)
     if (!sentMessage || !sentMessage.ok) {
       pendingMessage.setStatus("failed")
-      if (sentMessage.code === 404) {
+      if (sentMessage.code === 404 || sentMessage.code === 413) {
         this.isLocked = true
-        await modal.alert(lang[sentMessage.msg] || lang.ERROR)
+        await modal.alert(lang[sentMessage.msg]?.replace("{SIZE}", "2 MB") || lang.ERROR)
         this.isLocked = false
       }
-      pendingMessage.toHTML().onclick = async () => {
-        const confResend = await modal.confirm(lang.CONTENT_RESEND)
-        if (!confResend) return
-        this.sendMessage(messageWriten, isTemp, pendingMessage)
-      }
+      pendingMessage.clickListener("retry", "cancel")
       return
     }
     pendingMessage.setStatus("sent")
@@ -194,6 +180,10 @@ export default class Room implements PrimaryClass {
         roomdata: this.data
       })
     }
+  }
+  async deleteMessage(msgid: string): Promise<void> {
+    console.log(msgid)
+    return
   }
   update(): void | Promise<void> {}
   async destroy(): Promise<void> {

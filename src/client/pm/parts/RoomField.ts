@@ -20,7 +20,7 @@ export default class RoomField {
     this.el = kelement("div", "chatlist")
   }
   send(msg: IMessageBuilder, isTemp?: boolean): MessageBuilder {
-    const message = new MessageBuilder(msg)
+    const message = new MessageBuilder(msg, this.room)
     this.room.list.add(message)
     this.el.append(message.run(isTemp).toHTML())
     return message
@@ -28,6 +28,12 @@ export default class RoomField {
   resend(message: MessageBuilder): void {
     message.clickListener()
     this.el.append(message.toHTML())
+  }
+  remove(message: MessageBuilder): void {
+    const msg = message.toHTML()
+    if (this.el.contains(msg)) {
+      this.el.removeChild(msg)
+    }
   }
   run(middle: HTMLDivElement) {
     this.middle = middle

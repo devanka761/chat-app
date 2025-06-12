@@ -9,6 +9,7 @@
   "TYPE_HERE": "Type Here",
   "SAY_SOMETHING": "Say something",
   "ERROR": "Something went wrong",
+  "CONTENT_TOO_LARGE": "Your file exceeded the upload size limit",
   "TO_MANY_REQUEST": "You're on cooldown!<br/>Too many requests. Please try again.",
   "UNAUTHORIZED": "Unauthorized<br/>Please relogin by refreshing the page",
   "DELETED_USER": "Deleted User",

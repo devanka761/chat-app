@@ -51,7 +51,6 @@ const entry = Object.keys(appConfig.entry).reduce((entries, entry, entryName) =>
 
 module.exports = {
   mode: "production",
-  target: ["web", "es6"],
   entry,
   output: {
     path: path.resolve(__dirname, "public/bundle"),
@@ -65,12 +64,26 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.ts$/,
+        test: /\.tsx?$/,
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
           options: {
-            presets: [["@babel/preset-env", { targets: "defaults" }], "@babel/preset-typescript"]
+            presets: [
+              [
+                "@babel/preset-env",
+                {
+                  targets: {
+                    ie: "11",
+                    firefox: "60",
+                    chrome: "58",
+                    safari: "10",
+                    edge: "18"
+                  }
+                }
+              ],
+              "@babel/preset-typescript"
+            ]
           }
         }
       },

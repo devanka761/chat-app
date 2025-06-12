@@ -51,7 +51,6 @@ const entry = Object.keys(appConfig.entry).reduce((entries, entry, entryName) =>
 
 module.exports = {
   mode: "development",
-  target: ["web", "es6"],
   entry,
   output: {
     path: path.resolve(__dirname, "public/bundle"),
@@ -70,7 +69,7 @@ module.exports = {
         use: {
           loader: "babel-loader",
           options: {
-            presets: [["@babel/preset-env", { targets: "defaults" }], "@babel/preset-typescript"]
+            presets: ["@babel/preset-typescript"]
           }
         }
       },

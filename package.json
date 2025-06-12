@@ -6,11 +6,12 @@
   "scripts": {
     "lint": "eslint",
     "start": "node .",
-    "dev": "npx nodemon",
-    "build": "echo Bundling Client && webpack --config webpack.prod.cjs && echo Client Done && echo Bundling Server && webpack --config webpack.server.cjs && echo Server Done && echo Finished",
+    "dev": "nodemon",
+    "build": "echo Bundling Client && webpack --config webpack.prod.cjs && echo Client Done && echo Bundling Server && tsc && echo Server Done && echo Finished",
     "client:build": "webpack --config webpack.prod.cjs",
     "dev:build": "webpack --config webpack.dev.cjs",
-    "server:build": "webpack --config webpack.server.cjs"
+    "server:build": "tsc",
+    "dbclear": "tsx ./src/server/clearDB.ts"
   },
   "repository": {
     "type": "git",
@@ -40,6 +41,7 @@
     "@eslint/js": "^9.26.0",
     "@types/express": "^5.0.1",
     "@types/express-session": "^1.18.1",
+    "@types/node": "^24.0.0",
     "@types/nodemailer": "^6.4.17",
     "@types/session-file-store": "^1.2.5",
     "babel-loader": "^10.0.0",
@@ -56,6 +58,7 @@
     "style-loader": "^4.0.0",
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
+    "tsx": "^4.20.1",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.32.1",
     "webpack": "^5.99.8",

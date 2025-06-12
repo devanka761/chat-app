@@ -1,5 +1,5 @@
 import fs from "fs"
-import { Databases, DBPerKey, User } from "../types/db.types"
+import { Databases, User } from "../types/db.types"
 
 const dirpath: string = "./dist/db"
 const stgpath: string = "./dist/stg"
@@ -38,12 +38,14 @@ class DevankaLocal {
         this.save(file)
       })
   }
-  fileGet(filekey: string, filefolder: string) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  fileGet(filekey: string, filefolder: string): any {
     if (!fs.existsSync(`${dirpath}/${filefolder}/${filekey}.json`)) return null
     const userBuffer = fs.readFileSync(`${dirpath}/${filefolder}/${filekey}.json`, "utf-8")
     return JSON.parse(userBuffer)
   }
-  fileSet(filekey: string, filefolder: string, newfiledata: DBPerKey) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  fileSet(filekey: string, filefolder: string, newfiledata: any): void {
     if (!fs.existsSync(dirpath)) fs.mkdirSync(dirpath)
     if (!fs.existsSync(`${dirpath}/${filefolder}`)) fs.mkdirSync(`${dirpath}/${filefolder}`)
     fs.writeFileSync(`${dirpath}/${filefolder}/${filekey}.json`, JSON.stringify(newfiledata), "utf-8")

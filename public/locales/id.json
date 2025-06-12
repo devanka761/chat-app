@@ -9,6 +9,7 @@
   "TYPE_HERE": "Tulis Sesuatu",
   "SAY_SOMETHING": "Tulis apa ya",
   "ERROR": "Terjadi kesalahan",
+  "CONTENT_TOO_LARGE": "Ukuran file yang kamu kirim terlalu besar",
   "TO_MANY_REQUEST": "Kamu lagi cooldown!<br/>Terlalu banyak permintaan. Silakan coba lagi.",
   "UNAUTHORIZED": "Kesalahan<br/>Silakan login ulang dengan refresh halaman ini",
   "DELETED_USER": "Pengguna Terhapus",

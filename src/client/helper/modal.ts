@@ -3,7 +3,7 @@ import kelement from "./kelement"
 import * as klang from "./lang"
 
 const modal = {
-  async waittime(ts: number = 500, tsa: number = 0): Promise<void> {
+  async waittime(ts: number = 500, tsa: number = 5): Promise<void> {
     const ms: number = ts - tsa || 0
     return new Promise((resolve) => setTimeout(resolve, ms))
   },

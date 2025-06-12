@@ -5,5 +5,5 @@
   ],
   "watch": ["./src/server"],
   "ext": "ts",
-  "exec": "npx ts-node ./src/server/server.ts"
+  "exec": "tsx ./src/server/server.ts"
 }

@@ -19,7 +19,8 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitAny": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "removeComments": true
   },
   "include": ["./src/server/**/*"],
   "exclude": ["./node_modules/*", "./dist/**/*", "./public/**/*"]

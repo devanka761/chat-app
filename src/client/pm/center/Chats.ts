@@ -38,7 +38,7 @@ export default class Chats implements PrimaryClass {
       if (!user) return
 
       const unread = ch.c.filter((ct) => {
-        return ct.userid !== db.me.id && ct.type !== "deleted" && !ct.watch?.includes(db.me.id)
+        return ct.userid !== db.me.id && ct.type !== "deleted" && !ct.readers?.includes(db.me.id)
       }).length
 
       const lastchat = ch.c[ch.c.length - 1]
@@ -87,6 +87,7 @@ export default class Chats implements PrimaryClass {
       card.addUnread(1).updateChat(s.chat)
       this.card_list.prepend(card.toHTML())
     }
+    this.writeIfEmpty(db.c)
   }
   run(): void {
     userState.center = this

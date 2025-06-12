@@ -1,5 +1,6 @@
+import {} from "../../server/types/db.types"
 import { UserProfile } from "../../server/types/profile.types"
-import { IMessageWriter } from "./message.types"
+import { IMessageWriterType } from "./message.types"
 
 export interface EmailProvider {
   provider: string
@@ -46,10 +47,23 @@ export interface UserDB {
   image?: string
   isFriend?: number
 }
-export interface ChatDB extends IMessageWriter {
+export interface CIChatObject {
+  userid: string
+  timestamp: number
+  text?: string
+  type?: IMessageWriterType
+  edited?: number
+  reply?: string
+  source?: string
+}
+export interface ChatDB extends CIChatObject {
   id: string
   userid: string
   timestamp: number
+  readers?: string[]
+}
+export interface IChatCl {
+  [key: string]: ChatDB
 }
 export interface ChatsDB {
   id: string

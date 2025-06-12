@@ -1,5 +1,5 @@
 import fs from "fs"
-import { ChatDB, ChatsDB, MeDB, PeerDB } from "../../client/types/db.types"
+import { ChatsDB, MeDB, PeerDB } from "../../client/types/db.types"
 import db from "../main/db"
 import * as hprofile from "./profile.controller"
 import * as hroom from "./room.controller"
