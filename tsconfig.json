@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "*": ["./node_modules/*"]
+    },
+    "typeRoots": [
+      "./src/types",
+      "./src/interfaces",
+      "./node_modules/@types"
+    ],
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "outDir": "./dist/bundle",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "removeComments": true
+  },
+  "include": ["./src/**/*"],
+  "exclude": ["./node_modules/*", "./dist/**/*", "./public/**/*"]
+}

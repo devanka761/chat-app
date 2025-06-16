@@ -1,0 +1,13 @@
+node_modules
+eslint.config.mjs
+.prettierrc
+.prettierrc.mjs
+.prettierrc.json
+package.json
+package-lock.json
+tsconfig.json
+README.md
+nodemon.json
+public
+dist
+ex

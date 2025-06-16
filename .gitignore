@@ -2,16 +2,7 @@ node_modules
 package-lock.json
 
 .env
-
-client/css
-client/**.html
-!client/index.html
-client/bundle
-views/**.ejs
-!views/error.ejs
-server/db/**.json
-server/dbfile
-server/config/firebase-adminsdk.json
-server/sessions/
-!server/sessions/df.txt
+public/bundle
+views
+dist
 ex
