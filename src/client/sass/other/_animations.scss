@@ -1,5 +1,25 @@
 @use "../variables" as v;
 
+@keyframes opt_in {
+  0% {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes opt_out {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+}
 @keyframes bgTrans {
   0% {
     background-color: #00000000;

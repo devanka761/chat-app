@@ -71,7 +71,7 @@ export default class OptionMsgBuilder {
   run() {
     this.createElement()
     this.el.onclick = () => {
-      this.msg.closeOptmenu()
+      // this.msg.closeOptmenu()
       this.clickHandler()
     }
     return this.el

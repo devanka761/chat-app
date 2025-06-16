@@ -58,6 +58,9 @@ export function sendMessage(uid: string, room: IRoomFind, s: IMessageWriter): IR
   })
 
   if (s.edit) {
+    if ((!roomChat[s.edit].type || roomChat[s.edit].type === "text") && (!s.text || s.text.length < 1)) {
+      return { code: 404, msg: "CONTENT_EMPTY" }
+    }
     if (roomChat[s.edit].type === "deleted") {
       return { code: 404, msg: "MSG_EDIT_DELETED" }
     }
@@ -68,8 +71,11 @@ export function sendMessage(uid: string, room: IRoomFind, s: IMessageWriter): IR
     if (Date.now() > oldts + 1000 * 60 * 15) {
       return { code: 404, msg: "CONTENT_EDIT_EXPIRED" }
     }
+    dbOld[s.edit].txt = s.text
+    dbOld[s.edit].e = Date.now()
+    db.fileSet(roomkey, room.type, dbOld)
 
-    newChat.edited = Date.now()
+    return { code: 200, data: { isFirst: false, roomid: chatkey as string, chat: { ...normalizeMessage(s.edit, dbOld[s.edit]) } } }
   }
 
   if (s.text) newChat.text = s.text
@@ -88,6 +94,10 @@ export function sendMessage(uid: string, room: IRoomFind, s: IMessageWriter): IR
       fs.writeFileSync(`${fpath}/${chatkey}/${fname}`, buffer, "base64")
       newChat.source = fname
     }
+  }
+
+  if ((!s.type || s.type === "text") && (!s.text || s.text.length < 1)) {
+    return { code: 404, msg: "CONTENT_EMPTY" }
   }
 
   const chat_id = "c" + Date.now().toString(36)
@@ -115,7 +125,7 @@ export function normalizeMessage(message_id: string, s: ChatObject): ChatDB {
     id: message_id,
     userid: s.u,
     timestamp: s.ts,
-    type: s.ty,
+    type: s.d ? "deleted" : s.ty,
     text: s.txt,
     reply: s.r,
     edited: s.e,
@@ -135,4 +145,37 @@ export function minimizeMessage(uid: string, s: CIChatObject): ChatObject {
     co.ty = "voice"
   }
   return co
+}
+export function delMessage(uid: string, chat_type: string, chat_id: string, message_id: string): IRepBackRec {
+  const fkey = chat_type === "user" ? "c" : "g"
+  const cdb = db.ref[fkey]
+  const chatkey =
+    chat_type === "user"
+      ? Object.keys(cdb).find((k) => {
+          return cdb[k].u.find((usr) => usr === uid) && cdb[k].u.find((usr) => usr === chat_id)
+        })
+      : Object.keys(cdb).find((k) => k === chat_id)
+
+  if (!chatkey) return { code: 404 }
+
+  const roomkey = chatkey as string
+  const dbOld = (db.fileGet(roomkey, chat_type) || {}) as IChatDBAPI
+  if (!dbOld[message_id]) return { code: 404 }
+
+  dbOld[message_id].d = true
+  dbOld[message_id].txt = ""
+  dbOld[message_id].ty = "deleted"
+  delete dbOld[message_id].r
+  const sources = dbOld[message_id].i
+
+  if (sources) {
+    const fpath = "./dist/stg/room"
+    if (!fs.existsSync(`${fpath}`)) fs.mkdirSync(`${fpath}`)
+    if (!fs.existsSync(`${fpath}/${chatkey}`)) fs.mkdirSync(`${fpath}/${chatkey}`)
+    if (fs.existsSync(`${fpath}/${chatkey}/${sources}`)) fs.rmSync(`${fpath}/${chatkey}/${sources}`, { force: true })
+  }
+  delete dbOld[message_id].i
+  db.fileSet(chatkey, chat_type, dbOld)
+
+  return { code: 200, data: { roomid: chatkey } }
 }

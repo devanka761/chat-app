@@ -7,9 +7,7 @@ import db from "../../manager/db"
 import Room from "../content/Room"
 import ReplyBuilder from "../../properties/ReplyBuilder"
 import AttachmentBuilder from "../../properties/AttachmentBuilder"
-
-// const contents: RoomFormContent = {}
-let editID: string | null = null
+import EditBuilder from "../../properties/EditBuilder"
 
 export default class RoomForm {
   readonly id: string
@@ -25,6 +23,7 @@ export default class RoomForm {
   private canSend: boolean
   private downed: Set<string>
   public reply: ReplyBuilder | null
+  public edit: EditBuilder | null
   public attachment: AttachmentBuilder | null
   constructor({ room }) {
     this.id = "roomform"
@@ -79,6 +78,19 @@ export default class RoomForm {
     if (this.isLocked) return
     if (!this.canSend) return
 
+    if (this.edit) {
+      const messageBuilder = this.room.list.get(this.edit.id)
+      if (messageBuilder) {
+        const rollback = { ...messageBuilder.json }
+        messageBuilder.setText(this.textarea.value)
+        const messageWriter: MessageWriter = messageBuilder.raw
+        messageWriter.setEdit(this.edit.id)
+        this.room.sendMessage(messageWriter, true, messageBuilder, rollback)
+        this.clearForm()
+        return
+      }
+    }
+
     const messageWriter: MessageWriter = new MessageWriter()
     messageWriter.setText(this.textarea.value)
     messageWriter.setUserId(<string>db.me.id)
@@ -89,8 +101,6 @@ export default class RoomForm {
         src: this.attachment.src
       })
     }
-    // if (contents.voice) messageWriter.addVoice(contents.voice)
-    if (editID) messageWriter.setEdit(editID)
     messageWriter.setTimeStamp()
     this.room.sendMessage(messageWriter, true)
     this.clearForm()
@@ -115,6 +125,8 @@ export default class RoomForm {
     inp.click()
   }
   private setAttachment(file: File): void {
+    this.focus()
+    if (this.edit) this.edit.close()
     if (this.attachment) this.attachment.close()
     this.attachment = new AttachmentBuilder({ file: file, form: this })
     this.attachment.run()
@@ -124,10 +136,13 @@ export default class RoomForm {
   }
   closeAttachment(): void {
     if (!this.attachment) return
+    this.focus()
     this.attachment.close()
     this.growArea()
   }
   setReply(msgid: string): void {
+    this.focus()
+    if (this.edit) this.edit.close()
     if (this.reply) this.reply.close()
     this.reply = new ReplyBuilder({ id: msgid, form: this })
     this.reply.run()
@@ -136,20 +151,30 @@ export default class RoomForm {
   }
   closeReply(): void {
     if (!this.reply) return
+    this.focus()
     this.reply.close()
     this.growArea()
   }
   setEdit(msgid: string): void {
-    console.log(msgid)
-  }
-  private closeEdit(): void {
-    const eedit = this.bottom.querySelector(".edit-embed")
-    if (eedit) {
-      eedit.remove()
-      this.textarea.value = ""
-    }
-    editID = null
+    this.focus()
+    if (this.reply) this.reply.close()
+    if (this.attachment) this.attachment.close()
+    if (this.edit) this.edit.close()
+    this.edit = new EditBuilder({ id: msgid, form: this })
+    this.edit.run()
+    this.bottom.prepend(this.edit.html)
     this.growArea()
+  }
+  closeEdit(): void {
+    this.focus()
+    if (!this.edit) return
+    this.edit.close()
+    this.textarea.value = ""
+    this.growArea()
+  }
+  setText(msg: string): void {
+    this.textarea.value = msg
+    this.textarea.select()
   }
   growArea(): void {
     if (!this.canSend && (this.textarea.value.trim().length > 0 || this.attachment?.src)) {
@@ -160,9 +185,10 @@ export default class RoomForm {
       this.btnVoice.innerHTML = `<i class="fa-solid fa-microphone"></i>`
     }
     // const eattach: HTMLDivElement | null = this.bottom.querySelector(".attach")
-    const attachHeight: number = this.attachment?.html?.offsetHeight || 0
-    const embedHeight: number = this.reply?.html?.offsetHeight || 0
-    const mediaHeight: number = attachHeight + embedHeight
+    const attachHeight: number = this.attachment?.html.clientHeight || 0
+    const replyHeight: number = this.reply?.html.clientHeight || 0
+    const editHeight: number = this.edit?.html.clientHeight || 0
+    const mediaHeight: number = attachHeight + replyHeight + editHeight
 
     this.textarea.style.height = "24px"
     const textareaHeight = this.textarea.scrollHeight > 80 ? 80 : this.textarea.scrollHeight

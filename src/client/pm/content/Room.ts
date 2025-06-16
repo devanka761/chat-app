@@ -17,6 +17,7 @@ import RoomField from "../parts/RoomField"
 import RoomForm from "../parts/RoomForm"
 import Profile from "./Profile"
 import MessageBuilder from "../../properties/MessageBuilder"
+import { IMessageBuilder } from "../../types/message.types"
 
 export default class Room implements PrimaryClass {
   readonly id: string
@@ -30,6 +31,8 @@ export default class Room implements PrimaryClass {
   public form: RoomForm
   public field: RoomField
   public list: MessagesAPI
+  public opt?: HTMLDivElement
+  public optRetrying?: HTMLDivElement
   constructor(s: { data: RoomDetail; users: UserDB[]; chats?: ChatsDB }) {
     this.id = "room"
     this.isLocked = false
@@ -122,7 +125,7 @@ export default class Room implements PrimaryClass {
     this.bottom.style.height = `${formHeight}px`
     this.middle.style.height = `calc(100% - (60px + ${formHeight}px))`
   }
-  async sendMessage(messageWriten: MessageWriter, isTemp?: boolean, resend?: MessageBuilder): Promise<void> {
+  async sendMessage(messageWriten: MessageWriter, isTemp?: boolean, resend?: MessageBuilder, rollback?: IMessageBuilder): Promise<void> {
     const message = messageWriten.toJSON()
     const pendingMessage = resend
       ? resend
@@ -140,18 +143,28 @@ export default class Room implements PrimaryClass {
           },
           isTemp
         )
-    if (resend) this.field.resend(pendingMessage)
+    if (resend && !rollback) this.field.resend(pendingMessage)
     pendingMessage.setStatus("pending")
     await modal.waittime(1000)
     const sentMessage = await xhr.post(`/x/room/sendMessage/${this.data.type}/${this.data.id}`, message)
     if (!sentMessage || !sentMessage.ok) {
+      this.isLocked = true
+      if (rollback) {
+        pendingMessage.setTimeStamp(rollback.timestamp)
+        await modal.alert(lang[sentMessage.msg] || lang.ERROR)
+        pendingMessage.setStatus(this.data.type === "user" && rollback.readers?.includes(this.data.id) ? "read" : "sent")
+        pendingMessage.setText(rollback.text as string)
+        pendingMessage.setEdited(rollback.edited)
+        this.isLocked = false
+        return
+      }
       pendingMessage.setStatus("failed")
       if (sentMessage.code === 404 || sentMessage.code === 413) {
-        this.isLocked = true
         await modal.alert(lang[sentMessage.msg]?.replace("{SIZE}", "2 MB") || lang.ERROR)
         this.isLocked = false
       }
       pendingMessage.clickListener("retry", "cancel")
+      this.isLocked = false
       return
     }
     pendingMessage.setStatus("sent")
@@ -164,14 +177,24 @@ export default class Room implements PrimaryClass {
     const roomid = rep?.roomid as string
     if (repFirst) {
       db.c.push({
-        c: [repChat],
+        c: [],
         id: roomid,
         u: this.users
       })
     }
     const dbchat = db.c.find((k) => k.id === roomid)
-    if (dbchat) dbchat.c.push(repChat)
+    if (dbchat) {
+      const oldDB = dbchat.c.find((ch) => ch.id === repChat.id)
+      if (oldDB) {
+        oldDB.text = repChat.text
+        oldDB.edited = repChat.edited
+        pendingMessage.setEdited(repChat.edited)
+      } else {
+        dbchat.c.push(repChat)
+      }
+    }
     if (userState.center?.id === "chats") {
+      if (dbchat && dbchat.c[dbchat.c.length - 1].id !== repChat.id) return
       userState.center?.update({
         chat: repChat,
         users: this.users,
@@ -182,7 +205,35 @@ export default class Room implements PrimaryClass {
     }
   }
   async deleteMessage(msgid: string): Promise<void> {
-    console.log(msgid)
+    const message = this.list.get(msgid)
+    if (!message) return
+    const isUser = this.data.type === "user"
+    message.setStatus("pending")
+
+    const deletedMessage = await xhr.post(`/x/room/delMessage/${this.data.type}/${this.data.id}/${msgid}`)
+    if (!deletedMessage || !deletedMessage.ok) {
+      this.isLocked = true
+      await modal.alert(lang[deletedMessage.msg] || lang.ERROR)
+      message.setStatus(isUser && message.json.readers?.includes(this.data.id) ? "read" : "sent")
+      this.isLocked = false
+      return
+    }
+    message.deleted = true
+
+    const roomid = (<unknown>deletedMessage.data?.roomid) as string
+
+    const dbchat = db.c.find((k) => k.id === roomid)
+    if (userState.center?.id === "chats") {
+      if (dbchat?.c[dbchat.c.length - 1].id === msgid) {
+        userState.center?.update({
+          chat: message.json,
+          users: this.users,
+          roomid: this.chats?.id,
+          isFirst: false,
+          roomdata: this.data
+        })
+      }
+    }
     return
   }
   update(): void | Promise<void> {}

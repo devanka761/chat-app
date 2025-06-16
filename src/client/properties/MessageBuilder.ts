@@ -27,6 +27,16 @@ const msgoptIndex: { [key in MessageOptionType]: number } = {
   delete: 5,
   cancel: 6
 }
+
+function getOptOffsetToList(child: HTMLDivElement, parent: HTMLDivElement) {
+  let offset = 0
+  while (child && child !== parent) {
+    offset += child.offsetTop
+    if (child.offsetParent) child = child.offsetParent as HTMLDivElement
+  }
+  return offset
+}
+
 export default class MessageBuilder {
   private el: HTMLDivElement
   private field: HTMLDivElement
@@ -42,11 +52,13 @@ export default class MessageBuilder {
   private optmenu: HTMLDivElement
   public room: Room
   private optLocked: boolean
+  private isRetry: boolean
   constructor(s: IMessageBuilder, room: Room) {
     this.s = s
     this.user = s.user
     this.room = room
     this.optLocked = false
+    this.isRetry = false
   }
   private createElement(): void {
     this.el = kelement("div", "card")
@@ -64,6 +76,7 @@ export default class MessageBuilder {
     this.field.append(this.sender)
   }
   private renderReply(): void {
+    if (this.s.type === "deleted") return
     if (!this.s.reply) return
     const msgAPI = this.room.list.get(this.s.reply)
     if (!msgAPI) return
@@ -113,6 +126,7 @@ export default class MessageBuilder {
     eattach.append(efile)
   }
   private renderAttach(isTemp: boolean): void {
+    if (this.s.type === "deleted") return
     if (this.s.type !== "image" && this.s.type !== "video" && this.s.type !== "file" && this.s.type !== "audio") return
     if (!this.s.source) return
     this.attach = kelement("div", "chp attach")
@@ -133,6 +147,12 @@ export default class MessageBuilder {
     this.textEdidted = kelement("span", "edited")
     const textParent = kelement("div", "chp text", { e: [this.textMessage, this.textEdidted] })
     this.field.append(textParent)
+    if (this.s.type === "deleted") {
+      textParent.classList.add("del")
+      this.textMessage.innerHTML = `<i class="fa-solid fa-ban"></i> ${this.user.id === db.me.id ? lang.CONTENT_YOU_DELETED : lang.CONTENT_DELETED}`
+      return
+    }
+    if (this.s.edited) this.textEdidted.innerHTML = `(${lang.CONTENT_EDITED})`
     if (this.s.text) this.textMessage.innerHTML = escapeHTML(this.s.text)
   }
   private renderTime(): void {
@@ -140,6 +160,16 @@ export default class MessageBuilder {
     this.sendStatus = kelement("div", "status")
     const timeParent = kelement("div", "chp time", { e: [this.timestamp, this.sendStatus] })
     this.field.append(timeParent)
+  }
+  set deleted(isDeleted: boolean) {
+    if (isDeleted) {
+      this.s.type = "deleted"
+      this.timestamp.parentElement?.remove()
+      this.attach?.remove()
+      this.reply?.remove()
+      this.textMessage.parentElement?.classList.add("del")
+      this.textMessage.innerHTML = `<i class="fa-solid fa-ban"></i> ${this.user.id === db.me.id ? lang.CONTENT_YOU_DELETED : lang.CONTENT_DELETED}`
+    }
   }
   set edit(text: string) {
     this.s.text = text
@@ -155,15 +185,59 @@ export default class MessageBuilder {
     this.renderCall()
     this.renderText()
     this.renderTime()
+    if (this.s.type === "deleted") this.deleted = true
     this.clickListener()
   }
+  private fixElHeight(eoptmenu: HTMLDivElement): void {
+    eoptmenu.style.top = `-${eoptmenu.clientHeight}px`
+    const listViewTop = this.room.field.html.scrollTop
+    const listViewBottom = listViewTop + this.room.field.html.clientHeight
+
+    const cardTop = getOptOffsetToList(eoptmenu, this.room.field.html) - eoptmenu.clientHeight
+    const cardBottom = cardTop + eoptmenu.scrollHeight
+
+    const isVisible = cardBottom > listViewTop && cardTop < listViewBottom
+    if (cardBottom < 1) {
+      this.room.field.html.style.paddingTop = `${-1 * cardBottom + 20}px`
+    }
+    if (!isVisible) this.room.field.html.scrollTop = cardBottom - 10
+  }
   private renderOptmenu(...args: MessageOptionType[]): void {
+    if (this.room.opt) {
+      if (this.room.opt === this.optmenu) {
+        console.log("canceled:", "message option closed")
+        return
+      }
+      if (this.room.optRetrying) {
+        console.log("canceled:", "message option closed")
+        return
+      }
+      console.log("retry:", "opening message option ...")
+      this.isRetry = true
+      this.room.optRetrying = this.optmenu
+      setTimeout(() => this.renderOptmenu(...args), 200)
+      return
+    }
+    if (this.isRetry) {
+      console.log("success:", "message option opened")
+    }
+    if (!this.isRetry && this.room.optRetrying) return
     if (this.optLocked) return
-    this.optLocked = true
-    setTimeout(() => {
-      this.optLocked = false
-    }, 450)
     this.optmenu = kelement("div", "optmenu")
+    this.room.opt = this.optmenu
+    delete this.room.optRetrying
+    if (this.isRetry) {
+      window.addEventListener("click", () => this.closeOptmenu(), { once: true })
+      this.isRetry = false
+    } else {
+      window.addEventListener(
+        "click",
+        () => {
+          window.addEventListener("click", () => this.closeOptmenu(), { once: true })
+        },
+        { once: true }
+      )
+    }
     const optConfig = { msg: this, room: this.room }
     if (args && args.length >= 1) {
       args = args.sort((a, b) => {
@@ -176,14 +250,19 @@ export default class MessageBuilder {
         this.optmenu.append(btnMenu.run())
       })
       this.el.prepend(this.optmenu)
-      this.el.scrollIntoView()
+      this.fixElHeight(this.optmenu)
       return
     }
     if (this.user.id !== db.me.id) {
       this.optmenu.append(new OptionMsgBuilder({ ...optConfig, optype: "profile" }).run())
     }
     if (this.s.type === "deleted") {
+      if (this.user.id === db.me.id) {
+        this.optmenu.remove()
+        return
+      }
       this.el.prepend(this.optmenu)
+      this.fixElHeight(this.optmenu)
       return
     }
     this.optmenu.append(new OptionMsgBuilder({ ...optConfig, optype: "reply" }).run())
@@ -196,17 +275,20 @@ export default class MessageBuilder {
     }
 
     this.el.prepend(this.optmenu)
-    this.el.scrollIntoView()
+    this.fixElHeight(this.optmenu)
   }
   async closeOptmenu(): Promise<void> {
-    if (this.optLocked) return
+    // if (this.optLocked) return
     this.optLocked = true
     if (this.optmenu && this.el.contains(this.optmenu)) {
       this.optmenu.classList.add("out")
-      await modal.waittime(500)
+      await modal.waittime(200)
       this.el.removeChild(this.optmenu)
+      this.el.removeAttribute("style")
+      this.room.field.html.removeAttribute("style")
     }
     this.optLocked = false
+    delete this.room.opt
   }
   clickListener(...args: MessageOptionType[]): void {
     this.el.onclick = (e) => {
@@ -214,18 +296,9 @@ export default class MessageBuilder {
       if (target instanceof Node) {
         if (this.optmenu?.contains(target)) return
         if (this.s.type === "video" && this.attach?.contains(target)) return
-        if (this.reply?.contains(target)) {
-          this.closeOptmenu()
-          return
-        }
+        if (this.reply?.contains(target)) return
       }
-      if (this.optmenu && this.el.contains(this.optmenu)) {
-        this.closeOptmenu()
-        return
-      }
-      this.room.list.entries.forEach((msg) => {
-        msg.closeOptmenu()
-      })
+      if (this.optmenu && this.el.contains(this.optmenu)) return
       this.renderOptmenu(...args)
     }
   }
@@ -245,7 +318,7 @@ export default class MessageBuilder {
       this.el.classList.add("error")
       this.timestamp.innerHTML = lang.FAILED
     } else {
-      this.setTimeStamp(Date.now())
+      this.setTimeStamp(this.s.timestamp || Date.now())
       this.sendStatus.innerHTML = statusIcon[statusText]
       this.sendStatus.classList.remove("btn")
       this.el.classList.remove("error")
@@ -253,6 +326,14 @@ export default class MessageBuilder {
   }
   setTimeStamp(ts: number): void {
     this.timestamp.innerHTML = sdate.parseTime(ts)
+  }
+  setText(txt: string): void {
+    this.s.text = txt
+    this.textMessage.innerHTML = escapeHTML(txt)
+  }
+  setEdited(ts?: number): void {
+    this.s.edited = ts
+    if (ts) this.textEdidted.innerHTML = `(${lang.CONTENT_EDITED})`
   }
   get html(): HTMLDivElement {
     return this.el

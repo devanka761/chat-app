@@ -1,16 +1,16 @@
 {
-  "name": "kirimin",
-  "version": "1.0.0",
+  "name": "mondin",
+  "version": "3.0.0",
   "description": "",
-  "main": "./dist/bundle/bundle.js",
+  "main": "./dist/bundle/server/server.js",
   "scripts": {
     "lint": "eslint",
     "start": "node .",
     "dev": "nodemon",
-    "build": "echo Bundling Client && webpack --config webpack.prod.cjs && echo Client Done && echo Bundling Server && tsc && echo Server Done && echo Finished",
+    "build": "echo Bundling Client && webpack --config webpack.prod.cjs && echo Client Done && echo Bundling Server && rm -rf ./dist/bundle && tsc && echo Server Done && echo Finished",
     "client:build": "webpack --config webpack.prod.cjs",
     "dev:build": "webpack --config webpack.dev.cjs",
-    "server:build": "tsc",
+    "server:build": "rm -rf ./dist/bundle && tsc",
     "dbclear": "tsx ./src/server/clearDB.ts"
   },
   "repository": {

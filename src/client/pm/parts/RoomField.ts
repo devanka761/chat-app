@@ -35,6 +35,9 @@ export default class RoomField {
       this.el.removeChild(msg)
     }
   }
+  get html(): HTMLDivElement {
+    return this.el
+  }
   run(middle: HTMLDivElement) {
     this.middle = middle
     this.createElement()

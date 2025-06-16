@@ -1,40 +1,39 @@
 import kelement from "../helper/kelement"
-import setbadge from "../helper/setbadge"
+import { lang } from "../helper/lang"
 import { transpileChat } from "../main/transpileChat"
 import RoomForm from "../pm/parts/RoomForm"
 
-export default class ReplyBuilder {
+export default class EditBuilder {
   public id: string
   public form: RoomForm
   private el: HTMLDivElement
-  private username: HTMLParagraphElement
   private msg: HTMLParagraphElement
   private btnCancel: HTMLDivElement
   constructor(s: { id: string; form: RoomForm }) {
     this.id = s.id
     this.form = s.form
   }
-  createElement(): void {
-    this.username = kelement("p", "username")
+  private createElement(): void {
+    const desc = kelement("p", "username", { e: `<i class="fa-solid fa-pencil"></i> ${lang.CONTENT_EDIT}` })
     this.msg = kelement("p", "msg")
-    const left = kelement("div", "left", { e: [this.username, this.msg] })
-    this.btnCancel = kelement("div", "btn btn-cancel-rep", {
+    const left = kelement("div", "left", { e: [desc, this.msg] })
+    this.btnCancel = kelement("div", "btn btn-cancel-edit", {
       e: '<i class="fa-duotone fa-circle-x"></i>'
     })
     const right = kelement("div", "right", { e: this.btnCancel })
     const box = kelement("div", "box", { e: [left, right] })
 
-    this.el = kelement("div", "embed", { e: box })
-  }
-  close(): void {
-    this.el.remove()
-    this.form.reply = null
+    this.el = kelement("div", "embed embed-edit", { e: box })
   }
   clickHandler(): void {
-    this.btnCancel.onclick = () => this.form.closeReply()
+    this.btnCancel.onclick = () => this.form.closeEdit()
   }
   get html(): HTMLDivElement {
     return this.el
+  }
+  close(): void {
+    this.el.remove()
+    this.form.edit = null
   }
   private init(): void {
     this.createElement()
@@ -42,11 +41,8 @@ export default class ReplyBuilder {
     const target = this.form.room.list.get(this.id)?.json
     if (!target) return
 
-    const { user } = target
-
-    this.username.innerHTML = `<i class="fa-solid fa-reply"></i> ${user.username}`
-    if (user.badges) setbadge(this.username, user.badges)
     this.msg.innerHTML = transpileChat(target, null, true)
+    this.form.setText(target.text || "")
   }
   run(): this {
     this.init()

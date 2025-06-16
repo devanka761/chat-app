@@ -113,6 +113,8 @@
   "GRPS_KICK_CONFIRM": "Kick @<b>{uname}</b> from group?",
   "GRPS_TYPE_PRIVATE": "The group you are trying to join is a private group. You must have the invite link to join.",
   "GRPS_404": "Group not found",
+  "CONTENT_EDIT": "Edit Message",
+  "CONTENT_EMPTY": "Cannot send empty message",
   "CONTENT_NO_MEDIA_DEVICES": "Please allow Kirimin to access your microphone in order to use this feature",
   "CONTENT_WANT_TO_DELETE": "Delete this message?",
   "CONTENT_CONFIRM_DELETE": "DELETE",

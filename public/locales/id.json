@@ -115,6 +115,8 @@
   "GRPS_KICK_CONFIRM": "Keluarkan @<b>{uname}</b> dari grup?",
   "GRPS_TYPE_PRIVATE": "Tipe grup ini adalah pribadi. Kamu harus punya link undangan buat masuk.",
   "GRPS_404": "Grup tidak ditemukan",
+  "CONTENT_EDIT": "Edit Pesan",
+  "CONTENT_EMPTY": "Tidak dapat mengirim pesan kosong",
   "CONTENT_NO_MEDIA_DEVICES": "Harap izinkan Kirimin untuk mengakses mikrofon agar dapat menggunakan fitur ini",
   "CONTENT_WANT_TO_DELETE": "Beneran mau hapus pesan ini?",
   "CONTENT_CONFIRM_DELETE": "HAPUS",

@@ -94,7 +94,6 @@ $errorbg: #3d2b31;
     background-color: v.$bar_bg;
     .embed {
       width: 100%;
-      height: 55px;
       padding: 5px;
       padding-bottom: 0;
       .box {
@@ -112,9 +111,9 @@ $errorbg: #3d2b31;
         }
       }
     }
-    .embed.cb {
+    .embed.embed-edit {
       .box {
-        border-color: transparent;
+        border-color: v.$white;
         .left {
           color: v.$white;
         }
@@ -122,7 +121,6 @@ $errorbg: #3d2b31;
     }
     .attach {
       width: 100%;
-      height: 50px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -255,24 +253,24 @@ $errorbg: #3d2b31;
       scroll-behavior: smooth;
       scrollbar-width: thin;
       .card {
+        position: relative;
         width: 100%;
         margin-top: 5px;
         .optmenu {
+          position: absolute;
+          top: 0;
+          left: 0;
           width: fit-content;
           min-width: 250px;
-          margin-left: 0;
-          margin-top: 20px;
-          margin-right: auto;
           background-color: v.$black;
           border-radius: 10px;
           overflow: hidden;
           border: 2px solid v.$black;
-          animation: slide_up_in 0.5s;
+          animation: opt_in 0.25s;
           .btn {
             background-color: v.$black;
             padding: 10px;
             &.opt-profile {
-              border-bottom: 1px solid rgba($color: v.$white, $alpha: 0.2);
               color: v.$cgreen;
             }
             &.opt-delete,
@@ -284,7 +282,7 @@ $errorbg: #3d2b31;
             }
           }
           &.out {
-            animation: slide_up_out 0.5s forwards;
+            animation: opt_out 0.2s forwards;
           }
         }
         .field {
@@ -294,8 +292,7 @@ $errorbg: #3d2b31;
           max-width: calc(100% - 40px);
           padding: 10px;
           border-radius: 10px;
-          background-color: #3f464e;
-          transform: translate(0);
+          background: #3f464e;
           .chp {
             max-width: 425px;
             margin-bottom: 3px;
@@ -490,6 +487,15 @@ $errorbg: #3d2b31;
               word-break: break-word;
               hyphens: auto;
             }
+            .edited {
+              color: v.$softwhite;
+              font-size: 0.8rem;
+              text-align: right;
+            }
+            &.del {
+              color: v.$softwhite;
+              font-style: italic;
+            }
           }
           .time {
             display: flex;
@@ -503,13 +509,26 @@ $errorbg: #3d2b31;
         }
         &.me {
           .optmenu {
-            margin-left: auto;
-            margin-right: 0;
+            left: auto;
+            right: 0;
           }
           .field {
             margin-left: auto;
             margin-right: 0;
-            background-color: v.$bar_active;
+            background: v.$bar_active;
+          }
+        }
+        &:has(.optmenu) {
+          .field {
+            border-left: none;
+            border-right: 2px solid v.$darkcream;
+            transform: translateX(0);
+          }
+          &.me {
+            .field {
+              border-right: none;
+              border-left: 2px solid v.$darkcream;
+            }
           }
         }
         &.error {
