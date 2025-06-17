@@ -1,0 +1,173 @@
+@use "../../variables" as v;
+
+.Chats {
+  background-color: v.$card_secondary;
+  scrollbar-width: thin;
+  overflow-y: auto;
+  overflow-x: hidden;
+  .search {
+    width: 100%;
+    padding: 10px;
+    border-bottom: 1px solid v.$black;
+    input {
+      width: 100%;
+      padding: 10px;
+      background-color: v.$card_primary;
+      color: v.$white;
+      border-radius: 5px;
+    }
+    .btn {
+      width: 100%;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+      background-color: v.$sgreen;
+      color: v.$white;
+      border-radius: 5px;
+      margin-top: 5px;
+      font-size: 1em;
+    }
+  }
+  .search.flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+  }
+  .card-list {
+    .nomore {
+      padding: 10px;
+      text-align: center;
+      font-style: italic;
+    }
+    .card {
+      padding: 10px;
+      width: 100%;
+      border-bottom: 1px solid rgba($color: v.$white, $alpha: 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      .getload {
+        width: 100%;
+        text-align: center;
+        .spinner {
+          font-size: 2em;
+        }
+      }
+      .left {
+        display: flex;
+        justify-content: left;
+        align-items: center;
+        gap: 10px;
+        .img {
+          width: 50px;
+          height: 50px;
+          img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center;
+            -o-object-fit: cover;
+            -o-object-position: center;
+          }
+        }
+        .detail {
+          .name {
+            font-weight: bold;
+            word-break: break-all;
+            word-break: break-word;
+            hyphens: auto;
+          }
+          .last {
+            font-size: 0.8em;
+            word-break: break-all;
+            word-break: break-word;
+            hyphens: auto;
+            &.vc::before {
+              font-family: "Font Awesome 6 Pro";
+              font-weight: 600;
+              margin-right: 3px;
+            }
+            &.missed {
+              &::before {
+                color: v.$cred;
+                content: "\e226";
+              }
+            }
+            &.rejected {
+              &::before {
+                color: v.$cred;
+                content: "\e227";
+              }
+            }
+            &.outgoing {
+              &::before {
+                color: v.$cgreen;
+                content: "\e224";
+              }
+            }
+            &.incoming {
+              &::before {
+                color: v.$cgreen;
+                content: "\e223";
+              }
+            }
+          }
+        }
+      }
+      .right {
+        display: flex;
+        flex-direction: column;
+        align-items: end;
+        justify-content: center;
+        gap: 5px;
+        .last {
+          font-size: 0.8em;
+        }
+        .unread {
+          width: 20px;
+          height: 20px;
+          font-size: 0.8em;
+          border-radius: 50%;
+          text-align: center;
+          align-content: center;
+          background-color: v.$blurple;
+        }
+        .btn {
+          font-size: 1.25em;
+        }
+      }
+    }
+    .card:hover {
+      background-color: v.$bar_bg;
+    }
+    .freq {
+      background-color: v.$card_primary;
+      border-bottom: 1px solid v.$blurple;
+      .note {
+        text-align: center;
+      }
+      .card:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+  .global-btn {
+    position: sticky;
+    bottom: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: auto;
+    margin-left: auto;
+    width: fit-content;
+    padding: 10px;
+    background-color: v.$sgray;
+    border-radius: 10px;
+  }
+  .global-btn:hover {
+    background-color: v.$bar_active;
+  }
+}

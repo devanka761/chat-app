@@ -38,8 +38,8 @@ Object.values(appConfig.entries).forEach((entryInfo, entryName) => {
       chunks: entryInfo.chunks,
       publicPath: "/bundle",
       chunksSortMode: "manual",
-      inject: "body",
-      scriptLoading: "module"
+      inject: "head",
+      scriptLoading: "defer"
     })
   )
 })

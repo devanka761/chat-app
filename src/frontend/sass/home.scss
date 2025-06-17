@@ -1,0 +1,139 @@
+@use "./variables" as v;
+@use "./main";
+@use "./other/nav";
+
+.main {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: linear-gradient(120deg, #272b30, #3f464e, #272b30);
+  .sect {
+    &#home {
+      position: relative;
+      padding: 10px;
+      width: 100%;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      .card {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        .icon {
+          width: 100px;
+          height: 100px;
+          text-align: center;
+          animation: slide_up_in 1s;
+          img {
+            margin: auto;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            -o-object-fit: cover;
+            -o-object-position: center;
+            &.brd {
+              border-radius: 10px;
+            }
+          }
+        }
+        .title {
+          font-size: 1.25em;
+          text-align: center;
+          animation: slide_up_in 1s;
+          h1 {
+            word-break: break-all;
+            word-break: break-word;
+            hyphens: auto;
+          }
+        }
+        .actions {
+          text-align: center;
+          margin-top: 40px;
+          animation: slide_down_in 1s;
+          .btn {
+            color: v.$white;
+            border: 1px solid v.$blurple;
+            border-radius: 10px;
+            overflow: hidden;
+            a {
+              background-color: v.$blurple;
+              min-width: 150px;
+              max-width: 100%;
+              display: block;
+              padding: 10px;
+              color: v.$white;
+              font-weight: bold;
+              text-decoration: none;
+              &.joined {
+                background-color: #272b30;
+                color: v.$white;
+              }
+            }
+          }
+        }
+      }
+      .author {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        text-align: left;
+        font-family: monospace, monospace;
+        font-size: 0.8em;
+        animation: slide_right_in 2s;
+        p {
+          a {
+            color: v.$blurple;
+            font-weight: bold;
+            text-shadow:
+              1px 0 1px v.$card_primary,
+              0 1px 1px v.$card_primary,
+              -1px 0 1px v.$card_primary,
+              0 -1px 1px v.$card_primary,
+              1px 1px 2px v.$card_primary,
+              1px -1px 2px v.$card_primary,
+              -1px 1px 2px v.$card_primary,
+              -1px -1px 2px v.$card_primary;
+          }
+        }
+      }
+    }
+  }
+  &.invite {
+    background: #272b30;
+    .sect {
+      &#home {
+        .card {
+          width: fit-content;
+          height: fit-content;
+          max-width: calc(100% - 40px);
+          max-height: calc(100% - 40px);
+          padding: 40px;
+          background-color: #272b30;
+          border: 1px solid v.$black;
+          border-radius: 20px;
+          box-shadow: 0 0 5px v.$black;
+          .icon {
+            margin-bottom: 20px;
+          }
+          .title {
+            p {
+              span {
+                font-style: italic;
+                font-size: 1em;
+                color: v.$softwhite;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

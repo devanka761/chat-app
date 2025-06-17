@@ -1,0 +1,33 @@
+@use "../variables" as v;
+
+.ForceClose {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  .box {
+    padding: 20px;
+    .msg {
+      font-size: 1.5em;
+      text-align: center;
+      line-height: 2;
+      &.msg-3 {
+        margin-top: 40px;
+        a {
+          font-size: 0.75em;
+          display: block;
+          margin: 0 auto;
+          width: fit-content;
+          padding: 5px 10px;
+          background-color: v.$blurple;
+          color: v.$white;
+          font-weight: bold;
+          text-decoration: none;
+          border-radius: 10px;
+        }
+      }
+    }
+  }
+}

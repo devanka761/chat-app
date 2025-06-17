@@ -19,3 +19,6 @@ export interface Zender {
   type: string
   [key: string]: string | number | boolean
 }
+export interface XHRData {
+  [key: string]: string | number | boolean | null
+}

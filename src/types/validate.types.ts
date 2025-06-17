@@ -3,3 +3,5 @@ export type ValidateObj = {
 }
 
 export type ValidateArr = string[]
+
+export type XHRType = "POST" | "GET"

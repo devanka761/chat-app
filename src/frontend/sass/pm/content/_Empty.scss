@@ -1,0 +1,43 @@
+@use "../../variables" as v;
+
+.Empty {
+  position: absolute;
+  top: 0;
+  left: calc(350px + 100px);
+  width: calc(100% - (350px + 100px));
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: v.$bg;
+  .top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: v.$bar_bg;
+    color: v.$white;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.25em;
+    .btn {
+      position: absolute;
+      left: 10px;
+    }
+    .sec-title {
+      font-weight: bold;
+    }
+  }
+  .title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .desc {
+    font-style: italic;
+    color: v.$yellow;
+  }
+}
