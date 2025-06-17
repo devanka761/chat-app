@@ -5,8 +5,8 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 
 const appConfig = {
   entry: {
-    app: "./src/client/app.ts",
-    home: "./src/client/home.ts"
+    app: "./src/frontend/app.ts",
+    home: "./src/frontend/home.ts"
   },
   entries: {
     app: {

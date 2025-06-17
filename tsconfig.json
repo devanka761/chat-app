@@ -3,13 +3,12 @@
     "target": "es2016",
     "module": "commonjs",
     "moduleResolution": "node",
-    "baseUrl": ".",
     "paths": {
       "*": ["./node_modules/*"]
     },
     "typeRoots": [
-      "./src/server/types/",
-      "./src/client/types/",
+      "./src/backend/types/",
+      "./src/frontend/types/",
       "./node_modules/@types"
     ],
     "resolveJsonModule": true,
@@ -22,6 +21,6 @@
     "skipLibCheck": true,
     "removeComments": true
   },
-  "include": ["./src/server/**/*"],
+  "include": ["./src/backend/**/*"],
   "exclude": ["./node_modules/*", "./dist/**/*", "./public/**/*"]
 }

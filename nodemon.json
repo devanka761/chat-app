@@ -3,7 +3,7 @@
     "**.json",
     "client/**"
   ],
-  "watch": ["./src/server"],
+  "watch": ["./src/backend"],
   "ext": "ts",
-  "exec": "tsx ./src/server/server.ts"
+  "exec": "tsx ./src/backend/server.ts"
 }
