@@ -5,11 +5,11 @@ import userState from "../../main/userState"
 import { PrimaryClass } from "../../types/userState.types"
 
 export default class Empty implements PrimaryClass {
-  readonly id: string
+  readonly role: string
   public isLocked: boolean
   private el: HTMLDivElement
   constructor() {
-    this.id = "empty"
+    this.role = "empty"
   }
   createElement() {
     this.el = kel("div", "Empty pmcontent")

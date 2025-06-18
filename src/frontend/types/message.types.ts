@@ -1,5 +1,10 @@
 import { MessageTypeF } from "./db.types"
 
+export interface IWritterFileF {
+  src: string
+  name: string
+}
+
 export interface IWritterF {
   userid?: string
   timestamp?: number

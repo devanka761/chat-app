@@ -74,7 +74,7 @@ server.on("error", console.error)
 // })
 server.on("connection", (c) => {
   console.log("connected", c.getId())
-  c.send({ data: "hehehe" })
+  c.send(JSON.stringify({ data: "hehehe" }))
 })
 app.use("/cloud", server)
 
@@ -92,6 +92,8 @@ app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
     })
     return
   }
+
+  console.error(err)
 
   res.status(500).json({
     ok: false,

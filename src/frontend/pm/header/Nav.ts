@@ -6,11 +6,11 @@ import _navlist from "./_navlist"
 import HeaderBar from "./HeaderBar"
 
 export default class Nav implements PrimaryClass {
-  readonly id: string
+  readonly role: string
   public isLocked: boolean
   private el: HTMLDivElement
   constructor() {
-    this.id = "nav"
+    this.role = "nav"
     this.isLocked = false
   }
   private createElement(): void {
@@ -21,17 +21,17 @@ export default class Nav implements PrimaryClass {
       const elnav = kel("div", `btn nav-${btn.id}`)
 
       const centerClass = <PrimaryClass>userState.currcenter
-      if (centerClass.id === btn.id) {
+      if (centerClass.role === btn.id) {
         elnav.classList.add("selected")
-      } else if ((!centerClass || !centerClass.id) && btn.id === "chats") {
+      } else if ((!centerClass || !centerClass.role) && btn.id === "chats") {
         elnav.classList.add("selected")
       }
       elnav.append(kel("i", btn.c), kel("p", null, { e: lang[btn.txt] }))
       this.el.append(elnav)
       elnav.onclick = async () => {
         if (this.isLocked) return
-        if (userState.currcenter?.id === btn.id) return
-        if (userState.currcontent?.id === btn.id) return
+        if (userState.currcenter?.role === btn.id) return
+        if (userState.currcontent?.role === btn.id) return
         if (userState.currcenter?.isLocked) return
         if (userState.currcontent?.isLocked) return
         this.isLocked = true

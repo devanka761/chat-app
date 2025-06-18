@@ -55,10 +55,10 @@ export interface IMessageTempF {
   edited?: number
   reply?: string
   source?: string
-  readers?: string[]
 }
 export interface IMessageF extends IMessageTempF {
   id: string
+  readers?: string[]
 }
 export interface IChatKeyF {
   [key: string]: IMessageF

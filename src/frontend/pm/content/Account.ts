@@ -10,11 +10,11 @@ import { PrimaryClass } from "../../types/userState.types"
 
 export default class Account implements PrimaryClass {
   public isLocked: boolean
-  readonly id: string
+  readonly role: string
   private el: HTMLDivElement
   private x: { [key: string]: HTMLElement }
   constructor() {
-    this.id = "account"
+    this.role = "account"
     this.isLocked = false
     this.x = {}
   }

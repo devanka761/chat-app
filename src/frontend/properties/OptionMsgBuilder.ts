@@ -1,4 +1,4 @@
-import kelement from "../helper/kelement"
+import { kel } from "../helper/kel"
 import { lang } from "../helper/lang"
 import modal from "../helper/modal"
 import userState from "../main/userState"
@@ -28,7 +28,7 @@ export default class OptionMsgBuilder {
     this.room = s.room
   }
   createElement(): void {
-    this.el = kelement("div", `btn opt-${this.optype}`)
+    this.el = kel("div", `btn opt-${this.optype}`)
     this.el.innerHTML = innerBtn[this.optype]
   }
   private async clickHandler(): Promise<void> {
@@ -58,12 +58,11 @@ export default class OptionMsgBuilder {
         break
       }
       case "retry": {
-        this.room.sendMessage(this.msg.raw, true, this.msg)
+        if (this.msg.raw) this.room.sendNewMessage(this.msg.raw, this.msg)
         break
       }
       case "cancel": {
         this.room.field.remove(this.msg)
-        this.room.list.delete(this.msg.id)
         break
       }
     }

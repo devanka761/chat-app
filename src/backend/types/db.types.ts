@@ -56,7 +56,7 @@ export interface IChatB {
   o?: string
   n?: string
   i?: string
-  t?: TRoomTypeF
+  t: TRoomTypeF
   b?: number[]
   l?: string
 }

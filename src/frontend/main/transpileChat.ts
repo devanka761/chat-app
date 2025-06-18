@@ -10,7 +10,7 @@ const mediaIcons: { [key: string]: string } = {
   audio: '<i class="fa-light fa-music"></i>'
 }
 
-export function transpileChat(s: IMessageF, lastuser?: IUserF, noStatus?: boolean): string {
+export function transpileChat(s: IMessageF, lastuser?: IUserF | null, noStatus?: boolean): string {
   const myId = db.me.id
   let text = ""
   if (lastuser) text = `${ss(lastuser.username, 10)} <i class="fa-regular fa-angle-right"></i> `
@@ -23,7 +23,7 @@ export function transpileChat(s: IMessageF, lastuser?: IUserF, noStatus?: boolea
   if (s.type === "call") {
     text += `<i class="fa-solid fa-phone-volume"></i> Voice Call`
     return text
-  } else if (s.type === "image" || s.type === "video" || s.type === "file") {
+  } else if (s.type === "image" || s.type === "video" || s.type === "file" || s.type === "audio") {
     text += `${mediaIcons[s.type]} ${s.text ? escapeHTML(lastuser ? ss(<string>s.text, 9) : ss(<string>s.text, 19)) : "Media"}`
   } else if (s.type === "voice") {
     text += `<i class="fa-light fa-microphone"></i> Voice Chat`

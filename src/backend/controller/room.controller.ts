@@ -20,7 +20,7 @@ export function sendMessage(uid: string, room_id: string, room_type: TRoomTypeF,
       ? Object.keys(cdb).find((k) => {
           return cdb[k].u.find((usr) => usr === uid) && cdb[k].u.find((usr) => usr === room_id)
         })
-      : Object.keys(cdb).find((k) => k === room_id)
+      : Object.keys(cdb).find((k) => cdb[k].t === "group" && k === room_id && cdb[k].u.find((usr) => usr === uid))
   if (s.edit && !chatkey) return { code: 400 }
   if (s.edit && chatkey) return editMessage(uid, chatkey, room_id, room_type, s)
   if (room_type === "group" && !chatkey) return { code: 404 }
@@ -29,7 +29,8 @@ export function sendMessage(uid: string, room_id: string, room_type: TRoomTypeF,
     chatkey = "u" + Date.now().toString(36)
     db.ref.c[chatkey] = {
       u: [uid, room_id],
-      c: chatkey
+      c: chatkey,
+      t: "user"
     }
     db.save("c")
   }
@@ -54,6 +55,7 @@ export function sendMessage(uid: string, room_id: string, room_type: TRoomTypeF,
   }
 
   const chat_id = "c" + Date.now().toString(36)
+  newChat.timestamp = Date.now()
 
   dbOld[chat_id] = minimizeMessage(uid, newChat)
   db.fileSet(chatkey, "room", dbOld)
@@ -91,14 +93,14 @@ export function editMessage(uid: string, chatkey: string, room_id: string, room_
   return { code: 200, data: { isFirst: false, roomid: chatkey, chat: { ...normalizeMessage(s.edit, dbOld[s.edit]) } } }
 }
 
-export function delMessage(uid: string, room: string, target: string, message_id: string): IRepTempB {
+export function delMessage(uid: string, target: string, room: string, message_id: string): IRepTempB {
   const cdb = db.ref.c
   const chatkey =
     room === "user"
       ? Object.keys(cdb).find((k) => {
           return cdb[k].t === "user" && cdb[k].u.find((usr) => usr === uid) && cdb[k].u.find((usr) => usr === target)
         })
-      : Object.keys(cdb).find((k) => k === target)
+      : Object.keys(cdb).find((k) => cdb[k].t === "group" && k === target && cdb[k].u.find((usr) => usr === uid))
 
   if (!chatkey) return { code: 404 }
 

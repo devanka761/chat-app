@@ -83,7 +83,7 @@ export function convertMessage(uid: string, s: IWritterF): IMessageTempF {
   return {
     userid: uid,
     timestamp: s.timestamp || Date.now(),
-    edited: s.timestamp || Date.now(),
+    edited: s.edit ? Date.now() : undefined,
     reply: s.reply,
     text: s.text,
     type: s.type,

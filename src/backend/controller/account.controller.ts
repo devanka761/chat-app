@@ -63,11 +63,10 @@ export function getMe(uid: string): IRepTempB {
       return cdb[k].c && cdb[k].u.find((usr) => usr === uid)
     })
     .map((k) => {
-      const chatFile = db.fileGet(cdb[k].c as string, "user") || {}
+      const chatFile = db.fileGet(cdb[k].c as string, "room") || {}
       const isUser = cdb[k].t === "user" ? true : false
       const rdb: IRoomDataF = isUser ? convertUser(cdb[k].u.find((usr) => usr !== uid) as string) : convertGroup(k)
       return {
-        id: k,
         u: cdb[k].u.filter((usr) => usr !== uid).map((usr) => getUser(uid, usr)),
         m: Object.keys(chatFile).map((msgkey) => {
           const rawData = chatFile[msgkey]

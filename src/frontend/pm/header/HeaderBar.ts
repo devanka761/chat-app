@@ -1,7 +1,7 @@
 import { eroot, kel } from "../../helper/kel"
 
 class HeaderBar {
-  readonly id: string
+  readonly role: string
   private isLocked: boolean
   private appname: string
   private el: HTMLDivElement
@@ -10,7 +10,7 @@ class HeaderBar {
   private btn_find: HTMLDivElement
   private btn_settings: HTMLDivElement
   constructor() {
-    this.id = "header"
+    this.role = "header"
     this.appname = "KIRIMIN"
     this.isLocked = false
   }

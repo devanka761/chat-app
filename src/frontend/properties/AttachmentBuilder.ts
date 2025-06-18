@@ -1,5 +1,5 @@
 import { ss } from "../helper/escaper"
-import kelement from "../helper/kelement"
+import { kel } from "../helper/kel"
 import mediaCheck from "../manager/mediaCheck"
 import RoomForm from "../pm/parts/RoomForm"
 
@@ -19,12 +19,12 @@ export default class AttachmentBuilder {
     this.name = s.file.name
   }
   createElement(): void {
-    this.media = kelement("div", "media")
-    this.btnCancel = kelement("div", "btn btn-close", {
+    this.media = kel("div", "media")
+    this.btnCancel = kel("div", "btn btn-close", {
       e: '<i class="fa-duotone fa-circle-x"></i>'
     })
-    const right = kelement("div", "close", { e: this.btnCancel })
-    this.el = kelement("div", "attach", { e: [this.media, right] })
+    const right = kel("div", "close", { e: this.btnCancel })
+    this.el = kel("div", "attach", { e: [this.media, right] })
   }
   close(): void {
     this.el.remove()
@@ -44,10 +44,10 @@ export default class AttachmentBuilder {
   private setImage(src: string): void {
     this.clearMedia()
     if (typeof src !== "string") return this.setDocument()
-    const parent = kelement("div", "img")
+    const parent = kel("div", "img")
     const img = new Image()
     img.alt = this.name
-    const filename = kelement("div", "name")
+    const filename = kel("div", "name")
     filename.innerText = this.name
     img.onerror = async () => {
       img.remove()
@@ -66,12 +66,12 @@ export default class AttachmentBuilder {
     this.clearMedia()
     if (typeof src !== "string") return this.setDocument()
 
-    const parent = kelement("div", "img")
+    const parent = kel("div", "img")
 
-    const filename = kelement("div", "name")
+    const filename = kel("div", "name")
     filename.innerText = this.name
 
-    const vid = kelement("video")
+    const vid = kel("video")
     vid.volume = 0
     vid.controls = false
     vid.onerror = () => {
@@ -90,12 +90,12 @@ export default class AttachmentBuilder {
   private setDocument(text?: string): void {
     if (!text) text = this.name
     this.clearMedia()
-    const p = kelement("p")
+    const p = kel("p")
     const file_extension = text.match(file_format_regex)?.[1]
     const parse_extension = file_extension ? `.${file_extension}` : ".dvnkz"
     const parse_name = ss(text, 30).replace(parse_extension, "")
     p.innerText = parse_name + (file_extension ? `.${file_extension}` : "")
-    const parent = kelement("div", "document", { e: p })
+    const parent = kel("div", "document", { e: p })
     this.media.append(parent)
   }
   private async renderFile(): Promise<void> {

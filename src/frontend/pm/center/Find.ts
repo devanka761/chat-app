@@ -37,11 +37,11 @@ function user_card(s: IUserF): { [key: string]: HTMLDivElement } {
   return { card, eusername, elastchat }
 }
 export default class Find implements PrimaryClass {
-  readonly id: string
+  readonly role: string
   public isLocked: boolean
   private el: HTMLDivElement
   constructor() {
-    this.id = "find"
+    this.role = "find"
     this.isLocked = false
   }
   private createElement() {
@@ -110,7 +110,7 @@ export default class Find implements PrimaryClass {
         cardlist.append(card)
         card.onclick = async () => {
           if (userState.currcontent?.isLocked) return
-          if (userState.currcontent?.id === "profile") {
+          if (userState.currcontent?.role === "profile") {
             if ((userState.currcontent as Profile)?.user?.id === usr.id) return
           }
           swiper(new Profile({ user: usr }), userState.currcontent)
@@ -119,7 +119,7 @@ export default class Find implements PrimaryClass {
       if (userResult.length === 1) {
         const usr = userResult[0]
         if (userState.currcontent?.isLocked) return
-        if (userState.currcontent?.id === "profile") {
+        if (userState.currcontent?.role === "profile") {
           if ((userState.currcontent as Profile)?.user?.id === usr.id) return
         }
         swiper(new Profile({ user: usr }), userState.currcontent)

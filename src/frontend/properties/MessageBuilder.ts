@@ -1,5 +1,5 @@
 import { escapeHTML, ss } from "../helper/escaper"
-import kelement from "../helper/kelement"
+import { kel } from "../helper/kel"
 import { lang } from "../helper/lang"
 import modal from "../helper/modal"
 import sdate from "../helper/sdate"
@@ -7,14 +7,13 @@ import setbadge from "../helper/setbadge"
 import { transpileChat } from "../main/transpileChat"
 import db from "../manager/db"
 import Room from "../pm/content/Room"
-import { UserDB } from "../types/db.types"
-import { IMessageBuilder, MessageOptionType } from "../types/message.types"
+import { IMessageF, IUserF } from "../types/db.types"
+import { IWritterF, MessageOptionType } from "../types/message.types"
 import { TStatusIcon, TStatusText } from "../types/room.types"
-import MessageWriter from "./MessageWriter"
 import OptionMsgBuilder from "./OptionMsgBuilder"
 
 const statusIcon: TStatusIcon = {
-  pending: '<i class="fa-duotone fa-regular fa-clock"></i>',
+  pending: '<i class="fa-duotone fa-solid fa-spinner-third fa-spin"></i>',
   sent: '<i class="fa-regular fa-check"></i>',
   read: '<i class="fa-regular fa-check-double"></i>',
   failed: '<i class="fa-regular fa-rotate-left"></i>'
@@ -40,8 +39,8 @@ function getOptOffsetToList(child: HTMLDivElement, parent: HTMLDivElement) {
 export default class MessageBuilder {
   private el: HTMLDivElement
   private field: HTMLDivElement
-  private user: UserDB
-  private s: IMessageBuilder
+  private user: IUserF
+  private s: IMessageF
   private sender: HTMLDivElement
   private timestamp: HTMLDivElement
   private reply?: HTMLDivElement
@@ -53,23 +52,25 @@ export default class MessageBuilder {
   public room: Room
   private optLocked: boolean
   private isRetry: boolean
-  constructor(s: IMessageBuilder, room: Room) {
-    this.s = s
-    this.user = s.user
+  public raw?: IWritterF
+  constructor(message: IMessageF, user: IUserF, room: Room, raw?: IWritterF) {
+    this.s = message
+    this.user = user
     this.room = room
     this.optLocked = false
     this.isRetry = false
+    if (raw) this.raw = raw
   }
   private createElement(): void {
-    this.el = kelement("div", "card")
-    this.field = kelement("div", "field")
+    this.el = kel("div", "card")
+    this.field = kel("div", "field")
     if (this.user.id === db.me.id) {
       this.el.classList.add("me")
     }
     this.el.append(this.field)
   }
   private renderUser(): void {
-    this.sender = kelement("div", "chp sender", {
+    this.sender = kel("div", "chp sender", {
       e: ss(escapeHTML(this.user.username))
     })
     if (this.user.badges) setbadge(this.sender, this.user.badges)
@@ -78,13 +79,12 @@ export default class MessageBuilder {
   private renderReply(): void {
     if (this.s.type === "deleted") return
     if (!this.s.reply) return
-    const msgAPI = this.room.list.get(this.s.reply)
+    const msgAPI = this.room.field.list.get(this.s.reply)
     if (!msgAPI) return
-    const target = msgAPI.json
-    const { user } = target
-    const replysender = kelement("div", "name", { e: ss(escapeHTML(user.username)) })
-    const replymsg = kelement("div", "msg", { e: transpileChat(target, null, true) })
-    this.reply = kelement("div", "chp embed", { e: [replysender, replymsg] })
+    const { user, message } = msgAPI.json
+    const replysender = kel("div", "name", { e: ss(escapeHTML(user.username)) })
+    const replymsg = kel("div", "msg", { e: transpileChat(message, null, true) })
+    this.reply = kel("div", "chp embed", { e: [replysender, replymsg] })
     this.reply.onclick = () => {
       const msgHTML = msgAPI.html
       msgHTML.scrollIntoView()
@@ -92,50 +92,49 @@ export default class MessageBuilder {
     }
     this.field.append(this.reply)
   }
-  private attachImage(eattach: HTMLDivElement, url: string, roomid: string, isTemp: boolean): void {
-    const parent = kelement("div", "img")
+  private attachImage(eattach: HTMLDivElement, url: string, isTemp: boolean): void {
+    const parent = kel("div", "img")
     const img = new Image()
     img.onerror = () => {
       img.remove()
       parent.remove()
-      this.attachFile(eattach, url, roomid, isTemp)
+      this.attachFile(eattach, url, isTemp)
     }
-    img.src = isTemp ? url : `/file/media/${roomid}/${url}`
+    img.src = isTemp ? url : `/file/media/${this.room.data.type}/${this.room.id}/${url}`
     img.alt = isTemp ? Date.now().toString(32) : url
     parent.append(img)
     eattach.append(parent)
   }
-  private attachVideo(eattach: HTMLDivElement, url: string, roomid: string, isTemp: boolean): void {
-    const parent = kelement("div", "img")
-    const vid = kelement("video")
+  private attachVideo(eattach: HTMLDivElement, url: string, isTemp: boolean): void {
+    const parent = kel("div", "img")
+    const vid = kel("video")
     vid.onerror = () => {
       vid.remove()
       parent.remove()
-      this.attachFile(eattach, url, roomid, isTemp)
+      this.attachFile(eattach, url, isTemp)
     }
     vid.controls = true
-    vid.src = isTemp ? url : `/file/media/${roomid}/${url}`
+    vid.src = isTemp ? url : `/file/media/${this.room.data.type}/${this.room.id}/${url}`
     parent.prepend(vid)
     eattach.append(parent)
   }
-  private attachFile(eattach: HTMLDivElement, url: string, roomid: string, isTemp: boolean): void {
-    const efile = kelement("a", "document", {
-      a: { href: isTemp ? url : `/file/media/${roomid}/${url}`, target: "_blank" },
+  private attachFile(eattach: HTMLDivElement, url: string, isTemp: boolean): void {
+    const efile = kel("a", "document", {
+      a: { href: isTemp ? url : `/file/media/${this.room.data.type}/${this.room.id}/${url}`, target: "_blank" },
       e: isTemp ? Date.now().toString(32) : url
     })
     eattach.append(efile)
   }
   private renderAttach(isTemp: boolean): void {
-    if (this.s.type === "deleted") return
     if (this.s.type !== "image" && this.s.type !== "video" && this.s.type !== "file" && this.s.type !== "audio") return
     if (!this.s.source) return
-    this.attach = kelement("div", "chp attach")
+    this.attach = kel("div", "chp attach")
     if (this.s.type === "image") {
-      this.attachImage(this.attach, this.s.source, this.s.roomid, isTemp)
+      this.attachImage(this.attach, this.s.source, isTemp)
     } else if (this.s.type === "video") {
-      this.attachVideo(this.attach, this.s.source, this.s.roomid, isTemp)
+      this.attachVideo(this.attach, this.s.source, isTemp)
     } else {
-      this.attachFile(this.attach, this.s.source, this.s.roomid, isTemp)
+      this.attachFile(this.attach, this.s.source, isTemp)
     }
     this.field.append(this.attach)
   }
@@ -143,9 +142,9 @@ export default class MessageBuilder {
     // <div class="chp vc"><div class="vc-icon"></div><div class="vc-message"><p>Voice Call</p></div></div>
   }
   private renderText(): void {
-    this.textMessage = kelement("p")
-    this.textEdidted = kelement("span", "edited")
-    const textParent = kelement("div", "chp text", { e: [this.textMessage, this.textEdidted] })
+    this.textMessage = kel("p")
+    this.textEdidted = kel("span", "edited")
+    const textParent = kel("div", "chp text", { e: [this.textMessage, this.textEdidted] })
     this.field.append(textParent)
     if (this.s.type === "deleted") {
       textParent.classList.add("del")
@@ -156,9 +155,9 @@ export default class MessageBuilder {
     if (this.s.text) this.textMessage.innerHTML = escapeHTML(this.s.text)
   }
   private renderTime(): void {
-    this.timestamp = kelement("div", "ts", { e: sdate.parseTime(this.s.timestamp) })
-    this.sendStatus = kelement("div", "status")
-    const timeParent = kelement("div", "chp time", { e: [this.timestamp, this.sendStatus] })
+    this.timestamp = kel("div", "ts", { e: sdate.parseTime(this.s.timestamp) })
+    this.sendStatus = kel("div", "status")
+    const timeParent = kel("div", "chp time", { e: [this.timestamp, this.sendStatus] })
     this.field.append(timeParent)
   }
   set deleted(isDeleted: boolean) {
@@ -223,7 +222,7 @@ export default class MessageBuilder {
     }
     if (!this.isRetry && this.room.optRetrying) return
     if (this.optLocked) return
-    this.optmenu = kelement("div", "optmenu")
+    this.optmenu = kel("div", "optmenu")
     this.room.opt = this.optmenu
     delete this.room.optRetrying
     if (this.isRetry) {
@@ -302,7 +301,7 @@ export default class MessageBuilder {
       this.renderOptmenu(...args)
     }
   }
-  getUser(): UserDB {
+  getUser(): IUserF {
     return this.user
   }
   get id(): string {
@@ -313,12 +312,13 @@ export default class MessageBuilder {
   }
   setStatus(statusText: TStatusText): void {
     if (statusText === "failed") {
+      this.clickListener("retry", "cancel")
       this.sendStatus.innerHTML = `${statusIcon[statusText]}`
       this.sendStatus.classList.add("btn")
       this.el.classList.add("error")
       this.timestamp.innerHTML = lang.FAILED
     } else {
-      this.setTimeStamp(this.s.timestamp || Date.now())
+      if (statusText === "pending") this.timestamp.innerHTML = lang.CONTENT_SENDING
       this.sendStatus.innerHTML = statusIcon[statusText]
       this.sendStatus.classList.remove("btn")
       this.el.classList.remove("error")
@@ -338,18 +338,23 @@ export default class MessageBuilder {
   get html(): HTMLDivElement {
     return this.el
   }
-  get json(): IMessageBuilder {
-    return this.s
-  }
-  get raw(): MessageWriter {
-    const messages = new MessageWriter(this.s)
-    return messages
+  get json() {
+    return { message: this.s, user: this.user }
   }
   async highlight(): Promise<void> {
     if (this.el.classList.contains("highlight")) return
     this.el.classList.add("highlight")
     await modal.waittime(5000, 5)
     this.el.classList.remove("highlight")
+  }
+  update(s: IMessageF): this {
+    this.s = s
+    if (!this.attach) return this
+    if (!this.s.source) return this
+    if (this.s.type !== "file") return this
+    while (this.attach.lastChild) this.attach.lastChild.remove()
+    this.attachFile(this.attach, this.s.source, false)
+    return this
   }
   run(isTemp?: boolean): this {
     this.init(isTemp || false)

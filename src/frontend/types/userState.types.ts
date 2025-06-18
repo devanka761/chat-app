@@ -9,7 +9,7 @@ export interface UserLocked {
 }
 
 export interface PrimaryClass {
-  readonly id: string
+  readonly role: string
   isLocked: boolean
   destroy(): Promise<void>
   update(...args: any[]): void | Promise<void>

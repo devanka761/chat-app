@@ -5,13 +5,9 @@ import db from "./main/db"
 const cleardatabase: { [key: string]: () => void } = {
   chat: () => {
     db.ref.c = {}
-    db.ref.g = {}
-    db.save("c", "g")
-    if (fs.existsSync("./dist/db/user")) {
-      fs.rmSync("./dist/db/user", { recursive: true, force: true })
-    }
-    if (fs.existsSync("./dist/db/group")) {
-      fs.rmSync("./dist/db/group", { recursive: true, force: true })
+    db.save("c")
+    if (fs.existsSync("./dist/db/room")) {
+      fs.rmSync("./dist/db/room", { recursive: true, force: true })
     }
     if (fs.existsSync("./dist/stg/room")) {
       fs.rmSync("./dist/stg/room", { recursive: true, force: true })

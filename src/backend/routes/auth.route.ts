@@ -74,7 +74,7 @@ router.get("/:provider/callback", async (req: Request, res: Response) => {
     res.status(verifyUser.code).json(verifyUser)
     return
   }
-  const userData = verifyUser.data as IUserCookieB
+  const userData = verifyUser.data.user as IUserCookieB
   req.user = {
     id: userData.id,
     data: {

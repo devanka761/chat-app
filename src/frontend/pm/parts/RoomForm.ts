@@ -1,16 +1,16 @@
-import kelement from "../../helper/kelement"
+import { kel } from "../../helper/kel"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
-import MessageWriter from "../../properties/MessageWriter"
 import db from "../../manager/db"
 // import { RoomFormContent } from "../../types/room.types"
 import Room from "../content/Room"
 import ReplyBuilder from "../../properties/ReplyBuilder"
 import AttachmentBuilder from "../../properties/AttachmentBuilder"
 import EditBuilder from "../../properties/EditBuilder"
+import MessageWritter from "../../properties/MessageWritter"
 
 export default class RoomForm {
-  readonly id: string
+  readonly role: string
   public isLocked: boolean
   public room: Room
   private bottom: HTMLDivElement
@@ -26,28 +26,28 @@ export default class RoomForm {
   public edit: EditBuilder | null
   public attachment: AttachmentBuilder | null
   constructor({ room }) {
-    this.id = "roomform"
+    this.role = "roomform"
     this.isLocked = false
     this.room = room
     this.canSend = false
     this.downed = new Set()
   }
   private createElement(): void {
-    this.btnEmoji = kelement("div", "btn btn-emoji", { e: `<i class="fa-solid fa-face-smile"></i>` })
-    const eemoji = kelement("div", "emoji", { e: this.btnEmoji })
-    this.textarea = kelement("textarea")
+    this.btnEmoji = kel("div", "btn btn-emoji", { e: `<i class="fa-solid fa-face-smile"></i>` })
+    const eemoji = kel("div", "emoji", { e: this.btnEmoji })
+    this.textarea = kel("textarea")
     this.textarea.name = "content-input"
     this.textarea.id = "content-input" + this.room.data.id + Date.now().toString(36)
     this.textarea.maxLength = 500
     this.textarea.placeholder = lang.TYPE_HERE
-    const etextbox = kelement("div", "textbox", { e: this.textarea })
-    this.btnAttach = kelement("div", "btn btn-attach", { e: `<i class="fa-solid fa-paperclip"></i>` })
-    this.btnImage = kelement("div", "btn btn-image", { e: `<i class="fa-solid fa-camera-retro"></i>` })
-    const eactions = kelement("div", "actions", { e: [this.btnAttach, this.btnImage] })
-    const einput = kelement("div", "input", { e: [eemoji, etextbox, eactions] })
-    this.btnVoice = kelement("div", "btn btn-voice", { e: `<i class="fa-solid fa-microphone"></i>` })
-    const evoice = kelement("div", "voice", { e: this.btnVoice })
-    this.el = kelement("div", "field", { e: [einput, evoice] })
+    const etextbox = kel("div", "textbox", { e: this.textarea })
+    this.btnAttach = kel("div", "btn btn-attach", { e: `<i class="fa-solid fa-paperclip"></i>` })
+    this.btnImage = kel("div", "btn btn-image", { e: `<i class="fa-solid fa-camera-retro"></i>` })
+    const eactions = kel("div", "actions", { e: [this.btnAttach, this.btnImage] })
+    const einput = kel("div", "input", { e: [eemoji, etextbox, eactions] })
+    this.btnVoice = kel("div", "btn btn-voice", { e: `<i class="fa-solid fa-microphone"></i>` })
+    const evoice = kel("div", "voice", { e: this.btnVoice })
+    this.el = kel("div", "field", { e: [einput, evoice] })
   }
   private btnListener(): void {
     this.textarea.oninput = () => this.growArea()
@@ -75,34 +75,24 @@ export default class RoomForm {
     if (key === "shift" && this.downed.has(key)) this.downed.delete(key)
   }
   private sendMessage(): void {
+    const text = this.textarea.value.toString()
+
     if (this.isLocked) return
     if (!this.canSend) return
 
-    if (this.edit) {
-      const messageBuilder = this.room.list.get(this.edit.id)
-      if (messageBuilder) {
-        const rollback = { ...messageBuilder.json }
-        messageBuilder.setText(this.textarea.value)
-        const messageWriter: MessageWriter = messageBuilder.raw
-        messageWriter.setEdit(this.edit.id)
-        this.room.sendMessage(messageWriter, true, messageBuilder, rollback)
-        this.clearForm()
-        return
-      }
+    const writter = new MessageWritter().setUserId(db.me.id).setText(text).setTimeStamp()
+
+    if (this.reply) writter.setReply(this.reply.id)
+
+    if (this.attachment && this.attachment.src) {
+      writter.addFile({ name: this.attachment.name, src: this.attachment.src })
     }
 
-    const messageWriter: MessageWriter = new MessageWriter()
-    messageWriter.setText(this.textarea.value)
-    messageWriter.setUserId(<string>db.me.id)
-    if (this.reply) messageWriter.setReply(this.reply.id)
-    if (this.attachment && this.attachment.src) {
-      messageWriter.addFile({
-        name: this.attachment.name,
-        src: this.attachment.src
-      })
-    }
-    messageWriter.setTimeStamp()
-    this.room.sendMessage(messageWriter, true)
+    if (this.edit) writter.setEdit(this.edit.id)
+
+    if (!writter.isValid) return
+
+    this.room.sendWritter(writter.toJSON())
     this.clearForm()
   }
   private clearForm() {
@@ -198,16 +188,19 @@ export default class RoomForm {
   }
   private async focus(): Promise<void> {
     this.textarea.readOnly = true
-    await modal.waittime(500)
+    await modal.waittime(20)
     this.textarea.focus()
-    await modal.waittime(100)
     this.textarea.readOnly = false
+  }
+  private async firstFocus() {
+    await modal.waittime(580)
+    this.focus()
   }
   run(bottom: HTMLDivElement): void {
     this.bottom = bottom
     this.createElement()
     this.bottom.append(this.el)
-    this.focus()
     this.btnListener()
+    this.firstFocus()
   }
 }

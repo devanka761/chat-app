@@ -15,7 +15,8 @@ export class MessagesAPI {
     this.data.push(msg)
     return this
   }
-  delete(message_id: string): void {
-    this.data = this.data.filter((msg) => msg.id === message_id)
+  remove(message: string | MessageBuilder): void {
+    const msgid = typeof message === "string" ? message : message.id
+    this.data = this.data.filter((msg) => msg.id === msgid)
   }
 }

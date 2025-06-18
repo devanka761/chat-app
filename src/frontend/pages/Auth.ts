@@ -11,7 +11,7 @@ import Nav from "../pm/header/Nav"
 import { LangObject, Languages } from "../types/helper.types"
 import db from "../manager/db"
 import cloud from "../manager/cloud"
-import kel from "../helper/kel"
+import { kel } from "../helper/kel"
 
 let lang: LangObject = {}
 

@@ -9,13 +9,13 @@ import ChatBuilder from "../../properties/ChatBuilder"
 import { kel, eroot } from "../../helper/kel"
 
 export default class Chats implements PrimaryClass {
-  readonly id: string
+  readonly role: string
   public isLocked: boolean
   private el: HTMLDivElement
   private card_list: HTMLDivElement
   private list: ChatsAPI
   constructor() {
-    this.id = "chats"
+    this.role = "chats"
     this.isLocked = false
     this.list = new ChatsAPI({ data: [] })
   }

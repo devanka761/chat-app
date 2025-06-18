@@ -1,16 +1,25 @@
 import fs from "fs"
 import db from "../main/db"
+import { TRoomTypeF } from "../../frontend/types/room.types"
 
 export function userFile(imgsrc: string): string | null {
   if (!fs.existsSync(`./dist/stg/user/${imgsrc}`)) return null
   return `./dist/stg/user/${imgsrc}`
 }
-export function roomFile(uid: string, roomid: string, filename: string): string | null {
-  const isAllowed = roomid === "community" || db.ref.c[roomid].u.find((usr) => usr === uid)
-  if (!isAllowed) return null
-  if (!fs.existsSync(`./dist/stg/room/${roomid}`)) return null
-  if (!fs.existsSync(`./dist/stg/room/${roomid}/${filename}`)) return null
-  return `./dist/stg/room/${roomid}/${filename}`
+export function roomFile(uid: string, roomtype: TRoomTypeF, roomid: string, filename: string): string | null {
+  const cdb = db.ref.c
+
+  const roomkey =
+    roomtype === "user"
+      ? Object.keys(cdb).find((k) => {
+          return cdb[k].t === "user" && cdb[k].u.find((usr) => usr === uid) && cdb[k].u.find((usr) => usr === roomid)
+        })
+      : Object.keys(cdb).find((k) => cdb[k].t === "group" && k === roomid && cdb[k].u.find((usr) => usr === uid))
+
+  if (!roomkey) return null
+  if (!fs.existsSync(`./dist/stg/room/${roomkey}`)) return null
+  if (!fs.existsSync(`./dist/stg/room/${roomkey}/${filename}`)) return null
+  return `./dist/stg/room/${roomkey}/${filename}`
 }
 export function langFile(langid: string) {
   const langpath = `./public/locales/${langid}.json`

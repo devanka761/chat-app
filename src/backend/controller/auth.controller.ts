@@ -85,12 +85,12 @@ export function processUser(email: string, dbkey: string): IRepTempB {
   if (!ukey) {
     ukey = "7" + rNumber(5).toString() + (Object.keys(udb).length + 1).toString()
     db.ref.u[ukey] = { id: ukey, data: [data.user.data], uname: `u${ukey}`, dname: `User ${ukey}` }
-    db.save("u")
   }
-  data.user.data.id = ukey
   data.user.id = ukey
+  data.user.data.id = ukey
   delete db.ref.t[dbkey]
-  return { code: 200, data: { user: db.ref.u[ukey] } }
+  db.save("u")
+  return { code: 200, data: data }
 }
 
 export function processThirdParty(s: { user: IUserTempB; provider: string }): IRepTempB {
@@ -111,10 +111,10 @@ export function processThirdParty(s: { user: IUserTempB; provider: string }): IR
     ukey = "7" + rNumber(5).toString() + (Object.keys(udb).length + 1).toString()
     db.ref.u[ukey] = { id: ukey, data: [data.user.data], uname: `u${ukey}`, dname: `User ${ukey}` }
   }
+  data.user.id = ukey
   db.ref.u[ukey].data = [data.user.data]
   db.save("u")
-  data.user.id = ukey
-  return { code: 200, data: { user: db.ref.u[ukey] } }
+  return { code: 200, data: data }
 }
 const emailQueue: { index: number; done: number } = { index: 0, done: 0 }
 

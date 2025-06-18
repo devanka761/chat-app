@@ -1,4 +1,4 @@
-import kel from "./kel"
+import { kel } from "./kel"
 
 const localeBadge: { [key: string]: [string, string] } = {
   "1": ["dev", "DEVELOPER"],

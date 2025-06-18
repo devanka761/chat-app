@@ -1,4 +1,4 @@
-import kelement from "../helper/kelement"
+import { kel } from "../helper/kel"
 import setbadge from "../helper/setbadge"
 import { transpileChat } from "../main/transpileChat"
 import RoomForm from "../pm/parts/RoomForm"
@@ -15,16 +15,16 @@ export default class ReplyBuilder {
     this.form = s.form
   }
   createElement(): void {
-    this.username = kelement("p", "username")
-    this.msg = kelement("p", "msg")
-    const left = kelement("div", "left", { e: [this.username, this.msg] })
-    this.btnCancel = kelement("div", "btn btn-cancel-rep", {
+    this.username = kel("p", "username")
+    this.msg = kel("p", "msg")
+    const left = kel("div", "left", { e: [this.username, this.msg] })
+    this.btnCancel = kel("div", "btn btn-cancel-rep", {
       e: '<i class="fa-duotone fa-circle-x"></i>'
     })
-    const right = kelement("div", "right", { e: this.btnCancel })
-    const box = kelement("div", "box", { e: [left, right] })
+    const right = kel("div", "right", { e: this.btnCancel })
+    const box = kel("div", "box", { e: [left, right] })
 
-    this.el = kelement("div", "embed", { e: box })
+    this.el = kel("div", "embed", { e: box })
   }
   close(): void {
     this.el.remove()
@@ -39,14 +39,14 @@ export default class ReplyBuilder {
   private init(): void {
     this.createElement()
     this.clickHandler()
-    const target = this.form.room.list.get(this.id)?.json
+    const target = this.form.room.field.list.get(this.id)?.json
     if (!target) return
 
-    const { user } = target
+    const { user, message } = target
 
     this.username.innerHTML = `<i class="fa-solid fa-reply"></i> ${user.username}`
     if (user.badges) setbadge(this.username, user.badges)
-    this.msg.innerHTML = transpileChat(target, null, true)
+    this.msg.innerHTML = transpileChat(message, null, true)
   }
   run(): this {
     this.init()

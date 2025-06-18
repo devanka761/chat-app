@@ -1,47 +1,48 @@
-import culement from "../../helper/culement"
-import kelement from "../../helper/kelement"
-import { lang } from "../../helper/lang"
+import { eroot, kel } from "../../helper/kel"
 import modal from "../../helper/modal"
 import noUser from "../../helper/noUser"
 import setbadge from "../../helper/setbadge"
-import xhr from "../../helper/xhr"
-import { MessagesAPI } from "../../properties/MessagesAPI"
-import MessageWriter from "../../properties/MessageWriter"
 import userState from "../../main/userState"
 import db from "../../manager/db"
 import swiper from "../../manager/swiper"
-import { ChatDB, ChatsDB, UserDB } from "../../types/db.types"
-import { RoomDetail } from "../../types/room.types"
+import { IChatsF, IMessageF, IRoomDataF, IUserF } from "../../types/db.types"
+import {} from "../../types/room.types"
 import { PrimaryClass } from "../../types/userState.types"
 import RoomField from "../parts/RoomField"
 import RoomForm from "../parts/RoomForm"
 import Profile from "./Profile"
+import { IWritterF } from "../../types/message.types"
 import MessageBuilder from "../../properties/MessageBuilder"
-import { IMessageBuilder } from "../../types/message.types"
+import { convertMessage } from "../../helper/helper"
+import xhr from "../../helper/xhr"
+import { IRepB } from "../../../backend/types/validate.types"
+import { lang } from "../../helper/lang"
 
 export default class Room implements PrimaryClass {
+  readonly role: string
   readonly id: string
   public isLocked: boolean
   private el: HTMLDivElement
-  public data: RoomDetail
-  private chats?: ChatsDB
-  private users: UserDB[]
+  public data: IRoomDataF
+  private chats?: IChatsF
+  private users: IUserF[]
   private middle: HTMLDivElement
   private bottom: HTMLDivElement
   public form: RoomForm
   public field: RoomField
-  public list: MessagesAPI
   public opt?: HTMLDivElement
   public optRetrying?: HTMLDivElement
-  constructor(s: { data: RoomDetail; users: UserDB[]; chats?: ChatsDB }) {
-    this.id = "room"
+  constructor(s: { data: IRoomDataF; users: IUserF[]; chats?: IChatsF }) {
+    this.role = "room"
     this.isLocked = false
     this.users = s.users
     this.chats = s.chats
     this.data = s.data
+    this.id = s.data.id
+    this.field = new RoomField({ room: this })
   }
   private createElement(): void {
-    this.el = kelement("div", "Room pmcontent")
+    this.el = kel("div", "Room pmcontent")
     this.el.innerHTML = `
     <div class="top">
       <div class="left">
@@ -78,22 +79,22 @@ export default class Room implements PrimaryClass {
   private writeUser(): void {
     const img = new Image()
     img.onerror = () => (img.src = `/assets/${this.data.type}.jpg`)
-    img.alt = this.data.name.short
-    img.src = this.data.img ? `/file/${this.data.type}/${this.data.img}` : "/assets/user.jpg"
+    img.alt = this.data.short
+    img.src = this.data.image ? `/file/${this.data.type}/${this.data.image}` : "/assets/user.jpg"
     const eimg = <HTMLDivElement>this.el.querySelector(".top .left .user .img")
     eimg.append(img)
 
     const euname = <HTMLDivElement>this.el.querySelector(".top .left .user .names .uname")
-    euname.innerText = this.data.name.short
+    euname.innerText = this.data.short
     if (this.data.badges) setbadge(euname, this.data.badges)
     const edname = <HTMLDivElement>this.el.querySelector(".top .left .user .names .dname")
-    edname.innerText = this.data.name.full
+    edname.innerText = this.data.long
 
     const euser = <HTMLDivElement>this.el.querySelector(".top .left .user")
     euser.onclick = () => {
       if (this.data.type === "user") {
         const user = this.users.find((usr) => usr.id === this.data.id)
-        swiper(new Profile({ user: user as UserDB, classBefore: this }), userState.currcontent)
+        swiper(new Profile({ user: user as IUserF, classBefore: this }), userState.currcontent)
       }
     }
   }
@@ -102,17 +103,15 @@ export default class Room implements PrimaryClass {
     this.form.run(this.bottom)
   }
   private writeField(): void {
-    this.field = new RoomField({ room: this })
-    this.list = new MessagesAPI({ data: [] })
     this.field.run(this.middle)
 
-    // const chats = this.data.type === "user" ? db.c : db.g;
     const collection = db.c
-    const chats = collection.find((ch) => ch.u.find((usr) => usr.id === this.data.id))
+    const chats = collection.find((ch) => ch.r.id === this.data.id)
     if (chats) {
-      chats.c.forEach((ch) => {
-        const user: UserDB = ch.userid === db.me.id ? db.me : chats.u.find((usr) => usr.id === ch.userid) || noUser()
-        const message = this.field.send({ ...ch, user, roomid: chats.id })
+      chats.m.forEach((ch) => {
+        const user: IUserF = ch.userid === db.me.id ? db.me : chats.u.find((usr) => usr.id === ch.userid) || noUser()
+        const message = new MessageBuilder(ch, user, this)
+        this.field.send(message.run())
         if (this.data.type === "user" && ch.readers?.includes(this.data.id)) {
           message.setStatus("read")
         } else {
@@ -125,117 +124,154 @@ export default class Room implements PrimaryClass {
     this.bottom.style.height = `${formHeight}px`
     this.middle.style.height = `calc(100% - (60px + ${formHeight}px))`
   }
-  async sendMessage(messageWriten: MessageWriter, isTemp?: boolean, resend?: MessageBuilder, rollback?: IMessageBuilder): Promise<void> {
-    const message = messageWriten.toJSON()
-    const pendingMessage = resend
-      ? resend
-      : this.field.send(
-          {
-            ...message,
-            id: Date.now().toString(36),
-            timestamp: Date.now(),
-            userid: db.me.id,
-            user: db.me,
-            edited: message.edittime,
-            source: message.filesrc,
-            roomid: this.chats?.id || this.data.id,
-            readers: message.watch
-          },
-          isTemp
-        )
-    if (resend && !rollback) this.field.resend(pendingMessage)
-    pendingMessage.setStatus("pending")
+  async sendMessage(s: IWritterF): Promise<IRepB> {
     await modal.waittime(1000)
-    const sentMessage = await xhr.post(`/x/room/sendMessage/${this.data.type}/${this.data.id}`, message)
-    if (!sentMessage || !sentMessage.ok) {
-      this.isLocked = true
-      if (rollback) {
-        pendingMessage.setTimeStamp(rollback.timestamp)
-        await modal.alert(lang[sentMessage.msg] || lang.ERROR)
-        pendingMessage.setStatus(this.data.type === "user" && rollback.readers?.includes(this.data.id) ? "read" : "sent")
-        pendingMessage.setText(rollback.text as string)
-        pendingMessage.setEdited(rollback.edited)
-        this.isLocked = false
-        return
-      }
-      pendingMessage.setStatus("failed")
-      if (sentMessage.code === 404 || sentMessage.code === 413) {
-        await modal.alert(lang[sentMessage.msg]?.replace("{SIZE}", "2 MB") || lang.ERROR)
-        this.isLocked = false
-      }
-      pendingMessage.clickListener("retry", "cancel")
-      this.isLocked = false
-      return
-    }
-    pendingMessage.setStatus("sent")
-
-    const rep = sentMessage.data
-    const repChat = (<unknown>rep?.chat) as ChatDB
-    pendingMessage.id = repChat.id
-    pendingMessage.setTimeStamp(repChat.timestamp)
-    const repFirst = rep?.isFirst ? true : false
-    const roomid = rep?.roomid as string
-    if (repFirst) {
-      db.c.push({
-        c: [],
-        id: roomid,
-        u: this.users
-      })
-    }
-    const dbchat = db.c.find((k) => k.id === roomid)
-    if (dbchat) {
-      const oldDB = dbchat.c.find((ch) => ch.id === repChat.id)
-      if (oldDB) {
-        oldDB.text = repChat.text
-        oldDB.edited = repChat.edited
-        pendingMessage.setEdited(repChat.edited)
-      } else {
-        dbchat.c.push(repChat)
-      }
-    }
-    if (userState.center?.id === "chats") {
-      if (dbchat && dbchat.c[dbchat.c.length - 1].id !== repChat.id) return
-      userState.center?.update({
-        chat: repChat,
-        users: this.users,
-        roomid: roomid,
-        isFirst: repFirst,
-        roomdata: this.data
-      })
-    }
+    return await xhr.post(`/x/room/sendMessage/${this.data.type}/${this.data.id}`, s)
   }
-  async deleteMessage(msgid: string): Promise<void> {
-    const message = this.list.get(msgid)
-    if (!message) return
-    const isUser = this.data.type === "user"
+  async sendNewMessage(s: IWritterF, message: MessageBuilder): Promise<void> {
     message.setStatus("pending")
-
-    const deletedMessage = await xhr.post(`/x/room/delMessage/${this.data.type}/${this.data.id}/${msgid}`)
-    if (!deletedMessage || !deletedMessage.ok) {
+    this.field.html.append(message.html)
+    const messageSent = await this.sendMessage(s)
+    if (!messageSent || !messageSent.ok) {
+      message.setStatus("failed")
       this.isLocked = true
-      await modal.alert(lang[deletedMessage.msg] || lang.ERROR)
-      message.setStatus(isUser && message.json.readers?.includes(this.data.id) ? "read" : "sent")
+      if (messageSent.code === 413) {
+        await modal.alert(lang[messageSent.msg]?.replace("{SIZE}", "2 MB") || lang.ERROR)
+      }
       this.isLocked = false
       return
     }
-    message.deleted = true
-
-    const roomid = (<unknown>deletedMessage.data?.roomid) as string
-
-    const dbchat = db.c.find((k) => k.id === roomid)
-    if (userState.center?.id === "chats") {
-      if (dbchat?.c[dbchat.c.length - 1].id === msgid) {
-        userState.center?.update({
-          chat: message.json,
-          users: this.users,
-          roomid: this.chats?.id,
-          isFirst: false,
-          roomdata: this.data
-        })
-      }
-    }
+    const msg: IMessageF = messageSent.data.chat
+    message.setTimeStamp(msg.timestamp)
+    message.update(msg)
+    message.setStatus("sent")
+  }
+  async createNewMessage(s: IWritterF): Promise<void> {
+    const msg = { ...convertMessage(db.me.id, s), id: Date.now().toString(36) }
+    const message: MessageBuilder = new MessageBuilder(msg, db.me, this, s)
+    this.field.send(message.run(true))
+    this.sendNewMessage(s, message)
+  }
+  async sendEditedMessage(_s: IWritterF): Promise<void> {
     return
   }
+  async sendWritter(s: IWritterF): Promise<void> {
+    if (s.edit) return await this.sendEditedMessage(s)
+    return await this.createNewMessage(s)
+  }
+  async deleteMessage(_msgid: string): Promise<void> {
+    return
+  }
+  // async sendMessage(messageWriten: MessageWriter, isTemp?: boolean, resend?: MessageBuilder, rollback?: IMessageBuilder): Promise<void> {
+  //   const message = messageWriten.toJSON()
+  //   const pendingMessage = resend
+  //     ? resend
+  //     : this.field.send(
+  //         {
+  //           ...message,
+  //           id: Date.now().toString(36),
+  //           timestamp: Date.now(),
+  //           userid: db.me.id,
+  //           user: db.me,
+  //           edited: message.edittime,
+  //           source: message.filesrc,
+  //           roomid: this.chats?.id || this.data.id,
+  //           readers: message.watch
+  //         },
+  //         isTemp
+  //       )
+  //   if (resend && !rollback) this.field.resend(pendingMessage)
+  //   pendingMessage.setStatus("pending")
+  //   await modal.waittime(1000)
+  //   const sentMessage = await xhr.post(`/x/room/sendMessage/${this.data.type}/${this.data.id}`, message)
+  //   if (!sentMessage || !sentMessage.ok) {
+  //     this.isLocked = true
+  //     if (rollback) {
+  //       pendingMessage.setTimeStamp(rollback.timestamp)
+  //       await modal.alert(lang[sentMessage.msg] || lang.ERROR)
+  //       pendingMessage.setStatus(this.data.type === "user" && rollback.readers?.includes(this.data.id) ? "read" : "sent")
+  //       pendingMessage.setText(rollback.text as string)
+  //       pendingMessage.setEdited(rollback.edited)
+  //       this.isLocked = false
+  //       return
+  //     }
+  //     pendingMessage.setStatus("failed")
+  //     if (sentMessage.code === 404 || sentMessage.code === 413) {
+  //       await modal.alert(lang[sentMessage.msg]?.replace("{SIZE}", "2 MB") || lang.ERROR)
+  //       this.isLocked = false
+  //     }
+  //     pendingMessage.clickListener("retry", "cancel")
+  //     this.isLocked = false
+  //     return
+  //   }
+  //   pendingMessage.setStatus("sent")
+
+  //   const repChat: IMessageF = sentMessage.data.chat
+  //   pendingMessage.id = repChat.id
+  //   pendingMessage.setTimeStamp(repChat.timestamp)
+  //   const repFirst = sentMessage.data.isFirst ? true : false
+  //   const roomdata: IRoomDataF = sentMessage.data.roomdata
+  //   if (repFirst) {
+  //     db.c.push({
+  //       m: [],
+  //       r: roomdata,
+  //       u: this.users
+  //     })
+  //   }
+  //   const dbchat = db.c.find((k) => k.r.id === roomdata.id)
+  //   if (dbchat) {
+  //     const oldDB = dbchat.m.find((ch) => ch.id === repChat.id)
+  //     if (oldDB) {
+  //       oldDB.text = repChat.text
+  //       oldDB.edited = repChat.edited
+  //       pendingMessage.setEdited(repChat.edited)
+  //     } else {
+  //       dbchat.m.push(repChat)
+  //     }
+  //   }
+  //   if (userState.center?.id === "chats") {
+  //     if (dbchat && dbchat.m[dbchat.m.length - 1].id !== repChat.id) return
+  //     userState.center?.update({
+  //       chat: repChat,
+  //       users: this.users,
+  //       roomid: roomdata.id,
+  //       isFirst: repFirst,
+  //       roomdata: roomdata
+  //     })
+  //   }
+  // }
+  // async deleteMessage(msgid: string): Promise<void> {
+  //   const message = this.list.get(msgid)
+  //   if (!message) return
+  //   const isUser = this.data.type === "user"
+  //   message.setStatus("pending")
+
+  //   const deletedMessage = await xhr.post(`/x/room/delMessage/${this.data.type}/${this.data.id}/${msgid}`)
+  //   if (!deletedMessage || !deletedMessage.ok) {
+  //     this.isLocked = true
+  //     await modal.alert(lang[deletedMessage.msg] || lang.ERROR)
+  //     message.setStatus(isUser && message.json.readers?.includes(this.data.id) ? "read" : "sent")
+  //     this.isLocked = false
+  //     return
+  //   }
+  //   message.deleted = true
+
+  //   const roomdata: IRoomDataF = deletedMessage.data.roomdata
+  //   const roomid = roomdata.id
+  //   const dbchat = db.c.find((k) => k.r.id === roomid)
+  //   if (userState.center?.id === "chats") {
+  //     if (dbchat?.m[dbchat.m.length - 1].id === msgid) {
+  //       userState.center?.update({
+  //         chat: message.json,
+  //         users: this.users,
+  //         roomid: roomid,
+  //         isFirst: false,
+  //         roomdata: roomdata
+  //       })
+  //     }
+  //   }
+  //   return
+  // }
   update(): void | Promise<void> {}
   async destroy(): Promise<void> {
     this.el.classList.add("out")
@@ -249,7 +285,7 @@ export default class Room implements PrimaryClass {
   run(): void {
     userState.content = this
     this.createElement()
-    culement.app().append(this.el)
+    eroot().append(this.el)
     this.writeData()
   }
 }

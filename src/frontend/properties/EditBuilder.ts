@@ -1,4 +1,4 @@
-import kelement from "../helper/kelement"
+import { kel } from "../helper/kel"
 import { lang } from "../helper/lang"
 import { transpileChat } from "../main/transpileChat"
 import RoomForm from "../pm/parts/RoomForm"
@@ -14,16 +14,16 @@ export default class EditBuilder {
     this.form = s.form
   }
   private createElement(): void {
-    const desc = kelement("p", "username", { e: `<i class="fa-solid fa-pencil"></i> ${lang.CONTENT_EDIT}` })
-    this.msg = kelement("p", "msg")
-    const left = kelement("div", "left", { e: [desc, this.msg] })
-    this.btnCancel = kelement("div", "btn btn-cancel-edit", {
+    const desc = kel("p", "username", { e: `<i class="fa-solid fa-pencil"></i> ${lang.CONTENT_EDIT}` })
+    this.msg = kel("p", "msg")
+    const left = kel("div", "left", { e: [desc, this.msg] })
+    this.btnCancel = kel("div", "btn btn-cancel-edit", {
       e: '<i class="fa-duotone fa-circle-x"></i>'
     })
-    const right = kelement("div", "right", { e: this.btnCancel })
-    const box = kelement("div", "box", { e: [left, right] })
+    const right = kel("div", "right", { e: this.btnCancel })
+    const box = kel("div", "box", { e: [left, right] })
 
-    this.el = kelement("div", "embed embed-edit", { e: box })
+    this.el = kel("div", "embed embed-edit", { e: box })
   }
   clickHandler(): void {
     this.btnCancel.onclick = () => this.form.closeEdit()
@@ -38,11 +38,12 @@ export default class EditBuilder {
   private init(): void {
     this.createElement()
     this.clickHandler()
-    const target = this.form.room.list.get(this.id)?.json
+    const target = this.form.room.field.list.get(this.id)?.json
     if (!target) return
+    const { message } = target
 
-    this.msg.innerHTML = transpileChat(target, null, true)
-    this.form.setText(target.text || "")
+    this.msg.innerHTML = transpileChat(message, null, true)
+    this.form.setText(message.text || "")
   }
   run(): this {
     this.init()

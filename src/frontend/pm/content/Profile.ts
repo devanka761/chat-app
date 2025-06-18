@@ -11,13 +11,13 @@ import swiper from "../../manager/swiper"
 import Room from "./Room"
 
 export default class Profile implements PrimaryClass {
-  readonly id: string
+  readonly role: string
   public isLocked: boolean
   private el: HTMLDivElement
   public user: IUserF
   private classBefore?: PrimaryClass
   constructor(s: { user: IUserF; classBefore?: PrimaryClass }) {
-    this.id = "profile"
+    this.role = "profile"
     this.isLocked = false
     this.user = s.user
     this.classBefore = s.classBefore

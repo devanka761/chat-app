@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // import { KiriminHttpResponse } from "../types/helper.types"
 
-import { IRepB, IReqType, SivalKeyType } from "../../backend/types/validate.types"
+import { IRepB, IReqType } from "../../backend/types/validate.types"
 
-async function efetch(method: IReqType, url: string, s?: SivalKeyType): Promise<IRepB> {
+async function efetch(method: IReqType, url: string, s?: any): Promise<IRepB> {
   return await fetch(url, {
     method,
     headers: { "Content-Type": "application/json", Accept: "application/json" },
@@ -20,7 +21,7 @@ async function efetch(method: IReqType, url: string, s?: SivalKeyType): Promise<
     })
 }
 
-function exmlrequest(method: IReqType, url: string, s?: SivalKeyType, el?: boolean): Promise<IRepB> {
+function exmlrequest(method: IReqType, url: string, s?: any, el?: boolean): Promise<IRepB> {
   return new Promise((resolve) => {
     const xhr: XMLHttpRequest = new XMLHttpRequest()
     xhr.open(method, url)
@@ -61,10 +62,10 @@ export default {
   async get(ref: string): Promise<IRepB> {
     return await efetch("GET", ref)
   },
-  async post(ref: string, s?: SivalKeyType): Promise<IRepB> {
+  async post(ref: string, s?: any): Promise<IRepB> {
     return await efetch("POST", ref, s)
   },
-  async upload(ref: string, s?: SivalKeyType, el?: boolean): Promise<IRepB> {
+  async upload(ref: string, s?: any, el?: boolean): Promise<IRepB> {
     return await exmlrequest("POST", ref, s, el)
   }
 }
