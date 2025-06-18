@@ -1,5 +1,4 @@
-import culement from "../../helper/culement"
-import kelement from "../../helper/kelement"
+import { eroot, kel } from "../../helper/kel"
 import { lang } from "../../helper/lang"
 import userState from "../../main/userState"
 import { PrimaryClass } from "../../types/userState.types"
@@ -15,11 +14,11 @@ export default class Nav implements PrimaryClass {
     this.isLocked = false
   }
   private createElement(): void {
-    this.el = kelement("div", "nav")
+    this.el = kel("div", "nav")
   }
   private writeNav(): void {
     _navlist.forEach((btn) => {
-      const elnav = kelement("div", `btn nav-${btn.id}`)
+      const elnav = kel("div", `btn nav-${btn.id}`)
 
       const centerClass = <PrimaryClass>userState.currcenter
       if (centerClass.id === btn.id) {
@@ -27,7 +26,7 @@ export default class Nav implements PrimaryClass {
       } else if ((!centerClass || !centerClass.id) && btn.id === "chats") {
         elnav.classList.add("selected")
       }
-      elnav.append(kelement("i", btn.c), kelement("p", null, { e: lang[btn.txt] }))
+      elnav.append(kel("i", btn.c), kel("p", null, { e: lang[btn.txt] }))
       this.el.append(elnav)
       elnav.onclick = async () => {
         if (this.isLocked) return
@@ -49,7 +48,7 @@ export default class Nav implements PrimaryClass {
   run(): void {
     userState.tab = this
     this.createElement()
-    culement.app().append(this.el)
+    eroot().append(this.el)
     this.writeNav()
   }
 }

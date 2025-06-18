@@ -1,5 +1,14 @@
 import { KelementAttr, SSKelement } from "../types/helper.types"
 
+export function qutor(classnames: string, parent?: HTMLElement | null): HTMLElement | null {
+  const el = parent ?? document.body
+  return el.querySelector(classnames)
+}
+
+export function eroot(): HTMLDivElement {
+  return document.querySelector(".app") as HTMLDivElement
+}
+
 const idAliases = ["id", "#"] as const
 const childAliases = ["child", "e"] as const
 const attrAliases = ["a", "attr"] as const
@@ -23,16 +32,9 @@ function getChildValue(cla: KelementAttr): (keyof SSKelement | string)[] | undef
   }
   return undefined
 }
-// function createElementWithMap<K extends keyof HTMLElementTagNameMap>(tagName: K): HTMLElementTagNameMap[K] {
-//   return document.createElement(tagName)
-// }
-export default function kelement<KelementTag extends keyof HTMLElementTagNameMap>(
-  tagName: KelementTag,
-  className?: string | null,
-  prop?: KelementAttr
-): HTMLElementTagNameMap[KelementTag] {
+
+export function kel<KelementTag extends keyof HTMLElementTagNameMap>(tagName: KelementTag, className?: string | null, prop?: KelementAttr): HTMLElementTagNameMap[KelementTag] {
   const el = document.createElement(tagName)
-  // const el = createElementWithMap(tagName)
   idAliases.forEach((alias) => {
     if (prop?.[alias]) {
       const idVal = getIdValue({ [alias]: prop[alias] })

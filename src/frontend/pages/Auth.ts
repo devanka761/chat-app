@@ -1,17 +1,17 @@
 import config from "../../backend/config/config"
-import kelement from "../helper/kelement"
 import * as klang from "../helper/lang"
 import modal from "../helper/modal"
 import xhr from "../helper/xhr"
 import Chats from "../pm/center/Chats"
 import Account from "../pm/content/Account"
-import { AccountDB } from "../../backend/types/account.types"
-// import Empty from "../pm/content/Empty"
+import { IAccountB } from "../../backend/types/account.types"
+import { IRepB } from "../../backend/types/validate.types"
 import headerBar from "../pm/header/HeaderBar"
 import Nav from "../pm/header/Nav"
-import { KiriminHttpResponse, LangObject, Languages } from "../types/helper.types"
+import { LangObject, Languages } from "../types/helper.types"
 import db from "../manager/db"
 import cloud from "../manager/cloud"
+import kel from "../helper/kel"
 
 let lang: LangObject = {}
 
@@ -24,14 +24,9 @@ const ProviderObject = {
 }
 
 function loginProvider(provider: LoginProvider): HTMLElement {
-  // const btn = <HTMLElement>document.createElement("div")
-  // btn.classList.add("inp")
-
-  // btn.innerHTML = `<a href="/x/auth/${ProviderObject[provider]}" class="btn btn-${ProviderObject[provider]}"><i class="fa-brands fa-${ProviderObject[provider]}"></i> ${ProviderObject[provider]} Login</a>`
-
-  const btn = kelement("div", "inp")
+  const btn = kel("div", "inp")
   btn.append(
-    kelement("a", `btn btn-${ProviderObject[provider]}`, {
+    kel("a", `btn btn-${ProviderObject[provider]}`, {
       a: { href: `/x/auth/${ProviderObject[provider]}` },
       e: `<i class="fa-brands fa-${ProviderObject[provider]}"></i> ${ProviderObject[provider]} Login`
     })
@@ -55,14 +50,14 @@ let auth_container: HTMLDivElement | null = null
 export default class Auth {
   private el: HTMLDivElement
   private crateElement(): void {
-    this.el = kelement("div", "Auth")
+    this.el = kel("div", "Auth")
     this.el.innerHTML = `<div class="none"><i class="fa-solid fa-map"></i> <i class="fa-regular fa-map"></i> <i class="fa-light fa-map"></i> <i class="fa-thin fa-map"></i> <i class="fa-duotone fa-solid fa-map"></i> <i class="fa-duotone fa-regular fa-map"></i> <i class="fa-duotone fa-light fa-map"></i> <i class="fa-duotone fa-thin fa-map"></i> <i class="fa-sharp fa-solid fa-map"></i> <i class="fa-brands fa-font-awesome"></i> <i class="fa-sharp fa-regular fa-map"></i> <i class="fa-sharp fa-light fa-map"></i> <i class="fa-sharp fa-thin fa-map"></i> <i class="fa-sharp-duotone fa-solid fa-map"></i> <i class="fa-sharp-duotone fa-regular fa-map"></i> <i class="fa-sharp-duotone fa-light fa-map"></i> <i class="fa-sharp-duotone fa-thin fa-map"></i></div>`
   }
   private async checkUser(): Promise<void> {
     await klang.klang.load()
     lang = klang.lang
 
-    const isUser: KiriminHttpResponse = (await modal.loading(xhr.get("/x/auth/isUser"))) as KiriminHttpResponse
+    const isUser: IRepB = await modal.loading(xhr.get("/x/auth/isUser"))
     if (isUser.code !== 200) {
       this.el.querySelector(".none")?.remove()
       return this.writeForm()
@@ -76,7 +71,7 @@ export default class Auth {
     // new Empty().run()
     new Account().run()
   }
-  private initializeData(s: AccountDB): void {
+  private initializeData(s: IAccountB): void {
     if (s.peer) cloud.run(s.peer)
     if (s.me) db.me = s.me
     if (s.c) db.c = s.c
@@ -103,7 +98,7 @@ class SignEmail {
     this.isLocked = false
   }
   private createElement(): void {
-    this.el = kelement("div", "box")
+    this.el = kel("div", "box")
     this.el.innerHTML = `
     <div class="top">
       <p>KIRIMIN</p>
@@ -173,7 +168,7 @@ class SignEmail {
       const data = {}
       const formData = new FormData(form)
       formData.forEach((val, k) => (data[k] = val.toString()))
-      const userLogin: KiriminHttpResponse = (await modal.loading(xhr.post("/x/auth/sign-in", data))) as KiriminHttpResponse
+      const userLogin: IRepB = await modal.loading(xhr.post("/x/auth/sign-in", data))
       if (!userLogin.ok) {
         await modal.alert(lang[userLogin.msg] || lang.ERROR)
         this.isLocked = false
@@ -206,7 +201,7 @@ class SignCode {
     this.isLocked = false
   }
   private createElement(): void {
-    this.el = kelement("div", "box")
+    this.el = kel("div", "box")
     this.el.innerHTML = `
     <div class="top">
       <p>KIRIMIN</p>
@@ -286,7 +281,7 @@ class SignCode {
       const data = {}
       const formData = new FormData(form)
       formData.forEach((val, k) => (data[k] = val))
-      const userLogin: KiriminHttpResponse = (await modal.loading(xhr.post("/x/auth/verify", data))) as KiriminHttpResponse
+      const userLogin: IRepB = await modal.loading(xhr.post("/x/auth/verify", data))
       if (!userLogin.ok) {
         await modal.alert(lang[userLogin.msg] || lang.ERROR)
         this.isLocked = false

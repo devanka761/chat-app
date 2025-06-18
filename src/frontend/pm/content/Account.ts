@@ -1,5 +1,4 @@
-import culement from "../../helper/culement"
-import kelement from "../../helper/kelement"
+import { eroot, kel } from "../../helper/kel"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import sdate from "../../helper/sdate"
@@ -20,7 +19,7 @@ export default class Account implements PrimaryClass {
     this.x = {}
   }
   private createElement() {
-    this.el = kelement("div", "Account pmcontent")
+    this.el = kel("div", "Account pmcontent")
     this.el.innerHTML = `
     <div class="top">
       <div class="btn btn-back"><i class="fa-solid fa-arrow-left"></i></div>
@@ -199,7 +198,7 @@ export default class Account implements PrimaryClass {
     }
     const btnImg = <HTMLDivElement>this.el.querySelector(".btn-img")
     btnImg.onclick = () => {
-      const inp = kelement("input", null, { a: { type: "file", accept: "image/*" } })
+      const inp = kel("input", null, { a: { type: "file", accept: "image/*" } })
       inp.onchange = async () => {
         if (this.isLocked) return
         this.isLocked = true
@@ -218,15 +217,23 @@ export default class Account implements PrimaryClass {
           this.isLocked = false
           return
         }
-        const imgsrc = await new Promise((resolve) => {
+        const imgbuffer: string | undefined = await new Promise((resolve) => {
           const reader = new FileReader()
           reader.onload = () => {
-            return resolve(reader.result)
+            return resolve(reader.result?.toString())
           }
           reader.readAsDataURL(file)
         })
 
-        const setImg = await modal.loading(xhr.post("/x/account/set-img", { img: imgsrc, name: file.name }, true), lang.UPLOADING)
+        if (!imgbuffer) {
+          await modal.alert({ ic: "image-slash", msg: lang.IMG_ERR })
+          this.isLocked = false
+          return
+        }
+
+        const imgsrc = imgbuffer
+
+        const setImg = await modal.loading(xhr.upload("/x/account/set-img", { img: imgsrc, name: file.name }, true), lang.UPLOADING)
         if (setImg?.code === 413) {
           await modal.alert(lang.ACC_FILE_LIMIT.replace(/{SIZE}/g, "2.5MB"))
           this.isLocked = false
@@ -269,7 +276,7 @@ export default class Account implements PrimaryClass {
   private renEmails(): void {
     const eemails = <HTMLParagraphElement>this.el.querySelector(".useremail .outer .chp-f")
     db.me.email?.forEach((sid) => {
-      eemails.append(kelement("p", null, { e: `${sid.email} - ${sid.provider}` }))
+      eemails.append(kel("p", null, { e: `${sid.email} - ${sid.provider}` }))
     })
   }
   update(): void | Promise<void> {}
@@ -282,7 +289,7 @@ export default class Account implements PrimaryClass {
   run(): void {
     userState.content = this
     this.createElement()
-    culement.app().append(this.el)
+    eroot().append(this.el)
     this.writeDetail()
     this.btnListener()
   }

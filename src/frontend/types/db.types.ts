@@ -1,3 +1,5 @@
+import { TRoomTypeF } from "./room.types"
+
 export interface EmailProvider {
   provider: string
   email: string
@@ -67,6 +69,7 @@ export interface IRoomDataF {
   short: string
   image?: string
   badges?: number[]
+  type: TRoomTypeF
 }
 export interface IChatsF {
   r: IRoomDataF

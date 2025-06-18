@@ -1,8 +1,7 @@
-import culement from "./culement"
-import kelement from "./kelement"
+import { kel, eroot } from "./kel"
 
 function waittime(ms = 495) {
-  return new Promise(resolve => setTimeout(resolve, ms))
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 let nindex = 0
@@ -24,17 +23,17 @@ class Notip {
     this.ic = ic
   }
   createElement(): void {
-    this.el = kelement("div", "notip")
+    this.el = kel("div", "notip")
   }
   writeData(): void {
-    const eicon = kelement("div", "icon")
-    const etop = kelement("div", "top")
-    const ebottom = kelement("div", "bottom")
-    const etext = kelement("div", "text")
+    const eicon = kel("div", "icon")
+    const etop = kel("div", "top")
+    const ebottom = kel("div", "bottom")
+    const etext = kel("div", "text")
     etext.append(etop, ebottom)
-    const edetail = kelement("div", "detail")
+    const edetail = kel("div", "detail")
     edetail.append(eicon, etext)
-    const eclose = kelement("div", "close btn-close", { e: `<div class="btn"><i class="fa-solid fa-x"></i></div>` })
+    const eclose = kel("div", "close btn-close", { e: `<div class="btn"><i class="fa-solid fa-x"></i></div>` })
     this.el.append(edetail, eclose)
     if (this.c) this.el.classList.add(cl[this.c.toString()])
     if (this.ic) eicon.innerHTML = '<i class="fa-solid fa-' + this.ic + '"></i>'
@@ -60,7 +59,7 @@ class Notip {
   run() {
     this.createElement()
     this.writeData()
-    culement.app().append(this.el)
+    eroot().append(this.el)
     nshowtime = setTimeout(() => {
       this.destroy()
     }, 3995)

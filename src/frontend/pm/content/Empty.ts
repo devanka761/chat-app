@@ -1,5 +1,4 @@
-import culement from "../../helper/culement"
-import kelement from "../../helper/kelement"
+import { eroot, kel } from "../../helper/kel"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import userState from "../../main/userState"
@@ -13,7 +12,7 @@ export default class Empty implements PrimaryClass {
     this.id = "empty"
   }
   createElement() {
-    this.el = kelement("div", "Empty pmcontent")
+    this.el = kel("div", "Empty pmcontent")
     this.el.innerHTML = `
     <div class="title">
       <div class="img">
@@ -35,6 +34,6 @@ export default class Empty implements PrimaryClass {
   run(): void {
     userState.content = this
     this.createElement()
-    culement.app().append(this.el)
+    eroot().append(this.el)
   }
 }

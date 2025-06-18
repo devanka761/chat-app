@@ -1,6 +1,5 @@
-import culement from "../../helper/culement"
+import { kel, eroot } from "../../helper/kel"
 import { escapeHTML, ss } from "../../helper/escaper"
-import kelement from "../../helper/kelement"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import notip from "../../helper/notip"
@@ -9,24 +8,24 @@ import xhr from "../../helper/xhr"
 import userState from "../../main/userState"
 import resetform from "../../manager/resetform"
 import swiper from "../../manager/swiper"
-import { UserDB } from "../../types/db.types"
+import { IUserF } from "../../types/db.types"
 import { PrimaryClass } from "../../types/userState.types"
 import Profile from "../content/Profile"
 
-function user_card(s: UserDB): { [key: string]: HTMLDivElement } {
+function user_card(s: IUserF): { [key: string]: HTMLDivElement } {
   const { username, displayname, image, badges } = s
-  const card = kelement("div", "card")
-  const eleft = kelement("div", "left")
-  // const eright = kelement("div", "right")
-  const ecimg = kelement("div", "img")
+  const card = kel("div", "card")
+  const eleft = kel("div", "left")
+  // const eright = kel("div", "right")
+  const ecimg = kel("div", "img")
   const img = new Image()
   img.onerror = () => (img.src = "/assets/user.jpg")
   img.alt = username
   img.src = image ? `/file/user/${image}` : "/assets/user.jpg"
   img.width = 50
-  const edetail = kelement("div", "detail")
-  const eusername = kelement("div", "name", { e: `${username}` })
-  const elastchat = kelement("div", "last", { e: escapeHTML(ss(displayname, 30)) })
+  const edetail = kel("div", "detail")
+  const eusername = kel("div", "name", { e: `${username}` })
+  const elastchat = kel("div", "last", { e: escapeHTML(ss(displayname, 30)) })
   if (badges) setbadge(eusername, badges)
 
   card.append(eleft /*eright*/)
@@ -46,19 +45,19 @@ export default class Find implements PrimaryClass {
     this.isLocked = false
   }
   private createElement() {
-    this.el = kelement("div", "Chats pmcenter")
+    this.el = kel("div", "Chats pmcenter")
   }
   private renderBtn(): void {
-    const searchBar1 = kelement("div", "search", { e: `<p>${lang.FIND_RANDOM}</p>` })
-    const btnRandom = kelement("div", "btn btn-random", { e: `<i class="fa-solid fa-play"></i> ${lang.FIND_START}` })
+    const searchBar1 = kel("div", "search", { e: `<p>${lang.FIND_RANDOM}</p>` })
+    const btnRandom = kel("div", "btn btn-random", { e: `<i class="fa-solid fa-play"></i> ${lang.FIND_START}` })
     searchBar1.append(btnRandom)
-    const searchBar2 = kelement("div", "search")
-    const form = kelement("form", "form form-search-user", {
+    const searchBar2 = kel("div", "search")
+    const form = kel("form", "form form-search-user", {
       a: { action: "/x/profile/search" },
       e: `<p><label for="search_id">${lang.FIND_ID}</label></p><input type="text" name="search_id" id="search_id" placeholder="${lang.TYPE_HERE}" maxLength="30"/><button class="btn"><i class="fa-solid fa-magnifying-glass"></i> ${lang.FIND_SEARCH}</button>`
     })
     searchBar2.append(form)
-    const cardlist = kelement("div", "card-list")
+    const cardlist = kel("div", "card-list")
     this.el.append(searchBar1, searchBar2, cardlist)
     this.formListener(btnRandom, form, cardlist)
     const inp = form.querySelector("input")
@@ -86,7 +85,7 @@ export default class Find implements PrimaryClass {
         return
       }
       resetform(form)
-      const eloading = kelement("div", "card", { e: `<div class="getload"><div class="spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div>LOADING</div>` })
+      const eloading = kel("div", "card", { e: `<div class="getload"><div class="spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div>LOADING</div>` })
       cardlist.prepend(eloading)
       await modal.waittime(1000)
       const searchResult = await xhr.get(`/x/profile/search/${data.search_id}`)
@@ -96,7 +95,7 @@ export default class Find implements PrimaryClass {
         this.isLocked = false
         return
       }
-      const userResult = (<unknown>searchResult?.data?.users || []) as UserDB[]
+      const userResult = (<unknown>searchResult?.data?.users || []) as IUserF[]
       if (userResult.length < 1) {
         await modal.alert(lang.FIND_NOTFOUND)
         this.isLocked = false
@@ -141,7 +140,7 @@ export default class Find implements PrimaryClass {
   run(): void {
     userState.center = this
     this.createElement()
-    culement.app().append(this.el)
+    eroot().append(this.el)
     this.renderBtn()
   }
 }

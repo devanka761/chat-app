@@ -1,5 +1,4 @@
-import culement from "../helper/culement"
-import kelement from "../helper/kelement"
+import { kel, eroot } from "../helper/kel"
 import { ForceCloseObject } from "../types/cloud.types"
 
 export default class ForceClose {
@@ -15,18 +14,18 @@ export default class ForceClose {
     this.action_url = s.action_url || null
   }
   createElement() {
-    this.el = kelement("div", "ForceClose")
-    const ebox = kelement("div", "box")
+    this.el = kel("div", "ForceClose")
+    const ebox = kel("div", "box")
     ebox.innerHTML = `<div class="msg msg-1">${this.msg_1}</div><div class="msg msg-2">${this.msg_2}</div>`
     if (this.action_text && this.action_url) {
-      const msg_3 = kelement("div", "msg msg-3")
+      const msg_3 = kel("div", "msg msg-3")
       msg_3.innerHTML = `<p><a href="${this.action_url}">${this.action_text}</a></p>`
       ebox.append(msg_3)
     }
     this.el.append(ebox)
   }
   destroyAll() {
-    const appel = culement.app()
+    const appel = eroot()
     while (appel.lastChild) appel.lastChild.remove()
     appel.append(this.el)
   }

@@ -1,19 +1,20 @@
-import { KiriminHttpResponse, ModalAlert, ModalConfirm, ModalPrompt, ModalSelect } from "../types/helper.types"
-import kelement from "./kelement"
+import { ModalAlert, ModalConfirm, ModalPrompt, ModalSelect } from "../types/helper.types"
+import { IRepB } from "../../backend/types/validate.types"
 import * as klang from "./lang"
+import { kel, eroot, qutor } from "./kel"
 
 const modal = {
   async waittime(ts: number = 500, tsa: number = 5): Promise<void> {
     const ms: number = ts - tsa || 0
     return new Promise((resolve) => setTimeout(resolve, ms))
   },
-  async loading(newfunc: Promise<object | string | number | void>, msg: string = "LOADING"): Promise<KiriminHttpResponse> {
-    const el = kelement("div", "loading", {
-      e: kelement("div", "box", {
-        e: [kelement("div", "spinner", { e: kelement("i", "fa-solid fa-circle-notch fa-spin") }), kelement("div", "msg", { e: kelement("p", null, { e: msg }) })]
+  async loading(newfunc: Promise<object | string | number | void>, msg: string = "LOADING"): Promise<IRepB> {
+    const el = kel("div", "loading", {
+      e: kel("div", "box", {
+        e: [kel("div", "spinner", { e: kel("i", "fa-solid fa-circle-notch fa-spin") }), kel("div", "msg", { e: kel("p", null, { e: msg }) })]
       })
     })
-    document.querySelector(".app")?.append(el)
+    eroot().append(el)
 
     await this.waittime()
 
@@ -32,7 +33,7 @@ const modal = {
       })
   },
   element(): HTMLElement {
-    return kelement("div", "modal")
+    return kel("div", "modal")
   },
   async alert(options: object | string): Promise<boolean> {
     return new Promise((resolve) => {
@@ -64,20 +65,21 @@ const modal = {
         </div>
       </div>`
 
-      const btn = el.querySelector(".act .btn-ok")
-      if (s.okx) btn.innerText = s.okx
+      const btn = qutor(".act .btn-ok", el)
+      if (s.okx && btn) btn.innerText = s.okx
 
-      document.querySelector(".app")?.append(el)
-      btn.focus()
+      eroot().append(el)
+      btn?.focus()
 
-      btn.onclick = async (): Promise<void> => {
-        el.classList.add("out")
-        await this.waittime(500, 5)
-        el.remove()
-        resolve(false)
-        if (s.ok) s.ok()
-        return
-      }
+      if (btn)
+        btn.onclick = async (): Promise<void> => {
+          el.classList.add("out")
+          await this.waittime(500, 5)
+          el.remove()
+          resolve(false)
+          if (s.ok) s.ok()
+          return
+        }
     })
   },
   confirm(options: object | string): Promise<boolean> {
@@ -115,7 +117,7 @@ const modal = {
       if (s.img) {
         const img = new Image()
         img.src = s.img
-        el.querySelector(".box .inf").append(img)
+        qutor(".box .inf", el)?.append(img)
         img.onerror = async () => {
           el.classList.add("out")
           await this.waittime()
@@ -123,28 +125,30 @@ const modal = {
           return resolve(await this.alert({ msg: lang.IMG_ERR, ic: "image-slash" }))
         }
       }
-      const btnOk = el.querySelector(".acts .btn-ok")
-      if (s.okx) btnOk.innerText = s.okx
-      const btnCancel = el.querySelector(".acts .btn-cancel")
-      if (s.cancelx) btnCancel.innerText = s.cancelx
+      const btnOk = qutor(".acts .btn-ok", el)
+      if (s.okx && btnOk) btnOk.innerText = s.okx
+      const btnCancel = qutor(".acts .btn-cancel", el)
+      if (s.cancelx && btnCancel) btnCancel.innerText = s.cancelx
 
-      document.querySelector(".app")?.append(el)
-      btnOk.focus()
+      eroot().append(el)
+      btnOk?.focus()
 
-      btnOk.onclick = async () => {
-        el.classList.add("out")
-        await this.waittime(500, 5)
-        el.remove()
-        resolve(true)
-        if (s.ok) s.ok()
-      }
-      btnCancel.onclick = async () => {
-        el.classList.add("out")
-        await this.waittime(500, 5)
-        el.remove()
-        resolve(false)
-        if (s.cancel) s.cancel()
-      }
+      if (btnOk)
+        btnOk.onclick = async () => {
+          el.classList.add("out")
+          await this.waittime(500, 5)
+          el.remove()
+          resolve(true)
+          if (s.ok) s.ok()
+        }
+      if (btnCancel)
+        btnCancel.onclick = async () => {
+          el.classList.add("out")
+          await this.waittime(500, 5)
+          el.remove()
+          resolve(false)
+          if (s.cancel) s.cancel()
+        }
     })
   },
   prompt(options: object): Promise<string | null> {
@@ -176,13 +180,13 @@ const modal = {
         </div>
       </div>`
 
-      const einf = el.querySelector(".inf")
+      const einf = qutor(".inf", el)
       let inp: HTMLInputElement | HTMLTextAreaElement | null = null
       if (s.tarea) {
-        inp = kelement("textarea")
+        inp = kel("textarea")
         inp.maxLength = s.max ? s.max : 300
       } else {
-        inp = kelement("input")
+        inp = kel("input")
         inp.type = "text"
         inp.maxLength = s.max ? s.max : 100
         inp.autocomplete = "off"
@@ -195,34 +199,36 @@ const modal = {
         inp.oninput = () => (inp.value = inp.value.replace(tpRegex, ""))
       }
 
-      const btnOk = el.querySelector(".acts .btn-ok")
-      if (s.okx) btnOk.innerText = s.okx
-      const btnCancel = el.querySelector(".acts .btn-cancel")
-      if (s.cancelx) btnCancel.innerText = s.cancelx
+      const btnOk = qutor(".acts .btn-ok", el)
+      if (s.okx && btnOk) btnOk.innerText = s.okx
+      const btnCancel = qutor(".acts .btn-cancel", el)
+      if (s.cancelx && btnCancel) btnCancel.innerText = s.cancelx
 
-      einf.append(inp)
-      document.querySelector(".app")?.append(el)
+      einf?.append(inp)
+      eroot().append(el)
       inp.focus()
       if (s.val) inp.value = s.val
 
-      btnOk.onclick = async () => {
-        el.classList.add("out")
-        await this.waittime()
-        el.remove()
-        resolve(inp.value)
-        if (s.ok) s.ok()
-      }
-      btnCancel.onclick = async () => {
-        el.classList.add("out")
-        await this.waittime()
-        el.remove()
-        resolve(null)
-        if (s.cancel) s.cancel()
-      }
+      if (btnOk)
+        btnOk.onclick = async () => {
+          el.classList.add("out")
+          await this.waittime()
+          el.remove()
+          resolve(inp.value)
+          if (s.ok) s.ok()
+        }
+      if (btnCancel)
+        btnCancel.onclick = async () => {
+          el.classList.add("out")
+          await this.waittime()
+          el.remove()
+          resolve(null)
+          if (s.cancel) s.cancel()
+        }
       inp.onkeydown = (e) => {
         if (e.key.toLowerCase() === "enter") {
           e.preventDefault()
-          btnOk.click()
+          btnOk?.click()
         }
       }
     })
@@ -262,10 +268,10 @@ const modal = {
         </div>
       </div>`
 
-      const form = el.querySelector(".box .inf #modal-radio-form")
+      const form = qutor(".box .inf #modal-radio-form", el) as HTMLFormElement
       const optionId: string = Date.now().toString(36)
       s.items.forEach((itm) => {
-        const radioInp = kelement("input", null, {
+        const radioInp = kel("input", null, {
           a: {
             type: "radio",
             name: optionId,
@@ -275,39 +281,41 @@ const modal = {
             checked: itm.activated ? "true" : false
           }
         })
-        const radioLabel = kelement("label", null, {
+        const radioLabel = kel("label", null, {
           a: { for: `${optionId}-${itm.id}` },
           e: [radioInp, `<p>${itm.label}</p>`]
         })
 
-        const radio = kelement("div", "radio", { e: radioLabel })
+        const radio = kel("div", "radio", { e: radioLabel })
         form.append(radio)
       })
 
-      const btnOk = el.querySelector(".acts .btn-ok")
-      if (s.okx) btnOk.innerText = s.okx
-      const btnCancel = el.querySelector(".acts .btn-cancel")
-      if (s.cancelx) btnCancel.innerText = s.cancelx
+      const btnOk = qutor(".acts .btn-ok", el)
+      if (s.okx && btnOk) btnOk.innerText = s.okx
+      const btnCancel = qutor(".acts .btn-cancel", el)
+      if (s.cancelx && btnCancel) btnCancel.innerText = s.cancelx
 
-      document.querySelector(".app")?.append(el)
+      eroot().append(el)
 
-      btnOk.onclick = async () => {
-        let data: string | null = null
-        const formData = new FormData(form)
-        formData.forEach((val) => (data = val.toString()))
-        el.classList.add("out")
-        await this.waittime()
-        el.remove()
-        resolve(data)
-        if (s.ok) s.ok()
-      }
-      btnCancel.onclick = async () => {
-        el.classList.add("out")
-        await this.waittime()
-        el.remove()
-        resolve(null)
-        if (s.cancel) s.cancel()
-      }
+      if (btnOk)
+        btnOk.onclick = async () => {
+          let data: string | null = null
+          const formData = new FormData(form)
+          formData.forEach((val) => (data = val.toString()))
+          el.classList.add("out")
+          await this.waittime()
+          el.remove()
+          resolve(data)
+          if (s.ok) s.ok()
+        }
+      if (btnCancel)
+        btnCancel.onclick = async () => {
+          el.classList.add("out")
+          await this.waittime()
+          el.remove()
+          resolve(null)
+          if (s.cancel) s.cancel()
+        }
     })
   }
 }

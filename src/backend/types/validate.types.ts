@@ -10,6 +10,8 @@ export type SivalKeyType = {
   [key: string]: SivalType
 }
 
+export type IReqType = "POST" | "GET"
+
 export interface IRepTempB {
   ok?: boolean
   code: number
@@ -19,6 +21,7 @@ export interface IRepTempB {
 
 export interface IRepB extends IRepTempB {
   ok: boolean
+  msg: string
 }
 export interface Zender {
   key: string

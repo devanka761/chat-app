@@ -3,11 +3,12 @@ import globals from "globals"
 import tseslint from "typescript-eslint"
 import { defineConfig, globalIgnores } from "eslint/config"
 
+
 export default defineConfig([
   globalIgnores(["node_modules/", "dist/", "public/", "ex/", "templates/", "views/", "*.json", "webpack*"]),
-  { rules: { "no-unused-vars": "off" } },
-  { files: ["**/*.{js,mjs,cjs,ts}"], plugins: { js }, extends: ["js/recommended"] },
-  { files: ["**/*.{js,mjs,cjs,ts}"], languageOptions: { globals: globals.node } },
+  // { rules: { "no-unused-vars": "off" } },
+  { files: ["**/*.{js,mjs,cjs,ts,mts,cts}"], plugins: { js }, extends: ["js/recommended"] },
+  { files: ["**/*.{js,mjs,cjs,ts,mts,cts}"], languageOptions: { globals: globals.node } },
   tseslint.configs.recommended,
   {
     rules: {

@@ -1,14 +1,12 @@
-import culement from "../../helper/culement"
-import kelement from "../../helper/kelement"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import userState from "../../main/userState"
 import db from "../../manager/db"
 import { PrimaryClass } from "../../types/userState.types"
-import { ChatDB, ChatsDB, UserDB } from "../../types/db.types"
+import { IChatsF, IMessageF, IRoomDataF, IUserF } from "../../types/db.types"
 import ChatsAPI from "../../properties/ChatsAPI"
 import ChatBuilder from "../../properties/ChatBuilder"
-import { RoomDetail } from "../../types/room.types"
+import { kel, eroot } from "../../helper/kel"
 
 export default class Chats implements PrimaryClass {
   readonly id: string
@@ -22,36 +20,27 @@ export default class Chats implements PrimaryClass {
     this.list = new ChatsAPI({ data: [] })
   }
   private createElement(): void {
-    this.el = kelement("div", "Chats pmcenter")
-    this.card_list = kelement("div", "card-list")
+    this.el = kel("div", "Chats pmcenter")
+    this.card_list = kel("div", "card-list")
     this.el.append(this.card_list)
   }
   private btnListener(): void {}
   private writeChatList(): void {
-    const cdb: ChatsDB[] = db.c.sort((a, b) => {
-      if (a.c[a.c.length - 1].timestamp < b.c[b.c.length - 1].timestamp) return 1
-      if (a.c[a.c.length - 1].timestamp > b.c[b.c.length - 1].timestamp) return -1
+    const cdb: IChatsF[] = db.c.sort((a, b) => {
+      if (a.m[a.m.length - 1].timestamp < b.m[b.m.length - 1].timestamp) return 1
+      if (a.m[a.m.length - 1].timestamp > b.m[b.m.length - 1].timestamp) return -1
       return 0
     })
     cdb.forEach((ch) => {
       const user = ch.u.find((usr) => usr.id !== db.me.id)
       if (!user) return
 
-      const unread = ch.c.filter((ct) => {
+      const unread = ch.m.filter((ct) => {
         return ct.userid !== db.me.id && ct.type !== "deleted" && !ct.readers?.includes(db.me.id)
       }).length
 
-      const lastchat = ch.c[ch.c.length - 1]
-      const roomDetail: RoomDetail = {
-        type: "user",
-        id: user.id,
-        name: {
-          short: user.username,
-          full: user.displayname
-        },
-        img: user.image,
-        badges: user.badges
-      }
+      const lastchat = ch.m[ch.m.length - 1]
+      const roomDetail: IRoomDataF = ch.r
       const card = new ChatBuilder({ data: roomDetail, users: [user], chat: lastchat })
       card.setUnread(unread).run()
       this.list.add(card)
@@ -59,11 +48,11 @@ export default class Chats implements PrimaryClass {
     })
     this.writeIfEmpty(cdb)
   }
-  private writeIfEmpty(cdb: ChatsDB[]): void {
+  private writeIfEmpty(cdb: IChatsF[]): void {
     const oldNomore: HTMLParagraphElement | null = this.el.querySelector(".nomore")
     if (cdb.length < 1) {
       if (oldNomore) return
-      const nomore = kelement("p", "nomore", { e: `${lang.CHTS_NOCHAT}<br/>${lang.CHTS_PLS}` })
+      const nomore = kel("p", "nomore", { e: `${lang.CHTS_NOCHAT}<br/>${lang.CHTS_PLS}` })
       this.card_list.append(nomore)
     } else {
       if (oldNomore) oldNomore.remove()
@@ -75,7 +64,7 @@ export default class Chats implements PrimaryClass {
     this.isLocked = false
     this.el.remove()
   }
-  update(s: { chat: ChatDB; users: UserDB[]; roomid: string; isFirst: boolean; roomdata: RoomDetail }): void {
+  update(s: { chat: IMessageF; users: IUserF[]; roomid: string; isFirst: boolean; roomdata: IRoomDataF }): void {
     if (s.isFirst) {
       const firstcard = new ChatBuilder({ data: s.roomdata, users: s.users, chat: s.chat })
       firstcard.run()
@@ -92,7 +81,7 @@ export default class Chats implements PrimaryClass {
   run(): void {
     userState.center = this
     this.createElement()
-    culement.app().append(this.el)
+    eroot().append(this.el)
     this.writeChatList()
     this.btnListener()
   }

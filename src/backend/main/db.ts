@@ -1,5 +1,5 @@
 import fs from "fs"
-import { Databases, User } from "../types/db.types"
+import { Databases, IUserB } from "../types/db.types"
 
 const dirpath: string = "./dist/db"
 const stgpath: string = "./dist/stg"
@@ -29,7 +29,7 @@ class DevankaLocal {
         this.ref[fileKey] = JSON.parse(filebuffer)
         if (fileKey === "u") {
           Object.keys(this.ref[fileKey]).forEach((objkey) => {
-            const k = objkey as keyof User
+            const k = objkey as keyof IUserB
             if (this.ref[fileKey][k].peer) delete this.ref[fileKey][k].peer
             if (this.ref[fileKey][k].zzz) delete this.ref[fileKey][k].zzz
           })

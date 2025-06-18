@@ -1,7 +1,7 @@
 import { escapeHTML, ss } from "../helper/escaper"
 import { lang } from "../helper/lang"
 import db from "../manager/db"
-import { ChatDB, UserDB } from "../types/db.types"
+import { IMessageF, IUserF } from "../types/db.types"
 
 const mediaIcons: { [key: string]: string } = {
   file: '<i class="fa-light fa-file"></i>',
@@ -10,8 +10,8 @@ const mediaIcons: { [key: string]: string } = {
   audio: '<i class="fa-light fa-music"></i>'
 }
 
-export function transpileChat(s: ChatDB, lastuser: UserDB | null = null, noStatus?: boolean): string {
-  const myId = <string>db.me.id
+export function transpileChat(s: IMessageF, lastuser?: IUserF, noStatus?: boolean): string {
+  const myId = db.me.id
   let text = ""
   if (lastuser) text = `${ss(lastuser.username, 10)} <i class="fa-regular fa-angle-right"></i> `
 

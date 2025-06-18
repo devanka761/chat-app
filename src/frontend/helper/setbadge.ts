@@ -1,4 +1,4 @@
-import kelement from "./kelement"
+import kel from "./kel"
 
 const localeBadge: { [key: string]: [string, string] } = {
   "1": ["dev", "DEVELOPER"],
@@ -9,7 +9,7 @@ const localeBadge: { [key: string]: [string, string] } = {
 }
 function parseBadge(n: number | string): HTMLElement {
   if (typeof n === "number") n = n.toString()
-  const i = kelement("i", "B")
+  const i = kel("i", "B")
   i.innerHTML = localeBadge[n][0]
   i.title = localeBadge[n][1]
   return i

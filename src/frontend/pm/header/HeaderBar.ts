@@ -1,5 +1,4 @@
-import culement from "../../helper/culement"
-import kelement from "../../helper/kelement"
+import { eroot, kel } from "../../helper/kel"
 
 class HeaderBar {
   readonly id: string
@@ -16,11 +15,11 @@ class HeaderBar {
     this.isLocked = false
   }
   private createElement(): void {
-    this.el = kelement("div", "header")
-    this.apptitle = kelement("div", "title", { e: "KIRIMIN" })
-    this.eactions = kelement("div", "actions")
-    this.btn_find = kelement("div", "btn btn-find", { e: `<i class="fa-solid fa-fw fa-magnifying-glass"></i>` })
-    this.btn_settings = kelement("div", "btn btn-settings", {
+    this.el = kel("div", "header")
+    this.apptitle = kel("div", "title", { e: "KIRIMIN" })
+    this.eactions = kel("div", "actions")
+    this.btn_find = kel("div", "btn btn-find", { e: `<i class="fa-solid fa-fw fa-magnifying-glass"></i>` })
+    this.btn_settings = kel("div", "btn btn-settings", {
       e: `<i class="fa-solid fa-fw fa-ellipsis-vertical"></i>`
     })
     this.el.append(this.apptitle, this.eactions)
@@ -41,7 +40,7 @@ class HeaderBar {
   }
   run(): void {
     this.createElement()
-    culement.app().append(this.el)
+    eroot().append(this.el)
     this.btnListener()
   }
 }

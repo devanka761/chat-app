@@ -1,32 +1,29 @@
-import culement from "../../helper/culement"
-import kelement from "../../helper/kelement"
+import { eroot, kel } from "../../helper/kel"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import setbadge from "../../helper/setbadge"
 import xhr from "../../helper/xhr"
 import userState from "../../main/userState"
-import { UserDB } from "../../types/db.types"
+import { IRoomDataF, IUserF } from "../../types/db.types"
 import { PrimaryClass } from "../../types/userState.types"
-import { UserProfile } from "../../../backend/types/profile.types"
 import db from "../../manager/db"
 import swiper from "../../manager/swiper"
 import Room from "./Room"
-import { RoomDetail } from "../../types/room.types"
 
 export default class Profile implements PrimaryClass {
   readonly id: string
   public isLocked: boolean
   private el: HTMLDivElement
-  public user: UserDB
+  public user: IUserF
   private classBefore?: PrimaryClass
-  constructor(s: { user: UserDB; classBefore?: PrimaryClass }) {
+  constructor(s: { user: IUserF; classBefore?: PrimaryClass }) {
     this.id = "profile"
     this.isLocked = false
     this.user = s.user
     this.classBefore = s.classBefore
   }
   createElement(): void {
-    this.el = kelement("div", "Profile pmcontent")
+    this.el = kel("div", "Profile pmcontent")
     this.el.innerHTML = `
     <div class="top">
       <div class="btn btn-back"><i class="fa-solid fa-arrow-left"></i></div>
@@ -79,15 +76,13 @@ export default class Profile implements PrimaryClass {
     // btn-chat
     const btnChat = <HTMLDivElement>this.el.querySelector(".btn-chat")
     btnChat.onclick = () => {
-      const roomDetail: RoomDetail = {
-        type: "user",
+      const roomDetail: IRoomDataF = {
         id: this.user.id,
-        name: {
-          short: this.user.username,
-          full: this.user.displayname
-        },
-        img: this.user.image,
-        badges: this.user.badges
+        long: this.user.displayname,
+        short: this.user.username,
+        type: "user",
+        badges: this.user.badges,
+        image: this.user.image
       }
       swiper(new Room({ data: roomDetail, users: [this.user] }), userState.currcontent)
     }
@@ -103,7 +98,7 @@ export default class Profile implements PrimaryClass {
     if (this.user.isFriend === 2) return this.actSent(eoption)
     if (this.user.isFriend === 3) return this.actReceived(eoption)
   }
-  async actXhr(eoption: HTMLDivElement, ref: string, useconfirm?: string): Promise<{ ok: boolean; data?: { user: UserProfile } }> {
+  async actXhr(eoption: HTMLDivElement, ref: string, useconfirm?: string): Promise<{ ok: boolean; data?: { user: IUserF } }> {
     if (this.isLocked) return { ok: false }
     this.isLocked = true
 
@@ -124,7 +119,7 @@ export default class Profile implements PrimaryClass {
       this.isLocked = false
       return { ok: false }
     }
-    const userData = (<unknown>setreq.data.user) as UserProfile
+    const userData = setreq.data.user as IUserF
     this.user = userData
     const { isFriend } = userData
 
@@ -153,25 +148,25 @@ export default class Profile implements PrimaryClass {
     return { ok: true, data: { user: userData } }
   }
   actNotFriend(eoption: HTMLDivElement): void {
-    const btn = kelement("div", "btn sb", { e: `<i class="fa-solid fa-user-plus"></i> ${lang.PROF_ADD}` })
+    const btn = kel("div", "btn sb", { e: `<i class="fa-solid fa-user-plus"></i> ${lang.PROF_ADD}` })
     eoption.append(btn)
     btn.onclick = async () => this.actXhr(btn, "addfriend")
   }
   actFriend(eoption: HTMLDivElement): void {
-    const btn = kelement("div", "btn sr", { e: `<i class="fa-solid fa-user-minus"></i> ${lang.PROF_UNFRIEND}` })
+    const btn = kel("div", "btn sr", { e: `<i class="fa-solid fa-user-minus"></i> ${lang.PROF_UNFRIEND}` })
     btn.classList.add("btn", "sr")
     eoption.append(btn)
     btn.onclick = async () => this.actXhr(btn, "unfriend", "PROF_CONF_UNFRIEND")
   }
   actSent(eoption: HTMLDivElement): void {
     eoption.innerHTML = `<div class="note sy">${lang.PROF_WAIT}</div>`
-    const btn = kelement("div", "btn sr", { e: `<i class="fa-solid fa-user-xmark"></i> ${lang.PROF_CANCEL}` })
+    const btn = kel("div", "btn sr", { e: `<i class="fa-solid fa-user-xmark"></i> ${lang.PROF_CANCEL}` })
     eoption.append(btn)
     btn.onclick = async () => this.actXhr(btn, "cancelfriend", "PROF_CONF_CANCEL")
   }
   actReceived(eoption: HTMLDivElement): void {
-    const btn_a = kelement("div", "btn sg", { e: `<i class="fa-solid fa-user-check"></i> ${lang.PROF_ACCEPT}` })
-    const btn_b = kelement("div", "btn sr", { e: `<i class="fa-solid fa-user-xmark"></i> ${lang.PROF_IGNORE}` })
+    const btn_a = kel("div", "btn sg", { e: `<i class="fa-solid fa-user-check"></i> ${lang.PROF_ACCEPT}` })
+    const btn_b = kel("div", "btn sr", { e: `<i class="fa-solid fa-user-xmark"></i> ${lang.PROF_IGNORE}` })
 
     eoption.append(btn_a, btn_b)
     btn_a.onclick = async () => this.actXhr(btn_a, "acceptfriend")
@@ -188,7 +183,7 @@ export default class Profile implements PrimaryClass {
   run(): void {
     userState.content = this
     this.createElement()
-    culement.app().append(this.el)
+    eroot().append(this.el)
     this.writeDetail()
     this.renOptions()
     this.btnListener()

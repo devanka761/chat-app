@@ -124,7 +124,8 @@ export function convertUser(user_id: string): IRoomDataF {
     short: user.uname,
     long: user.dname,
     image: user.img,
-    badges: user.b
+    badges: user.b,
+    type: "user"
   }
 }
 export function convertGroup(group_id: string): IRoomDataF {
@@ -134,6 +135,7 @@ export function convertGroup(group_id: string): IRoomDataF {
     long: group.n || "unamed",
     short: group_id,
     badges: group.b,
-    image: group.i
+    image: group.i,
+    type: "group"
   }
 }
