@@ -273,6 +273,9 @@ $errorbg: #3d2b31;
             &.opt-profile {
               color: v.$cgreen;
             }
+            &.opt-download {
+              color: v.$yellow;
+            }
             &.opt-delete,
             &.opt-cancel {
               color: v.$cred;
@@ -486,6 +489,12 @@ $errorbg: #3d2b31;
               word-break: break-all;
               word-break: break-word;
               hyphens: auto;
+              user-select: text;
+              -webkit-tap-highlight-color: #b42751;
+              -webkit-touch-callout: #b42751;
+              -webkit-user-select: text;
+              -moz-user-select: text;
+              -ms-user-select: text;
             }
             .edited {
               color: v.$softwhite;

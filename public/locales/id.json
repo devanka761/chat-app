@@ -185,5 +185,14 @@
   "SET_NOT_ALLOW": "Tidak Diizinkan",
   "SET_ALL_NOTIF": "semua jenis notifikasi",
   "SET_CHANGE_RULE": "Ganti Izin",
-  "ROOM_TYPE_NOT_FOUND": "ID Room Chat tidak ditemukan"
+  "ROOM_TYPE_NOT_FOUND": "ID Room Chat tidak ditemukan",
+  "OPT_profile": "Lihat Profile",
+  "OPT_copy": "Salin",
+  "OPT_download": "Download File",
+  "OPT_reply": "Balas",
+  "OPT_edit": "Edit",
+  "OPT_retry": "Coba Lagi",
+  "OPT_delete": "Hapus",
+  "OPT_cancel": "Batalkan",
+  "NP_COPIED": "Berhasil Menyalin"
 }

@@ -6,12 +6,12 @@ import userState from "../../main/userState"
 import db from "../../manager/db"
 import swiper from "../../manager/swiper"
 import { IChatsF, IMessageF, IRoomDataF, IUserF } from "../../types/db.types"
-import {} from "../../types/room.types"
+import { TStatusText } from "../../types/room.types"
 import { PrimaryClass } from "../../types/userState.types"
 import RoomField from "../parts/RoomField"
 import RoomForm from "../parts/RoomForm"
 import Profile from "./Profile"
-import { IWritterF } from "../../types/message.types"
+import { IMessageUpdateF, IWritterF } from "../../types/message.types"
 import MessageBuilder from "../../properties/MessageBuilder"
 import { convertMessage } from "../../helper/helper"
 import xhr from "../../helper/xhr"
@@ -112,10 +112,12 @@ export default class Room implements PrimaryClass {
         const user: IUserF = ch.userid === db.me.id ? db.me : chats.u.find((usr) => usr.id === ch.userid) || noUser()
         const message = new MessageBuilder(ch, user, this)
         this.field.send(message.run())
-        if (this.data.type === "user" && ch.readers?.includes(this.data.id)) {
-          message.setStatus("read")
-        } else {
-          message.setStatus("sent")
+        if (ch.userid === db.me.id) {
+          if (this.data.type === "user" && ch.readers?.includes(this.data.id)) {
+            message.setStatus("read")
+          } else {
+            message.setStatus("sent")
+          }
         }
       })
     }
@@ -125,7 +127,7 @@ export default class Room implements PrimaryClass {
     this.middle.style.height = `calc(100% - (60px + ${formHeight}px))`
   }
   async sendMessage(s: IWritterF): Promise<IRepB> {
-    await modal.waittime(1000)
+    await modal.waittime(5000)
     return await xhr.post(`/x/room/sendMessage/${this.data.type}/${this.data.id}`, s)
   }
   async sendNewMessage(s: IWritterF, message: MessageBuilder): Promise<void> {
@@ -145,6 +147,7 @@ export default class Room implements PrimaryClass {
     message.setTimeStamp(msg.timestamp)
     message.update(msg)
     message.setStatus("sent")
+    this.processUpdate(messageSent.data)
   }
   async createNewMessage(s: IWritterF): Promise<void> {
     const msg = { ...convertMessage(db.me.id, s), id: Date.now().toString(36) }
@@ -152,126 +155,85 @@ export default class Room implements PrimaryClass {
     this.field.send(message.run(true))
     this.sendNewMessage(s, message)
   }
-  async sendEditedMessage(_s: IWritterF): Promise<void> {
-    return
+  async sendEditedMessage(s: IWritterF): Promise<void> {
+    if (!s.edit) return
+    const message: MessageBuilder | null = this.field.list.get(s.edit)
+    if (!message) return
+    if (message.json.message.text === s.text) return
+    message.html.scrollIntoView({ behavior: "smooth" })
+    const currStatus = message.currentStatus?.toString()
+    message.setStatus("pending")
+    const messageSent = await this.sendMessage(s)
+    if (!messageSent || !messageSent.ok) {
+      message.setStatus("failed")
+      this.isLocked = true
+      await modal.alert(lang[messageSent.msg] || lang.ERROR)
+      this.isLocked = false
+      message.setStatus((currStatus || "sent") as TStatusText)
+      message.setTimeStamp(message.json.message.timestamp)
+      message.clickListener()
+      return
+    }
+    const msg: IMessageF = messageSent.data.chat
+    message.setTimeStamp(msg.timestamp)
+    message.setText(msg.text as string)
+    message.setStatus("sent")
+    message.setEdited(msg.edited)
+    this.processUpdate(messageSent.data)
   }
   async sendWritter(s: IWritterF): Promise<void> {
     if (s.edit) return await this.sendEditedMessage(s)
     return await this.createNewMessage(s)
   }
-  async deleteMessage(_msgid: string): Promise<void> {
-    return
+  processUpdate(s: IMessageUpdateF): void {
+    if (s.isFirst) {
+      db.c.push({
+        m: [],
+        r: this.data,
+        u: this.users
+      })
+    }
+    const dbchat = db.c.find((k) => k.r.id === this.data.id)
+    if (dbchat) {
+      const oldDB = dbchat.m.find((ch) => ch.id === s.chat.id)
+      if (oldDB) {
+        oldDB.text = s.chat.text
+        oldDB.edited = s.chat.edited
+      } else {
+        dbchat.m.push(s.chat)
+      }
+    }
+    if (userState.center?.role === "chats") {
+      if (dbchat && dbchat.m[dbchat.m.length - 1].id !== s.chat.id) return
+      userState.center.update({
+        chat: s.chat,
+        users: this.users,
+        roomid: s.roomid,
+        isFirst: s.isFirst,
+        roomdata: this.data
+      })
+    }
   }
-  // async sendMessage(messageWriten: MessageWriter, isTemp?: boolean, resend?: MessageBuilder, rollback?: IMessageBuilder): Promise<void> {
-  //   const message = messageWriten.toJSON()
-  //   const pendingMessage = resend
-  //     ? resend
-  //     : this.field.send(
-  //         {
-  //           ...message,
-  //           id: Date.now().toString(36),
-  //           timestamp: Date.now(),
-  //           userid: db.me.id,
-  //           user: db.me,
-  //           edited: message.edittime,
-  //           source: message.filesrc,
-  //           roomid: this.chats?.id || this.data.id,
-  //           readers: message.watch
-  //         },
-  //         isTemp
-  //       )
-  //   if (resend && !rollback) this.field.resend(pendingMessage)
-  //   pendingMessage.setStatus("pending")
-  //   await modal.waittime(1000)
-  //   const sentMessage = await xhr.post(`/x/room/sendMessage/${this.data.type}/${this.data.id}`, message)
-  //   if (!sentMessage || !sentMessage.ok) {
-  //     this.isLocked = true
-  //     if (rollback) {
-  //       pendingMessage.setTimeStamp(rollback.timestamp)
-  //       await modal.alert(lang[sentMessage.msg] || lang.ERROR)
-  //       pendingMessage.setStatus(this.data.type === "user" && rollback.readers?.includes(this.data.id) ? "read" : "sent")
-  //       pendingMessage.setText(rollback.text as string)
-  //       pendingMessage.setEdited(rollback.edited)
-  //       this.isLocked = false
-  //       return
-  //     }
-  //     pendingMessage.setStatus("failed")
-  //     if (sentMessage.code === 404 || sentMessage.code === 413) {
-  //       await modal.alert(lang[sentMessage.msg]?.replace("{SIZE}", "2 MB") || lang.ERROR)
-  //       this.isLocked = false
-  //     }
-  //     pendingMessage.clickListener("retry", "cancel")
-  //     this.isLocked = false
-  //     return
-  //   }
-  //   pendingMessage.setStatus("sent")
+  async deleteMessage(msgid: string): Promise<void> {
+    const message = this.field.list.get(msgid)
+    if (!message) return
+    const currStatus = message.currentStatus?.toString()
+    message.setStatus("pending")
 
-  //   const repChat: IMessageF = sentMessage.data.chat
-  //   pendingMessage.id = repChat.id
-  //   pendingMessage.setTimeStamp(repChat.timestamp)
-  //   const repFirst = sentMessage.data.isFirst ? true : false
-  //   const roomdata: IRoomDataF = sentMessage.data.roomdata
-  //   if (repFirst) {
-  //     db.c.push({
-  //       m: [],
-  //       r: roomdata,
-  //       u: this.users
-  //     })
-  //   }
-  //   const dbchat = db.c.find((k) => k.r.id === roomdata.id)
-  //   if (dbchat) {
-  //     const oldDB = dbchat.m.find((ch) => ch.id === repChat.id)
-  //     if (oldDB) {
-  //       oldDB.text = repChat.text
-  //       oldDB.edited = repChat.edited
-  //       pendingMessage.setEdited(repChat.edited)
-  //     } else {
-  //       dbchat.m.push(repChat)
-  //     }
-  //   }
-  //   if (userState.center?.id === "chats") {
-  //     if (dbchat && dbchat.m[dbchat.m.length - 1].id !== repChat.id) return
-  //     userState.center?.update({
-  //       chat: repChat,
-  //       users: this.users,
-  //       roomid: roomdata.id,
-  //       isFirst: repFirst,
-  //       roomdata: roomdata
-  //     })
-  //   }
-  // }
-  // async deleteMessage(msgid: string): Promise<void> {
-  //   const message = this.list.get(msgid)
-  //   if (!message) return
-  //   const isUser = this.data.type === "user"
-  //   message.setStatus("pending")
-
-  //   const deletedMessage = await xhr.post(`/x/room/delMessage/${this.data.type}/${this.data.id}/${msgid}`)
-  //   if (!deletedMessage || !deletedMessage.ok) {
-  //     this.isLocked = true
-  //     await modal.alert(lang[deletedMessage.msg] || lang.ERROR)
-  //     message.setStatus(isUser && message.json.readers?.includes(this.data.id) ? "read" : "sent")
-  //     this.isLocked = false
-  //     return
-  //   }
-  //   message.deleted = true
-
-  //   const roomdata: IRoomDataF = deletedMessage.data.roomdata
-  //   const roomid = roomdata.id
-  //   const dbchat = db.c.find((k) => k.r.id === roomid)
-  //   if (userState.center?.id === "chats") {
-  //     if (dbchat?.m[dbchat.m.length - 1].id === msgid) {
-  //       userState.center?.update({
-  //         chat: message.json,
-  //         users: this.users,
-  //         roomid: roomid,
-  //         isFirst: false,
-  //         roomdata: roomdata
-  //       })
-  //     }
-  //   }
-  //   return
-  // }
+    const messageDeleted = await xhr.post(`/x/room/delMessage/${this.data.type}/${this.data.id}/${msgid}`)
+    if (!messageDeleted || !messageDeleted.ok) {
+      this.isLocked = true
+      message.setStatus("failed")
+      await modal.alert(lang[messageDeleted.msg] || lang.ERROR)
+      message.setTimeStamp(message.json.message.timestamp)
+      message.setStatus((currStatus || "sent") as TStatusText)
+      message.clickListener()
+      this.isLocked = false
+      return
+    }
+    message.deleted = true
+    this.processUpdate(messageDeleted.data)
+  }
   update(): void | Promise<void> {}
   async destroy(): Promise<void> {
     this.el.classList.add("out")

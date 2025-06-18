@@ -183,5 +183,14 @@
   "SET_NOT_ALLOW": "Not Allowed",
   "SET_ALL_NOTIF": "all notifications",
   "SET_CHANGE_RULE": "Change Rule",
-  "ROOM_TYPE_NOT_FOUND": "Room Chat ID is not found"
+  "ROOM_TYPE_NOT_FOUND": "Room Chat ID is not found",
+  "OPT_profile": "View Profile",
+  "OPT_copy": "Copy",
+  "OPT_download": "Download File",
+  "OPT_reply": "Reply",
+  "OPT_edit": "Edit",
+  "OPT_retry": "Retry",
+  "OPT_delete": "Delete",
+  "OPT_cancel": "Cancel",
+  "NP_COPIED": "Copied"
 }

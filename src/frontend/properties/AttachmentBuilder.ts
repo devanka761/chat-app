@@ -83,6 +83,9 @@ export default class AttachmentBuilder {
     vid.oncanplay = () => {
       this.form.growArea()
     }
+    vid.onload = () => {
+      this.form.growArea()
+    }
     parent.append(vid)
     this.media.append(parent, filename)
     vid.src = src
@@ -97,6 +100,7 @@ export default class AttachmentBuilder {
     p.innerText = parse_name + (file_extension ? `.${file_extension}` : "")
     const parent = kel("div", "document", { e: p })
     this.media.append(parent)
+    this.form.growArea()
   }
   private async renderFile(): Promise<void> {
     const filesrc: string = await new Promise((resolve) => {

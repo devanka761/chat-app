@@ -4,6 +4,12 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+html {
+  height: 100dvh;
+  scroll-behavior: smooth;
+  scrollbar-color: v.$blurple v.$card_secondary;
+  scrollbar-width: thin;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
@@ -11,12 +17,6 @@
   -moz-user-select: none;
   -ms-user-select: none;
   box-sizing: border-box;
-}
-html {
-  height: 100dvh;
-  scroll-behavior: smooth;
-  scrollbar-color: v.$blurple v.$card_secondary;
-  scrollbar-width: thin;
 }
 
 body {
@@ -61,6 +61,7 @@ select {
   font-size: 1em;
 }
 img {
+  pointer-events: none;
   display: block;
 }
 button,
@@ -137,4 +138,13 @@ input[type="checkbox"]:checked::before {
 }
 .center {
   text-align: center;
+}
+
+::selection {
+  background: v.$black;
+  color: v.$white;
+}
+
+.tpdownload {
+  display: none;
 }

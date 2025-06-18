@@ -2,6 +2,8 @@ import { escapeHTML, ss } from "../helper/escaper"
 import { kel } from "../helper/kel"
 import { lang } from "../helper/lang"
 import modal from "../helper/modal"
+import { copyToClipboard, textHighlight } from "../helper/navigator"
+import notip from "../helper/notip"
 import sdate from "../helper/sdate"
 import setbadge from "../helper/setbadge"
 import { transpileChat } from "../main/transpileChat"
@@ -20,11 +22,13 @@ const statusIcon: TStatusIcon = {
 }
 const msgoptIndex: { [key in MessageOptionType]: number } = {
   profile: 1,
-  reply: 2,
-  edit: 3,
-  retry: 4,
-  delete: 5,
-  cancel: 6
+  copy: 2,
+  download: 3,
+  reply: 4,
+  edit: 5,
+  retry: 6,
+  delete: 7,
+  cancel: 8
 }
 
 function getOptOffsetToList(child: HTMLDivElement, parent: HTMLDivElement) {
@@ -53,6 +57,7 @@ export default class MessageBuilder {
   private optLocked: boolean
   private isRetry: boolean
   public raw?: IWritterF
+  private lastStatus?: TStatusText
   constructor(message: IMessageF, user: IUserF, room: Room, raw?: IWritterF) {
     this.s = message
     this.user = user
@@ -119,8 +124,8 @@ export default class MessageBuilder {
     eattach.append(parent)
   }
   private attachFile(eattach: HTMLDivElement, url: string, isTemp: boolean): void {
-    const efile = kel("a", "document", {
-      a: { href: isTemp ? url : `/file/media/${this.room.data.type}/${this.room.id}/${url}`, target: "_blank" },
+    const efile = kel("span", "document", {
+      a: { href: isTemp ? url : `/file/media/${this.room.data.type}/${this.room.id}/${url}` },
       e: isTemp ? Date.now().toString(32) : url
     })
     eattach.append(efile)
@@ -168,6 +173,7 @@ export default class MessageBuilder {
       this.reply?.remove()
       this.textMessage.parentElement?.classList.add("del")
       this.textMessage.innerHTML = `<i class="fa-solid fa-ban"></i> ${this.user.id === db.me.id ? lang.CONTENT_YOU_DELETED : lang.CONTENT_DELETED}`
+      this.textEdidted.remove()
     }
   }
   set edit(text: string) {
@@ -255,6 +261,12 @@ export default class MessageBuilder {
     if (this.user.id !== db.me.id) {
       this.optmenu.append(new OptionMsgBuilder({ ...optConfig, optype: "profile" }).run())
     }
+    if (["image", "video", "audio", "file"].find((ity) => ity === this.s.type)) {
+      this.optmenu.append(new OptionMsgBuilder({ ...optConfig, optype: "download" }).run())
+    }
+    if (this.s.text && this.s.text.length >= 1) {
+      this.optmenu.append(new OptionMsgBuilder({ ...optConfig, optype: "copy" }).run())
+    }
     if (this.s.type === "deleted") {
       if (this.user.id === db.me.id) {
         this.optmenu.remove()
@@ -296,6 +308,7 @@ export default class MessageBuilder {
         if (this.optmenu?.contains(target)) return
         if (this.s.type === "video" && this.attach?.contains(target)) return
         if (this.reply?.contains(target)) return
+        if (this.s.type === "deleted") return
       }
       if (this.optmenu && this.el.contains(this.optmenu)) return
       this.renderOptmenu(...args)
@@ -310,7 +323,11 @@ export default class MessageBuilder {
   set id(message_id: string) {
     this.s.id = message_id
   }
+  get currentStatus(): TStatusText | undefined {
+    return this.lastStatus
+  }
   setStatus(statusText: TStatusText): void {
+    this.lastStatus = statusText
     if (statusText === "failed") {
       this.clickListener("retry", "cancel")
       this.sendStatus.innerHTML = `${statusIcon[statusText]}`
@@ -347,11 +364,31 @@ export default class MessageBuilder {
     await modal.waittime(5000, 5)
     this.el.classList.remove("highlight")
   }
+  async copyText(): Promise<boolean> {
+    if (!this.s.text || this.s.text.length < 1) return false
+    textHighlight(this.textMessage)
+    const isCopied = await copyToClipboard(this.s.text)
+    if (isCopied) notip({ a: lang.NP_COPIED, ic: "clipboard-check", c: "1" })
+    return isCopied
+  }
+  async saveAs(): Promise<void> {
+    if (!this.s.source) return
+    const isSent = !this.lastStatus || this.lastStatus === "sent" || this.lastStatus === "read"
+    const a = kel("a")
+    a.href = isSent ? `/file/media/${this.room.data.type}/${this.room.id}/${this.s.source}` : this.s.source
+    a.download = isSent ? this.s.source : Date.now().toString(36)
+    document.body.append(a)
+    a.click()
+
+    await modal.waittime(2000)
+    document.body.removeChild(a)
+    a.remove()
+  }
   update(s: IMessageF): this {
     this.s = s
     if (!this.attach) return this
     if (!this.s.source) return this
-    if (this.s.type !== "file") return this
+    if (this.s.type !== "file" && s.type !== "audio") return this
     while (this.attach.lastChild) this.attach.lastChild.remove()
     this.attachFile(this.attach, this.s.source, false)
     return this

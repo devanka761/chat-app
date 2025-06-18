@@ -1,4 +1,4 @@
-import { MessageTypeF } from "./db.types"
+import { IMessageF, MessageTypeF } from "./db.types"
 
 export interface IWritterFileF {
   src: string
@@ -16,4 +16,10 @@ export interface IWritterF {
   filename?: string
 }
 
-export type MessageOptionType = "profile" | "reply" | "edit" | "retry" | "delete" | "cancel"
+export type MessageOptionType = "profile" | "copy" | "download" | "reply" | "edit" | "retry" | "delete" | "cancel"
+
+export interface IMessageUpdateF {
+  isFirst: boolean
+  roomid: string
+  chat: IMessageF
+}

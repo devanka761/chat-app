@@ -9,12 +9,14 @@ import { MessageOptionType } from "../types/message.types"
 import MessageBuilder from "./MessageBuilder"
 
 const innerBtn: { [key in MessageOptionType]: string } = {
-  profile: '<i class="fa-duotone fa-regular fa-circle-user fa-fw"></i> View Profile',
-  reply: '<i class="fa-duotone fa-regular fa-reply fa-fw"></i> Reply',
-  edit: '<i class="fa-duotone fa-regular fa-pen-to-square fa-fw"></i> Edit',
-  retry: '<i class="fa-regular fa-rotate-left fa-fw"></i> Retry',
-  delete: '<i class="fa-duotone fa-regular fa-trash-xmark fa-fw"></i> Delete',
-  cancel: '<i class="fa-duotone fa-regular fa-rectangle-xmark fa-fw"></i> Cancel Send'
+  profile: '<i class="fa-duotone fa-regular fa-circle-user fa-fw"></i> {TEXT}',
+  copy: '<i class="fa-duotone fa-regular fa-copy fa-fw"></i> {TEXT}',
+  download: '<i class="fa-duotone fa-regular fa-download fa-fw"></i> {TEXT}',
+  reply: '<i class="fa-duotone fa-regular fa-reply fa-fw"></i> {TEXT}',
+  edit: '<i class="fa-duotone fa-regular fa-pen-to-square fa-fw"></i> {TEXT}',
+  retry: '<i class="fa-regular fa-rotate-left fa-fw"></i> {TEXT}',
+  delete: '<i class="fa-duotone fa-regular fa-trash-xmark fa-fw"></i> {TEXT}',
+  cancel: '<i class="fa-duotone fa-regular fa-rectangle-xmark fa-fw"></i> {TEXT}'
 }
 
 export default class OptionMsgBuilder {
@@ -29,12 +31,20 @@ export default class OptionMsgBuilder {
   }
   createElement(): void {
     this.el = kel("div", `btn opt-${this.optype}`)
-    this.el.innerHTML = innerBtn[this.optype]
+    this.el.innerHTML = innerBtn[this.optype].replace("{TEXT}", lang[`OPT_${this.optype}`])
   }
   private async clickHandler(): Promise<void> {
     switch (this.optype) {
       case "profile": {
         swiper(new Profile({ user: this.msg.getUser() }), userState.content)
+        break
+      }
+      case "download": {
+        this.msg.saveAs()
+        break
+      }
+      case "copy": {
+        this.msg.copyText()
         break
       }
       case "reply": {

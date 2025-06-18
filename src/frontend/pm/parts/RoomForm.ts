@@ -115,13 +115,13 @@ export default class RoomForm {
     inp.click()
   }
   private setAttachment(file: File): void {
-    this.focus()
     if (this.edit) this.edit.close()
     if (this.attachment) this.attachment.close()
     this.attachment = new AttachmentBuilder({ file: file, form: this })
     this.attachment.run()
     this.bottom.prepend(this.attachment.html)
     if (this.reply) this.bottom.prepend(this.reply.html)
+    this.focus()
     this.growArea()
   }
   closeAttachment(): void {

@@ -123,5 +123,5 @@ export function delMessage(uid: string, target: string, room: string, message_id
   delete dbOld[message_id].i
   db.fileSet(chatkey, "room", dbOld)
 
-  return { code: 200, data: { roomid: chatkey } }
+  return { code: 200, data: { isFirst: false, roomid: chatkey, chat: { ...normalizeMessage(message_id, dbOld[message_id]) } } }
 }
