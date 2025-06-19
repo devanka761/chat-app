@@ -16,3 +16,17 @@ export function textHighlight(el: HTMLElement): void {
   window.getSelection()?.removeAllRanges()
   window.getSelection()?.addRange(range)
 }
+
+export function checkMedia(s: { audio?: boolean; video?: boolean }): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return resolve(false)
+    navigator.mediaDevices
+      .getUserMedia({ audio: s.audio || false, video: s.video || false })
+      .then(() => {
+        return resolve(true)
+      })
+      .catch(() => {
+        return resolve(false)
+      })
+  })
+}

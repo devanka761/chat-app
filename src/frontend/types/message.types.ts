@@ -3,6 +3,7 @@ import { IMessageF, MessageTypeF } from "./db.types"
 export interface IWritterFileF {
   src: string
   name: string
+  isVoice?: boolean
 }
 
 export interface IWritterF {

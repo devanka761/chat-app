@@ -192,5 +192,6 @@
   "OPT_retry": "Retry",
   "OPT_delete": "Delete",
   "OPT_cancel": "Cancel",
-  "NP_COPIED": "Copied"
+  "NP_COPIED": "Copied",
+  "REC_ST_RECORDING": "Recording Voice"
 }

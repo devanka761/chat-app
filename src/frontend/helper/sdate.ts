@@ -6,8 +6,13 @@ const sdate = {
     t2 = new Date(t2)
     return t1.getFullYear() === t2.getFullYear() && t1.getMonth() === t2.getMonth() && t1.getDate() === t2.getDate()
   },
-  time(ts: number = Date.now()): string {
-    return new Date(ts).toLocaleTimeString(navigator.language, { hour: "2-digit", minute: "2-digit" })
+  time(tsInp: number | 0 = Date.now(), useSeconds?: boolean): string {
+    const ts = typeof tsInp === "number" && tsInp > 0 ? tsInp : Date.now()
+    return new Date(ts).toLocaleTimeString(navigator.language, {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: useSeconds ? "2-digit" : undefined
+    })
   },
   date(ts: number = Date.now()): string {
     return new Date(ts).toLocaleDateString(navigator.language, { year: "2-digit", month: "2-digit", day: "2-digit" })
@@ -73,6 +78,15 @@ const sdate = {
     if (seconds > 0 || result === "") {
       result += `${seconds}${lang.SDATE_sSECONDS}`
     }
+    return result.trim()
+  },
+  durrNumber(ms: number): string {
+    const totalSeconds = Math.floor(ms / 1000)
+    if (ms > 1000 * 60 * 45) return "Error"
+
+    const minutes = Math.floor((totalSeconds % 3600) / 60)
+    const seconds = totalSeconds % 60
+    const result = `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`
     return result.trim()
   }
 }

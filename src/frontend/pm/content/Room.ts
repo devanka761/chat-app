@@ -17,6 +17,7 @@ import { convertMessage } from "../../helper/helper"
 import xhr from "../../helper/xhr"
 import { IRepB } from "../../../backend/types/validate.types"
 import { lang } from "../../helper/lang"
+import RoomRecorder from "../parts/RoomRecorder"
 
 export default class Room implements PrimaryClass {
   readonly role: string
@@ -29,6 +30,7 @@ export default class Room implements PrimaryClass {
   private middle: HTMLDivElement
   private bottom: HTMLDivElement
   public form: RoomForm
+  public recorder: RoomRecorder
   public field: RoomField
   public opt?: HTMLDivElement
   public optRetrying?: HTMLDivElement
@@ -39,7 +41,9 @@ export default class Room implements PrimaryClass {
     this.chats = s.chats
     this.data = s.data
     this.id = s.data.id
+    this.form = new RoomForm({ room: this })
     this.field = new RoomField({ room: this })
+    this.recorder = new RoomRecorder({ room: this })
   }
   private createElement(): void {
     this.el = kel("div", "Room pmcontent")
@@ -99,7 +103,6 @@ export default class Room implements PrimaryClass {
     }
   }
   private writeForm(): void {
-    this.form = new RoomForm({ room: this })
     this.form.run(this.bottom)
   }
   private writeField(): void {

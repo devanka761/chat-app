@@ -1,5 +1,14 @@
 @use "../variables" as v;
 
+@keyframes spinning {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 @keyframes opt_in {
   0% {
     opacity: 0;

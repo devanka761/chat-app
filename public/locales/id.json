@@ -194,5 +194,6 @@
   "OPT_retry": "Coba Lagi",
   "OPT_delete": "Hapus",
   "OPT_cancel": "Batalkan",
-  "NP_COPIED": "Berhasil Menyalin"
+  "NP_COPIED": "Berhasil Menyalin",
+  "REC_ST_RECORDING": "Merekam Suara"
 }

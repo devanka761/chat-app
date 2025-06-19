@@ -48,7 +48,7 @@ export function sendMessage(uid: string, room_id: string, room_type: TRoomTypeF,
       const fpath = "./dist/stg/room"
       if (!fs.existsSync(`${fpath}`)) fs.mkdirSync(`${fpath}`)
       if (!fs.existsSync(`${fpath}/${chatkey}`)) fs.mkdirSync(`${fpath}/${chatkey}`)
-      const fname = s.type === "voice" ? `VN${uniq.toUpperCase()}.ogg` : `${uniq}_${s.filename}`
+      const fname = s.type === "voice" ? `voice-${uniq}-${uid}.ogg` : `${uniq}_${s.filename}`
       fs.writeFileSync(`${fpath}/${chatkey}/${fname}`, buffer, "base64")
       newChat.source = fname
     }

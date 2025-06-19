@@ -34,7 +34,7 @@ export default class MessageWritter {
     return this
   }
   addFile(file: IWritterFileF): this {
-    this.data.type = mediaCheck(file.name) || "file"
+    this.data.type = file.isVoice ? "voice" : mediaCheck(file.name) || "file"
     this.data.filesrc = file.src
     this.data.filename = file.name
     return this

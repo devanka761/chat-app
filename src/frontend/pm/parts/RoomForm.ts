@@ -15,7 +15,7 @@ export default class RoomForm {
   public room: Room
   private bottom: HTMLDivElement
   private el: HTMLDivElement
-  private btnEmoji: HTMLDivElement
+  // private btnEmoji: HTMLDivElement
   private btnAttach: HTMLDivElement
   private btnImage: HTMLDivElement
   private btnVoice: HTMLDivElement
@@ -33,8 +33,8 @@ export default class RoomForm {
     this.downed = new Set()
   }
   private createElement(): void {
-    this.btnEmoji = kel("div", "btn btn-emoji", { e: `<i class="fa-solid fa-face-smile"></i>` })
-    const eemoji = kel("div", "emoji", { e: this.btnEmoji })
+    // this.btnEmoji = kel("div", "btn btn-emoji", { e: `<i class="fa-solid fa-face-smile"></i>` })
+    // const eemoji = kel("div", "emoji", { e: this.btnEmoji })
     this.textarea = kel("textarea")
     this.textarea.name = "content-input"
     this.textarea.id = "content-input" + this.room.data.id + Date.now().toString(36)
@@ -44,7 +44,7 @@ export default class RoomForm {
     this.btnAttach = kel("div", "btn btn-attach", { e: `<i class="fa-solid fa-paperclip"></i>` })
     this.btnImage = kel("div", "btn btn-image", { e: `<i class="fa-solid fa-camera-retro"></i>` })
     const eactions = kel("div", "actions", { e: [this.btnAttach, this.btnImage] })
-    const einput = kel("div", "input", { e: [eemoji, etextbox, eactions] })
+    const einput = kel("div", "input", { e: [/*eemoji,*/ etextbox, eactions] })
     this.btnVoice = kel("div", "btn btn-voice", { e: `<i class="fa-solid fa-microphone"></i>` })
     const evoice = kel("div", "voice", { e: this.btnVoice })
     this.el = kel("div", "field", { e: [einput, evoice] })
@@ -60,6 +60,8 @@ export default class RoomForm {
         this.textarea.focus()
         return this.sendMessage()
       }
+      this.clearForm()
+      this.room.recorder.run(this.bottom)
     }
   }
   private keyDown(e: KeyboardEvent): void {
@@ -195,6 +197,12 @@ export default class RoomForm {
   private async firstFocus() {
     await modal.waittime(580)
     this.focus()
+  }
+  close(): void {
+    if (this.el) this.bottom.removeChild(this.el)
+  }
+  open() {
+    this.bottom.appendChild(this.el)
   }
   run(bottom: HTMLDivElement): void {
     this.bottom = bottom
