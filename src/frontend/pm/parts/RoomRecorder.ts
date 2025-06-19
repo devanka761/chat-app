@@ -26,6 +26,7 @@ export default class RoomRecorder {
   private mediaRecorder: MediaRecorder | null | undefined
   private canSend: boolean
   private chunks: Blob[]
+  private sendIcon: HTMLElement
   constructor({ room }) {
     this.role = "roomrecorder"
     this.isLocked = false
@@ -45,7 +46,8 @@ export default class RoomRecorder {
     this.btnCancel.innerHTML = '<i class="fa-duotone fa-regular fa-trash-xmark fa-fw"></i>'
 
     this.spinning = kel("div", "btn btn-spinning")
-    this.btnSend = kel("div", "btn btn-send", { e: '<i class="fa-solid fa-paper-plane-top"></i>' })
+    this.sendIcon = kel("i", "fa-solid fa-paper-plane-top")
+    this.btnSend = kel("div", "btn btn-send", { e: this.sendIcon })
 
     this.voices = kel("div", "voice", { e: [this.spinning, this.btnSend] })
     this.el = kel("div", "recorder", {
@@ -56,56 +58,77 @@ export default class RoomRecorder {
     this.btnSend.onclick = () => {
       if (this.isLocked) return
       this.isLocked = true
-      this.canSend = true
-      this.stop()
+      this.stop(true)
     }
     this.btnCancel.onclick = () => {
       if (this.isLocked) return
       this.isLocked = true
-      this.canSend = false
-      this.close()
+      this.stop(false)
     }
+  }
+  private destroyWhenWrongClicked(): void {
+    window.addEventListener(
+      "click",
+      (e) => {
+        const { target } = e
+        if (target instanceof Node) {
+          if (this.btnSend.contains(target) || this.btnCancel.contains(target) || this.spinning.contains(target) || this.voices.contains(target) || this.sendIcon.contains(target)) {
+            console.log("btn send and btn cancel")
+            return
+          } else if (this.el.contains(target)) {
+            console.log("parent element")
+            this.destroyWhenWrongClicked()
+            return
+          } else {
+            console.log("others")
+            this.stop(false)
+            return
+          }
+        }
+      },
+      { once: true }
+    )
   }
   private startRecording(): void {
     if (!this.mediaRecorder || !this.mediaStream) return
+    this.destroyWhenWrongClicked()
     this.mediaRecorder.start()
     this.startTime = Date.now()
+    this.growArea()
     this.recordInterval = setInterval(() => {
       this.timestamp.innerHTML = sdate.durrNumber(Date.now() - this.startTime)
     }, 200)
   }
   growArea(): void {
-    this.room.resizeMiddle(1)
+    this.room.resizeMiddle(this.el.clientHeight)
   }
   private async destroyMedia(): Promise<void> {
-    if (this.mediaRecorder) this.mediaRecorder.stop()
     if (this.mediaStream) {
-      for (const track of this.mediaStream.getTracks()) {
-        track.enabled = false
-        await modal.waittime(1000)
-        track.stop()
-        this.mediaStream.removeTrack(track)
-        await modal.waittime(500)
+      const numberOfTracks = this.mediaStream.getTracks().length
+      console.log(`Destroying ${numberOfTracks} Track(s)`)
+      await modal.waittime(1000)
+      for (let i = 0; i < numberOfTracks; i++) {
+        this.mediaStream.getTracks()[i].enabled = false
+        this.mediaStream.getTracks()[i].stop()
+        console.log(`Track #${i + 1} Stopped`)
+        await modal.waittime(100)
+        this.mediaStream.removeTrack(this.mediaStream.getTracks()[i])
+        console.log(`Track #${i + 1} Removed`)
+        await modal.waittime(100)
       }
     }
     this.mediaRecorder = null
     this.mediaStream = null
-    console.log("destroyed!")
-  }
-  close(): void {
-    if (this.recordInterval) clearInterval(this.recordInterval)
-    this.destroyMedia()
-    this.spinning.remove()
-    this.btnSend.remove()
-    this.voices.remove()
-    this.bottom.removeChild(this.el)
-    this.el.remove()
-    this.isLocked = false
-    this.room.form.open()
+    await modal.waittime(100)
+    console.log("Media Stream destroyed")
+    await modal.waittime(100)
+    console.log("Media Recorder destroyed")
+    console.log("Done!")
   }
   private setupAudioRecorder(): void {
     if (!this.mediaRecorder || !this.mediaStream) return
     this.mediaRecorder.onerror = () => {
+      this.destroyMedia()
       return modal.alert(lang.CONTENT_NO_MEDIA_DEVICES + " #1")
     }
     this.mediaRecorder.ondataavailable = (e) => {
@@ -114,42 +137,58 @@ export default class RoomRecorder {
     this.mediaRecorder.onstop = () => {
       const blob = new Blob(this.chunks, { type: "audio/ogg; codecs=0" })
       this.chunks = []
-      console.log(this.canSend)
-      if (!this.canSend) return
-      const reader = new FileReader()
-      reader.onload = () => this.send(reader.result)
-      reader.readAsDataURL(blob)
+      if (!this.canSend) {
+        this.destroyMedia()
+        return
+      }
+      this.send(blob)
     }
   }
-  send(rawsrc: string | ArrayBuffer | null): void {
-    console.log("sending...")
-    if (!rawsrc) return this.close()
+  async send(blob: Blob): Promise<void> {
+    await modal.waittime(2000)
+    this.destroyMedia()
+    if (!blob) return this.close()
+    const filesrc: string | null = await new Promise((resolve) => {
+      const reader: FileReader = new FileReader()
+      reader.onload = () => resolve(reader.result?.toString() || null)
+      reader.readAsDataURL(blob)
+    })
+    if (!filesrc) return this.close()
     const writter = new MessageWritter()
       .setUserId(db.me.id)
       .setTimeStamp()
       .addFile({
         isVoice: true,
-        name: "voice_" + ".ogg",
-        src: rawsrc.toString()
+        name: "voice_message" + ".ogg",
+        src: filesrc
       })
     if (!writter.isValid) return this.close()
     this.room.sendWritter(writter.toJSON())
     this.close()
   }
-  async stop(): Promise<void> {
+  async stop(wantToSend: boolean): Promise<void> {
     if (this.recordInterval) clearInterval(this.recordInterval)
+    if (wantToSend) this.canSend = wantToSend
+    if (this.mediaRecorder) this.mediaRecorder.stop()
+    if (wantToSend !== true) return this.close()
     this.spinning.style.visibility = "hidden"
     this.btnCancel.style.visibility = "hidden"
-    this.statusText.innerHTML = lang.FINISHING
+    this.statusText.innerHTML = lang.FINISHING.toLowerCase()
     this.timestamp.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>'
     this.btnSend.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>'
-    await modal.waittime(2000)
-    if (!this.mediaRecorder) {
-      return this.close()
-    }
-    this.mediaRecorder.stop()
+  }
+  close(): void {
+    this.reset()
+    this.spinning.remove()
+    this.btnSend.remove()
+    this.voices.remove()
+    this.bottom.removeChild(this.el)
+    this.el.remove()
+    this.isLocked = false
+    this.room.form.open()
   }
   async init(): Promise<void> {
+    if (this.mediaRecorder || this.mediaStream) return
     const checkPerm = await checkMedia({ audio: true })
     if (!checkPerm) {
       await modal.alert(lang.CONTENT_NO_MEDIA_DEVICES)
@@ -168,6 +207,17 @@ export default class RoomRecorder {
     this.btnListener()
     this.setupAudioRecorder()
     this.startRecording()
+  }
+  reset(): void {
+    this.isLocked = false
+    this.recordInterval = null
+    this.startTime = 0
+    this.chunks = []
+    this.canSend = false
+    this.isLocked = false
+  }
+  get html(): HTMLDivElement {
+    return this.el
   }
   run(bottom: HTMLDivElement): void {
     this.bottom = bottom

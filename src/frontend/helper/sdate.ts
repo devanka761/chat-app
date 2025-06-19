@@ -82,7 +82,7 @@ const sdate = {
   },
   durrNumber(ms: number): string {
     const totalSeconds = Math.floor(ms / 1000)
-    if (ms > 1000 * 60 * 45) return "Error"
+    if (ms > 1000 * 60 * 45) return "0:00"
 
     const minutes = Math.floor((totalSeconds % 3600) / 60)
     const seconds = totalSeconds % 60

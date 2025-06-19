@@ -8,14 +8,14 @@ const router: Router = express.Router()
 
 router.use(cdUser, isUser)
 
-router.post("/sendMessage/:chat_type/:chat_id", express.json({ limit: "10mb" }), (req: Request, res: Response) => {
+router.post("/sendMessage/:chat_type/:chat_id", express.json({ limit: "10mb" }), async (req: Request, res: Response) => {
   if (req.params.chat_type !== "user" && req.params.chat_type !== "group") {
     res.status(404).json({ ok: false, msg: "ROOM_TYPE_NOT_FOUND" })
     return
   }
 
   const { chat_type, chat_id } = req.params
-  const setroom = rep(sendMessage(req.user?.id as string, chat_id, chat_type, req.body))
+  const setroom = rep(await sendMessage(req.user?.id as string, chat_id, chat_type, req.body))
   res.status(setroom.code).json(setroom)
 })
 router.post("/delMessage/:chat_type/:chat_id/:message_id", express.json({ limit: "100KB" }), (req: Request, res: Response) => {

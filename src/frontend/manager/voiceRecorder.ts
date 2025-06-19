@@ -9,7 +9,6 @@ export default function getVoiceRecorder(): Promise<TVoiceRecorder | null> {
       .getUserMedia({ audio: true })
       .then((stream) => {
         const newRecorder = new MediaRecorder(stream, { audioBitsPerSecond: 128000 })
-
         resolve({ media: newRecorder, stream: stream })
       })
       .catch((err) => {

@@ -13,6 +13,7 @@ import { IMessageF, IUserF } from "../types/db.types"
 import { IWritterF, MessageOptionType } from "../types/message.types"
 import { TStatusIcon, TStatusText } from "../types/room.types"
 import OptionMsgBuilder from "./OptionMsgBuilder"
+import VoiceBuilder from "./VoiceBuilder"
 
 const statusIcon: TStatusIcon = {
   pending: '<i class="fa-duotone fa-solid fa-spinner-third fa-spin"></i>',
@@ -124,6 +125,27 @@ export default class MessageBuilder {
     parent.prepend(vid)
     eattach.append(parent)
   }
+  private attachVoice(eattach: HTMLDivElement, url: string, isTemp: boolean): void {
+    const audio = new Audio()
+    const voice = new VoiceBuilder({ msg: this, audio }).run()
+    audio.onerror = () => {
+      audio.remove()
+      voice.remove()
+      this.attachFile(eattach, url, isTemp)
+    }
+    audio.onended = () => voice.stop()
+    audio.ontimeupdate = () => {
+      voice.time = audio.currentTime
+    }
+    audio.oncanplay = () => {
+      if (!eattach.contains(voice.html)) eattach.prepend(voice.html)
+    }
+    audio.onloadedmetadata = () => {
+      voice.time = audio.duration
+    }
+    audio.src = isTemp ? url : `/file/media/${this.room.data.type}/${this.room.id}/${url}`
+    eattach.append(audio)
+  }
   private attachFile(eattach: HTMLDivElement, url: string, isTemp: boolean): void {
     const efile = kel("span", "document", {
       a: { href: isTemp ? url : `/file/media/${this.room.data.type}/${this.room.id}/${url}` },
@@ -132,13 +154,16 @@ export default class MessageBuilder {
     eattach.append(efile)
   }
   private renderAttach(isTemp: boolean): void {
-    if (this.s.type !== "image" && this.s.type !== "video" && this.s.type !== "file" && this.s.type !== "audio") return
+    const validMedia = ["voice", "video", "image", "file", "audio"]
+    if (!validMedia.find((ity) => ity === this.s.type)) return
     if (!this.s.source) return
     this.attach = kel("div", "chp attach")
     if (this.s.type === "image") {
       this.attachImage(this.attach, this.s.source, isTemp)
     } else if (this.s.type === "video") {
       this.attachVideo(this.attach, this.s.source, isTemp)
+    } else if (this.s.type === "voice") {
+      this.attachVoice(this.attach, this.s.source, isTemp)
     } else {
       this.attachFile(this.attach, this.s.source, isTemp)
     }
@@ -307,7 +332,7 @@ export default class MessageBuilder {
       const { target } = e
       if (target instanceof Node) {
         if (this.optmenu?.contains(target)) return
-        if (this.s.type === "video" && this.attach?.contains(target)) return
+        if ((this.s.type === "video" || this.s.type === "voice") && this.attach?.contains(target)) return
         if (this.reply?.contains(target)) return
         if (this.s.type === "deleted" || this.lastStatus === "pending") return
       }

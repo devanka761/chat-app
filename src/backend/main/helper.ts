@@ -64,7 +64,7 @@ export function decryptData(ciphertext: string): string {
   return dataResult
 }
 
-const msgValidTypes = ["audio", "file", "video", "image"]
+const msgValidTypes = ["audio", "file", "video", "image", "voice"]
 
 export function msgNotValid(s: IWritterF): string | null {
   if ((!s.type || s.type === "text") && (!s.text || s.text.length < 1)) {

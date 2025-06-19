@@ -1,4 +1,5 @@
 import fs from "fs"
+import Ffmpeg from "fluent-ffmpeg"
 import db from "../main/db"
 import { TRoomTypeF } from "../../frontend/types/room.types"
 import { IWritterF } from "../../frontend/types/message.types"
@@ -9,7 +10,7 @@ import { IMessageKeyB } from "../types/db.types"
 
 const msgValidTypes = ["audio", "file", "video", "image"]
 
-export function sendMessage(uid: string, room_id: string, room_type: TRoomTypeF, s: IWritterF): IRepTempB {
+export async function sendMessage(uid: string, room_id: string, room_type: TRoomTypeF, s: IWritterF): Promise<IRepTempB> {
   if (s.text) s.text = s.text.trim()
   const notvalid = msgNotValid(s)
   if (notvalid) return { code: 400, msg: notvalid }
@@ -48,8 +49,25 @@ export function sendMessage(uid: string, room_id: string, room_type: TRoomTypeF,
       const fpath = "./dist/stg/room"
       if (!fs.existsSync(`${fpath}`)) fs.mkdirSync(`${fpath}`)
       if (!fs.existsSync(`${fpath}/${chatkey}`)) fs.mkdirSync(`${fpath}/${chatkey}`)
-      const fname = s.type === "voice" ? `voice-${uniq}-${uid}.ogg` : `${uniq}_${s.filename}`
+      let fname = s.type === "voice" ? `voice-${uniq}-${uid}.ogg` : `${uniq}_${s.filename}`
       fs.writeFileSync(`${fpath}/${chatkey}/${fname}`, buffer, "base64")
+
+      if (s.type === "voice") {
+        const covFname = fname.replace(".ogg", ".mp3")
+        const convertAudio: boolean = await new Promise((resolve) => {
+          Ffmpeg(fname)
+            .toFormat("mp3")
+            .save(covFname)
+            .on("end", () => {
+              resolve(true)
+            })
+            .on("error", () => {
+              resolve(false)
+            })
+        })
+        if (convertAudio === true) fname = covFname
+      }
+
       newChat.source = fname
     }
   }
