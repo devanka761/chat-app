@@ -12,6 +12,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  animation: slide_right_in 0.5s;
+  &.out {
+    animation: slide_right_out 0.5s forwards;
+  }
   .title {
     padding: 10px;
     font-weight: bold;

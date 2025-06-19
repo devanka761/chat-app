@@ -83,9 +83,6 @@ export default class AttachmentBuilder {
     vid.oncanplay = () => {
       this.form.growArea()
     }
-    vid.onload = () => {
-      this.form.growArea()
-    }
     parent.append(vid)
     this.media.append(parent, filename)
     vid.src = src

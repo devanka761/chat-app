@@ -9,6 +9,10 @@
   height: 100%;
   padding: 10px;
   background-color: v.$bar_bg;
+  animation: slide_right_in 0.5s;
+  &.out {
+    animation: slide_right_out 0.5s forwards;
+  }
   .btn {
     position: relative;
     margin-bottom: 10px;

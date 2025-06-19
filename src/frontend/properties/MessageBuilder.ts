@@ -2,7 +2,7 @@ import { escapeHTML, ss } from "../helper/escaper"
 import { kel } from "../helper/kel"
 import { lang } from "../helper/lang"
 import modal from "../helper/modal"
-import { copyToClipboard, textHighlight } from "../helper/navigator"
+import { copyToClipboard } from "../helper/navigator"
 import notip from "../helper/notip"
 import sdate from "../helper/sdate"
 import setbadge from "../helper/setbadge"
@@ -119,6 +119,7 @@ export default class MessageBuilder {
       this.attachFile(eattach, url, isTemp)
     }
     vid.controls = true
+    vid.setAttribute("controlsList", "nodownload")
     vid.src = isTemp ? url : `/file/media/${this.room.data.type}/${this.room.id}/${url}`
     parent.prepend(vid)
     eattach.append(parent)
@@ -308,7 +309,7 @@ export default class MessageBuilder {
         if (this.optmenu?.contains(target)) return
         if (this.s.type === "video" && this.attach?.contains(target)) return
         if (this.reply?.contains(target)) return
-        if (this.s.type === "deleted") return
+        if (this.s.type === "deleted" || this.lastStatus === "pending") return
       }
       if (this.optmenu && this.el.contains(this.optmenu)) return
       this.renderOptmenu(...args)
@@ -366,9 +367,9 @@ export default class MessageBuilder {
   }
   async copyText(): Promise<boolean> {
     if (!this.s.text || this.s.text.length < 1) return false
-    textHighlight(this.textMessage)
+    // textHighlight(this.textMessage)
     const isCopied = await copyToClipboard(this.s.text)
-    if (isCopied) notip({ a: lang.NP_COPIED, ic: "clipboard-check", c: "1" })
+    if (isCopied) notip({ a: `${lang.NP_COPIED}:`, b: ss(this.s.text, 100), ic: "clipboard-check", c: "1" })
     return isCopied
   }
   async saveAs(): Promise<void> {

@@ -54,7 +54,7 @@ export default class Find implements PrimaryClass {
     const searchBar2 = kel("div", "search")
     const form = kel("form", "form form-search-user", {
       a: { action: "/x/profile/search" },
-      e: `<p><label for="search_id">${lang.FIND_ID}</label></p><input type="text" name="search_id" id="search_id" placeholder="${lang.TYPE_HERE}" maxLength="30"/><button class="btn"><i class="fa-solid fa-magnifying-glass"></i> ${lang.FIND_SEARCH}</button>`
+      e: `<p><label for="search_id">${lang.FIND_ID}</label></p><input type="text" name="search_id" id="search_id" placeholder="${lang.TYPE_HERE}" maxLength="30" autocomplete="off"/><button class="btn"><i class="fa-solid fa-magnifying-glass"></i> ${lang.FIND_SEARCH}</button>`
     })
     searchBar2.append(form)
     const cardlist = kel("div", "card-list")

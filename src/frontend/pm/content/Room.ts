@@ -127,12 +127,13 @@ export default class Room implements PrimaryClass {
     this.middle.style.height = `calc(100% - (60px + ${formHeight}px))`
   }
   async sendMessage(s: IWritterF): Promise<IRepB> {
-    await modal.waittime(5000)
+    await modal.waittime(1000)
     return await xhr.post(`/x/room/sendMessage/${this.data.type}/${this.data.id}`, s)
   }
   async sendNewMessage(s: IWritterF, message: MessageBuilder): Promise<void> {
     message.setStatus("pending")
     this.field.html.append(message.html)
+    message.html.scrollIntoView()
     const messageSent = await this.sendMessage(s)
     if (!messageSent || !messageSent.ok) {
       message.setStatus("failed")
@@ -147,6 +148,7 @@ export default class Room implements PrimaryClass {
     message.setTimeStamp(msg.timestamp)
     message.update(msg)
     message.setStatus("sent")
+    message.clickListener()
     this.processUpdate(messageSent.data)
   }
   async createNewMessage(s: IWritterF): Promise<void> {
@@ -160,7 +162,7 @@ export default class Room implements PrimaryClass {
     const message: MessageBuilder | null = this.field.list.get(s.edit)
     if (!message) return
     if (message.json.message.text === s.text) return
-    message.html.scrollIntoView({ behavior: "smooth" })
+    message.html.scrollIntoView()
     const currStatus = message.currentStatus?.toString()
     message.setStatus("pending")
     const messageSent = await this.sendMessage(s)
@@ -179,6 +181,7 @@ export default class Room implements PrimaryClass {
     message.setText(msg.text as string)
     message.setStatus("sent")
     message.setEdited(msg.edited)
+    message.clickListener()
     this.processUpdate(messageSent.data)
   }
   async sendWritter(s: IWritterF): Promise<void> {
