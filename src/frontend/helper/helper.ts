@@ -1,6 +1,8 @@
 import { IMessageTempF } from "../types/db.types"
 import { IWritterF } from "../types/message.types"
 
+export const msgValidTypes = ["audio", "file", "video", "image", "voice"]
+
 export function convertMessage(uid: string, s: IWritterF): IMessageTempF {
   return {
     userid: uid,

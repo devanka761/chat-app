@@ -13,7 +13,7 @@ import { IMessageF, IUserF } from "../types/db.types"
 import { IWritterF, MessageOptionType } from "../types/message.types"
 import { TStatusIcon, TStatusText } from "../types/room.types"
 import OptionMsgBuilder from "./OptionMsgBuilder"
-import VoiceBuilder from "./VoiceBuilder"
+import AudioBuilder from "./AudioBuilder"
 
 const statusIcon: TStatusIcon = {
   pending: '<i class="fa-duotone fa-solid fa-spinner-third fa-spin"></i>',
@@ -106,6 +106,7 @@ export default class MessageBuilder {
       parent.remove()
       this.attachFile(eattach, url, isTemp)
     }
+    img.onload = () => this.room.checkIfMediaReady()
     img.src = isTemp ? url : `/file/media/${this.room.data.type}/${this.room.id}/${url}`
     img.alt = isTemp ? Date.now().toString(32) : url
     parent.append(img)
@@ -119,29 +120,36 @@ export default class MessageBuilder {
       parent.remove()
       this.attachFile(eattach, url, isTemp)
     }
+    vid.oncanplay = () => this.room.checkIfMediaReady()
     vid.controls = true
     vid.setAttribute("controlsList", "nodownload")
     vid.src = isTemp ? url : `/file/media/${this.room.data.type}/${this.room.id}/${url}`
     parent.prepend(vid)
     eattach.append(parent)
   }
-  private attachVoice(eattach: HTMLDivElement, url: string, isTemp: boolean): void {
+  private attachAudio(eattach: HTMLDivElement, url: string, isTemp: boolean): void {
+    if (this.s.type !== "audio" && this.s.type !== "voice") {
+      return this.attachFile(eattach, url, isTemp)
+    }
     const audio = new Audio()
-    const voice = new VoiceBuilder({ msg: this, audio }).run()
+    const voice = new AudioBuilder({ msg: this, audio }).setType(this.s.type).run()
     audio.onerror = () => {
       audio.remove()
       voice.remove()
       this.attachFile(eattach, url, isTemp)
     }
-    audio.onended = () => voice.stop()
+    audio.onended = () => {
+      voice.stop()
+    }
     audio.ontimeupdate = () => {
       voice.time = audio.currentTime
     }
     audio.oncanplay = () => {
       if (!eattach.contains(voice.html)) eattach.prepend(voice.html)
+      this.room.checkIfMediaReady()
     }
     audio.onloadedmetadata = () => {
-      voice.time = audio.duration
+      voice.text = audio.duration
     }
     audio.src = isTemp ? url : `/file/media/${this.room.data.type}/${this.room.id}/${url}`
     eattach.append(audio)
@@ -152,6 +160,7 @@ export default class MessageBuilder {
       e: isTemp ? Date.now().toString(32) : url
     })
     eattach.append(efile)
+    this.room.checkIfMediaReady()
   }
   private renderAttach(isTemp: boolean): void {
     const validMedia = ["voice", "video", "image", "file", "audio"]
@@ -162,8 +171,8 @@ export default class MessageBuilder {
       this.attachImage(this.attach, this.s.source, isTemp)
     } else if (this.s.type === "video") {
       this.attachVideo(this.attach, this.s.source, isTemp)
-    } else if (this.s.type === "voice") {
-      this.attachVoice(this.attach, this.s.source, isTemp)
+    } else if (this.s.type === "voice" || this.s.type === "audio") {
+      this.attachAudio(this.attach, this.s.source, isTemp)
     } else {
       this.attachFile(this.attach, this.s.source, isTemp)
     }
@@ -315,7 +324,6 @@ export default class MessageBuilder {
     this.fixElHeight(this.optmenu)
   }
   async closeOptmenu(): Promise<void> {
-    // if (this.optLocked) return
     this.optLocked = true
     if (this.optmenu && this.el.contains(this.optmenu)) {
       this.optmenu.classList.add("out")
@@ -332,7 +340,7 @@ export default class MessageBuilder {
       const { target } = e
       if (target instanceof Node) {
         if (this.optmenu?.contains(target)) return
-        if ((this.s.type === "video" || this.s.type === "voice") && this.attach?.contains(target)) return
+        if ((this.s.type === "video" || this.s.type === "voice" || this.s.type === "audio") && this.attach?.contains(target)) return
         if (this.reply?.contains(target)) return
         if (this.s.type === "deleted" || this.lastStatus === "pending") return
       }
@@ -414,7 +422,7 @@ export default class MessageBuilder {
     this.s = s
     if (!this.attach) return this
     if (!this.s.source) return this
-    if (this.s.type !== "file" && s.type !== "audio") return this
+    if (this.s.type !== "file") return this
     while (this.attach.lastChild) this.attach.lastChild.remove()
     this.attachFile(this.attach, this.s.source, false)
     return this

@@ -413,6 +413,11 @@ $errorbg: #3d2b31;
               justify-content: space-between;
               align-items: center;
               gap: 10px;
+              .icon-type {
+                font-size: 1.2em;
+                text-align: center;
+                align-content: center;
+              }
               .control {
                 font-size: 1.5em;
                 min-width: 18px;
@@ -604,6 +609,24 @@ $errorbg: #3d2b31;
         }
         &.highlight {
           animation: bgTrans 5s;
+        }
+      }
+      .preload {
+        position: sticky;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 20px;
+        text-align: center;
+        font-size: 1.2em;
+        i {
+          color: v.$blurple;
+          font-size: 1.3em;
+        }
+      }
+      &.asset-loading {
+        .card {
+          opacity: 0.2;
         }
       }
     }

@@ -27,6 +27,7 @@ export default class RoomRecorder {
   private canSend: boolean
   private chunks: Blob[]
   private sendIcon: HTMLElement
+  private permTry: number
   constructor({ room }) {
     this.role = "roomrecorder"
     this.isLocked = false
@@ -36,6 +37,7 @@ export default class RoomRecorder {
     this.chunks = []
     this.canSend = false
     this.isLocked = false
+    this.permTry = 1
   }
   private createElement(): void {
     this.statusText = kel("div", "record-status", { e: lang.REC_ST_RECORDING })
@@ -73,14 +75,11 @@ export default class RoomRecorder {
         const { target } = e
         if (target instanceof Node) {
           if (this.btnSend.contains(target) || this.btnCancel.contains(target) || this.spinning.contains(target) || this.voices.contains(target) || this.sendIcon.contains(target)) {
-            console.log("btn send and btn cancel")
             return
           } else if (this.el.contains(target)) {
-            console.log("parent element")
             this.destroyWhenWrongClicked()
             return
           } else {
-            console.log("others")
             this.stop(false)
             return
           }
@@ -104,26 +103,17 @@ export default class RoomRecorder {
   }
   private async destroyMedia(): Promise<void> {
     if (this.mediaStream) {
-      const numberOfTracks = this.mediaStream.getTracks().length
-      console.log(`Destroying ${numberOfTracks} Track(s)`)
       await modal.waittime(1000)
-      for (let i = 0; i < numberOfTracks; i++) {
-        this.mediaStream.getTracks()[i].enabled = false
-        this.mediaStream.getTracks()[i].stop()
-        console.log(`Track #${i + 1} Stopped`)
+      for (const track of this.mediaStream.getTracks()) {
+        track.enabled = false
+        track.stop()
         await modal.waittime(100)
-        this.mediaStream.removeTrack(this.mediaStream.getTracks()[i])
-        console.log(`Track #${i + 1} Removed`)
+        this.mediaStream.removeTrack(track)
         await modal.waittime(100)
       }
     }
     this.mediaRecorder = null
     this.mediaStream = null
-    await modal.waittime(100)
-    console.log("Media Stream destroyed")
-    await modal.waittime(100)
-    console.log("Media Recorder destroyed")
-    console.log("Done!")
   }
   private setupAudioRecorder(): void {
     if (!this.mediaRecorder || !this.mediaStream) return
@@ -188,12 +178,21 @@ export default class RoomRecorder {
     this.room.form.open()
   }
   async init(): Promise<void> {
-    if (this.mediaRecorder || this.mediaStream) return
+    if (this.mediaRecorder || this.mediaStream || this.isLocked) return
+    this.isLocked = true
     const checkPerm = await checkMedia({ audio: true })
     if (!checkPerm) {
       await modal.alert(lang.CONTENT_NO_MEDIA_DEVICES)
+      this.isLocked = false
       return
     }
+    if (this.permTry <= 1) {
+      await modal.waittime(500)
+      this.isLocked = false
+      this.permTry = 2
+      return this.init()
+    }
+    this.isLocked = false
     const voiceRecorder = await getVoiceRecorder()
     if (!voiceRecorder) {
       await modal.alert(lang.CONTENT_NO_MEDIA_DEVICES)

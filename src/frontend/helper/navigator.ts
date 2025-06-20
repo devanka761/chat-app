@@ -22,7 +22,14 @@ export function checkMedia(s: { audio?: boolean; video?: boolean }): Promise<boo
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return resolve(false)
     navigator.mediaDevices
       .getUserMedia({ audio: s.audio || false, video: s.video || false })
-      .then(() => {
+      .then((stream) => {
+        setTimeout(() => {
+          for (const track of stream.getTracks()) {
+            track.enabled = false
+            track.stop()
+            stream.removeTrack(track)
+          }
+        }, 250)
         return resolve(true)
       })
       .catch(() => {

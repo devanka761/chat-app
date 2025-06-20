@@ -1,5 +1,7 @@
 import { IMessageF, MessageTypeF } from "./db.types"
 
+export type msgValidTypes = ["audio", "file", "video", "image", "voice"]
+
 export interface IWritterFileF {
   src: string
   name: string

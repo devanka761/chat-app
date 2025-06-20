@@ -62,8 +62,6 @@ export default class MessageWritter {
       if (!this.data.filename || !this.data.filesrc) return false
     }
 
-    if (this.data.type === "voice" && !this.data.filesrc) return false
-
     if (this.data.text && this.data.text.length > 500) return false
 
     if (this.data.filename && this.data.filename.length > 100) return false

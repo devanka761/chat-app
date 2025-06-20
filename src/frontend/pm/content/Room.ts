@@ -13,7 +13,7 @@ import RoomForm from "../parts/RoomForm"
 import Profile from "./Profile"
 import { IMessageUpdateF, IWritterF } from "../../types/message.types"
 import MessageBuilder from "../../properties/MessageBuilder"
-import { convertMessage } from "../../helper/helper"
+import { convertMessage, msgValidTypes } from "../../helper/helper"
 import xhr from "../../helper/xhr"
 import { IRepB } from "../../../backend/types/validate.types"
 import { lang } from "../../helper/lang"
@@ -34,6 +34,7 @@ export default class Room implements PrimaryClass {
   public field: RoomField
   public opt?: HTMLDivElement
   public optRetrying?: HTMLDivElement
+  public mediaToLoad: number
   constructor(s: { data: IRoomDataF; users: IUserF[]; chats?: IChatsF }) {
     this.role = "room"
     this.isLocked = false
@@ -44,6 +45,7 @@ export default class Room implements PrimaryClass {
     this.form = new RoomForm({ room: this })
     this.field = new RoomField({ room: this })
     this.recorder = new RoomRecorder({ room: this })
+    this.mediaToLoad = 0
   }
   private createElement(): void {
     this.el = kel("div", "Room pmcontent")
@@ -107,12 +109,14 @@ export default class Room implements PrimaryClass {
   }
   private writeField(): void {
     this.field.run(this.middle)
-
     const collection = db.c
     const chats = collection.find((ch) => ch.r.id === this.data.id)
     if (chats) {
       chats.m.forEach((ch) => {
         const user: IUserF = ch.userid === db.me.id ? db.me : chats.u.find((usr) => usr.id === ch.userid) || noUser()
+        if (msgValidTypes.find((ity) => ity === ch.type)) {
+          this.mediaToLoad++
+        }
         const message = new MessageBuilder(ch, user, this)
         this.field.send(message.run())
         if (ch.userid === db.me.id) {
@@ -123,6 +127,13 @@ export default class Room implements PrimaryClass {
           }
         }
       })
+    }
+  }
+  checkIfMediaReady(): void {
+    if (this.mediaToLoad < 0) return
+    this.mediaToLoad--
+    if (this.mediaToLoad === 0) {
+      this.field.scrollToBottom()
     }
   }
   resizeMiddle(formHeight: number): void {

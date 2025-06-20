@@ -1,4 +1,5 @@
 import { kel } from "../../helper/kel"
+import { lang } from "../../helper/lang"
 import MessageBuilder from "../../properties/MessageBuilder"
 import { MessagesAPI } from "../../properties/MessagesAPI"
 import {} from "../../types/message.types"
@@ -11,6 +12,7 @@ export default class RoomField {
   private el: HTMLDivElement
   private middle: HTMLDivElement
   public list: MessagesAPI
+  private preload: HTMLDivElement | undefined | null
   constructor(s: { room: Room }) {
     this.role = "roomfield"
     this.isLocked = false
@@ -18,7 +20,8 @@ export default class RoomField {
     this.list = new MessagesAPI({ data: [] })
   }
   private createElement() {
-    this.el = kel("div", "chatlist")
+    this.preload = kel("div", "preload", { e: `<i class="fa-solid fa-circle-notch fa-spin fa-fw"></i> ${lang.LOADING}` })
+    this.el = kel("div", "chatlist asset-loading", { e: this.preload })
   }
   send(message: MessageBuilder): MessageBuilder {
     this.list.add(message)
@@ -38,6 +41,11 @@ export default class RoomField {
   }
   get html(): HTMLDivElement {
     return this.el
+  }
+  scrollToBottom(): void {
+    if (this.preload) this.el.removeChild(this.preload)
+    this.el.classList.remove("asset-loading")
+    this.el.scrollTop = this.el.scrollHeight
   }
   run(middle: HTMLDivElement) {
     this.middle = middle

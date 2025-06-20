@@ -4,11 +4,9 @@ import db from "../main/db"
 import { TRoomTypeF } from "../../frontend/types/room.types"
 import { IWritterF } from "../../frontend/types/message.types"
 import { IRepTempB } from "../types/validate.types"
-import { convertMessage, minimizeMessage, msgNotValid, normalizeMessage } from "../main/helper"
+import { convertMessage, minimizeMessage, msgNotValid, msgValidTypes, normalizeMessage } from "../main/helper"
 import { IMessageTempF } from "../../frontend/types/db.types"
 import { IMessageKeyB } from "../types/db.types"
-
-const msgValidTypes = ["audio", "file", "video", "image"]
 
 export async function sendMessage(uid: string, room_id: string, room_type: TRoomTypeF, s: IWritterF): Promise<IRepTempB> {
   if (s.text) s.text = s.text.trim()
@@ -41,7 +39,7 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
 
   if (s.type) {
     newChat.type = s.type
-    if (msgValidTypes.find((vt) => vt === s.type) || s.type === "voice") {
+    if (msgValidTypes.find((vt) => vt === s.type)) {
       const dataurl = decodeURIComponent(s.filesrc as string)
       const buffer = Buffer.from(dataurl.split(",")[1], "base64")
       if (buffer.length > 2500000) return { code: 413, msg: "ACC_FILE_LIMIT" }
