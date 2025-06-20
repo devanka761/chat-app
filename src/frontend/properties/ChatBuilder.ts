@@ -92,11 +92,20 @@ export default class ChatBuilder {
     this.lastchat.innerHTML = transpileChat(chat)
     this.timestamp.innerHTML = sdate.dateOrTime(chat.timestamp)
   }
+  hide(): void {
+    this.el.classList.add("hidden")
+  }
+  show(): void {
+    this.el.classList.remove("hidden")
+  }
   get id(): string {
     return this.data.id
   }
   get html(): HTMLDivElement {
     return this.el
+  }
+  get json() {
+    return { data: this.data, user: this.users, unread: this.unread }
   }
   run(): this {
     this.init()

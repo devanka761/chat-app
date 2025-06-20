@@ -45,7 +45,7 @@ export default class Room implements PrimaryClass {
     this.form = new RoomForm({ room: this })
     this.field = new RoomField({ room: this })
     this.recorder = new RoomRecorder({ room: this })
-    this.mediaToLoad = 0
+    this.mediaToLoad = 1
   }
   private createElement(): void {
     this.el = kel("div", "Room pmcontent")
@@ -128,6 +128,7 @@ export default class Room implements PrimaryClass {
         }
       })
     }
+    this.checkIfMediaReady()
   }
   checkIfMediaReady(): void {
     if (this.mediaToLoad < 0) return

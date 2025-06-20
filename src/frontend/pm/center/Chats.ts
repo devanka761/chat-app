@@ -7,6 +7,16 @@ import { IChatsF, IMessageF, IRoomDataF, IUserF } from "../../types/db.types"
 import ChatsAPI from "../../properties/ChatsAPI"
 import ChatBuilder from "../../properties/ChatBuilder"
 import { kel, eroot } from "../../helper/kel"
+import { TChatsTypeF } from "../../types/room.types"
+import FolderCard from "../parts/FolderCard"
+import FolderAPI from "../../properties/FolderAPI"
+
+const typeOrder: { [key in TChatsTypeF]: number } = {
+  all: 1,
+  user: 2,
+  group: 3,
+  unread: 4
+}
 
 export default class Chats implements PrimaryClass {
   readonly role: string
@@ -14,15 +24,19 @@ export default class Chats implements PrimaryClass {
   private el: HTMLDivElement
   private card_list: HTMLDivElement
   private list: ChatsAPI
+  private folders: FolderAPI
+  private type_list: HTMLDivElement
   constructor() {
     this.role = "chats"
     this.isLocked = false
     this.list = new ChatsAPI({ data: [] })
+    this.folders = new FolderAPI({ data: [] })
   }
   private createElement(): void {
     this.el = kel("div", "Chats pmcenter")
     this.card_list = kel("div", "card-list")
-    this.el.append(this.card_list)
+    this.type_list = kel("div", "type-list")
+    this.el.append(this.type_list, this.card_list)
   }
   private btnListener(): void {}
   private writeChatList(): void {
@@ -48,6 +62,13 @@ export default class Chats implements PrimaryClass {
     })
     this.writeIfEmpty(cdb)
   }
+  private writeTypeList(): void {
+    Object.keys(typeOrder).forEach((k) => {
+      const card = new FolderCard({ chats: this, typeName: k as TChatsTypeF }).run()
+      this.folders.add(card)
+      this.type_list.append(card.html)
+    })
+  }
   private writeIfEmpty(cdb: IChatsF[]): void {
     const oldNomore: HTMLParagraphElement | null = this.el.querySelector(".nomore")
     if (cdb.length < 1) {
@@ -56,6 +77,28 @@ export default class Chats implements PrimaryClass {
       this.card_list.append(nomore)
     } else {
       if (oldNomore) oldNomore.remove()
+    }
+  }
+  public setTypeList(chatType: TChatsTypeF = "all"): void {
+    this.folders.enabled = chatType
+    if (chatType === "user" || chatType === "group") {
+      this.list.entries.forEach((chat) => {
+        if (chat.json.data.type === chatType) {
+          chat.show()
+        } else {
+          chat.hide()
+        }
+      })
+    } else if (chatType === "unread") {
+      this.list.entries.forEach((chat) => {
+        if (chat.json.unread < 1) {
+          chat.hide()
+        } else {
+          chat.show()
+        }
+      })
+    } else {
+      this.list.entries.forEach((chat) => chat.show())
     }
   }
   async destroy(): Promise<void> {
@@ -73,8 +116,10 @@ export default class Chats implements PrimaryClass {
 
     const card = this.list.get(s.roomdata.id)
     if (card) {
-      card.addUnread(1).updateChat(s.chat)
+      if (s.chat.userid !== db.me.id) card.addUnread()
+      card.updateChat(s.chat)
       this.card_list.prepend(card.html)
+      this.setTypeList(this.folders.enabled)
     }
     this.writeIfEmpty(db.c)
   }
@@ -82,7 +127,9 @@ export default class Chats implements PrimaryClass {
     userState.center = this
     this.createElement()
     eroot().append(this.el)
+    this.writeTypeList()
     this.writeChatList()
+    this.setTypeList()
     this.btnListener()
   }
 }

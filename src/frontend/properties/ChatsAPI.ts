@@ -5,6 +5,9 @@ export default class ChatsAPI {
   constructor({ data }: { data: ChatBuilder[] }) {
     this.data = data
   }
+  get entries(): ChatBuilder[] {
+    return this.data
+  }
   get(user_chat_id: string): ChatBuilder | null {
     return this.data.find((usrch) => usrch.id === user_chat_id) || null
   }

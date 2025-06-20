@@ -5,6 +5,34 @@
   scrollbar-width: thin;
   overflow-y: auto;
   overflow-x: hidden;
+  .type-list {
+    padding: 10px;
+    max-width: 100%;
+    overflow-x: auto;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 10px;
+    .card {
+      width: fit-content;
+      border: 1px solid v.$softwhite;
+      color: v.$softwhite;
+      border-radius: 1.65em;
+      padding: 3px 20px;
+      font-size: 0.9rem;
+      align-content: center;
+      cursor: pointer;
+      i {
+        text-transform: capitalize;
+        font-style: normal;
+      }
+      &.on {
+        border-color: v.$blurple;
+        background-color: v.$bar_active;
+        color: v.$white;
+      }
+    }
+  }
   .search {
     width: 100%;
     padding: 10px;
@@ -139,6 +167,9 @@
         .btn {
           font-size: 1.25em;
         }
+      }
+      &.hidden {
+        display: none;
       }
     }
     .card:hover {

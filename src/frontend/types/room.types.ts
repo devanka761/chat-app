@@ -10,6 +10,7 @@ export interface IRoomFormF {
   file?: IRoomFileF
 }
 export type TRoomTypeF = "user" | "group"
+export type TChatsTypeF = "all" | "user" | "group" | "unread"
 
 export type TStatusIcon = {
   [key in TStatusText]: string
