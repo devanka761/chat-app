@@ -12,11 +12,9 @@ export default class Account implements PrimaryClass {
   public isLocked: boolean
   readonly role: string
   private el: HTMLDivElement
-  private x: { [key: string]: HTMLElement }
   constructor() {
     this.role = "account"
     this.isLocked = false
-    this.x = {}
   }
   private createElement() {
     this.el = kel("div", "Account pmcontent")

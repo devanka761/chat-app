@@ -11,11 +11,11 @@ import { TChatsTypeF } from "../../types/room.types"
 import FolderCard from "../parts/FolderCard"
 import FolderAPI from "../../properties/FolderAPI"
 
-const typeOrder: { [key in TChatsTypeF]: number } = {
+const typeOrder: { [key: string]: number } = {
   all: 1,
+  unread: 4,
   user: 2,
-  group: 3,
-  unread: 4
+  group: 3
 }
 
 export default class Chats implements PrimaryClass {
@@ -63,11 +63,17 @@ export default class Chats implements PrimaryClass {
     this.writeIfEmpty(cdb)
   }
   private writeTypeList(): void {
-    Object.keys(typeOrder).forEach((k) => {
-      const card = new FolderCard({ chats: this, typeName: k as TChatsTypeF }).run()
-      this.folders.add(card)
-      this.type_list.append(card.html)
-    })
+    Object.keys(typeOrder)
+      .sort((a, b) => {
+        if (typeOrder[a] > typeOrder[b]) return 1
+        if (typeOrder[a] < typeOrder[b]) return -1
+        return 0
+      })
+      .forEach((k) => {
+        const card = new FolderCard({ chats: this, typeName: k as TChatsTypeF }).run()
+        this.folders.add(card)
+        this.type_list.append(card.html)
+      })
   }
   private writeIfEmpty(cdb: IChatsF[]): void {
     const oldNomore: HTMLParagraphElement | null = this.el.querySelector(".nomore")

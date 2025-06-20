@@ -1,13 +1,15 @@
 import { PrimaryClass, UserLocked, UserNotif } from "../types/userState.types"
+import appConfig from "../../backend/config/public.config.json"
 
 class UserState {
-  private notif: UserNotif
-  private color: "dark" | "light"
+  public notif: UserNotif
+  public color: "dark" | "light"
   public currtab: PrimaryClass | null
   public currcenter: PrimaryClass | null
   public currcontent: PrimaryClass | null
   public currlast: PrimaryClass | null
   public locked: UserLocked
+  private saveKey: string
   constructor() {
     this.color = "dark"
     this.notif = { a01: 1, a02: 1, a03: 1 }
@@ -15,6 +17,7 @@ class UserState {
     this.currcenter = null
     this.currcontent = null
     this.currlast = null
+    this.saveKey = "Kirimin_Local"
     this.locked = { currtab: false, currcenter: false, currcontent: false }
   }
   set tab(newtab: PrimaryClass | null) {
@@ -44,6 +47,31 @@ class UserState {
   }
   get last(): PrimaryClass | null {
     return this.currlast
+  }
+
+  save(): void {
+    window.localStorage.setItem(
+      this.saveKey,
+      JSON.stringify({
+        notif: this.notif,
+        color: this.color,
+        saveVersion: appConfig.saveVersion
+      })
+    )
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  read(): any {
+    if (!window.localStorage) return null
+    const file = window.localStorage.getItem(this.saveKey)
+    return file ? JSON.parse(file) : null
+  }
+  async load(): Promise<void> {
+    const file = this.read()
+    if (file) {
+      if (!file.saveVersion || file.saveVersion !== appConfig.saveVersion) return
+      if (file.color) this.color = file.color
+      if (file.notif) this.notif = file.notif
+    }
   }
 }
 

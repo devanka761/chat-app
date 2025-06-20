@@ -1,4 +1,5 @@
 import { kel } from "../../helper/kel"
+import { lang } from "../../helper/lang"
 import { TChatsTypeF } from "../../types/room.types"
 import Chats from "../center/Chats"
 
@@ -19,7 +20,7 @@ export default class FolderCard {
     this.num = s.num
   }
   createElement(): void {
-    this.name = kel("i", "name", { e: this.typeName })
+    this.name = kel("i", "name", { e: lang[`FOLDER_${this.typeName}`] })
     this.el = kel("div", "card", { e: this.name })
   }
   clickListener(): void {

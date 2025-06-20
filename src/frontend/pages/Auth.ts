@@ -12,6 +12,7 @@ import { LangObject, Languages } from "../types/helper.types"
 import db from "../manager/db"
 import cloud from "../manager/cloud"
 import { kel } from "../helper/kel"
+import Empty from "../pm/content/Empty"
 
 let lang: LangObject = {}
 
@@ -68,8 +69,11 @@ export default class Auth {
     headerBar.run()
     new Chats().run()
     new Nav().run()
-    // new Empty().run()
-    new Account().run()
+    if (isUser.data.isFirst) {
+      new Account().run()
+      return
+    }
+    new Empty().run()
   }
   private initializeData(s: IAccountB): void {
     if (s.peer) cloud.run(s.peer)
