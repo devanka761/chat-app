@@ -104,7 +104,8 @@ export function acceptfriend(uid: string, s: { userid: string }): IRepTempB {
   if (!cdb[friendkey])
     db.ref.c[friendkey] = {
       u: [uid, s.userid],
-      f: 1
+      f: 1,
+      t: "user"
     }
   db.save("u", "c")
 

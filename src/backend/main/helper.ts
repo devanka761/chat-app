@@ -132,8 +132,8 @@ export function convertGroup(group_id: string): IRoomDataF {
   const group = db.ref.c[group_id]
   return {
     id: group_id,
-    long: group.n || "unamed",
-    short: group_id,
+    long: group_id,
+    short: group.n || "unamed",
     badges: group.b,
     image: group.i,
     type: "group"

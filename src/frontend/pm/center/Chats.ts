@@ -10,6 +10,7 @@ import { kel, eroot } from "../../helper/kel"
 import { TChatsTypeF } from "../../types/room.types"
 import FolderCard from "../parts/FolderCard"
 import FolderAPI from "../../properties/FolderAPI"
+import noMessage from "../../helper/noMessage"
 
 const typeOrder: { [key: string]: number } = {
   all: 1,
@@ -41,21 +42,18 @@ export default class Chats implements PrimaryClass {
   private btnListener(): void {}
   private writeChatList(): void {
     const cdb: IChatsF[] = db.c.sort((a, b) => {
-      if (a.m[a.m.length - 1].timestamp < b.m[b.m.length - 1].timestamp) return 1
-      if (a.m[a.m.length - 1].timestamp > b.m[b.m.length - 1].timestamp) return -1
+      if ((a.m[a.m.length - 1]?.timestamp || 0) < (b.m[b.m.length - 1]?.timestamp || 0)) return 1
+      if ((a.m[a.m.length - 1]?.timestamp || 0) > (b.m[b.m.length - 1]?.timestamp || 0)) return -1
       return 0
     })
     cdb.forEach((ch) => {
-      const user = ch.u.find((usr) => usr.id !== db.me.id)
-      if (!user) return
-
       const unread = ch.m.filter((ct) => {
         return ct.userid !== db.me.id && ct.type !== "deleted" && !ct.readers?.includes(db.me.id)
       }).length
 
-      const lastchat = ch.m[ch.m.length - 1]
+      const lastchat = ch.m[ch.m.length - 1] || noMessage()
       const roomDetail: IRoomDataF = ch.r
-      const card = new ChatBuilder({ data: roomDetail, users: [user], chat: lastchat })
+      const card = new ChatBuilder({ data: roomDetail, users: ch.u, chat: lastchat })
       card.setUnread(unread).run()
       this.list.add(card)
       this.card_list.append(card.html)

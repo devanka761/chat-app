@@ -37,7 +37,9 @@
     }
   }
   .header-options {
+    background-color: v.$bg;
     position: absolute;
+    padding: 7px 0;
     z-index: -1;
     top: 50px;
     right: 10px;
@@ -47,7 +49,8 @@
     animation: slide_down_in 0.25s;
     .btn {
       background-color: v.$bg;
-      padding: 14px 28px;
+      padding: 14px;
+      padding-right: 28px;
       &:hover {
         background-color: v.$bar_active;
       }

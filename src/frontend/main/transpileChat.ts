@@ -13,7 +13,7 @@ const mediaIcons: { [key: string]: string } = {
 export function transpileChat(s: IMessageF, lastuser?: IUserF | null, noStatus?: boolean): string {
   const myId = db.me.id
   let text = ""
-  if (lastuser) text = `${ss(lastuser.username, 10)} <i class="fa-regular fa-angle-right"></i> `
+  if (lastuser) text = `${ss(lastuser.username, 10)}: `
 
   if (s.type === "deleted") {
     text += `<i class="fa-solid fa-ban"></i> <i>${s.userid === myId ? lang.CONTENT_YOU_DELETED : lang.CONTENT_DELETED}</i>`

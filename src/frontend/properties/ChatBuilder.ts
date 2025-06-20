@@ -44,7 +44,9 @@ export default class ChatBuilder {
       setbadge(this.username, this.data.badges)
     }
 
-    this.lastchat = kel("div", "last", { e: transpileChat(this.chat) })
+    const lastUser = this.data.type === "group" ? this.users.find((usr) => usr.id === this.chat.userid) : undefined
+
+    this.lastchat = kel("div", "last", { e: transpileChat(this.chat, lastUser) })
 
     const edetail = kel("div", "detail")
     edetail.append(this.username, this.lastchat)
@@ -89,7 +91,8 @@ export default class ChatBuilder {
     this.clickListener()
   }
   updateChat(chat: IMessageF): void {
-    this.lastchat.innerHTML = transpileChat(chat)
+    const lastUser = this.data.type === "group" ? this.users.find((usr) => usr.id === chat.userid) : undefined
+    this.lastchat.innerHTML = transpileChat(chat, lastUser)
     this.timestamp.innerHTML = sdate.dateOrTime(chat.timestamp)
   }
   hide(): void {

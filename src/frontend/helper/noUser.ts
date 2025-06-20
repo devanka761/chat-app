@@ -1,5 +1,6 @@
+import { IUserF } from "../types/db.types"
 import { lang } from "./lang"
-export default function noUser() {
+export default function noUser(): IUserF {
   return {
     id: "-1",
     username: lang.DELETED_USER,

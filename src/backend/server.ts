@@ -7,6 +7,7 @@ import { ExpressPeerServer } from "peer"
 import authRouter from "./routes/auth.route"
 import accountRouter from "./routes/account.route"
 import profileRouter from "./routes/profile.route"
+import groupRouter from "./routes/group.route"
 import roomRouter from "./routes/room.route"
 import fileRouter from "./routes/file.route"
 import cfg from "./main/cfg"
@@ -45,6 +46,7 @@ const PORT: number = cfg.APP_PORT as number
 app.use("/x/auth", authRouter)
 app.use("/x/account", accountRouter)
 app.use("/x/profile", profileRouter)
+app.use("/x/group", groupRouter)
 app.use("/x/room", roomRouter)
 app.use("/file", fileRouter)
 

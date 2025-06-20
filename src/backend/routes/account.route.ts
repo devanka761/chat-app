@@ -1,5 +1,5 @@
 import express, { Request, Response, Router } from "express"
-import * as haccount from "../controller/account.controller"
+import { setBio, setDisplayname, setImg, setUsername } from "../controller/account.controller"
 import { rep } from "../main/helper"
 import { cdUser, isUser } from "../main/middlewares"
 import validate from "../main/validate"
@@ -14,8 +14,8 @@ router.post("/set-username", (req: Request, res: Response) => {
     res.status(400).json(rep({ code: 400 }))
     return
   }
-  const setUsername = rep(haccount.setUsername(<string>req.user?.id, req.body))
-  res.status(setUsername.code).json(setUsername)
+  const setUname = rep(setUsername(<string>req.user?.id, req.body))
+  res.status(setUname.code).json(setUname)
 })
 
 router.post("/set-displayname", (req: Request, res: Response) => {
@@ -23,24 +23,24 @@ router.post("/set-displayname", (req: Request, res: Response) => {
     res.status(400).json(rep({ code: 400 }))
     return
   }
-  const setDisplayname = rep(haccount.setDisplayname(<string>req.user?.id, req.body))
-  res.status(setDisplayname.code).json(setDisplayname)
+  const setDname = rep(setDisplayname(<string>req.user?.id, req.body))
+  res.status(setDname.code).json(setDname)
 })
 router.post("/set-bio", (req: Request, res: Response) => {
   if (!validate(["bio"], req.body)) {
     res.status(400).json(rep({ code: 400 }))
     return
   }
-  const setBio = rep(haccount.setBio(<string>req.user?.id, req.body))
-  res.status(setBio.code).json(setBio)
+  const setAbout = rep(setBio(<string>req.user?.id, req.body))
+  res.status(setAbout.code).json(setAbout)
 })
 router.post("/set-img", (req: Request, res: Response) => {
   if (!validate(["img", "name"], req.body)) {
     res.status(400).json(rep({ code: 400 }))
     return
   }
-  const setImg = rep(haccount.setImg(<string>req.user?.id, req.body))
-  res.status(setImg.code).json(setImg)
+  const setImage = rep(setImg(<string>req.user?.id, req.body))
+  res.status(setImage.code).json(setImage)
 })
 
 export default router

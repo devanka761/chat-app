@@ -244,22 +244,12 @@ export default class MessageBuilder {
   }
   private renderOptmenu(...args: MessageOptionType[]): void {
     if (this.room.opt) {
-      if (this.room.opt === this.optmenu) {
-        console.log("canceled:", "message option closed")
-        return
-      }
-      if (this.room.optRetrying) {
-        console.log("canceled:", "message option closed")
-        return
-      }
-      console.log("retry:", "opening message option ...")
+      if (this.room.opt === this.optmenu) return
+      if (this.room.optRetrying) return
       this.isRetry = true
       this.room.optRetrying = this.optmenu
       setTimeout(() => this.renderOptmenu(...args), 200)
       return
-    }
-    if (this.isRetry) {
-      console.log("success:", "message option opened")
     }
     if (!this.isRetry && this.room.optRetrying) return
     if (this.optLocked) return

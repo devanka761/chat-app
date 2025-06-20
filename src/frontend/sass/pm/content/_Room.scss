@@ -302,29 +302,40 @@ $errorbg: #3d2b31;
         .optmenu {
           position: absolute;
           top: 0;
-          left: 0;
+          left: 5px;
           width: fit-content;
           min-width: 250px;
-          background-color: v.$black;
+          background-color: rgba($color: v.$black, $alpha: 0.8);
+          backdrop-filter: blur(3px);
+          -webkit-backdrop-filter: blur(3px);
           border-radius: 10px;
           overflow: hidden;
-          border: 2px solid v.$black;
+          border: 2px solid #00000000;
           animation: opt_in 0.25s;
           .btn {
-            background-color: v.$black;
+            background-color: #00000000;
             padding: 10px;
+            &:hover {
+              background-color: rgba($color: v.$blurple, $alpha: 0.25);
+            }
             &.opt-profile {
               color: v.$cgreen;
+              &:hover {
+                background-color: rgba($color: v.$sgreen, $alpha: 0.25);
+              }
             }
             &.opt-download {
               color: v.$yellow;
+              &:hover {
+                background-color: rgba($color: v.$darkcream, $alpha: 0.15);
+              }
             }
             &.opt-delete,
             &.opt-cancel {
               color: v.$cred;
-            }
-            &:hover {
-              background-color: rgba($color: v.$white, $alpha: 0.1);
+              &:hover {
+                background-color: rgba($color: v.$sred, $alpha: 0.15);
+              }
             }
           }
           &.out {
@@ -564,7 +575,7 @@ $errorbg: #3d2b31;
         &.me {
           .optmenu {
             left: auto;
-            right: 0;
+            right: 5px;
           }
           .field {
             margin-left: auto;

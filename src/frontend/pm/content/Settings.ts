@@ -83,6 +83,12 @@ export default class Settings implements PrimaryClass {
     this.ecolor = qutor(".usercolor .outer .chp-f p", this.el) as HTMLParagraphElement
   }
   writeSettings() {
+    if (this.elang) {
+      this.elang.innerHTML = SelectLang().items.find((k) => k.activated)?.label || "English"
+    }
+    if (this.ecolor) {
+      this.ecolor.innerHTML = SelectColor().items.find((k) => k.activated)?.label || lang.SET_COLOR_DARK
+    }
     const enotif = this.el.querySelector(".usernotif .outer .chp-f")
 
     notiflist.forEach((nf) => {
@@ -103,12 +109,6 @@ export default class Settings implements PrimaryClass {
     })
   }
   btnListener() {
-    if (this.elang) {
-      this.elang.innerHTML = SelectLang().items.find((k) => k.activated)?.label || "English"
-    }
-    if (this.ecolor) {
-      this.ecolor.innerHTML = SelectColor().items.find((k) => k.activated)?.label || lang.SET_COLOR_DARK
-    }
     const btnLang = qutor(".btn-lang", this.el)
     if (btnLang)
       btnLang.onclick = async () => {
@@ -130,7 +130,12 @@ export default class Settings implements PrimaryClass {
         document.documentElement.lang = selLang
 
         await modal.alert(lang.SET_CHOOSE_LANG_DONE)
-        window.location.reload()
+        modal.loading(
+          new Promise((resolve) => {
+            setTimeout(resolve, 2000)
+            setTimeout(() => window.location.reload(), 500)
+          })
+        )
         this.isLocked = false
       }
     const btnColor = qutor(".btn-color", this.el)

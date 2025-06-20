@@ -22,6 +22,7 @@ const sdate = {
     return sameday ? sdate.time(ts) : sdate.datetime(ts)
   },
   dateOrTime(ts: number = Date.now()) {
+    if (ts === -1) return ""
     const sameday = sdate.sameday(Date.now(), ts)
     return sameday ? sdate.time(ts) : sdate.date(ts)
   },

@@ -67,7 +67,7 @@ export function getMe(uid: string): IRepTempB {
       const isUser = cdb[k].t === "user" ? true : false
       const rdb: IRoomDataF = isUser ? convertUser(cdb[k].u.find((usr) => usr !== uid) as string) : convertGroup(k)
       return {
-        u: cdb[k].u.filter((usr) => usr !== uid).map((usr) => getUser(uid, usr)),
+        u: cdb[k].u.map((usr) => getUser(uid, usr)),
         m: Object.keys(chatFile).map((msgkey) => {
           const rawData = chatFile[msgkey]
           return normalizeMessage(msgkey, rawData)
