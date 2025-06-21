@@ -6,6 +6,16 @@ export function userFile(imgsrc: string): string | null {
   if (!fs.existsSync(`./dist/stg/user/${imgsrc}`)) return null
   return `./dist/stg/user/${imgsrc}`
 }
+export function groupFile(uid: string, imgsrc: string): string | null {
+  const groupid = imgsrc.split("_")[0]
+  const cdb = db.ref.c[groupid]
+  if (!cdb) return null
+  if (!cdb.u.find((usr) => usr === uid)) return null
+
+  if (!fs.existsSync(`./dist/stg/group/${imgsrc}`)) return null
+  return `./dist/stg/group/${imgsrc}`
+}
+
 export function roomFile(uid: string, roomtype: TRoomTypeF, roomid: string, filename: string): string | null {
   const cdb = db.ref.c
 

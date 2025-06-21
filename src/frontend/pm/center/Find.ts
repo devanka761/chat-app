@@ -1,5 +1,5 @@
 import { kel, eroot } from "../../helper/kel"
-import { escapeHTML, ss } from "../../helper/escaper"
+import { ss } from "../../helper/escaper"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import notip from "../../helper/notip"
@@ -25,7 +25,8 @@ function user_card(s: IUserF): { [key: string]: HTMLDivElement } {
   img.width = 50
   const edetail = kel("div", "detail")
   const eusername = kel("div", "name", { e: `${username}` })
-  const elastchat = kel("div", "last", { e: escapeHTML(ss(displayname, 30)) })
+  const elastchat = kel("div", "last")
+  elastchat.innerText = ss(displayname, 30)
   if (badges) setbadge(eusername, badges)
 
   card.append(eleft /*eright*/)

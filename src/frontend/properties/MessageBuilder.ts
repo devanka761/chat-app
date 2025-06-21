@@ -1,4 +1,4 @@
-import { escapeHTML, ss } from "../helper/escaper"
+import { ss } from "../helper/escaper"
 import { kel } from "../helper/kel"
 import { lang } from "../helper/lang"
 import modal from "../helper/modal"
@@ -76,9 +76,8 @@ export default class MessageBuilder {
     this.el.append(this.field)
   }
   private renderUser(): void {
-    this.sender = kel("div", "chp sender", {
-      e: ss(escapeHTML(this.user.username))
-    })
+    this.sender = kel("div", "chp sender")
+    this.sender.innerText = ss(this.user.username)
     if (this.user.badges) setbadge(this.sender, this.user.badges)
     this.field.append(this.sender)
   }
@@ -88,7 +87,8 @@ export default class MessageBuilder {
     const msgAPI = this.room.field.list.get(this.s.reply)
     if (!msgAPI) return
     const { user, message } = msgAPI.json
-    const replysender = kel("div", "name", { e: ss(escapeHTML(user.username)) })
+    const replysender = kel("div", "name")
+    replysender.innerText = ss(user.username)
     const replymsg = kel("div", "msg", { e: transpileChat(message, null, true) })
     this.reply = kel("div", "chp embed", { e: [replysender, replymsg] })
     this.reply.onclick = () => {
@@ -192,7 +192,7 @@ export default class MessageBuilder {
       return
     }
     if (this.s.edited) this.textEdidted.innerHTML = `(${lang.CONTENT_EDITED})`
-    if (this.s.text) this.textMessage.innerHTML = escapeHTML(this.s.text)
+    if (this.s.text) this.textMessage.innerText = this.s.text
   }
   private renderTime(): void {
     this.timestamp = kel("div", "ts", { e: sdate.parseTime(this.s.timestamp) })
@@ -214,7 +214,7 @@ export default class MessageBuilder {
   set edit(text: string) {
     this.s.text = text
     this.s.edited = Date.now()
-    this.textMessage.innerHTML = escapeHTML(text)
+    this.textMessage.innerText = text
     this.textEdidted.innerText = lang.CONTENT_EDITED
   }
   private init(isTemp: boolean): void {
@@ -370,7 +370,7 @@ export default class MessageBuilder {
   }
   setText(txt: string): void {
     this.s.text = txt
-    this.textMessage.innerHTML = escapeHTML(txt)
+    this.textMessage.innerText = txt
   }
   setEdited(ts?: number): void {
     this.s.edited = ts

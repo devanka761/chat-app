@@ -33,6 +33,11 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
     }
     db.save("c")
   }
+  if (!db.ref.c[chatkey].c) {
+    isFirst = true
+    db.ref.c[chatkey].c = chatkey
+    db.save("c")
+  }
 
   const dbOld = (db.fileGet(chatkey, "room") || {}) as IMessageKeyB
   const newChat: IMessageTempF = convertMessage(uid, s)

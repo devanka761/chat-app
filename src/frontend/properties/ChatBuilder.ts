@@ -29,18 +29,20 @@ export default class ChatBuilder {
   private createElement(): void {
     this.el = kel("div", "card", { id: `chatlist-${this.data.id}` })
 
+    const folder = this.data.type === "user" ? "user" : "group"
     this.img = new Image()
     this.img.alt = this.data.short
-    this.img.onerror = () => (this.img.src = "/assets/user.jpg")
-    this.img.src = this.data.image ? `/file/user/${this.data.image}` : "/assets/user.jpg"
+    this.img.onerror = () => (this.img.src = `/assets/${folder}.jpg`)
+    this.img.src = this.data.image ? `/file/${folder}/${this.data.image}` : `/assets/${folder}.jpg`
     this.img.width = 50
 
     const ecimg = kel("div", "img")
     ecimg.append(this.img)
 
-    this.username = kel("div", "name", { e: this.data.short })
+    this.username = kel("div", "name")
+    this.username.innerText = this.data.short
 
-    if (this.data.type === "user" && this.data.badges) {
+    if (this.data.badges) {
       setbadge(this.username, this.data.badges)
     }
 
@@ -62,6 +64,22 @@ export default class ChatBuilder {
     if (this.unread >= 1) eright.append(this.eunread)
 
     this.el.append(eleft, eright)
+  }
+  updateData(newData: IRoomDataF): void {
+    const folder = this.data.type
+
+    if (newData.image) {
+      this.data.image = newData.image
+      this.img.src = `/file/${folder}/${this.data.image}`
+    }
+
+    if (newData.short) {
+      this.data.short = newData.short
+      this.username.innerText = this.data.short
+      if (this.data.badges) {
+        setbadge(this.username, this.data.badges)
+      }
+    }
   }
   addUnread(n?: number): this {
     this.unread = this.unread + (n || 1)
@@ -90,8 +108,11 @@ export default class ChatBuilder {
     this.createElement()
     this.clickListener()
   }
-  updateChat(chat: IMessageF): void {
+  updateChat(chat: IMessageF, roomdata: IRoomDataF): void {
     const lastUser = this.data.type === "group" ? this.users.find((usr) => usr.id === chat.userid) : undefined
+    if (roomdata.image && roomdata.image !== this.data.image) {
+      this.data.image = roomdata.image
+    }
     this.lastchat.innerHTML = transpileChat(chat, lastUser)
     this.timestamp.innerHTML = sdate.dateOrTime(chat.timestamp)
   }

@@ -1,7 +1,6 @@
 import fs from "fs"
 import db from "../main/db"
 import { getUser } from "./profile.controller"
-import {} from "./room.controller"
 import { convertGroup, convertUser, genhex, isProd, normalizeMessage, peerKey } from "../main/helper"
 import cfg from "../main/cfg"
 import { IChatsF, IRoomDataF, MeDB, PeerDB } from "../../frontend/types/db.types"
@@ -134,16 +133,18 @@ export function setImg(uid: string, s: { img: string; name: string }): IRepTempB
   const buffer = Buffer.from(dataurl.split(",")[1], "base64")
   if (buffer.length > 2500000) return { code: 413, msg: "ACC_FILE_LIMIT" }
 
-  if (!fs.existsSync(`./dist/stg/user`)) fs.mkdirSync(`./dist/stg/user`)
+  const fpath = "./dist/stg/user"
+
+  if (!fs.existsSync(fpath)) fs.mkdirSync(fpath)
 
   const udb = db.ref.u[uid]
   if (udb.img) {
-    if (fs.existsSync(`./dist/stg/user/${udb.img}`)) fs.unlinkSync(`./dist/stg/user/${udb.img}`)
+    if (fs.existsSync(`${fpath}/${udb.img}`)) fs.unlinkSync(`${fpath}/${udb.img}`)
   }
 
   const imgExt = /\.([a-zA-Z0-9]+)$/
   const imgName = `${uid}${Date.now().toString(35)}.${s.name.match(imgExt)?.[1]}`
-  fs.writeFileSync(`./dist/stg/user/${imgName}`, buffer)
+  fs.writeFileSync(`${fpath}/${imgName}`, buffer)
 
   db.ref.u[uid].img = imgName
   db.save("u")

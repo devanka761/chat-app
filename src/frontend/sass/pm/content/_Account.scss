@@ -181,14 +181,15 @@ $topheight: 60px;
                 -o-object-position: center;
               }
               .uname {
-                i.fa-user-crown {
+                font-style: normal;
+                .fa-user-crown {
                   font-size: 0.8em;
                   color: v.$yellow;
                   margin-left: 5px;
                 }
               }
             }
-            .right {
+            .btn-kick {
               color: v.$cred;
               cursor: pointer;
             }

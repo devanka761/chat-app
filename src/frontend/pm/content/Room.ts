@@ -18,6 +18,7 @@ import xhr from "../../helper/xhr"
 import { IRepB } from "../../../backend/types/validate.types"
 import { lang } from "../../helper/lang"
 import RoomRecorder from "../parts/RoomRecorder"
+import Group from "./Group"
 
 export default class Room implements PrimaryClass {
   readonly role: string
@@ -83,10 +84,11 @@ export default class Room implements PrimaryClass {
     this.writeField()
   }
   private writeUser(): void {
+    const folder = this.data.type === "user" ? "user" : "group"
     const img = new Image()
-    img.onerror = () => (img.src = `/assets/${this.data.type}.jpg`)
+    img.onerror = () => (img.src = `/assets/${folder}.jpg`)
     img.alt = this.data.short
-    img.src = this.data.image ? `/file/${this.data.type}/${this.data.image}` : "/assets/user.jpg"
+    img.src = this.data.image ? `/file/${folder}/${this.data.image}` : `/assets/${folder}.jpg`
     const eimg = <HTMLDivElement>this.el.querySelector(".top .left .user .img")
     eimg.append(img)
 
@@ -100,7 +102,9 @@ export default class Room implements PrimaryClass {
     euser.onclick = () => {
       if (this.data.type === "user") {
         const user = this.users.find((usr) => usr.id === this.data.id)
-        swiper(new Profile({ user: user as IUserF, classBefore: this }), userState.currcontent)
+        swiper(new Profile({ user: user as IUserF, classBefore: this }), userState.content)
+      } else {
+        swiper(new Group({ group: this.data, users: this.users }), userState.content)
       }
     }
   }

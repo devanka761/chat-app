@@ -1,6 +1,7 @@
+import fs from "fs"
 import { IChatsF } from "../../frontend/types/db.types"
 import db from "../main/db"
-import { convertGroup, convertUser } from "../main/helper"
+import { convertGroup } from "../main/helper"
 import { IChatB } from "../types/db.types"
 import { IRepTempB } from "../types/validate.types"
 
@@ -32,4 +33,55 @@ export function createGroup(uid: string, s: { name: string }): IRepTempB {
   }
 
   return { code: 200, data: { isFirst: true, roomid: chat_id, group: groupData } }
+}
+
+export function setGroupname(uid: string, s: { gname: string; id: string }): IRepTempB {
+  const cdb = db.ref.c
+  const gkey = Object.keys(cdb).find((k) => k === s.id)
+
+  if (!gkey) return { code: 404, msg: "GRPS_404" }
+  if (!cdb[gkey].o || cdb[gkey].o !== uid) return { code: 400, msg: "GRPS_OWNER_FEATURE" }
+  // if (cdb[gkey].lg && cdb[gkey].lg > Date.now()) {
+  //   return { code: 429, msg: "GRPS_DNAME_COOLDOWN", data: { timestamp: cdb[gkey].lg } }
+  // }
+  s.gname = s.gname.trim()
+
+  if (s.gname === cdb[gkey].n) return { code: 200, data: { text: s.gname } }
+  if (s.gname.length > 35) return { code: 400, msg: "GRPS_DNAME_LENGTH" }
+
+  db.ref.c[gkey].n = s.gname
+  db.ref.c[gkey].lg = Date.now() + 1000 * 60 * 15
+
+  db.save("c")
+  return { code: 200, data: { text: s.gname } }
+}
+
+export function setImg(uid: string, s: { img: string; name: string; id: string }): IRepTempB {
+  const gkey = Object.keys(db.ref.c).find((k) => k === s.id)
+  if (!gkey) return { code: 404, msg: "GRPS_404" }
+  const cdb = db.ref.c[gkey]
+  if (!cdb) return { code: 404, msg: "GRPS_404" }
+
+  if (!cdb.o || cdb.o !== uid) return { code: 400, msg: "GRPS_OWNER_FEATURE" }
+
+  const dataurl = decodeURIComponent(s.img)
+  const buffer = Buffer.from(dataurl.split(",")[1], "base64")
+  if (buffer.length > 2500000) return { code: 413, msg: "ACC_FILE_LIMIT" }
+
+  const fpath = "./dist/stg/group"
+
+  if (!fs.existsSync(fpath)) fs.mkdirSync(fpath)
+
+  if (cdb.i) {
+    if (fs.existsSync(`${fpath}/${cdb.i}`)) fs.unlinkSync(`${fpath}/${cdb.i}`)
+  }
+
+  const imgExt = /\.([a-zA-Z0-9]+)$/
+  const imgName = `${gkey}_${Date.now().toString(35)}.${s.name.match(imgExt)?.[1]}`
+  fs.writeFileSync(`${fpath}/${imgName}`, buffer)
+
+  db.ref.c[gkey].i = imgName
+  db.save("c")
+
+  return { code: 200, data: { text: imgName } }
 }

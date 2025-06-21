@@ -64,6 +64,7 @@ export interface IChatKeyF {
   [key: string]: IMessageF
 }
 export interface IRoomDataF {
+  owner?: string
   id: string
   long: string
   short: string

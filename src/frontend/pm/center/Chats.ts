@@ -111,6 +111,10 @@ export default class Chats implements PrimaryClass {
     this.isLocked = false
     this.el.remove()
   }
+  updateData(roomdata: IRoomDataF): void {
+    const card = this.list.get(roomdata.id)
+    if (card) card.updateData(roomdata)
+  }
   update(s: { chat: IMessageF; users: IUserF[]; roomid: string; isFirst: boolean; roomdata: IRoomDataF }): void {
     if (s.isFirst) {
       const firstcard = new ChatBuilder({ data: s.roomdata, users: s.users, chat: s.chat })
@@ -121,7 +125,7 @@ export default class Chats implements PrimaryClass {
     const card = this.list.get(s.roomdata.id)
     if (card) {
       if (s.chat.userid !== db.me.id) card.addUnread()
-      card.updateChat(s.chat)
+      card.updateChat(s.chat, s.roomdata)
       this.card_list.prepend(card.html)
       this.setTypeList(this.folders.enabled)
     }

@@ -59,6 +59,7 @@ export interface IChatB {
   t: TRoomTypeF
   b?: number[]
   l?: string
+  lg?: number
 }
 
 export type IMessageKeyB = {

@@ -17,7 +17,8 @@ export default [
     run: async () => {
       const groupName = await modal.prompt({
         ic: "pencil-mechanical",
-        msg: lang.GRPS_DNAME
+        msg: lang.GRPS_DNAME,
+        max: 35
       })
       if (!groupName) return
       const createdGroup = await modal.loading(xhr.post("/x/group/create", { name: groupName }))

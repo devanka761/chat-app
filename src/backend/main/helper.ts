@@ -131,6 +131,7 @@ export function convertUser(user_id: string): IRoomDataF {
 export function convertGroup(group_id: string): IRoomDataF {
   const group = db.ref.c[group_id]
   return {
+    owner: group.o,
     id: group_id,
     long: group_id,
     short: group.n || "unamed",
