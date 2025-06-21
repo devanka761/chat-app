@@ -1,4 +1,3 @@
-import { ss } from "../helper/escaper"
 import { kel } from "../helper/kel"
 import { lang } from "../helper/lang"
 import modal from "../helper/modal"
@@ -77,7 +76,7 @@ export default class MessageBuilder {
   }
   private renderUser(): void {
     this.sender = kel("div", "chp sender")
-    this.sender.innerText = ss(this.user.username)
+    this.sender.innerText = this.user.username
     if (this.user.badges) setbadge(this.sender, this.user.badges)
     this.field.append(this.sender)
   }
@@ -88,7 +87,7 @@ export default class MessageBuilder {
     if (!msgAPI) return
     const { user, message } = msgAPI.json
     const replysender = kel("div", "name")
-    replysender.innerText = ss(user.username)
+    replysender.innerText = user.username
     const replymsg = kel("div", "msg", { e: transpileChat(message, null, true) })
     this.reply = kel("div", "chp embed", { e: [replysender, replymsg] })
     this.reply.onclick = () => {
@@ -219,7 +218,7 @@ export default class MessageBuilder {
   }
   private init(isTemp: boolean): void {
     this.createElement()
-    if (this.user.id !== db.me.id) this.renderUser()
+    if (this.room.data.type === "group" && this.user.id !== db.me.id) this.renderUser()
     this.renderReply()
     this.renderAttach(isTemp)
     this.renderCall()
@@ -392,7 +391,7 @@ export default class MessageBuilder {
     if (!this.s.text || this.s.text.length < 1) return false
     // textHighlight(this.textMessage)
     const isCopied = await copyToClipboard(this.s.text)
-    if (isCopied) notip({ a: `${lang.NP_COPIED}:`, b: ss(this.s.text, 100), ic: "clipboard-check", c: "1" })
+    if (isCopied) notip({ a: `${lang.NP_COPIED}:`, b: this.s.text, ic: "clipboard-check", c: "1" })
     return isCopied
   }
   async saveAs(): Promise<void> {

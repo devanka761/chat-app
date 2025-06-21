@@ -9,7 +9,7 @@ const filefolders: string[] = ["room"]
 class DevankaLocal {
   public ref: Databases
   constructor() {
-    this.ref = { u: {}, t: {}, c: {}, p: {}, v: {} }
+    this.ref = { u: {}, t: {}, c: {}, p: {}, v: {}, k: {} }
   }
   load(): void {
     if (!fs.existsSync(dirpath)) fs.mkdirSync(dirpath)

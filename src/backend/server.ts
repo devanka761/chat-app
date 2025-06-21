@@ -21,7 +21,10 @@ if (!fs.existsSync("./dist/sessions")) {
   console.log("Sessions Reloaded!")
 }
 db.load()
-
+if (!db.ref.k.v) {
+  db.ref.k.v = 1
+  db.save("k")
+}
 const app: Application = express()
 
 const SessionFileStorage: FileStore = SessionFileStore(session)

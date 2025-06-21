@@ -23,18 +23,20 @@ $errorbg: #3d2b31;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    // gap: 10px;
     .left {
-      width: calc(100% - 130px);
       padding: 10px;
       display: flex;
       justify-content: left;
       align-items: center;
+      overflow: hidden;
       gap: 10px;
       .btn-back {
+        flex-shrink: 0;
         font-size: 1.25em;
       }
       .user {
-        width: calc(100% - 50px);
+        overflow: hidden;
         display: flex;
         justify-content: left;
         align-items: center;
@@ -42,6 +44,7 @@ $errorbg: #3d2b31;
         overflow: hidden;
         cursor: pointer;
         .img {
+          flex-shrink: 0;
           width: 30px;
           height: 30px;
           img {
@@ -55,25 +58,26 @@ $errorbg: #3d2b31;
           }
         }
         .names {
-          max-width: calc(100% - (30px + 18px));
-          max-height: 40px;
           overflow: hidden;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: start;
           .uname {
             line-height: 1.2;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
           }
           .dname {
             line-height: 1.2;
             font-size: 0.7em;
             color: v.$softwhite;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
         }
       }
     }
     .right {
+      flex-shrink: 0;
       padding: 10px 20px;
       display: flex;
       justify-content: right;
@@ -89,7 +93,6 @@ $errorbg: #3d2b31;
     bottom: 0;
     left: 0;
     width: 100%;
-    // height: calc(55px + 55px + 50px);
     height: $btmheight;
     background-color: v.$bar_bg;
     .embed {
@@ -101,13 +104,25 @@ $errorbg: #3d2b31;
         display: flex;
         justify-content: space-between;
         align-items: start;
+        gap: 10px;
         background-color: v.$bg;
         border-left: 2px solid v.$yellow;
         border-radius: 5px;
         padding: 5px;
+        overflow: hidden;
         .left {
+          overflow: hidden;
           color: v.$yellow;
           font-size: 0.8em;
+          .username,
+          .msg {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+        }
+        .right {
+          flex-shrink: 0;
         }
       }
     }
@@ -126,13 +141,16 @@ $errorbg: #3d2b31;
       align-items: center;
       padding: 5px;
       border-bottom: 1px solid v.$black;
+      overflow: hidden;
       .media {
         width: 100%;
         display: flex;
         justify-content: left;
         align-items: center;
         gap: 10px;
+        overflow: hidden;
         .img {
+          flex-shrink: 0;
           width: 50px;
           height: 38px;
           img,
@@ -149,11 +167,20 @@ $errorbg: #3d2b31;
           font-size: 0.9em;
           color: v.$softwhite;
           font-style: italic;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
         .document {
           font-size: 0.9em;
           color: v.$yellow;
           padding: 3px 5px;
+          overflow: hidden;
+          p {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
           p::before {
             content: "\f574";
             font-family: "Font Awesome 6 Pro";
@@ -350,6 +377,7 @@ $errorbg: #3d2b31;
           padding: 10px;
           border-radius: 10px;
           background: #3f464e;
+          overflow: hidden;
           .chp {
             max-width: 425px;
             margin-bottom: 3px;
@@ -358,10 +386,11 @@ $errorbg: #3d2b31;
             }
           }
           .sender {
-            width: fit-content;
-            max-width: 100%;
+            // max-width: 425px;
             font-weight: bold;
             overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
             cursor: pointer;
             color: v.$softwhite;
             font-size: 0.8em;
@@ -382,8 +411,15 @@ $errorbg: #3d2b31;
             color: v.$yellow;
             font-size: 0.8em;
             cursor: pointer;
+            .name,
+            .msg {
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
           }
           .attach {
+            overflow: hidden;
             .document {
               text-decoration: none;
               display: block;
@@ -391,11 +427,12 @@ $errorbg: #3d2b31;
               padding: 5px 7px;
               border: 1px solid v.$yellow;
               border-radius: 5px;
-              width: 100%;
               cursor: pointer;
               word-break: break-all;
               word-break: break-word;
               hyphens: auto;
+              overflow: hidden;
+              text-overflow: ellipsis;
               &::before {
                 content: "\f56d";
                 font-family: "Font Awesome 6 Pro";

@@ -172,6 +172,7 @@ $topheight: 60px;
               gap: 10px;
               cursor: pointer;
               img {
+                flex-shrink: 0;
                 border-radius: 50%;
                 width: 30px;
                 height: 30px;
@@ -182,6 +183,9 @@ $topheight: 60px;
               }
               .uname {
                 font-style: normal;
+                word-break: break-all;
+                word-break: break-word;
+                hyphens: auto;
                 .fa-user-crown {
                   font-size: 0.8em;
                   color: v.$yellow;
@@ -190,6 +194,7 @@ $topheight: 60px;
               }
             }
             .btn-kick {
+              flex-shrink: 0;
               color: v.$cred;
               cursor: pointer;
             }

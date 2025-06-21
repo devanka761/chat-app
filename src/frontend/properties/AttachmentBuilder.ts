@@ -1,4 +1,3 @@
-import { ss } from "../helper/escaper"
 import { kel } from "../helper/kel"
 import mediaCheck from "../manager/mediaCheck"
 import RoomForm from "../pm/parts/RoomForm"
@@ -93,7 +92,7 @@ export default class AttachmentBuilder {
     const p = kel("p")
     const file_extension = text.match(file_format_regex)?.[1]
     const parse_extension = file_extension ? `.${file_extension}` : ".dvnkz"
-    const parse_name = ss(text, 30).replace(parse_extension, "")
+    const parse_name = text.replace(parse_extension, "")
     p.innerText = parse_name + (file_extension ? `.${file_extension}` : "")
     const parent = kel("div", "document", { e: p })
     this.media.append(parent)

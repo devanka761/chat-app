@@ -8,6 +8,7 @@ import xhr from "../../helper/xhr"
 import { IChatsF } from "../../types/db.types"
 import db from "../../manager/db"
 import noMessage from "../../helper/noMessage"
+import Room from "../content/Room"
 
 export default [
   {
@@ -37,6 +38,7 @@ export default [
           roomdata: group.r
         })
       }
+      swiper(new Room({ data: group.r, users: group.u, chats: group }), userState.currcontent)
     }
   },
   {

@@ -1,9 +1,10 @@
 import fs from "fs"
 import { IChatsF } from "../../frontend/types/db.types"
 import db from "../main/db"
-import { convertGroup } from "../main/helper"
+import { convertGroup, convertUser, rNumber } from "../main/helper"
 import { IChatB } from "../types/db.types"
 import { IRepTempB } from "../types/validate.types"
+import { getUser } from "./profile.controller"
 
 export function createGroup(uid: string, s: { name: string }): IRepTempB {
   const cdb = db.ref.c
@@ -13,8 +14,10 @@ export function createGroup(uid: string, s: { name: string }): IRepTempB {
   s.name = s.name.trim()
 
   if (s.name.length > 35) return { code: 400, msg: "GRPS_DNAME_LENGTH" }
+  if (!db.ref.k.g) db.ref.k.g = 0
+  db.ref.k.g++
 
-  const chat_id = "g" + Date.now().toString(36)
+  const chat_id = "6" + rNumber(5).toString() + db.ref.k.g.toString()
 
   const roomData: IChatB = {
     u: [uid],
@@ -28,7 +31,7 @@ export function createGroup(uid: string, s: { name: string }): IRepTempB {
   db.fileSet(chat_id, "room", {})
   const groupData: IChatsF = {
     m: [],
-    u: [],
+    u: [getUser(uid, uid)],
     r: convertGroup(chat_id)
   }
 
@@ -41,9 +44,9 @@ export function setGroupname(uid: string, s: { gname: string; id: string }): IRe
 
   if (!gkey) return { code: 404, msg: "GRPS_404" }
   if (!cdb[gkey].o || cdb[gkey].o !== uid) return { code: 400, msg: "GRPS_OWNER_FEATURE" }
-  // if (cdb[gkey].lg && cdb[gkey].lg > Date.now()) {
-  //   return { code: 429, msg: "GRPS_DNAME_COOLDOWN", data: { timestamp: cdb[gkey].lg } }
-  // }
+  if (cdb[gkey].lg && cdb[gkey].lg > Date.now()) {
+    return { code: 429, msg: "GRPS_DNAME_COOLDOWN", data: { timestamp: cdb[gkey].lg } }
+  }
   s.gname = s.gname.trim()
 
   if (s.gname === cdb[gkey].n) return { code: 200, data: { text: s.gname } }

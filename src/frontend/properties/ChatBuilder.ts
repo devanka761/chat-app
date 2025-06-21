@@ -6,7 +6,6 @@ import userState from "../main/userState"
 import swiper from "../manager/swiper"
 import Room from "../pm/content/Room"
 import { IMessageF, IRoomDataF, IUserF } from "../types/db.types"
-import {} from "../types/room.types"
 
 export default class ChatBuilder {
   private el: HTMLDivElement

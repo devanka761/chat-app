@@ -94,4 +94,5 @@ export type Databases = {
   c: { [key: string]: IChatB }
   p: { [key: string]: Post }
   v: { [key: string]: Call }
+  k: { v?: number; g?: number }
 }

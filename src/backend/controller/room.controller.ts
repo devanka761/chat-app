@@ -17,7 +17,7 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
   let chatkey =
     room_type === "user"
       ? Object.keys(cdb).find((k) => {
-          return cdb[k].u.find((usr) => usr === uid) && cdb[k].u.find((usr) => usr === room_id)
+          return cdb[k].t === "user" && cdb[k].u.find((usr) => usr === uid) && cdb[k].u.find((usr) => usr === room_id)
         })
       : Object.keys(cdb).find((k) => cdb[k].t === "group" && k === room_id && cdb[k].u.find((usr) => usr === uid))
   if (s.edit && !chatkey) return { code: 400 }
@@ -25,7 +25,7 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
   if (room_type === "group" && !chatkey) return { code: 404 }
   if (!chatkey) {
     isFirst = true
-    chatkey = "u" + Date.now().toString(36)
+    chatkey = `u${uid}u${room_id}`
     db.ref.c[chatkey] = {
       u: [uid, room_id],
       c: chatkey,

@@ -1,4 +1,4 @@
-import { escapeHTML, ss } from "../helper/escaper"
+import { escapeHTML } from "../helper/escaper"
 import { lang } from "../helper/lang"
 import db from "../manager/db"
 import { IMessageF, IUserF } from "../types/db.types"
@@ -13,7 +13,7 @@ const mediaIcons: { [key: string]: string } = {
 export function transpileChat(s: IMessageF, lastuser?: IUserF | null, noStatus?: boolean): string {
   const myId = db.me.id
   let text = ""
-  if (lastuser) text = `${ss(lastuser.username, 10)}: `
+  if (lastuser && lastuser.id !== db.me.id) text = `${lastuser.username}: `
 
   if (s.type === "deleted") {
     text += `<i class="fa-solid fa-ban"></i> <i>${s.userid === myId ? lang.CONTENT_YOU_DELETED : lang.CONTENT_DELETED}</i>`
@@ -24,11 +24,11 @@ export function transpileChat(s: IMessageF, lastuser?: IUserF | null, noStatus?:
     text += `<i class="fa-solid fa-phone-volume"></i> Voice Call`
     return text
   } else if (s.type === "image" || s.type === "video" || s.type === "file" || s.type === "audio") {
-    text += `${mediaIcons[s.type]} ${s.text ? escapeHTML(lastuser ? ss(<string>s.text, 9) : ss(<string>s.text, 19)) : "Media"}`
+    text += `${mediaIcons[s.type]} ${s.text ? escapeHTML(s.text) : "Media"}`
   } else if (s.type === "voice") {
     text += `<i class="fa-light fa-microphone"></i> Voice Chat`
   } else {
-    text += escapeHTML(lastuser ? ss(<string>s.text, 10) : ss(<string>s.text))
+    text += escapeHTML(s.text || "")
   }
 
   if (s.userid === myId && !noStatus) {
