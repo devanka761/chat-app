@@ -6,10 +6,13 @@ import setbadge from "../../helper/setbadge"
 import xhr from "../../helper/xhr"
 import userState from "../../main/userState"
 import db from "../../manager/db"
+import swiper from "../../manager/swiper"
 import { IRoomDataF, IUserF } from "../../types/db.types"
 import { PrimaryClass } from "../../types/userState.types"
 import Chats from "../center/Chats"
 import Member from "../parts/Member"
+import Empty from "./Empty"
+import Room from "./Room"
 
 export default class Group implements PrimaryClass {
   public isLocked: boolean
@@ -21,11 +24,16 @@ export default class Group implements PrimaryClass {
   private btnImg?: HTMLDivElement | null
   private btnGname?: HTMLDivElement | null
   private btnInvite?: HTMLDivElement | null
-  constructor(s: { group: IRoomDataF; users: IUserF[] }) {
+  private btnLeave: HTMLAnchorElement
+  private room?: Room
+  private membersTitle?: HTMLDivElement | null
+  private ul?: HTMLUListElement | null
+  constructor(s: { group: IRoomDataF; users: IUserF[]; room?: Room }) {
     this.role = "group"
     this.isLocked = false
     this.group = s.group
     this.users = s.users
+    if (s.room) this.room = s.room
   }
   private createElement() {
     this.el = kel("div", "Account pmcontent")
@@ -41,11 +49,13 @@ export default class Group implements PrimaryClass {
     this.renGname()
     this.renInvite()
     this.renMembers()
-    // this.renUserSignIn()
+    this.renLeave()
   }
   private btnListener(): void {
     this.imgListener()
     this.gnameListener()
+    this.inviteListener()
+    this.leaveListener()
   }
   private renImage(): void {
     let chp = qutor(".chp.userphoto", this.wall)
@@ -168,11 +178,12 @@ export default class Group implements PrimaryClass {
       chp.append(outer)
     }
 
-    let chpTitle = qutor(".chp-t", outer)
-    if (!chpTitle) {
-      chpTitle = kel("div", "chp-t", { e: "Members" })
-      outer.append(chpTitle)
+    this.membersTitle = qutor(".chp-t", outer) as HTMLDivElement | null
+    if (!this.membersTitle) {
+      this.membersTitle = kel("div", "chp-t", { e: "Members" })
+      outer.append(this.membersTitle)
     }
+    this.renMemberTitle()
 
     let chpValue = qutor(".chp-u", outer)
     if (!chpValue) {
@@ -180,21 +191,35 @@ export default class Group implements PrimaryClass {
       outer.append(chpValue)
     }
 
-    let ul = qutor("ul", chpValue)
-    if (!ul) {
-      ul = kel("ul")
-      chpValue.append(ul)
+    this.ul = qutor("ul", chpValue) as HTMLUListElement | null
+    if (!this.ul) {
+      this.ul = kel("ul")
+      chpValue.append(this.ul)
     }
 
-    this.users.forEach((usr) => {
-      const member = new Member({ group: this.group, user: usr })
-      member.run()
-      if (member.isOwner) {
-        ul.prepend(member.html)
-      } else {
-        ul.append(member.html)
-      }
-    })
+    this.users.forEach((usr) => this.renMemberNew(usr))
+  }
+  private renMemberTitle(): void {
+    if (!this.membersTitle) return
+    this.membersTitle.innerHTML = `Members ${this.users.length}/10`
+  }
+  private renMemberNew(usr: IUserF): void {
+    const member = new Member({ group: this.group, user: usr })
+    member.run()
+    if (!this.ul) return
+    if (member.isOwner) {
+      this.ul.prepend(member.html)
+    } else {
+      this.ul.append(member.html)
+    }
+  }
+  private renLeave(): void {
+    this.btnLeave = kel("a", "leave")
+    this.btnLeave.href = "/x/group/leave"
+    this.btnLeave.innerHTML = this.group.owner === db.me.id ? lang.GRPS_DELETE : lang.GRPS_LEAVE
+    const p = kel("p", null, { e: this.btnLeave })
+    const chp = kel("div", "chp usersign", { e: p })
+    this.wall.append(chp)
   }
   private imgListener(): void {
     if (this.btnImg)
@@ -251,14 +276,10 @@ export default class Group implements PrimaryClass {
           this.isLocked = false
           this.processUpdate()
           this.renImage()
+          if (this.room) this.room.data.image = this.group.image
         }
         inp.click()
       }
-  }
-  private processUpdate(): void {
-    if (!userState.center || userState.center.role !== "chats") return
-    const chatCenter = userState.center as Chats
-    chatCenter.updateData(this.group)
   }
   private gnameListener(): void {
     if (this.btnGname)
@@ -282,7 +303,7 @@ export default class Group implements PrimaryClass {
         }
         const setGname = await modal.loading(xhr.post("/x/group/set-groupname", { gname: getUname, id: this.group.id }))
         if (!setGname.ok) {
-          await modal.alert(lang[setGname.msg].replace(/{TIMESTAMP}/, sdate.remain(setGname.data.timestamp)) || lang.ERROR)
+          await modal.alert(lang[setGname.msg]?.replace(/{TIMESTAMP}/, sdate.remain(setGname?.data?.timestamp)) || lang.ERROR)
           this.isLocked = false
           return
         }
@@ -292,7 +313,68 @@ export default class Group implements PrimaryClass {
         this.isLocked = false
         this.renGname()
         this.processUpdate()
+        if (this.room) this.room.data.short = this.group.short
       }
+  }
+  private inviteListener(): void {
+    if (this.btnInvite)
+      this.btnInvite.onclick = async () => {
+        if (this.isLocked === true) return
+        this.isLocked = true
+        const getReset = await modal.confirm({
+          msg: lang.GRPS_RESET,
+          ic: "rotate-right"
+        })
+        if (!getReset) {
+          this.isLocked = false
+          return
+        }
+        const setLink = await modal.loading(xhr.post("/x/group/reset-link", { id: this.group.id }))
+        if (!setLink.ok) {
+          await modal.alert(lang[setLink.msg])
+          this.isLocked = false
+          return
+        }
+        this.group.link = setLink.data.text
+        const gdb = db.c.find((ch) => ch.r.id === this.group.id)
+        if (gdb) gdb.r.link = this.group.link
+        this.isLocked = false
+        this.renInvite()
+        this.processUpdate()
+        if (this.room) this.room.data.link = this.group.link
+      }
+  }
+  private leaveListener(): void {
+    this.btnLeave.onclick = async (e) => {
+      e.preventDefault()
+      if (this.isLocked) return
+      this.isLocked = true
+      const msg = this.group.owner === db.me.id ? "GRPS_DELETE_CONFIRM" : "GRPS_LEAVE_CONFIRM"
+      const getLeave = await modal.confirm(lang[msg])
+      if (!getLeave) {
+        this.isLocked = false
+        return
+      }
+      const setLeave = await modal.loading(xhr.post(`/x/group/leave/${this.group.id}`))
+      if (!setLeave || !setLeave.ok) {
+        await modal.alert(lang[setLeave.msg] || lang.ERROR)
+        this.isLocked = false
+        return
+      }
+      this.isLocked = false
+      this.processDelete()
+      swiper(new Empty(), userState.content)
+    }
+  }
+  private processUpdate(): void {
+    if (!userState.center || userState.center.role !== "chats") return
+    const chatCenter = userState.center as Chats
+    chatCenter.updateData(this.group)
+  }
+  private processDelete(): void {
+    if (!userState.center || userState.center.role !== "chats") return
+    const chatCenter = userState.center as Chats
+    chatCenter.deleteData(this.group.id)
   }
   update(): void | Promise<void> {}
   async destroy(): Promise<void> {

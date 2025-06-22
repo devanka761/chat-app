@@ -16,6 +16,7 @@ router.post("/set-username", express.json({ limit: "100KB" }), (req: Request, re
   }
   const setUname = rep(setUsername(<string>req.user?.id, req.body))
   res.status(setUname.code).json(setUname)
+  return
 })
 
 router.post("/set-displayname", express.json({ limit: "100KB" }), (req: Request, res: Response) => {
@@ -25,6 +26,7 @@ router.post("/set-displayname", express.json({ limit: "100KB" }), (req: Request,
   }
   const setDname = rep(setDisplayname(<string>req.user?.id, req.body))
   res.status(setDname.code).json(setDname)
+  return
 })
 router.post("/set-bio", express.json({ limit: "100KB" }), (req: Request, res: Response) => {
   if (!validate(["bio"], req.body)) {
@@ -33,6 +35,7 @@ router.post("/set-bio", express.json({ limit: "100KB" }), (req: Request, res: Re
   }
   const setAbout = rep(setBio(<string>req.user?.id, req.body))
   res.status(setAbout.code).json(setAbout)
+  return
 })
 router.post("/set-img", express.json({ limit: "10MB" }), (req: Request, res: Response) => {
   if (!validate(["img", "name"], req.body)) {
@@ -41,6 +44,7 @@ router.post("/set-img", express.json({ limit: "10MB" }), (req: Request, res: Res
   }
   const setImage = rep(setImg(<string>req.user?.id, req.body))
   res.status(setImage.code).json(setImage)
+  return
 })
 
 export default router

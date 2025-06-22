@@ -141,3 +141,8 @@ export function convertGroup(group_id: string): IRoomDataF {
     link: group.l
   }
 }
+
+export function escapeWhiteSpace(txt: string): string {
+  const transtxt = /(\s)(?=\s)/g
+  return txt.replace(transtxt, "").trim()
+}

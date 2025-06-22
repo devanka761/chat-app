@@ -17,6 +17,7 @@ router.get("/:invite_id", (req: Request, res: Response) => {
   } else {
     res.json(getInv)
   }
+  return
 })
 
 export default router

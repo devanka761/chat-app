@@ -15,7 +15,7 @@
     gap: 10px;
     scrollbar-width: thin;
     .card {
-      flex: 1 0 auto;
+      flex-shrink: 0;
       width: fit-content;
       border: 1px solid v.$softwhite;
       color: v.$softwhite;
@@ -27,6 +27,9 @@
       i {
         font-style: normal;
         text-transform: capitalize;
+        &.num {
+          margin-left: 5px;
+        }
       }
       &.on {
         border-color: v.$blurple;

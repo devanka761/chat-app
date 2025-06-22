@@ -1,7 +1,7 @@
 import fs from "fs"
 import db from "../main/db"
 import { getUser } from "./profile.controller"
-import { convertGroup, convertUser, genhex, isProd, normalizeMessage, peerKey } from "../main/helper"
+import { convertGroup, convertUser, escapeWhiteSpace, genhex, isProd, normalizeMessage, peerKey } from "../main/helper"
 import cfg from "../main/cfg"
 import { IChatsF, IRoomDataF, MeDB, PeerDB } from "../../frontend/types/db.types"
 import { IRepTempB } from "../types/validate.types"
@@ -84,7 +84,7 @@ const dvnkzName = ["dvnkz", "dvnkz_", "devanka", "devanka761", "devanka7", "deva
 
 export function setUsername(uid: string, s: { uname: string }): IRepTempB {
   const udb = db.ref.u[uid]
-  if (udb.lu && udb.lu > Date.now()) return { code: 429, data: { timestamp: udb.lu } }
+  if (udb.lu && udb.lu > Date.now()) return { code: 429, msg: "ACC_FAIL_UNAME_COOLDOWN", data: { timestamp: udb.lu } }
   if (s.uname.length < 4 && s.uname.length > 20) return { code: 400, msg: "ACC_FAIL_UNAME_LENGTH" }
   const unamevalid = /^[A-Za-z0-9._]+$/
   const unamedeny = /^user/
@@ -99,9 +99,9 @@ export function setUsername(uid: string, s: { uname: string }): IRepTempB {
   return { code: 200, data: { text: s.uname } }
 }
 export function setDisplayname(uid: string, s: { dname: string }): IRepTempB {
-  s.dname = s.dname.trim()
+  s.dname = escapeWhiteSpace(s.dname)
   const udb = db.ref.u[uid]
-  if (udb.ld && udb.ld > Date.now()) return { code: 429, data: { timestamp: udb.ld } }
+  if (udb.ld && udb.ld > Date.now()) return { code: 429, msg: "ACC_FAIL_DNAME_COOLDOWN", data: { timestamp: udb.ld } }
   if (s.dname.length > 35) return { code: 400, msg: "ACC_FAIL_DNAME_LENGTH" }
   if (s.dname === udb.uname) return { code: 200, data: { text: s.dname } }
 
@@ -112,9 +112,9 @@ export function setDisplayname(uid: string, s: { dname: string }): IRepTempB {
 }
 
 export function setBio(uid: string, s: { bio: string }): IRepTempB {
-  s.bio = s.bio.trim()
+  s.bio = escapeWhiteSpace(s.bio)
   const udb = db.ref.u[uid]
-  if (udb.lb && udb.lb > Date.now()) return { code: 429, data: { timestamp: udb.lb } }
+  if (udb.lb && udb.lb > Date.now()) return { code: 429, msg: "ACC_FAIL_BIO_COOLDOWN", data: { timestamp: udb.lb } }
   if (s.bio.length > 200) return { code: 400, msg: "ACC_FAIL_BIO_LENGTH" }
   if (s.bio.length < 1) {
     delete db.ref.u[uid].bio

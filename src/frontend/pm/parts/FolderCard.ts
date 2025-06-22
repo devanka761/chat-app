@@ -1,7 +1,9 @@
 import { kel } from "../../helper/kel"
 import { lang } from "../../helper/lang"
+import db from "../../manager/db"
 import { TChatsTypeF } from "../../types/room.types"
 import Chats from "../center/Chats"
+import Tab from "../header/Nav"
 
 export default class FolderCard {
   readonly role: string
@@ -32,7 +34,19 @@ export default class FolderCard {
   off(): void {
     this.el.classList.remove("on")
   }
+  updateUnread(): void {
+    if (this.typeName === "all") return
+    const cdb =
+      this.typeName === "unread"
+        ? db.c.filter((k) => {
+            return k.m && k.m.length >= 1
+          })
+        : db.c.filter((k) => k.r.type === this.typeName && k.m && k.m.length >= 1)
+    const curUnread = cdb.filter((k) => k.m.find((msg) => msg.userid !== db.me.id && (!msg.readers || msg.readers.find((usr) => usr !== db.me.id))))
+    this.unread = curUnread.length
+  }
   set unread(num: number) {
+    Tab.update("chats", num >= 1)
     if (num < 1) {
       if (this.eunread) this.el.removeChild(this.eunread)
       return
@@ -53,6 +67,7 @@ export default class FolderCard {
   }
   run(): this {
     this.createElement()
+    this.updateUnread()
     this.clickListener()
     return this
   }

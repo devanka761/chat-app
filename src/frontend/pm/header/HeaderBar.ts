@@ -60,4 +60,5 @@ export class HeaderBar {
     this.btnListener()
   }
 }
-export default new HeaderBar()
+const headerBar = new HeaderBar()
+export default headerBar

@@ -30,7 +30,5 @@ export default class FolderAPI {
         folder.off()
       }
     })
-    // const folder = this.get(folder_name);
-    // if(folder) folder.
   }
 }

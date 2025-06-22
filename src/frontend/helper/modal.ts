@@ -180,6 +180,11 @@ const modal = {
         </div>
       </div>`
 
+      const btnOk = qutor(".acts .btn-ok", el)
+      if (s.okx && btnOk) btnOk.innerText = s.okx
+      const btnCancel = qutor(".acts .btn-cancel", el)
+      if (s.cancelx && btnCancel) btnCancel.innerText = s.cancelx
+
       const einf = qutor(".inf", el)
       let inp: HTMLInputElement | HTMLTextAreaElement | null = null
       if (s.tarea) {
@@ -190,6 +195,12 @@ const modal = {
         inp.type = "text"
         inp.maxLength = s.max ? s.max : 100
         inp.autocomplete = "off"
+        inp.onkeydown = (e) => {
+          if (e.key.toLowerCase() === "enter") {
+            e.preventDefault()
+            btnOk?.click()
+          }
+        }
       }
       inp.name = "prompt-field"
       inp.id = "prompt-field"
@@ -198,11 +209,6 @@ const modal = {
         const tpRegex = s.iregex || ""
         inp.oninput = () => (inp.value = inp.value.replace(tpRegex, ""))
       }
-
-      const btnOk = qutor(".acts .btn-ok", el)
-      if (s.okx && btnOk) btnOk.innerText = s.okx
-      const btnCancel = qutor(".acts .btn-cancel", el)
-      if (s.cancelx && btnCancel) btnCancel.innerText = s.cancelx
 
       einf?.append(inp)
       eroot().append(el)
@@ -225,12 +231,6 @@ const modal = {
           resolve(null)
           if (s.cancel) s.cancel()
         }
-      inp.onkeydown = (e) => {
-        if (e.key.toLowerCase() === "enter") {
-          e.preventDefault()
-          btnOk?.click()
-        }
-      }
     })
   },
   select(options: object): Promise<string | null> {

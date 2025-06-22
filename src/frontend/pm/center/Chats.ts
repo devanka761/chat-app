@@ -115,6 +115,14 @@ export default class Chats implements PrimaryClass {
     const card = this.list.get(roomdata.id)
     if (card) card.updateData(roomdata)
   }
+  deleteData(roomid: string): void {
+    const card = this.list.get(roomid)
+    if (card) card.html.remove()
+    const cdb = db.c.find((k) => k.r.id === roomid)
+    if (cdb) db.c = db.c.filter((k) => k.r.id !== roomid)
+    this.folders.entries.forEach((folder) => folder.updateUnread())
+    this.writeIfEmpty(db.c)
+  }
   update(s: { chat: IMessageF; users: IUserF[]; roomid: string; isFirst: boolean; roomdata: IRoomDataF }): void {
     if (s.isFirst) {
       const firstcard = new ChatBuilder({ data: s.roomdata, users: s.users, chat: s.chat })
@@ -129,6 +137,7 @@ export default class Chats implements PrimaryClass {
       this.card_list.prepend(card.html)
       this.setTypeList(this.folders.enabled)
     }
+    this.folders.entries.forEach((folder) => folder.updateUnread())
     this.writeIfEmpty(db.c)
   }
   run(): void {

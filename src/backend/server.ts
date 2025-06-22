@@ -107,4 +107,5 @@ app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
     code: 500,
     msg: "ERROR"
   })
+  return
 })

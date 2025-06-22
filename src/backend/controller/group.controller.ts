@@ -18,7 +18,7 @@ export function createGroup(uid: string, s: { name: string }): IRepTempB {
   db.ref.k.g++
 
   const chat_id = "6" + rNumber(5).toString() + db.ref.k.g.toString()
-  const invite_link = Date.now().toString(36) + chat_id
+  const invite_link = rNumber(1) + (Number(chat_id) + rNumber(6)).toString(36).substring(1) + Date.now().toString(36)
 
   const roomData: IChatB = {
     u: [uid],
@@ -89,4 +89,56 @@ export function setImg(uid: string, s: { img: string; name: string; id: string }
   db.save("c")
 
   return { code: 200, data: { text: imgName } }
+}
+
+export function resetLink(uid: string, s: { id: string }): IRepTempB {
+  const { id } = s
+  const cdb = db.ref.c[id]
+  if (!cdb || cdb.t !== "group") return { code: 404, msg: "GRPS_404" }
+  if (cdb.o !== uid) return { code: 400 }
+  const invite_link = rNumber(1) + (Number(id) + rNumber(6)).toString(36).substring(1) + Date.now().toString(36)
+  db.ref.c[id].l = invite_link
+  db.save("c")
+
+  return { code: 200, data: { text: invite_link } }
+}
+
+export function setLeave(uid: string, roomid: string): IRepTempB {
+  const cdb = db.ref.c[roomid]
+  if (!cdb) return { code: 404, msg: "GRPS_404" }
+  if (cdb.o === uid) return setDisband(uid, roomid)
+
+  if (!cdb.u.find((usr) => usr === uid)) return { code: 400 }
+
+  db.ref.c[roomid].u = cdb.u.filter((usr) => usr !== uid)
+  db.save("c")
+  return { code: 200 }
+}
+function setDisband(uid: string, roomid: string): IRepTempB {
+  const cdb = db.ref.c[roomid]
+  if (!cdb) return { code: 404, msg: "GRPS_404" }
+  if (cdb.o !== uid) return { code: 400, msg: "GRPS_OWNER_FEATURE" }
+
+  const roompath = "./dist/stg/room"
+  const mediapath = `${roompath}/${cdb.c}`
+  const grouppath = "./dist/stg/group"
+  const dbpath = "./dist/db/room"
+  const chatpath = `./dist/db/room/${cdb.c}.json`
+
+  if (fs.existsSync(roompath) || cdb.c || fs.existsSync(mediapath)) {
+    fs.rmSync(mediapath, { recursive: true, force: true })
+  }
+
+  if (fs.existsSync(grouppath) && cdb.i && fs.existsSync(`${grouppath}/${cdb.i}`)) {
+    fs.rmSync(`${grouppath}/${cdb.i}`, { recursive: true, force: true })
+  }
+
+  if (fs.existsSync(dbpath) && cdb.c && fs.existsSync(chatpath)) {
+    fs.rmSync(chatpath, { recursive: true, force: true })
+  }
+
+  delete db.ref.c[roomid]
+  db.save("c")
+
+  return { code: 200 }
 }

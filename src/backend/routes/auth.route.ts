@@ -12,11 +12,13 @@ router.use(express.json({ limit: "100KB" }))
 router.get("/isUser", (req: Request, res: Response) => {
   const isLogged = isUserLogged(req.user?.id)
   res.status(isLogged.code).json(isLogged)
+  return
 })
 
 router.post("/sign-in", (req: Request, res: Response) => {
   const signIn = rep(authLogin(req.body))
   res.status(signIn.code).json(signIn)
+  return
 })
 
 router.post("/verify", (req: Request, res: Response) => {
@@ -37,11 +39,13 @@ router.post("/verify", (req: Request, res: Response) => {
     }
   }
   res.status(verifyUser.code).json(verifyUser)
+  return
 })
 
 router.get("/logout", (req: Request, res: Response) => {
   req.session.destroy(() => {
     res.redirect("/app")
+    return
   })
 })
 
@@ -84,6 +88,7 @@ router.get("/:provider/callback", async (req: Request, res: Response) => {
     }
   }
   res.redirect("/app")
+  return
 })
 
 router.get("/:provider", cdUser, (req: Request, res: Response) => {
@@ -93,6 +98,7 @@ router.get("/:provider", cdUser, (req: Request, res: Response) => {
     return
   }
   res.redirect(getOAuthUrl(provider as "github" | "google" | "discord"))
+  return
 })
 
 export default router

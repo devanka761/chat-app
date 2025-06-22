@@ -31,9 +31,4 @@ export function isUser(req: Request, res: Response, next: NextFunction) {
     return
   }
   next()
-  // if (req.user?.id) {
-  //   if (db.ref.u[req.user.id]?.data) return next()
-  //   res.json({ code: 401, msg: "UNAUTHORIZED" })
-  // }
-  // res.json({ code: 401, msg: "UNAUTHORIZED" })
 }

@@ -17,6 +17,7 @@ router.post("/sendMessage/:chat_type/:chat_id", express.json({ limit: "10mb" }),
   const { chat_type, chat_id } = req.params
   const setroom = rep(await sendMessage(req.user?.id as string, chat_id, chat_type, req.body))
   res.status(setroom.code).json(setroom)
+  return
 })
 router.post("/delMessage/:chat_type/:chat_id/:message_id", express.json({ limit: "100KB" }), (req: Request, res: Response) => {
   if (req.params.chat_type !== "user" && req.params.chat_type !== "group") {
@@ -26,6 +27,7 @@ router.post("/delMessage/:chat_type/:chat_id/:message_id", express.json({ limit:
   const { chat_type, chat_id, message_id } = req.params
   const setroom = rep(delMessage(req.user?.id as string, chat_id, chat_type, message_id))
   res.status(setroom.code).json(setroom)
+  return
 })
 
 export default router

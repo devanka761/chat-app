@@ -7,7 +7,7 @@ import Account from "../pm/content/Account"
 import { IAccountB } from "../../backend/types/account.types"
 import { IRepB } from "../../backend/types/validate.types"
 import headerBar from "../pm/header/HeaderBar"
-import Nav from "../pm/header/Nav"
+import Tab from "../pm/header/Nav"
 import { LangObject, Languages } from "../types/helper.types"
 import db from "../manager/db"
 import cloud from "../manager/cloud"
@@ -68,7 +68,7 @@ export default class Auth {
     auth_container?.remove()
     headerBar.run()
     new Chats().run()
-    new Nav().run()
+    Tab.run()
     if (isUser.data.isFirst) {
       new Account().run()
       return

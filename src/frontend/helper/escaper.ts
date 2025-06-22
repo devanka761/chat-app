@@ -7,3 +7,8 @@ export function escapeHTML(txt: string): string {
   p.textContent = txt
   return p.innerHTML
 }
+
+export function escapeWhiteSpace(txt: string): string {
+  const transtxt = /(\s)(?=\s)/g
+  return txt.replace(transtxt, "").trim()
+}

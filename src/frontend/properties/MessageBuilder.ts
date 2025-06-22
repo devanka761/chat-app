@@ -13,6 +13,7 @@ import { IWritterF, MessageOptionType } from "../types/message.types"
 import { TStatusIcon, TStatusText } from "../types/room.types"
 import OptionMsgBuilder from "./OptionMsgBuilder"
 import AudioBuilder from "./AudioBuilder"
+import { escapeWhiteSpace } from "../helper/escaper"
 
 const statusIcon: TStatusIcon = {
   pending: '<i class="fa-duotone fa-solid fa-spinner-third fa-spin"></i>',
@@ -204,7 +205,7 @@ export default class MessageBuilder {
       return
     }
     if (this.s.edited) this.textEdidted.innerHTML = `(${lang.CONTENT_EDITED})`
-    if (this.s.text) this.textMessage.innerText = this.s.text.trim()
+    if (this.s.text) this.textMessage.innerText = escapeWhiteSpace(this.s.text)
   }
   private renderTime(): void {
     this.timestamp = kel("div", "ts", { e: sdate.parseTime(this.s.timestamp) })

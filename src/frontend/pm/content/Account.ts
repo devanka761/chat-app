@@ -203,7 +203,7 @@ export default class Account implements PrimaryClass {
   private renUserSignIn(): void {
     this.btnLogout = kel("a", "logout")
     this.btnLogout.href = "/x/auth/logout"
-    this.btnLogout.innerHTML = `<i class="fa-light fa-triangle-exclamation"></i> LOG OUT`
+    this.btnLogout.innerHTML = `LOG OUT`
     const p = kel("p", null, { e: this.btnLogout })
     const chp = kel("div", "chp usersign", { e: p })
     this.wall.append(chp)
@@ -252,7 +252,7 @@ export default class Account implements PrimaryClass {
             this.isLocked = false
             return
           }
-          if (setImg?.code !== 200) {
+          if (!setImg || !setImg.ok) {
             await modal.alert(lang[setImg.msg] || lang.ERROR)
             this.isLocked = false
             return
@@ -285,13 +285,8 @@ export default class Account implements PrimaryClass {
           return
         }
         const setUname = await modal.loading(xhr.post("/x/account/set-username", { uname: getUname }))
-        if (setUname?.code === 429) {
-          await modal.alert(`${lang.ACC_FAIL_UNAME_COOLDOWN}<br/><b>${sdate.remain(<number>setUname.data?.timestamp)?.toLocaleString() || "0"}</b>`)
-          this.isLocked = false
-          return
-        }
-        if (setUname?.code !== 200) {
-          await modal.alert(lang[setUname.msg] || lang.ERROR)
+        if (!setUname || !setUname.ok) {
+          await modal.alert(lang[setUname.msg]?.replace(/{TIMESTAMP}/, sdate.remain(setUname?.data?.timestamp)) || lang.ERROR)
           this.isLocked = false
           return
         }
@@ -321,13 +316,8 @@ export default class Account implements PrimaryClass {
           return
         }
         const setDname = await modal.loading(xhr.post("/x/account/set-displayname", { dname: getDname }))
-        if (setDname?.code === 429) {
-          await modal.alert(`${lang.ACC_FAIL_DNAME_COOLDOWN}<br/><b>${sdate.remain(<number>setDname.data?.timestamp)?.toLocaleString() || "0"}</b>`)
-          this.isLocked = false
-          return
-        }
-        if (!setDname || setDname.code !== 200) {
-          await modal.alert(lang[setDname.msg] || lang.ERROR)
+        if (!setDname || !setDname.ok) {
+          await modal.alert(lang[setDname.msg]?.replace(/{TIMESTAMP}/, sdate.remain(setDname?.data?.timestamp)) || lang.ERROR)
           this.isLocked = false
           return
         }
@@ -346,8 +336,8 @@ export default class Account implements PrimaryClass {
           tarea: true,
           val: db.me.bio,
           ic: "book-open-cover",
-          max: 220,
-          iregex: /(\s)(?=\s)/g
+          max: 220
+          // iregex: /(\s)(?=\s)/g
         })
         if (!getBio) {
           this.isLocked = false
@@ -358,13 +348,8 @@ export default class Account implements PrimaryClass {
           return
         }
         const setBio = await modal.loading(xhr.post("/x/account/set-bio", { bio: getBio }))
-        if (setBio?.code === 429) {
-          await modal.alert(`${lang.ACC_FAIL_BIO_COOLDOWN}<br/><b>${sdate.remain(<number>setBio.data?.timestamp)?.toLocaleString() || "0"}</b>`)
-          this.isLocked = false
-          return
-        }
-        if (setBio?.code !== 200) {
-          await modal.alert(lang[setBio.msg] || lang.ERROR)
+        if (!setBio || !setBio.ok) {
+          await modal.alert(lang[setBio.msg]?.replace(/{TIMESTAMP}/, sdate.remain(setBio?.data?.timestamp)) || lang.ERROR)
           this.isLocked = false
           return
         }
