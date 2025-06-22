@@ -25,6 +25,7 @@ $errorbg: #3d2b31;
     align-items: center;
     // gap: 10px;
     .left {
+      flex-grow: 1;
       padding: 10px;
       display: flex;
       justify-content: left;
@@ -36,6 +37,7 @@ $errorbg: #3d2b31;
         font-size: 1.25em;
       }
       .user {
+        flex-grow: 1;
         overflow: hidden;
         display: flex;
         justify-content: left;
@@ -319,13 +321,17 @@ $errorbg: #3d2b31;
       max-height: 100%;
       overflow-y: auto;
       overflow-x: hidden;
-      padding: 10px;
+      padding: 20px;
       scroll-behavior: smooth;
       scrollbar-width: thin;
       .card {
         position: relative;
         width: 100%;
-        margin-top: 5px;
+        margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        gap: 10px;
         .optmenu {
           position: absolute;
           top: 0;
@@ -369,11 +375,24 @@ $errorbg: #3d2b31;
             animation: opt_out 0.2s forwards;
           }
         }
+        .avatar {
+          flex-shrink: 0;
+          cursor: pointer;
+          img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            -o-object-fit: cover;
+            object-position: cover;
+            -o-object-position: center;
+          }
+        }
         .field {
           margin-left: 0;
           margin-right: auto;
           width: fit-content;
-          max-width: calc(100% - 40px);
+          max-width: calc(100% - (40px + 40px));
           padding: 10px;
           border-radius: 10px;
           background: #3f464e;
@@ -609,12 +628,19 @@ $errorbg: #3d2b31;
             color: v.$softwhite;
           }
         }
+
+        &:has(.avatar) {
+          .optmenu {
+            left: 55px;
+          }
+        }
         &.me {
           .optmenu {
             left: auto;
             right: 5px;
           }
           .field {
+            max-width: calc(100% - (40px));
             margin-left: auto;
             margin-right: 0;
             background: v.$bar_active;

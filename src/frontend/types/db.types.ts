@@ -71,6 +71,7 @@ export interface IRoomDataF {
   image?: string
   badges?: number[]
   type: TRoomTypeF
+  link?: string
 }
 export interface IChatsF {
   r: IRoomDataF

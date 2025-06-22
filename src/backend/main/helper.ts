@@ -133,10 +133,11 @@ export function convertGroup(group_id: string): IRoomDataF {
   return {
     owner: group.o,
     id: group_id,
-    long: group_id,
+    long: group.n || "unamed",
     short: group.n || "unamed",
     badges: group.b,
     image: group.i,
-    type: "group"
+    type: "group",
+    link: group.l
   }
 }

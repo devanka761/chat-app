@@ -1,7 +1,7 @@
 import fs from "fs"
 import { IChatsF } from "../../frontend/types/db.types"
 import db from "../main/db"
-import { convertGroup, convertUser, rNumber } from "../main/helper"
+import { convertGroup, rNumber } from "../main/helper"
 import { IChatB } from "../types/db.types"
 import { IRepTempB } from "../types/validate.types"
 import { getUser } from "./profile.controller"
@@ -18,16 +18,18 @@ export function createGroup(uid: string, s: { name: string }): IRepTempB {
   db.ref.k.g++
 
   const chat_id = "6" + rNumber(5).toString() + db.ref.k.g.toString()
+  const invite_link = Date.now().toString(36) + chat_id
 
   const roomData: IChatB = {
     u: [uid],
     o: uid,
     n: s.name.trim(),
     t: "group",
-    c: chat_id
+    c: chat_id,
+    l: invite_link
   }
   db.ref.c[chat_id] = { ...roomData }
-  db.save("c")
+  db.save("c", "k")
   db.fileSet(chat_id, "room", {})
   const groupData: IChatsF = {
     m: [],

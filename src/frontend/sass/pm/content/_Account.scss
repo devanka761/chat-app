@@ -147,11 +147,14 @@ $topheight: 60px;
     }
     .groupinvite {
       .chp-f {
-        p {
-          a {
-            text-decoration: none;
-            border-bottom: 1px solid v.$yellow;
-          }
+        a {
+          display: block;
+          line-height: 1.5;
+          text-decoration: none;
+          word-break: break-all;
+          word-break: break-word;
+          hyphens: none;
+          // border-bottom: 1px solid v.$yellow;
         }
       }
     }
@@ -160,11 +163,12 @@ $topheight: 60px;
         ul {
           list-style: none;
           li {
-            padding: 10px;
+            padding: 7px 10px;
             overflow: hidden;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
             .left {
               display: flex;
               justify-content: space-between;

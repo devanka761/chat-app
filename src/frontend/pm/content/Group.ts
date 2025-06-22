@@ -20,8 +20,7 @@ export default class Group implements PrimaryClass {
   private wall: HTMLDivElement
   private btnImg?: HTMLDivElement | null
   private btnGname?: HTMLDivElement | null
-  private btnDname?: HTMLDivElement | null
-  private btnBio?: HTMLDivElement | null
+  private btnInvite?: HTMLDivElement | null
   constructor(s: { group: IRoomDataF; users: IUserF[] }) {
     this.role = "group"
     this.isLocked = false
@@ -40,6 +39,7 @@ export default class Group implements PrimaryClass {
     this.renImage()
     this.renGroupId()
     this.renGname()
+    this.renInvite()
     this.renMembers()
     // this.renUserSignIn()
   }
@@ -73,7 +73,7 @@ export default class Group implements PrimaryClass {
     outer.prepend(img)
   }
   private renGroupId(): void {
-    const chp = kel("div", "chp userid", {
+    const chp = kel("div", "chp groupid", {
       e: `<div class="outer"><div class="chp-t">ID</div><div class="chp-f"><p>${this.group.id}</p></div></div>`
     })
     this.wall.append(chp)
@@ -109,10 +109,50 @@ export default class Group implements PrimaryClass {
     }
     p.innerText = this.group.short
     if (!this.btnGname && this.group.owner === db.me.id) {
-      this.btnGname = kel("div", "chp-e btn-username", {
+      this.btnGname = kel("div", "chp-e btn-groupname", {
         e: `<i class="fa-solid fa-pen-to-square"></i> Edit`
       })
       outer.append(this.btnGname)
+    }
+    if (this.group.badges) setbadge(chpValue, this.group.badges)
+  }
+  private renInvite(): void {
+    if (!this.group.link) return
+    let chp = qutor(".chp.groupinvite", this.wall)
+    if (!chp) {
+      chp = kel("div", "chp groupinvite")
+      this.wall.append(chp)
+    }
+    let outer = qutor(".outer", chp)
+    if (!outer) {
+      outer = kel("div", "outer")
+      chp.append(outer)
+    }
+
+    let chpTitle = qutor(".chp-t", outer)
+    if (!chpTitle) {
+      chpTitle = kel("div", "chp-t", { e: "Group Invite Link" })
+      outer.append(chpTitle)
+    }
+
+    let chpValue = qutor(".chp-f", outer)
+    if (!chpValue) {
+      chpValue = kel("div", "chp-f")
+      outer.append(chpValue)
+    }
+
+    let a = qutor("a", chpValue) as HTMLAnchorElement | null
+    if (!a) {
+      a = kel("a", "btn")
+      chpValue.append(a)
+    }
+    a.href = `/invite/${this.group.link}`
+    a.innerHTML = `${window.location.origin}/invite/${this.group.link} <i class="fa-duotone fa-light fa-solid fa-copy"></i>`
+    if (!this.btnInvite && this.group.owner === db.me.id) {
+      this.btnInvite = kel("div", "chp-e btn-invite", {
+        e: `<i class="fa-solid fa-rotate-right"></i> Reset`
+      })
+      outer.append(this.btnInvite)
     }
     if (this.group.badges) setbadge(chpValue, this.group.badges)
   }

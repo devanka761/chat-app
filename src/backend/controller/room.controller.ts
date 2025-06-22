@@ -25,7 +25,7 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
   if (room_type === "group" && !chatkey) return { code: 404 }
   if (!chatkey) {
     isFirst = true
-    chatkey = `u${uid}u${room_id}`
+    chatkey = `${uid}u${room_id}`
     db.ref.c[chatkey] = {
       u: [uid, room_id],
       c: chatkey,

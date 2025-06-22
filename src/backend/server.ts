@@ -10,6 +10,7 @@ import profileRouter from "./routes/profile.route"
 import groupRouter from "./routes/group.route"
 import roomRouter from "./routes/room.route"
 import fileRouter from "./routes/file.route"
+import inviteRouter from "./routes/invite.route"
 import cfg from "./main/cfg"
 import { peerKey } from "./main/helper"
 import db from "./main/db"
@@ -52,6 +53,7 @@ app.use("/x/profile", profileRouter)
 app.use("/x/group", groupRouter)
 app.use("/x/room", roomRouter)
 app.use("/file", fileRouter)
+app.use("/invite", inviteRouter)
 
 app.get("/app", (req: Request, res: Response) => {
   res.render("app")

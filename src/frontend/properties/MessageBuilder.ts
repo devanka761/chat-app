@@ -43,6 +43,8 @@ function getOptOffsetToList(child: HTMLDivElement, parent: HTMLDivElement) {
 export default class MessageBuilder {
   private el: HTMLDivElement
   private field: HTMLDivElement
+  private avatar: HTMLDivElement
+  private img: HTMLImageElement
   private user: IUserF
   private s: IMessageF
   private sender: HTMLDivElement
@@ -73,12 +75,23 @@ export default class MessageBuilder {
       this.el.classList.add("me")
     }
     this.el.append(this.field)
+    if (this.room.data.type === "group") {
+      this.avatar = kel("div", "avatar")
+      this.el.prepend(this.avatar)
+    }
   }
   private renderUser(): void {
     this.sender = kel("div", "chp sender")
     this.sender.innerText = this.user.username
     if (this.user.badges) setbadge(this.sender, this.user.badges)
     this.field.append(this.sender)
+    if (this.avatar) {
+      this.img = new Image()
+      this.img.onerror = () => (this.img.src = "/assets/user.jpg")
+      this.img.alt = this.user.username
+      this.img.src = this.user.image ? `/file/user/${this.user.image}` : `/assets/user.jpg`
+      this.avatar.append(this.img)
+    }
   }
   private renderReply(): void {
     if (this.s.type === "deleted") return
@@ -191,7 +204,7 @@ export default class MessageBuilder {
       return
     }
     if (this.s.edited) this.textEdidted.innerHTML = `(${lang.CONTENT_EDITED})`
-    if (this.s.text) this.textMessage.innerText = this.s.text
+    if (this.s.text) this.textMessage.innerText = this.s.text.trim()
   }
   private renderTime(): void {
     this.timestamp = kel("div", "ts", { e: sdate.parseTime(this.s.timestamp) })
