@@ -3,14 +3,14 @@
 $topheight: 60px;
 
 .Account {
-  background-color: v.$bg;
+  background-color: v.$px25;
   .top {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    background-color: v.$bar_bg;
-    color: v.$white;
+    background-color: v.$px2;
+    font-weight: 500;
     height: $topheight;
     display: flex;
     justify-content: center;
@@ -57,14 +57,14 @@ $topheight: 60px;
         max-width: 500px;
         margin: 0 auto;
         overflow: hidden;
-        border: 1px solid v.$sgray;
+        border: 1px solid v.$pm1;
         border-radius: 10px;
         .chp-t {
           text-align: center;
           padding: 5px;
           font-size: 0.9em;
-          font-style: italic;
-          background-color: v.$card_primary;
+          background-color: v.$black;
+          font-weight: 500;
         }
         .chp-f {
           text-align: center;
@@ -89,7 +89,7 @@ $topheight: 60px;
           text-align: center;
           padding: 5px;
           font-size: 0.9em;
-          background-color: v.$sgray;
+          background-color: v.$px2;
           font-weight: bold;
           cursor: pointer;
         }
@@ -105,7 +105,7 @@ $topheight: 60px;
     }
     .userphoto {
       .outer-img {
-        border: 1px solid v.$blurple;
+        border: 1px solid v.$pm1;
         position: relative;
         margin: 0 auto;
         width: 150px;
@@ -207,7 +207,7 @@ $topheight: 60px;
             border-bottom: none;
           }
           li:has(:hover) {
-            background-color: v.$sgray;
+            background-color: rgba($color: v.$pm1, $alpha: 0.2);
           }
         }
       }

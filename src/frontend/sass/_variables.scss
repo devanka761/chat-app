@@ -1,40 +1,70 @@
-$bg: #313338;
+$bg: #0b111d;
 
-$bar_bg: #3F4146;
-$bar_active: #3C426F;
+$px1: #0b111d;
+$px25: #0f1621;
+$px2: #1c222c;
+$pm1: #a395e8;
+$pm2: #2d3048;
 
-$card_primary: #1E1F21;
-$card_secondary: #2B2D30;
+$bar_bg: #3f4146;
+$bar_active: #3c426f;
 
-$fuchsia: #EB459D;
+$fuchsia: #eb459d;
 
-$white: #efefef;
-$softwhite: #aaaaaa;
-$black: #1b1b1b;
-$blackblue: #0A1F2D;
-$darkblue: #1D2D50;
-$midnightblue: #1F4068;
-$seablue: #2C5282;
-$softgreen: #2D6A4F;
-$bluegreen: #9AE3D8;
-$peagreen: #B9FBC0;
-$golden: #E2B93B;
-$btnblue: #007AB8;
-$btnhoverblue: #2C5282;
+$white: #f0f2f3;
+$softwhite: #abadaf;
+$swhite: #888b91;
+$black: #00000b;
 
-$darkgray: #2E3A4D;
-$bluegray: #34495E;
-$midgray: #5D6D7E;
-$lightgray: #7F8C8D;
-$lighergray: #85929E;
-
-$blurple: #5865F1;
-$sgreen: #3AA761;
-$sred: #DA373B;
-$sgray: #4E5057;
-$syellow: #BDA94E;
-$yellow: #FEE75B;
-$darkcream: #cab05c;
+$blurple: #5865f1;
+$sgreen: #3aa761;
+$sred: #da373b;
+$sgray: #4e5057;
+$syellow: #bda94e;
+$yellow: #fee75b;
 
 $cred: #ff6e6e;
-$cgreen: #6eff75;
+$cgreen: #6ccc71;
+
+$darkcream: #cab05c;
+
+$neonpurple: #64538b;
+$neonpink: #64354b;
+$neonbg: linear-gradient(135deg, #64354b, #64538b);
+$noenbg: linear-gradient(135deg, #64538b, #64354b);
+$rewardbg: linear-gradient(135deg, #ffc0cb, #800080);
+
+$textoutline:
+  -1px -1px 0 #000,
+  1px -1px 0 #000,
+  -1px 1px 0 #000,
+  1px 1px 0 #000;
+$textshadow:
+  1px 0 3px #0b0b0b,
+  0 1px 3px #0b0b0b,
+  -1px 0 3px #0b0b0b,
+  0 -1px 3px #0b0b0b,
+  1px 1px 10px #0b0b0b,
+  1px -1px 10px #0b0b0b,
+  -1px 1px 10px #0b0b0b,
+  -1px -1px 10px #0b0b0b;
+
+$defonts:
+  "Poppins",
+  system-ui,
+  -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  Roboto,
+  Oxygen,
+  Ubuntu,
+  Cantarell,
+  "Open Sans",
+  "Helvetica Neue",
+  sans-serif;
+
+$fontbiggest: 2.5rem;
+$fontbigger: 2rem;
+$fontbig: 1.75rem;
+$fontmedium: 1.25rem;
+$fontsmall: 0.875rem;

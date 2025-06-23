@@ -10,13 +10,13 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: v.$bg;
+  background-color: v.$px25;
   .top {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    background-color: v.$bar_bg;
+    background-color: v.$px2;
     color: v.$white;
     height: 60px;
     display: flex;

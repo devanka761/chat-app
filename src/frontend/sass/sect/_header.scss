@@ -7,14 +7,13 @@
   left: 100px;
   width: 350px;
   height: 50px;
-  background-color: v.$card_secondary;
-  border-bottom: 1px solid v.$black;
+  background-color: v.$px1;
   animation: slide_right_in 0.5s;
   &.out {
     animation: slide_right_out 0.5s forwards;
   }
   .header-identification {
-    background-color: v.$card_secondary;
+    background-color: v.$px1;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -37,7 +36,7 @@
     }
   }
   .header-options {
-    background-color: v.$bg;
+    background-color: v.$px2;
     position: absolute;
     padding: 7px 0;
     z-index: -1;
@@ -48,11 +47,12 @@
     overflow: hidden;
     animation: slide_down_in 0.25s;
     .btn {
-      background-color: v.$bg;
+      background-color: v.$px2;
       padding: 14px;
       padding-right: 28px;
       &:hover {
-        background-color: v.$bar_active;
+        background-color: v.$pm1;
+        color: v.$black;
       }
     }
     &.out {

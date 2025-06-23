@@ -60,11 +60,11 @@
           animation: slide_down_in 1s;
           .btn {
             color: v.$white;
-            border: 1px solid v.$blurple;
+            border: 1px solid v.$pm1;
             border-radius: 10px;
             overflow: hidden;
             a {
-              background-color: v.$blurple;
+              background-color: v.$pm1;
               min-width: 150px;
               max-width: 100%;
               display: block;
@@ -90,17 +90,9 @@
         animation: slide_right_in 2s;
         p {
           a {
-            color: v.$blurple;
+            color: v.$pm1;
             font-weight: bold;
-            text-shadow:
-              1px 0 1px v.$card_primary,
-              0 1px 1px v.$card_primary,
-              -1px 0 1px v.$card_primary,
-              0 -1px 1px v.$card_primary,
-              1px 1px 2px v.$card_primary,
-              1px -1px 2px v.$card_primary,
-              -1px 1px 2px v.$card_primary,
-              -1px -1px 2px v.$card_primary;
+            text-shadow: v.$textshadow;
           }
         }
       }

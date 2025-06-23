@@ -3,10 +3,11 @@
 .nav {
   z-index: 98;
   position: fixed;
-  top: 10px;right: 10px;
-  background-color: #1E1F2280;
-  border-bottom: 1px solid v.$blurple;
-  border-left: 1px solid v.$blurple;
+  top: 10px;
+  right: 10px;
+  background-color: #1e1f2280;
+  border-bottom: 1px solid v.$pm1;
+  border-left: 1px solid v.$pm1;
   border-radius: 10px;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -37,11 +38,12 @@
       &:hover {
         width: calc(100% + 20px);
         transform: translateX(-20px);
-        background-color: v.$card_primary;
-        border-color: v.$blurple;
+        background-color: v.$px1;
+        border-color: v.$pm1;
       }
       &:active {
-        background-color: v.$bar_active;
+        background-color: v.$pm1;
+        color: v.$px1;
       }
       &:last-child {
         margin-bottom: 0;
@@ -52,8 +54,8 @@
     min-width: 200px;
     .btn-menu {
       border-radius: 10px;
-      &:active{
-        background-color: v.$blurple;
+      &:active {
+        background-color: v.$pm1;
       }
     }
     .nav-list {

@@ -11,7 +11,7 @@ $bg3: #5d6d80;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: $bg1;
+  background-color: v.$px1;
   .none {
     i {
       color: #00000001;
@@ -24,13 +24,14 @@ $bg3: #5d6d80;
     scrollbar-width: thin;
     overflow-x: hidden;
     overflow-y: auto;
-    background-color: $bg2;
+    background-color: v.$px2;
     border-radius: 10px;
     animation: popup_in 0.5s;
+    border: 1px solid v.$pm1;
     .top {
       padding: 20px;
-      background: $bg3;
-      color: v.$white;
+      background: v.$pm1;
+      color: v.$black;
       text-align: center;
       font-size: 1.5em;
       font-weight: bold;
@@ -41,7 +42,7 @@ $bg3: #5d6d80;
         width: 100%;
         margin-bottom: 10px;
         a {
-          color: v.$yellow;
+          color: v.$pm1;
         }
         .btn-lang {
           margin: 0 auto;
@@ -61,7 +62,7 @@ $bg3: #5d6d80;
             line-height: 1.5;
           }
           .btn-help {
-            color: v.$yellow;
+            color: v.$pm1;
           }
         }
         .inp {
@@ -79,7 +80,7 @@ $bg3: #5d6d80;
               letter-spacing: 5px;
             }
             &:focus {
-              border-color: v.$blurple;
+              border-color: v.$pm1;
             }
           }
           .btn {
@@ -90,11 +91,12 @@ $bg3: #5d6d80;
             padding: 10px;
             text-align: center;
             text-transform: capitalize;
-            background-color: v.$card_primary;
+            background-color: v.$px1;
             display: block;
             text-decoration: none;
             &.btn-login {
-              background-color: $bg3;
+              background-color: v.$pm1;
+              color: v.$black;
             }
             &.btn-google {
               color: v.$cred;
@@ -110,7 +112,7 @@ $bg3: #5d6d80;
           }
         }
         .btn-headback {
-          color: v.$yellow;
+          color: v.$pm1;
           text-decoration: underline;
         }
         .sm {
@@ -122,9 +124,9 @@ $bg3: #5d6d80;
         .btn-start-over {
           text-align: center;
           a {
-            color: v.$darkcream;
+            color: v.$pm1;
             text-decoration: none;
-            border-bottom: 1px solid v.$darkcream;
+            border-bottom: 1px solid v.$pm1;
           }
         }
         &:last-child {

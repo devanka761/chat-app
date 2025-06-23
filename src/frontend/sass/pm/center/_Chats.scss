@@ -1,7 +1,7 @@
 @use "../../variables" as v;
 
 .Chats {
-  background-color: v.$card_secondary;
+  background-color: v.$px1;
   scrollbar-width: thin;
   overflow-y: auto;
   overflow-x: hidden;
@@ -32,8 +32,8 @@
         }
       }
       &.on {
-        border-color: v.$blurple;
-        background-color: v.$bar_active;
+        border-color: v.$pm1;
+        background-color: rgba($color: v.$pm1, $alpha: 0.5);
         color: v.$white;
       }
     }
@@ -45,7 +45,7 @@
     input {
       width: 100%;
       padding: 10px;
-      background-color: v.$card_primary;
+      background-color: v.$black;
       color: v.$white;
       border-radius: 5px;
     }
@@ -54,7 +54,7 @@
       padding: 10px;
       text-align: center;
       font-weight: bold;
-      background-color: v.$sgreen;
+      background-color: rgba($color: v.$pm1, $alpha: 0.5);
       color: v.$white;
       border-radius: 5px;
       margin-top: 5px;
@@ -173,7 +173,8 @@
           border-radius: 50%;
           text-align: center;
           align-content: center;
-          background-color: v.$blurple;
+          background-color: v.$pm1;
+          color: v.$black;
         }
         .btn {
           font-size: 1.25em;
@@ -184,11 +185,11 @@
       }
     }
     .card:hover {
-      background-color: v.$bar_bg;
+      background-color: v.$px2;
     }
     .freq {
-      background-color: v.$card_primary;
-      border-bottom: 1px solid v.$blurple;
+      background-color: v.$px1;
+      border-bottom: 1px solid v.$pm1;
       .note {
         text-align: center;
       }
@@ -210,6 +211,6 @@
     border-radius: 10px;
   }
   .global-btn:hover {
-    background-color: v.$bar_active;
+    background-color: v.$pm1;
   }
 }

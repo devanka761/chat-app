@@ -12,12 +12,12 @@ $errorbg: #3d2b31;
   left: calc(350px + 100px);
   width: calc(100% - (350px + 100px));
   height: 100%;
-  background-color: v.$bg;
+  background-color: v.$px25;
   .top {
     position: absolute;
     top: 0;
     left: 0;
-    background-color: v.$bar_bg;
+    background-color: v.$px2;
     width: 100%;
     height: 60px;
     display: flex;
@@ -96,7 +96,7 @@ $errorbg: #3d2b31;
     left: 0;
     width: 100%;
     height: $btmheight;
-    background-color: v.$bar_bg;
+    background-color: v.$px2;
     .embed {
       width: 100%;
       padding: 5px;
@@ -245,7 +245,8 @@ $errorbg: #3d2b31;
           border-radius: 50%;
           text-align: center;
           align-content: center;
-          background-color: v.$blurple;
+          background-color: v.$pm1;
+          color: v.$black;
         }
       }
     }
@@ -278,6 +279,7 @@ $errorbg: #3d2b31;
           text-align: center;
           align-content: center;
           background-color: v.$sgreen;
+          color: v.$white;
           &.btn-spinning {
             // position: absolute;
             outline: dashed 3px v.$sgreen;
@@ -308,8 +310,8 @@ $errorbg: #3d2b31;
       text-align: center;
       align-content: center;
       border-radius: 50%;
-      background-color: v.$sgray;
-      box-shadow: 0 0 5px v.$card_primary;
+      background-color: v.$px1;
+      box-shadow: 0 0 5px v.$px1;
       cursor: pointer;
     }
     .chatlist {
@@ -349,7 +351,7 @@ $errorbg: #3d2b31;
             background-color: #00000000;
             padding: 10px;
             &:hover {
-              background-color: rgba($color: v.$blurple, $alpha: 0.25);
+              background-color: rgba($color: v.$pm1, $alpha: 0.25);
             }
             &.opt-profile {
               color: v.$cgreen;
@@ -395,7 +397,7 @@ $errorbg: #3d2b31;
           max-width: calc(100% - (40px + 40px));
           padding: 10px;
           border-radius: 10px;
-          background: #3f464e;
+          background: v.$px2;
           overflow: hidden;
           .chp {
             max-width: 425px;
@@ -460,7 +462,7 @@ $errorbg: #3d2b31;
               }
             }
             .img {
-              background-color: v.$card_secondary;
+              background-color: v.$px2;
               width: 100%;
               max-height: 300px;
               border-radius: 5px;
@@ -530,14 +532,14 @@ $errorbg: #3d2b31;
                   border-radius: 50%;
                 }
                 input[type="range"]:active::-webkit-slider-thumb {
-                  box-shadow: 0 0 0 5px v.$blurple;
+                  box-shadow: 0 0 0 5px v.$pm1;
                 }
                 input[type="range"]:active::-webkit-slider-thumb {
-                  outline: solid 2px v.$blurple;
+                  outline: solid 2px v.$pm1;
                   outline-offset: 3px;
                 }
                 input[type="range"]:active::-moz-range-thumb {
-                  box-shadow: 0 0 0 5px v.$blurple;
+                  box-shadow: 0 0 0 5px v.$pm1;
                 }
               }
             }
@@ -643,7 +645,7 @@ $errorbg: #3d2b31;
             max-width: calc(100% - (40px));
             margin-left: auto;
             margin-right: 0;
-            background: v.$bar_active;
+            background: v.$pm2;
           }
         }
         &:has(.optmenu) {
@@ -694,7 +696,7 @@ $errorbg: #3d2b31;
         text-align: center;
         font-size: 1.2em;
         i {
-          color: v.$blurple;
+          color: v.$pm1;
           font-size: 1.3em;
         }
       }

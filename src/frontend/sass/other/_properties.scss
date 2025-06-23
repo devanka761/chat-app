@@ -19,7 +19,8 @@ $bg: #3f464e;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #1e1f2280;
+  background-color: rgba($color: v.$black, $alpha: 0.75);
+  color: v.$px1;
   .box {
     width: fit-content;
     max-width: calc(100% - 40px);
@@ -28,7 +29,7 @@ $bg: #3f464e;
     justify-content: center;
     align-items: center;
     gap: 10px;
-    background-color: $bg;
+    background-color: v.$pm1;
     padding: 30px 40px;
     border-radius: 20px;
     animation: slide_down_in 0.5s;
@@ -45,6 +46,7 @@ $bg: #3f464e;
     }
   }
 }
+
 .waiting {
   z-index: 98;
   position: fixed;
@@ -87,10 +89,11 @@ $bg: #3f464e;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba($color: v.$card_primary, $alpha: 0.5);
+  background-color: rgba($color: v.$black, $alpha: 0.75);
   display: flex;
   justify-content: center;
   align-items: center;
+  color: v.$white;
   .box {
     text-align: center;
     padding: 20px;
@@ -100,19 +103,20 @@ $bg: #3f464e;
     scrollbar-width: thin;
     overflow-y: auto;
     scrollbar-width: thin;
-    background-color: $bg;
+    background-color: v.$px2;
     border-radius: 10px;
-    box-shadow: 0 0 10px v.$black;
     animation: popup_in 0.5s;
+    box-shadow: -3px 3px 5px v.$pm1;
     .ic {
       font-size: 2.2em;
+      color: v.$pm1;
     }
     .inf {
       margin: 20px 0;
       font-weight: 300;
       font-size: 1.25em;
       a {
-        color: v.$yellow;
+        color: v.$pm1;
         text-decoration: none;
       }
       p {
@@ -132,9 +136,11 @@ $bg: #3f464e;
         width: 100%;
         padding: 10px;
         border-radius: 5px;
-        background-color: v.$card_secondary;
-        color: v.$white;
+        background-color: v.$px1;
         font-size: 1em;
+      }
+      textarea {
+        scrollbar-width: thin;
       }
       input[type="text"] {
         text-align: center;
@@ -145,7 +151,7 @@ $bg: #3f464e;
         .radio {
           width: 100%;
           border-radius: 10px;
-          border: 1px solid v.$blurple;
+          border: 1px solid v.$pm1;
           margin-bottom: 10px;
           label {
             padding: 14px;
@@ -158,10 +164,10 @@ $bg: #3f464e;
             input[type="radio"] {
               -webkit-appearance: none;
               appearance: none;
-              background-color: v.$card_secondary;
+              background-color: v.$px1;
               margin: 0;
               font: inherit;
-              color: v.$blurple;
+              color: v.$pm1;
               width: 1.15em;
               height: 1.15em;
               border-radius: 50%;
@@ -176,11 +182,11 @@ $bg: #3f464e;
               border-radius: 50%;
               transform: scale(0);
               transition: 120ms transform ease-in-out;
-              box-shadow: inset 1em 1em v.$card_secondary;
-              background-color: v.$blurple;
+              box-shadow: inset 1em 1em v.$px2;
+              background-color: v.$pm1;
             }
             input[type="radio"]:checked {
-              background-color: v.$blurple;
+              background-color: v.$pm1;
               transform: scale(1);
             }
             input[type="radio"]:checked::before {
@@ -193,8 +199,8 @@ $bg: #3f464e;
         }
       }
       .radio:has(:checked) {
-        border-color: v.$blurple;
-        background-color: v.$bar_active;
+        border-color: v.$pm1;
+        background-color: rgba($color: v.$pm1, $alpha: 0.2);
       }
     }
     .acts {
@@ -212,10 +218,11 @@ $bg: #3f464e;
         color: v.$white;
       }
       .btn-cancel {
-        background-color: v.$card_primary;
+        background-color: v.$px1;
       }
       .btn-ok {
-        background-color: v.$blurple;
+        background-color: v.$pm1;
+        color: v.$px1;
       }
     }
     .act {
@@ -227,8 +234,8 @@ $bg: #3f464e;
         border-radius: 5px;
         font-size: 0.9em;
         font-weight: bold;
-        color: v.$white;
-        background-color: v.$blurple;
+        background-color: v.$pm1;
+        color: v.$px1;
       }
     }
   }
@@ -246,8 +253,8 @@ $bg: #3f464e;
   right: 20px;
   width: fit-content;
   max-width: 400px;
-  background-color: v.$bar_active;
-  color: v.$white;
+  background-color: v.$pm1;
+  color: v.$px1;
   padding: 20px;
   border-radius: 14px;
   display: flex;
@@ -294,6 +301,7 @@ $bg: #3f464e;
   }
   &.g {
     background-color: v.$sgreen;
+    color: v.$white;
   }
   &.y {
     background-color: v.$black;
@@ -302,6 +310,7 @@ $bg: #3f464e;
   }
   &.r {
     background-color: v.$cred;
+    color: v.$white;
   }
   &.rb {
     background-color: v.$black;
@@ -394,7 +403,7 @@ $bg: #3f464e;
         padding: 10px;
         border-radius: 10px;
         text-align: center;
-        background-color: v.$card_secondary;
+        background-color: v.$px2;
       }
     }
   }
