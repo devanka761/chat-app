@@ -1,16 +1,13 @@
 import { eroot, kel } from "../../helper/kel"
 import modal from "../../helper/modal"
 import noUser from "../../helper/noUser"
-import setbadge from "../../helper/setbadge"
 import userState from "../../main/userState"
 import db from "../../manager/db"
-import swiper from "../../manager/swiper"
 import { IChatsF, IMessageF, IRoomDataF, IUserF } from "../../types/db.types"
 import { TStatusText } from "../../types/room.types"
 import { PrimaryClass } from "../../types/userState.types"
 import RoomField from "../parts/RoomField"
 import RoomForm from "../parts/RoomForm"
-import Profile from "./Profile"
 import { IMessageUpdateF, IWritterF } from "../../types/message.types"
 import MessageBuilder from "../../properties/MessageBuilder"
 import { convertMessage, msgValidTypes } from "../../helper/helper"
@@ -18,7 +15,7 @@ import xhr from "../../helper/xhr"
 import { IRepB } from "../../../backend/types/validate.types"
 import { lang } from "../../helper/lang"
 import RoomRecorder from "../parts/RoomRecorder"
-import Group from "./Group"
+import RoomTab from "../parts/RoomTab"
 
 export default class Room implements PrimaryClass {
   readonly role: string
@@ -28,11 +25,13 @@ export default class Room implements PrimaryClass {
   public data: IRoomDataF
   private chats?: IChatsF
   private users: IUserF[]
+  private top: HTMLDivElement
   private middle: HTMLDivElement
   private bottom: HTMLDivElement
   public form: RoomForm
   public recorder: RoomRecorder
   public field: RoomField
+  public tab: RoomTab
   public opt?: HTMLDivElement
   public optRetrying?: HTMLDivElement
   public mediaToLoad: number
@@ -45,68 +44,24 @@ export default class Room implements PrimaryClass {
     this.id = s.data.id
     this.form = new RoomForm({ room: this })
     this.field = new RoomField({ room: this })
+    this.tab = new RoomTab({ data: s.data, room: this, users: s.users })
     this.recorder = new RoomRecorder({ room: this })
     this.mediaToLoad = 1
   }
   private createElement(): void {
-    this.el = kel("div", "Room pmcontent")
-    this.el.innerHTML = `
-    <div class="top">
-      <div class="left">
-        <div class="btn btn-back"><i class="fa-solid fa-arrow-left"></i></div>
-        <div class="user">
-          <div class="img"></div>
-          <div class="names"><p class="uname"></p><p class="dname"></p></div>
-        </div>
-      </div>
-      <div class="right">
-        <div class="btn btn-video">
-          <i class="fa-solid fa-video"></i>
-        </div>
-        <div class="btn btn-call">
-          <i class="fa-solid fa-phone"></i>
-        </div>
-        <div class="btn btn-more">
-          <i class="fa-solid fa-ellipsis-vertical"></i>
-        </div>
-      </div>
-    </div>
-    <div class="mid">
-    </div>
-    <div class="bottom">
-    </div>`
-    this.middle = <HTMLDivElement>this.el.querySelector(".mid")
-    this.bottom = <HTMLDivElement>this.el.querySelector(".bottom")
+    this.top = kel("div", "top")
+    this.middle = kel("div", "mid")
+    this.bottom = kel("div", "bottom")
+
+    this.el = kel("div", "Room pmcontent", { e: [this.top, this.middle, this.bottom] })
   }
   private writeData(): void {
-    this.writeUser()
+    this.writeTab()
     this.writeForm()
     this.writeField()
   }
-  private writeUser(): void {
-    const folder = this.data.type === "user" ? "user" : "group"
-    const img = new Image()
-    img.onerror = () => (img.src = `/assets/${folder}.jpg`)
-    img.alt = this.data.short
-    img.src = this.data.image ? `/file/${folder}/${this.data.image}` : `/assets/${folder}.jpg`
-    const eimg = <HTMLDivElement>this.el.querySelector(".top .left .user .img")
-    eimg.append(img)
-
-    const euname = <HTMLDivElement>this.el.querySelector(".top .left .user .names .uname")
-    euname.innerText = this.data.short
-    if (this.data.badges) setbadge(euname, this.data.badges)
-    const edname = <HTMLDivElement>this.el.querySelector(".top .left .user .names .dname")
-    edname.innerText = this.data.long
-
-    const euser = <HTMLDivElement>this.el.querySelector(".top .left .user")
-    euser.onclick = () => {
-      if (this.data.type === "user") {
-        const user = this.users.find((usr) => usr.id === this.data.id)
-        swiper(new Profile({ user: user as IUserF, classBefore: this }), userState.content)
-      } else {
-        swiper(new Group({ group: this.data, users: this.users }), userState.content)
-      }
-    }
+  private writeTab(): void {
+    this.tab.run(this.top)
   }
   private writeForm(): void {
     this.form.run(this.bottom)

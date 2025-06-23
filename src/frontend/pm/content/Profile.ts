@@ -15,12 +15,12 @@ export default class Profile implements PrimaryClass {
   public isLocked: boolean
   private el: HTMLDivElement
   public user: IUserF
-  private classBefore?: PrimaryClass
-  constructor(s: { user: IUserF; classBefore?: PrimaryClass }) {
+  private room?: Room
+  constructor(s: { user: IUserF; room?: Room }) {
     this.role = "profile"
     this.isLocked = false
     this.user = s.user
-    this.classBefore = s.classBefore
+    this.room = s.room
   }
   createElement(): void {
     this.el = kel("div", "Profile pmcontent")
