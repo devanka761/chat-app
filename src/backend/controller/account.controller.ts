@@ -1,15 +1,15 @@
 import fs from "fs"
 import db from "../main/db"
 import { getUser } from "./profile.controller"
-import { convertGroup, convertUser, escapeWhiteSpace, genhex, isProd, normalizeMessage, peerKey } from "../main/helper"
+import { convertGroup, convertUser, escapeWhiteSpace, genhex, isProd, normalizeMessage, peerKey, rUid } from "../main/helper"
 import cfg from "../main/cfg"
-import { IChatsF, IRoomDataF, MeDB, PeerDB } from "../../frontend/types/db.types"
+import { IChatsF, IRoomDataF, MeDB, PeerDB, SocketDB } from "../../frontend/types/db.types"
 import { IRepTempB } from "../types/validate.types"
 import { IAccountB } from "../types/account.types"
 
-function initPeer(uid: string): PeerDB {
+function _initPeer(_uid: string): PeerDB {
   const peerid = genhex()
-  db.ref.u[uid].peer = peerid
+  // db.ref.u[uid].peer = peerid
   const data: PeerDB = {
     peerid,
     peerConfig: {
@@ -35,6 +35,13 @@ function initPeer(uid: string): PeerDB {
   return data
 }
 
+function initSocketClient(uid: string): SocketDB {
+  const id = rUid()
+  db.ref.u[uid].socket = id
+  const host = (isProd ? cfg.APP_DOMAIN : `${cfg.APP_HOST}:${cfg.APP_PORT}`) as string
+  return { id, host }
+}
+
 export function getMe(uid: string): IRepTempB {
   const udb = db.ref.u[uid]
   if (!udb) return { code: 400 }
@@ -53,7 +60,8 @@ export function getMe(uid: string): IRepTempB {
 
   const data: IAccountB = {
     me: meData,
-    peer: initPeer(uid)
+    socket: initSocketClient(uid)
+    // peer: initPeer(uid)
   }
 
   const cdb = db.ref.c

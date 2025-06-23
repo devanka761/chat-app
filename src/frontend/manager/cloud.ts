@@ -1,5 +1,4 @@
 // import { Peer } from "peerjs"
-import { DataConnection, Peer } from "peerjs"
 import { ForceCloseObject } from "../types/cloud.types"
 import { PeerDB } from "../types/db.types"
 import db from "./db"

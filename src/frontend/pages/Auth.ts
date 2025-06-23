@@ -10,9 +10,9 @@ import headerBar from "../pm/header/HeaderBar"
 import Tab from "../pm/header/Nav"
 import { LangObject, Languages } from "../types/helper.types"
 import db from "../manager/db"
-import cloud from "../manager/cloud"
 import { kel } from "../helper/kel"
 import Empty from "../pm/content/Empty"
+import socketClient from "../manager/socketClient"
 
 let lang: LangObject = {}
 
@@ -76,7 +76,8 @@ export default class Auth {
     new Empty().run()
   }
   private initializeData(s: IAccountB): void {
-    if (s.peer) cloud.run(s.peer)
+    // if (s.peer) cloud.run(s.peer)
+    if (s.socket) socketClient.run(s.socket)
     if (s.me) db.me = s.me
     if (s.c) db.c = s.c
     // const clientData = new ClientData({ id: k });

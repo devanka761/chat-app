@@ -8,6 +8,7 @@ const cfg: PossibleData = {
   APP_PRODUCTION: process.env.APP_PRODUCTION,
   APP_PORT: Number(process.env.APP_PORT),
   APP_HOST: process.env.APP_HOST,
+  APP_DOMAIN: process.env.APP_DOMAIN,
   SESSION_SECRET: process.env.SESSION_SECRET,
   CHAT_KEY: process.env.CHAT_KEY,
   TURN_HOST: process.env.TURN_HOST,
@@ -26,7 +27,7 @@ const cfg: PossibleData = {
   GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET
 }
 const toOverRide: PossibleData = overRideData
-Object.keys(toOverRide).forEach(k => {
+Object.keys(toOverRide).forEach((k) => {
   cfg[k] = toOverRide[k]
 })
 export default cfg

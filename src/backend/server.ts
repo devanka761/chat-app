@@ -1,9 +1,9 @@
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0"
 import fs from "fs"
 import express, { Application, NextFunction, Request, Response } from "express"
+import { WebSocketServer } from "ws"
 import session from "express-session"
 import SessionFileStore, { FileStore } from "session-file-store"
-import { ExpressPeerServer } from "peer"
 import authRouter from "./routes/auth.route"
 import accountRouter from "./routes/account.route"
 import profileRouter from "./routes/profile.route"
@@ -12,9 +12,11 @@ import roomRouter from "./routes/room.route"
 import fileRouter from "./routes/file.route"
 import inviteRouter from "./routes/invite.route"
 import cfg from "./main/cfg"
-import { peerKey } from "./main/helper"
 import db from "./main/db"
 import { sessionUserBinder } from "./main/binder"
+import { TRelay } from "./types/relay.types"
+import relay from "./main/relay"
+import { parse } from "url"
 
 if (!fs.existsSync("./dist")) fs.mkdirSync("./dist")
 if (!fs.existsSync("./dist/sessions")) {
@@ -65,25 +67,20 @@ app.get("/", (req: Request, res: Response) => {
   return
 })
 
-const appService = app.listen(PORT, () => {
-  console.log(`ONLINE >> http://localhost:${PORT}/app`)
-  console.log(`PEERS >> http://localhost:${PORT}/cloud/${peerKey}/peers`)
-})
+// const server = ExpressPeerServer(appService, {
+//   key: peerKey,
+//   allow_discovery: true
+// })
 
-const server = ExpressPeerServer(appService, {
-  key: peerKey,
-  allow_discovery: true
-})
-
-server.on("error", console.error)
+// server.on("error", console.error)
 // server.on("message", (c, msg) => {
 //   // console.log(c.getId(), msg)
 // })
-server.on("connection", (c) => {
-  console.log("connected", c.getId())
-  c.send(JSON.stringify({ data: "hehehe" }))
-})
-app.use("/cloud", server)
+// server.on("connection", (c) => {
+//   console.log("connected", c.getId())
+//   c.send(JSON.stringify({ data: "hehehe" }))
+// })
+// app.use("/cloud", server)
 
 app.use("/", (req: Request, res: Response) => {
   res.status(404).json({ ok: false, code: 404, msg: "NOT_FOUND" })
@@ -108,4 +105,50 @@ app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
     msg: "ERROR"
   })
   return
+})
+
+const server = app.listen(PORT, () => {
+  console.log(`ONLINE >> http://localhost:${PORT}`)
+  console.log(`APP >> http://localhost:${PORT}/app`)
+})
+
+const wss = new WebSocketServer({ server })
+
+wss.on("connection", (ws, req) => {
+  const { query } = parse(req.url!, true)
+  const clientId = query.id?.toString()
+  if (!clientId) {
+    console.log("❌ Connection rejected: no client ID")
+    ws.close()
+    return
+  }
+
+  const udb = db.ref.u
+  const userExist = Object.keys(udb).find((k) => udb[k].socket === clientId)
+  if (!userExist) {
+    console.log(`❌ Connection rejected: client with id ${clientId} is not found`)
+    ws.close()
+    return
+  }
+
+  const client: TRelay = relay.add(clientId, ws)
+  console.log(`Connected    : ${client.id}`)
+
+  ws.on("error", (err: Error) => {
+    console.error(err)
+  })
+
+  // ws.on("message", (data) => {
+  //   try {
+  //     const msg = JSON.parse(data.toString())
+  //     console.log("msg", msg)
+  //   } catch (err) {
+  //     console.error("❌ Failed to parse JSON:", err)
+  //   }
+  // })
+
+  ws.on("close", () => {
+    relay.remove(client.id)
+    console.log(`Disconnected : ${client.id}`)
+  })
 })

@@ -26,7 +26,7 @@ export interface IUserB {
   bio?: string
   b?: number[]
   data: IUserTempB[]
-  peer?: string
+  socket?: string
   zzz?: SivalKeyType[]
   req?: string[]
   lu?: number

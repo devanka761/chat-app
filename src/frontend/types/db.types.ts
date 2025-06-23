@@ -5,6 +5,11 @@ export interface EmailProvider {
   email: string
 }
 
+export interface SocketDB {
+  id: string
+  host: string
+}
+
 export interface PeerDB {
   peerid: string
   peerConfig: {

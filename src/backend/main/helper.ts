@@ -146,3 +146,8 @@ export function escapeWhiteSpace(txt: string): string {
   const transtxt = /(\s)(?=\s)/g
   return txt.replace(transtxt, "").trim()
 }
+
+export function rUid(): string {
+  const rstring = rNumber(1).toString() + (Date.now() + rNumber(6)).toString(36).substring(1)
+  return rstring + Date.now().toString(36)
+}
