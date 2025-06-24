@@ -11,6 +11,7 @@ export interface IRoomFormF {
 }
 export type TRoomTypeF = "user" | "group"
 export type TChatsTypeF = "all" | "user" | "group" | "unread"
+export type TFriendsTypeF = "friend" | "request"
 
 export type TStatusIcon = {
   [key in TStatusText]: string

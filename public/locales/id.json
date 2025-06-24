@@ -200,5 +200,7 @@
   "FOLDER_all": "Semua",
   "FOLDER_user": "Pribadi",
   "FOLDER_group": "Grup",
-  "FOLDER_unread": "Belum Dibaca"
+  "FOLDER_unread": "Belum Dibaca",
+  "CONTACT_friend": "Daftar Teman",
+  "CONTACT_request": "Permintaan Pertemanan"
 }

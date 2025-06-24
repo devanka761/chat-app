@@ -132,7 +132,7 @@ wss.on("connection", (ws, req) => {
   }
 
   const client: TRelay = relay.add(clientId, ws)
-  console.log(`Connected    : ${client.id}`)
+  console.log(`Connected     ${client.id}`)
 
   ws.on("error", (err: Error) => {
     console.error(err)
@@ -143,12 +143,12 @@ wss.on("connection", (ws, req) => {
   //     const msg = JSON.parse(data.toString())
   //     console.log("msg", msg)
   //   } catch (err) {
-  //     console.error("❌ Failed to parse JSON:", err)
+  //     console.error("Failed to parse JSON:", err)
   //   }
   // })
 
   ws.on("close", () => {
     relay.remove(client.id)
-    console.log(`Disconnected : ${client.id}`)
+    console.log(`Disconnected  ${client.id}`)
   })
 })

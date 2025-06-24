@@ -2,6 +2,7 @@ import userState from "../../main/userState"
 import swiper from "../../manager/swiper"
 import Chats from "../center/Chats"
 import Find from "../center/Find"
+import Friends from "../center/Friends"
 
 export default [
   {
@@ -18,6 +19,14 @@ export default [
     c: "fa-solid fa-comments",
     run: async () => {
       swiper(new Chats(), userState.currcenter)
+    }
+  },
+  {
+    id: "friends",
+    txt: "APP_FRIENDS",
+    c: "fa-solid fa-address-book",
+    run: async () => {
+      swiper(new Friends(), userState.currcenter)
     }
   }
 ]

@@ -60,6 +60,7 @@ export interface IChatB {
   b?: number[]
   l?: string
   lg?: number
+  ts?: number
 }
 
 export type IMessageKeyB = {

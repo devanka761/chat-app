@@ -31,7 +31,7 @@ export function searchUser(uid: string, userid: string) {
   const udb = db.ref.u
   const users = Object.values(udb)
     .filter((usr) => {
-      return usr.id !== uid && (usr.id === userid || usr.uname?.includes(userid))
+      return usr.id !== uid && (usr.id === userid || usr.uname?.toLowerCase().includes(userid.toLowerCase().toString()))
     })
     .map((usr) => {
       return getUser(uid, usr.id)
@@ -96,17 +96,19 @@ export function acceptfriend(uid: string, s: { userid: string }): IRepTempB {
   db.ref.u[uid].req = mdb.req.filter((k) => k !== s.userid)
   const cdb = db.ref.c
   const oldfriendkey = Object.keys(cdb).find((k) => {
-    return cdb[k].u.includes(uid) && cdb[k].u.includes(s.userid) && cdb[k].f === 1
+    return cdb[k].u.find((usr) => usr === uid) && cdb[k].u.find((usr) => usr === s.userid)
   })
 
-  const friendkey = oldfriendkey || "m" + Date.now().toString(36)
+  const friendkey = oldfriendkey || `${s.userid}u${uid}`
 
   if (!cdb[friendkey])
     db.ref.c[friendkey] = {
       u: [uid, s.userid],
-      f: 1,
+      // f: 1,
       t: "user"
     }
+  if (cdb[friendkey].f != 1) db.ref.c[friendkey].f = 1
+  db.ref.c[friendkey].ts = Date.now()
   db.save("u", "c")
 
   zender(uid, s.userid, "acceptfriend", { id: uid })

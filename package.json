@@ -11,7 +11,8 @@
     "client:build": "webpack --config webpack.prod.cjs",
     "dev:build": "webpack --config webpack.dev.cjs",
     "server:build": "rm -rf ./dist/bundle && tsc",
-    "dbclear": "tsx ./src/backend/clearDB.ts"
+    "dbclear": "tsx ./src/backend/clearDB.ts",
+    "coba": "tsx ./ex/coba.ts"
   },
   "repository": {
     "type": "git",

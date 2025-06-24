@@ -49,14 +49,20 @@ export function getMe(uid: string): IRepTempB {
   const meData: MeDB = {
     id: udb.id,
     username: udb.uname as string,
-    displayname: udb.dname as string
+    displayname: udb.dname as string,
+    image: udb.img,
+    bio: udb.bio,
+    badges: udb.b
   }
-  meData.image = udb.img
-  meData.bio = udb.bio
-  meData.badges = udb.b
   meData.email = udb.data.map((usr) => {
     return { email: <string>usr.email, provider: <string>usr.provider }
   })
+
+  if (udb.req && udb.req.length >= 1) {
+    meData.req = udb.req.map((userid) => {
+      return getUser(uid, userid)
+    })
+  }
 
   const data: IAccountB = {
     me: meData,
@@ -67,7 +73,7 @@ export function getMe(uid: string): IRepTempB {
   const cdb = db.ref.c
   const meChatList: IChatsF[] = Object.keys(cdb)
     .filter((k) => {
-      return cdb[k].c && cdb[k].u.find((usr) => usr === uid)
+      return cdb[k].u.find((usr) => usr === uid) && (cdb[k].c || cdb[k].f === 1)
     })
     .map((k) => {
       const chatFile = db.fileGet(cdb[k].c as string, "room") || {}

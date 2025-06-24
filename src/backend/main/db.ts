@@ -30,7 +30,7 @@ class DevankaLocal {
         if (fileKey === "u") {
           Object.keys(this.ref[fileKey]).forEach((objkey) => {
             const k = objkey as keyof IUserB
-            if (this.ref[fileKey][k].peer) delete this.ref[fileKey][k].peer
+            if (this.ref[fileKey][k].socket) delete this.ref[fileKey][k].socket
             if (this.ref[fileKey][k].zzz) delete this.ref[fileKey][k].zzz
           })
         }

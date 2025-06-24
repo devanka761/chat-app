@@ -39,25 +39,26 @@ export default class Chats implements PrimaryClass {
     this.type_list = kel("div", "type-list")
     this.el.append(this.type_list, this.card_list)
   }
-  private btnListener(): void {}
   private writeChatList(): void {
     const cdb: IChatsF[] = db.c.sort((a, b) => {
       if ((a.m[a.m.length - 1]?.timestamp || 0) < (b.m[b.m.length - 1]?.timestamp || 0)) return 1
       if ((a.m[a.m.length - 1]?.timestamp || 0) > (b.m[b.m.length - 1]?.timestamp || 0)) return -1
       return 0
     })
-    cdb.forEach((ch) => {
-      const unread = ch.m.filter((ct) => {
-        return ct.userid !== db.me.id && ct.type !== "deleted" && !ct.readers?.includes(db.me.id)
-      }).length
+    cdb
+      .filter((ch) => ch.m && ch.m.length >= 1)
+      .forEach((ch) => {
+        const unread = ch.m.filter((ct) => {
+          return ct.userid !== db.me.id && ct.type !== "deleted" && !ct.readers?.includes(db.me.id)
+        }).length
 
-      const lastchat = ch.m[ch.m.length - 1] || noMessage()
-      const roomDetail: IRoomDataF = ch.r
-      const card = new ChatBuilder({ data: roomDetail, users: ch.u, chat: lastchat })
-      card.setUnread(unread).run()
-      this.list.add(card)
-      this.card_list.append(card.html)
-    })
+        const lastchat = ch.m[ch.m.length - 1] || noMessage()
+        const roomDetail: IRoomDataF = ch.r
+        const card = new ChatBuilder({ data: roomDetail, users: ch.u, chat: lastchat })
+        card.setUnread(unread).run()
+        this.list.add(card)
+        this.card_list.append(card.html)
+      })
     this.writeIfEmpty(cdb)
   }
   private writeTypeList(): void {
@@ -105,12 +106,6 @@ export default class Chats implements PrimaryClass {
       this.list.entries.forEach((chat) => chat.show())
     }
   }
-  async destroy(): Promise<void> {
-    this.el.classList.add("out")
-    await modal.waittime()
-    this.isLocked = false
-    this.el.remove()
-  }
   updateData(roomdata: IRoomDataF): void {
     const card = this.list.get(roomdata.id)
     if (card) card.updateData(roomdata)
@@ -140,6 +135,12 @@ export default class Chats implements PrimaryClass {
     this.folders.entries.forEach((folder) => folder.updateUnread())
     this.writeIfEmpty(db.c)
   }
+  async destroy(): Promise<void> {
+    this.el.classList.add("out")
+    await modal.waittime()
+    this.isLocked = false
+    this.el.remove()
+  }
   run(): void {
     userState.center = this
     this.createElement()
@@ -147,6 +148,5 @@ export default class Chats implements PrimaryClass {
     this.writeTypeList()
     this.writeChatList()
     this.setTypeList()
-    this.btnListener()
   }
 }

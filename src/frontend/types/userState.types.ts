@@ -13,5 +13,5 @@ export interface PrimaryClass {
   isLocked: boolean
   destroy(): Promise<void>
   update(...args: any[]): void | Promise<void>
-  run(): void | Promise<void>
+  run(): any
 }

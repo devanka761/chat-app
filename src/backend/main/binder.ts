@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express"
 import "express-session"
-import { IUserSessionB, KiriminObject } from "../types/binder.types"
+import { IUserSessionB } from "../types/binder.types"
 
 declare module "express-session" {
   interface SessionData {
@@ -32,11 +32,5 @@ declare module "express" {
       id: string
       data: IUserSessionB
     }
-  }
-}
-
-declare module "peer" {
-  interface IMessage {
-    kirimin: KiriminObject
   }
 }

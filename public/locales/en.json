@@ -198,5 +198,7 @@
   "FOLDER_all": "All",
   "FOLDER_user": "Users",
   "FOLDER_group": "Groups",
-  "FOLDER_unread": "Unread"
+  "FOLDER_unread": "Unread",
+  "CONTACT_friend": "Friend List",
+  "CONTACT_request": "Friend Requests"
 }
