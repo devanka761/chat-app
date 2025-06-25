@@ -10,3 +10,6 @@
 @use "./pm/content/Account";
 @use "./pm/content/Profile";
 @use "./pm/content/Room";
+
+// this should be at the bottom of the page
+@use "./nrw";

@@ -7,50 +7,54 @@
   left: 0;
   width: 100px;
   height: 100%;
-  padding: 10px;
   background-color: v.$px2;
   animation: slide_right_in 0.5s;
   &.out {
     animation: slide_right_out 0.5s forwards;
   }
-  .btn {
-    position: relative;
-    margin-bottom: 10px;
-    width: 100%;
+  .box {
+    width: 100px;
+    height: 100%;
     padding: 10px;
-    text-align: center;
-    border-radius: 10px;
-    border-bottom: 1px solid #00000000;
-    border-left: 1px solid #00000000;
-    i {
-      font-size: 1.25em;
+    .btn {
+      position: relative;
+      margin-bottom: 10px;
+      width: 100%;
+      padding: 10px;
+      text-align: center;
+      border-radius: 10px;
+      border-bottom: 1px solid #00000000;
+      border-left: 1px solid #00000000;
+      i {
+        font-size: 1.25em;
+      }
+      p {
+        word-break: break-all;
+        word-break: break-word;
+        hyphens: auto;
+      }
+      &:last-child {
+        margin-bottom: 0;
+      }
+      &:hover {
+        background-color: v.$pm2;
+      }
+      &.selected {
+        background-color: v.$bg;
+        color: v.$pm1;
+        border-bottom: 1px solid v.$pm1;
+        border-left: 1px solid v.$pm1;
+      }
+      &.unseen::after {
+        content: "";
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: v.$cred;
+      }
     }
-    p {
-      word-break: break-all;
-      word-break: break-word;
-      hyphens: auto;
-    }
-  }
-  .btn:last-child {
-    margin-bottom: 0;
-  }
-  .btn:hover {
-    background-color: v.$pm2;
-  }
-  .btn.selected {
-    background-color: v.$bg;
-    color: v.$pm1;
-    border-bottom: 1px solid v.$pm1;
-    border-left: 1px solid v.$pm1;
-  }
-  .btn.unseen::after {
-    content: "";
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: v.$cred;
   }
 }

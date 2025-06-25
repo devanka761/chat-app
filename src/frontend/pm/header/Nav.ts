@@ -10,6 +10,7 @@ export class Nav implements PrimaryClass {
   readonly role: string
   public isLocked: boolean
   private el: HTMLDivElement
+  private box: HTMLDivElement
   private list: { [key: string]: HTMLDivElement }
   constructor() {
     this.role = "nav"
@@ -17,7 +18,8 @@ export class Nav implements PrimaryClass {
     this.list = {}
   }
   private createElement(): void {
-    this.el = kel("div", "nav")
+    this.box = kel("div", "box")
+    this.el = kel("div", "nav", { e: this.box })
   }
   private writeNav(): void {
     _navlist.forEach((btn) => {
@@ -30,7 +32,7 @@ export class Nav implements PrimaryClass {
         elnav.classList.add("selected")
       }
       elnav.append(kel("i", btn.c), kel("p", null, { e: lang[btn.txt] }))
-      this.el.append(elnav)
+      this.box.append(elnav)
       this.list[btn.id] = elnav
       elnav.onclick = async () => {
         if (this.isLocked) return
