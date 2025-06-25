@@ -1,9 +1,9 @@
 import { eroot, kel } from "../../helper/kel"
 import setbadge from "../../helper/setbadge"
-import userState from "../../main/userState"
+import adap from "../../main/adaptiveState"
 import db from "../../manager/db"
-import swiper from "../../manager/swiper"
 import { IRoomDataF, IUserF } from "../../types/db.types"
+import Group from "../content/Group"
 import Profile from "../content/Profile"
 
 export default class Member {
@@ -16,10 +16,12 @@ export default class Member {
   private btnKick?: HTMLElement | null
   private left: HTMLSpanElement
   private right?: HTMLSpanElement | null
-  constructor(s: { group: IRoomDataF; user: IUserF }) {
+  private parent?: Group
+  constructor(s: { group: IRoomDataF; user: IUserF; parent: Group }) {
     this.isLocked = false
     this.group = s.group
     this.user = s.user
+    this.parent = s.parent
   }
   createElement(): void {
     this.left = kel("span", "left")
@@ -66,7 +68,7 @@ export default class Member {
   private profileListener(): void {
     this.left.onclick = () => {
       if (this.user.id === db.me.id) return
-      swiper(new Profile({ user: this.user }), userState.content)
+      adap.swipe(new Profile({ user: this.user, classBefore: this.parent }))
     }
   }
   private kickListener(): void {

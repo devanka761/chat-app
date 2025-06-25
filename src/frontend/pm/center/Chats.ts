@@ -21,13 +21,15 @@ const typeOrder: { [key: string]: number } = {
 
 export default class Chats implements PrimaryClass {
   readonly role: string
-  public isLocked: boolean
+  king: "center" | "content"
+  isLocked: boolean
   private el: HTMLDivElement
   private card_list: HTMLDivElement
   private list: ChatsAPI
   private folders: FolderAPI
   private type_list: HTMLDivElement
   constructor() {
+    this.king = "center"
     this.role = "chats"
     this.isLocked = false
     this.list = new ChatsAPI({ data: [] })
@@ -54,7 +56,7 @@ export default class Chats implements PrimaryClass {
 
         const lastchat = ch.m[ch.m.length - 1] || noMessage()
         const roomDetail: IRoomDataF = ch.r
-        const card = new ChatBuilder({ data: roomDetail, users: ch.u, chat: lastchat })
+        const card = new ChatBuilder({ data: roomDetail, users: ch.u, chat: lastchat, parent: this })
         card.setUnread(unread).run()
         this.list.add(card)
         this.card_list.append(card.html)
@@ -113,14 +115,12 @@ export default class Chats implements PrimaryClass {
   deleteData(roomid: string): void {
     const card = this.list.get(roomid)
     if (card) card.html.remove()
-    const cdb = db.c.find((k) => k.r.id === roomid)
-    if (cdb) db.c = db.c.filter((k) => k.r.id !== roomid)
     this.folders.entries.forEach((folder) => folder.updateUnread())
     this.writeIfEmpty(db.c)
   }
   update(s: { chat: IMessageF; users: IUserF[]; roomid: string; isFirst: boolean; roomdata: IRoomDataF }): void {
     if (s.isFirst) {
-      const firstcard = new ChatBuilder({ data: s.roomdata, users: s.users, chat: s.chat })
+      const firstcard = new ChatBuilder({ data: s.roomdata, users: s.users, chat: s.chat, parent: this })
       firstcard.run()
       this.list.add(firstcard)
     }
@@ -135,11 +135,17 @@ export default class Chats implements PrimaryClass {
     this.folders.entries.forEach((folder) => folder.updateUnread())
     this.writeIfEmpty(db.c)
   }
-  async destroy(): Promise<void> {
+  async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    await modal.waittime()
+    if (!instant) await modal.waittime()
     this.isLocked = false
     this.el.remove()
+    this.list.entries.forEach((ch) => {
+      this.list.remove(ch.id)
+    })
+    this.folders.entries.forEach((folder) => {
+      this.folders.remove(folder.json.type)
+    })
   }
   run(): void {
     userState.center = this
@@ -147,6 +153,6 @@ export default class Chats implements PrimaryClass {
     eroot().append(this.el)
     this.writeTypeList()
     this.writeChatList()
-    this.setTypeList()
+    this.setTypeList(this.folders.enabled)
   }
 }

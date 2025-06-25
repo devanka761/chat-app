@@ -1,11 +1,11 @@
 import { kel } from "../../helper/kel"
 import Room from "../content/Room"
 import { IRoomDataF, IUserF } from "../../types/db.types"
-import swiper from "../../manager/swiper"
 import Profile from "../content/Profile"
-import userState from "../../main/userState"
 import Group from "../content/Group"
 import FriendBuilder from "../../properties/FriendBuilder"
+import adap from "../../main/adaptiveState"
+import { PrimaryClass } from "../../types/userState.types"
 
 export default class RoomTab {
   readonly role: string
@@ -25,13 +25,15 @@ export default class RoomTab {
   private btnVideo?: HTMLDivElement
   private btnMore: HTMLDivElement
   private card?: FriendBuilder
-  constructor(s: { room: Room; data: IRoomDataF; users: IUserF[]; card?: FriendBuilder }) {
+  classBefore?: PrimaryClass
+  constructor(s: { room: Room; data: IRoomDataF; users: IUserF[]; card?: FriendBuilder; classBefore?: PrimaryClass }) {
     this.role = "roomform"
     this.isLocked = false
     this.room = s.room
     this.data = s.data
     this.users = s.users
     this.card = s.card
+    this.classBefore = s.classBefore
   }
   private createLeft(): void {
     this.btnBack = kel("div", "btn btn-back", { e: '<i class="fa-solid fa-arrow-left"></i>' })
@@ -77,15 +79,18 @@ export default class RoomTab {
     }
   }
   private btnListener(): void {
+    this.btnBack.onclick = () => adap.swipe(this.classBefore)
     this.userListener()
   }
   private userListener(): void {
     this.userParent.onclick = () => {
       if (this.data.type === "user") {
         const user = this.users.find((usr) => usr.id === this.data.id)
-        swiper(new Profile({ user: user as IUserF, room: this.room, card: this.card }), userState.content)
+        const classBefore = this.room.classBefore?.role === "profile" ? this.room.classBefore.classBefore : this.room
+        adap.swipe(new Profile({ user: user as IUserF, room: this.room, card: this.card, classBefore }))
       } else {
-        swiper(new Group({ group: this.data, users: this.users, room: this.room }), userState.content)
+        const classBefore = this.room.classBefore?.role === "group" ? this.room.classBefore.classBefore : this.room
+        adap.swipe(new Group({ group: this.data, users: this.users, room: this.room, classBefore }))
       }
     }
   }

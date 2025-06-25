@@ -21,22 +21,24 @@
       background-color: v.$px2;
     }
     &.out {
-      animation: slide_right_out 0.5s forwards;
+      animation: slide_left_out 0.5s forwards;
     }
   }
   .nav {
-    width: 100%;
+    width: fit-content;
+    max-width: calc(100% - 30px);
     height: fit-content;
-    padding: 10px;
+    padding: 0;
     top: auto;
-    bottom: 0;
-    left: 0;
-    animation: slide_left_in 0.5s;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: slide_navnrw_in 0.5s;
     background-color: #00000000;
     .box {
       margin: 0 auto;
       width: fit-content;
-      max-width: calc(100% - 20px);
+      max-width: calc(100%);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -44,6 +46,7 @@
       background-color: v.$px2;
       border-radius: 20px;
       .btn {
+        flex-shrink: 0;
         padding: 10px;
         margin-bottom: 0;
         width: fit-content;
@@ -64,9 +67,9 @@
           border-left: none;
         }
       }
-      &.out {
-        animation: slide_right_out 0.5s forwards;
-      }
+    }
+    &.out {
+      animation: slide_navnrw_out 0.5s forwards;
     }
   }
   .pmcenter {
@@ -88,6 +91,7 @@
     }
   }
   .Chats {
+    padding-bottom: 95px;
     .type-list {
       padding: 20px 10px;
     }

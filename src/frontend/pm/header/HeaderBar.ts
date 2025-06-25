@@ -1,9 +1,12 @@
 import { eroot, kel, qutor } from "../../helper/kel"
+import modal from "../../helper/modal"
+import userState from "../../main/userState"
+import { PrimaryClass } from "../../types/userState.types"
 import OptionHeaderBuilder from "./OptionHeaderBuilder"
 
-export class HeaderBar {
+export default class HeaderBar implements PrimaryClass {
   readonly role: string
-  private isLocked: boolean
+  public isLocked: boolean
   private appname: string
   private el: HTMLDivElement
   private apptitle: HTMLDivElement
@@ -54,11 +57,17 @@ export class HeaderBar {
   get AppName(): string {
     return this.appname
   }
+  async destroy(instant?: boolean): Promise<void> {
+    this.el.classList.add("out")
+    if (!instant) await modal.waittime()
+    this.isLocked = false
+    this.el.remove()
+  }
+  update(): void {}
   run(): void {
+    userState.header = this
     this.createElement()
     eroot().append(this.el)
     this.btnListener()
   }
 }
-const headerBar = new HeaderBar()
-export default headerBar

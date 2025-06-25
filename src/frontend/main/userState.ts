@@ -1,13 +1,15 @@
 import { PrimaryClass, UserLocked, UserNotif } from "../types/userState.types"
 import appConfig from "../../backend/config/public.config.json"
+import HeaderBar from "../pm/header/HeaderBar"
+import Tab from "../pm/header/Tab"
 
 class UserState {
   public notif: UserNotif
   public color: "dark" | "light"
-  public currtab: PrimaryClass | null
-  public currcenter: PrimaryClass | null
-  public currcontent: PrimaryClass | null
-  public currlast: PrimaryClass | null
+  private currheader: HeaderBar | null
+  private currtab: Tab | null
+  private currcenter: PrimaryClass | null
+  private currcontent: PrimaryClass | null
   public locked: UserLocked
   private saveKey: string
   constructor() {
@@ -16,39 +18,32 @@ class UserState {
     this.currtab = null
     this.currcenter = null
     this.currcontent = null
-    this.currlast = null
     this.saveKey = "Kirimin_Local"
-    this.locked = { currtab: false, currcenter: false, currcontent: false }
   }
-  set tab(newtab: PrimaryClass | null) {
-    this.currlast = newtab
+  set header(newheader: HeaderBar | null) {
+    this.currheader = newheader
+  }
+  get header(): HeaderBar | null {
+    return this.currheader
+  }
+  set tab(newtab: Tab | null) {
     this.currtab = newtab
   }
-  get tab(): PrimaryClass | null {
+  get tab(): Tab | null {
     return this.currtab
   }
   set center(newcenter: PrimaryClass | null) {
-    this.currlast = newcenter
     this.currcenter = newcenter
   }
   get center(): PrimaryClass | null {
     return this.currcenter
   }
   set content(newcontent: PrimaryClass | null) {
-    this.currlast = newcontent
     this.currcontent = newcontent
   }
   get content(): PrimaryClass | null {
     return this.currcontent
   }
-  set last(newlast: PrimaryClass | null) {
-    this.currlast = newlast
-    this.currlast = newlast
-  }
-  get last(): PrimaryClass | null {
-    return this.currlast
-  }
-
   save(): void {
     window.localStorage.setItem(
       this.saveKey,

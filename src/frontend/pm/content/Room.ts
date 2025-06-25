@@ -20,24 +20,28 @@ import FriendBuilder from "../../properties/FriendBuilder"
 
 export default class Room implements PrimaryClass {
   readonly role: string
+  king: "center" | "content"
+  isLocked: boolean
   readonly id: string
-  public isLocked: boolean
   private el: HTMLDivElement
-  public data: IRoomDataF
+  data: IRoomDataF
   private chats?: IChatsF
   private users: IUserF[]
   private top: HTMLDivElement
   private middle: HTMLDivElement
   private bottom: HTMLDivElement
-  public form: RoomForm
-  public recorder: RoomRecorder
-  public field: RoomField
-  public tab: RoomTab
-  public opt?: HTMLDivElement
-  public optRetrying?: HTMLDivElement
-  public mediaToLoad: number
+  form: RoomForm
+  recorder: RoomRecorder
+  field: RoomField
+  tab: RoomTab
+  opt?: HTMLDivElement
+  optRetrying?: HTMLDivElement
+  mediaToLoad: number
   private card?: FriendBuilder
-  constructor(s: { data: IRoomDataF; users: IUserF[]; chats?: IChatsF; card?: FriendBuilder }) {
+  private btnBack: HTMLDivElement
+  classBefore?: PrimaryClass
+  constructor(s: { data: IRoomDataF; users: IUserF[]; chats?: IChatsF; card?: FriendBuilder; classBefore?: PrimaryClass }) {
+    this.king = "content"
     this.role = "room"
     this.isLocked = false
     this.users = s.users
@@ -45,9 +49,10 @@ export default class Room implements PrimaryClass {
     this.data = s.data
     this.card = s.card
     this.id = s.data.id
+    this.classBefore = s.classBefore
     this.form = new RoomForm({ room: this })
     this.field = new RoomField({ room: this })
-    this.tab = new RoomTab({ data: s.data, room: this, users: s.users, card: s.card })
+    this.tab = new RoomTab({ data: s.data, room: this, users: s.users, card: s.card, classBefore: s.classBefore })
     this.recorder = new RoomRecorder({ room: this })
     this.mediaToLoad = 1
   }
@@ -97,6 +102,7 @@ export default class Room implements PrimaryClass {
     this.mediaToLoad--
     if (this.mediaToLoad === 0) {
       this.field.scrollToBottom()
+      this.mediaToLoad = 1
     }
   }
   resizeMiddle(formHeight: number): void {
@@ -216,9 +222,9 @@ export default class Room implements PrimaryClass {
     this.processUpdate(messageDeleted.data)
   }
   update(): void | Promise<void> {}
-  async destroy(): Promise<void> {
+  async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    await modal.waittime()
+    if (!instant) await modal.waittime()
     this.isLocked = false
     this.el.remove()
   }

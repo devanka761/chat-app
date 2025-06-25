@@ -17,14 +17,16 @@ const typeOrder: { [key: string]: number } = {
 }
 
 export default class Friends implements PrimaryClass {
-  public isLocked: boolean
-  public role: string
+  readonly role: string
+  king: "center" | "content"
+  isLocked: boolean
   private el: HTMLDivElement
   private card_list: HTMLDivElement
   private type_list: HTMLDivElement
   private list: FriendsAPI
   private contacts: ContactsAPI
   constructor() {
+    this.king = "center"
     this.isLocked = false
     this.role = "friends"
     this.list = new FriendsAPI({ data: [] })
@@ -45,7 +47,7 @@ export default class Friends implements PrimaryClass {
     const users: IUserF[] = [...friendreq, ...friendlist]
 
     users.forEach((usr) => {
-      const card = new FriendBuilder({ user: usr }).run()
+      const card = new FriendBuilder({ user: usr, parent: this }).run()
       this.list.add(card)
       this.card_list.append(card.html)
     })
@@ -111,11 +113,17 @@ export default class Friends implements PrimaryClass {
       this.list.remove(friend.id)
     }
   }
-  async destroy(): Promise<void> {
+  async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    await modal.waittime()
+    if (!instant) await modal.waittime()
     this.isLocked = false
     this.el.remove()
+    this.list.entries.forEach((ch) => {
+      this.list.remove(ch.id)
+    })
+    this.contacts.entries.forEach((contact) => {
+      this.contacts.remove(contact.type)
+    })
   }
   run(): void {
     userState.center = this
@@ -123,6 +131,6 @@ export default class Friends implements PrimaryClass {
     eroot().append(this.el)
     this.writeTypeList()
     this.writeFriendList()
-    this.setTypeList()
+    this.setTypeList(this.contacts.enabled)
   }
 }

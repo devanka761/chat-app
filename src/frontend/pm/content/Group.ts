@@ -4,9 +4,9 @@ import modal from "../../helper/modal"
 import sdate from "../../helper/sdate"
 import setbadge from "../../helper/setbadge"
 import xhr from "../../helper/xhr"
+import adap from "../../main/adaptiveState"
 import userState from "../../main/userState"
 import db from "../../manager/db"
-import swiper from "../../manager/swiper"
 import { IRoomDataF, IUserF } from "../../types/db.types"
 import { PrimaryClass } from "../../types/userState.types"
 import Chats from "../center/Chats"
@@ -15,8 +15,9 @@ import Empty from "./Empty"
 import Room from "./Room"
 
 export default class Group implements PrimaryClass {
-  public isLocked: boolean
   readonly role: string
+  king: "center" | "content"
+  isLocked: boolean
   private group: IRoomDataF
   private users: IUserF[]
   private el: HTMLDivElement
@@ -28,17 +29,25 @@ export default class Group implements PrimaryClass {
   private room?: Room
   private membersTitle?: HTMLDivElement | null
   private ul?: HTMLUListElement | null
-  constructor(s: { group: IRoomDataF; users: IUserF[]; room?: Room }) {
+  private btnBack: HTMLDivElement
+  classBefore?: PrimaryClass
+  constructor(s: { group: IRoomDataF; users: IUserF[]; room?: Room; classBefore?: PrimaryClass }) {
+    this.king = "content"
     this.role = "group"
     this.isLocked = false
     this.group = s.group
     this.users = s.users
-    if (s.room) this.room = s.room
+    this.room = s.room
+    this.classBefore = s.classBefore
   }
   private createElement() {
     this.el = kel("div", "Account pmcontent")
-    const top = kel("div", "top")
-    top.innerHTML = `<div class="btn btn-back"><i class="fa-solid fa-arrow-left"></i></div><div class="sect-title">${lang.APP_GROUP}</div>`
+
+    // this.btnBack = kel("div", "btn btn-back", { e: `<i class="fa-solid fa-arrow-left"></i>` })
+    this.btnBack = kel("div", "btn btn-back")
+    this.btnBack.innerHTML = `<i class="fa-solid fa-arrow-left"></i>`
+    const etitle = kel("div", "sect-title", { e: lang.APP_GROUP })
+    const top = kel("div", "top", { e: [this.btnBack, etitle] })
 
     this.wall = kel("div", "wall")
     this.el.append(top, this.wall)
@@ -52,6 +61,7 @@ export default class Group implements PrimaryClass {
     this.renLeave()
   }
   private btnListener(): void {
+    this.btnBack.onclick = () => adap.swipe(this.classBefore)
     this.imgListener()
     this.gnameListener()
     this.inviteListener()
@@ -204,7 +214,7 @@ export default class Group implements PrimaryClass {
     this.membersTitle.innerHTML = `Members ${this.users.length}/10`
   }
   private renMemberNew(usr: IUserF): void {
-    const member = new Member({ group: this.group, user: usr })
+    const member = new Member({ group: this.group, user: usr, parent: this })
     member.run()
     if (!this.ul) return
     if (member.isOwner) {
@@ -363,7 +373,7 @@ export default class Group implements PrimaryClass {
       }
       this.isLocked = false
       this.processDelete()
-      swiper(new Empty(), userState.content)
+      adap.swipe(new Empty())
     }
   }
   private processUpdate(): void {
@@ -372,14 +382,16 @@ export default class Group implements PrimaryClass {
     chatCenter.updateData(this.group)
   }
   private processDelete(): void {
+    const cdb = db.c.find((k) => k.r.id === this.group.id)
+    if (cdb) db.c = db.c.filter((k) => k.r.id !== this.group.id)
     if (!userState.center || userState.center.role !== "chats") return
     const chatCenter = userState.center as Chats
     chatCenter.deleteData(this.group.id)
   }
   update(): void | Promise<void> {}
-  async destroy(): Promise<void> {
+  async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    await modal.waittime()
+    if (!instant) await modal.waittime()
     this.isLocked = false
     this.el.remove()
   }

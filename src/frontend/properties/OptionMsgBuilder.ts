@@ -1,8 +1,7 @@
 import { kel } from "../helper/kel"
 import { lang } from "../helper/lang"
 import modal from "../helper/modal"
-import userState from "../main/userState"
-import swiper from "../manager/swiper"
+import adap from "../main/adaptiveState"
 import Profile from "../pm/content/Profile"
 import Room from "../pm/content/Room"
 import { MessageOptionType } from "../types/message.types"
@@ -36,7 +35,7 @@ export default class OptionMsgBuilder {
   private async clickHandler(): Promise<void> {
     switch (this.optype) {
       case "profile": {
-        swiper(new Profile({ user: this.msg.getUser() }), userState.content)
+        adap.swipe(new Profile({ user: this.msg.getUser(), classBefore: this.room }))
         break
       }
       case "download": {

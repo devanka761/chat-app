@@ -6,13 +6,14 @@ import Chats from "../pm/center/Chats"
 import Account from "../pm/content/Account"
 import { IAccountB } from "../../backend/types/account.types"
 import { IRepB } from "../../backend/types/validate.types"
-import headerBar from "../pm/header/HeaderBar"
-import Tab from "../pm/header/Nav"
+import HeaderBar from "../pm/header/HeaderBar"
 import { LangObject, Languages } from "../types/helper.types"
 import db from "../manager/db"
 import { kel } from "../helper/kel"
 import Empty from "../pm/content/Empty"
 import socketClient from "../manager/socketClient"
+import adap from "../main/adaptiveState"
+import Tab from "../pm/header/Tab"
 
 let lang: LangObject = {}
 
@@ -66,15 +67,12 @@ export default class Auth {
     this.initializeData(isUser.data ?? {})
     this.el.remove()
     auth_container?.remove()
-    headerBar.run()
-    // new Find().run()
-    new Chats().run()
-    Tab.run()
-    if (isUser.data.isFirst) {
-      new Account().run()
-      return
-    }
-    new Empty().run()
+    adap.setHeader(new HeaderBar())
+    const newcontent = isUser.data.isFirst ? new Account() : new Empty()
+    adap.setCenter(new Chats())
+    adap.setContent(newcontent)
+    adap.setTab(new Tab())
+    adap.launch()
   }
   private initializeData(s: IAccountB): void {
     // if (s.peer) cloud.run(s.peer)

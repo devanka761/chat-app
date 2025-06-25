@@ -1,9 +1,9 @@
 import { kel } from "../../helper/kel"
 import { lang } from "../../helper/lang"
+import userState from "../../main/userState"
 import db from "../../manager/db"
 import { TChatsTypeF } from "../../types/room.types"
 import Chats from "../center/Chats"
-import Tab from "../header/Nav"
 
 export default class FolderCard {
   readonly role: string
@@ -46,7 +46,8 @@ export default class FolderCard {
     this.unread = curUnread.length
   }
   set unread(num: number) {
-    Tab.update("chats")
+    const tab = userState.tab
+    if (tab) tab.update("chats")
     if (num < 1) {
       if (this.eunread) this.el.removeChild(this.eunread)
       return

@@ -1,5 +1,22 @@
 @use "../variables" as v;
 
+@keyframes slide_navnrw_in {
+  0% {
+    transform: translateX(-50%) translateY(100%);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+@keyframes slide_navnrw_out {
+  0% {
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    transform: translateX(-50%) translateY(100%);
+  }
+}
+
 @keyframes spinning {
   0% {
     transform: rotate(0);

@@ -12,10 +12,12 @@ import { PrimaryClass } from "../../types/userState.types"
 
 export default class Find implements PrimaryClass {
   readonly role: string
-  public isLocked: boolean
+  king: "center" | "content"
+  isLocked: boolean
   private el: HTMLDivElement
   private list: FindAPI
   constructor() {
+    this.king = "center"
     this.role = "find"
     this.isLocked = false
     this.list = new FindAPI({ data: [] })
@@ -37,13 +39,15 @@ export default class Find implements PrimaryClass {
     this.el.append(searchBar1, searchBar2, cardlist)
     this.formListener(btnRandom, form, cardlist)
     const inp = form.querySelector("input")
-    if (inp) {
-      inp.readOnly = true
-      inp.focus()
-      setTimeout(() => {
-        inp.readOnly = false
-      }, 100)
-    }
+    if (inp) this.focus(inp)
+  }
+  async focus(inp: HTMLInputElement) {
+    await modal.waittime(500)
+    inp.readOnly = true
+    inp.focus()
+    setTimeout(() => {
+      inp.readOnly = false
+    }, 100)
   }
   private formListener(btnRandom: HTMLDivElement, form: HTMLFormElement, cardlist: HTMLDivElement): void {
     form.onsubmit = async (e) => {
@@ -85,7 +89,7 @@ export default class Find implements PrimaryClass {
         })
       this.isLocked = false
       userResult.forEach((usr) => {
-        const card = new FriendBuilder({ user: usr }).run()
+        const card = new FriendBuilder({ user: usr, parent: this }).run()
         cardlist.append(card.html)
         // card.onclick = async () => {
         //   if (userState.currcontent?.isLocked) return
@@ -102,9 +106,9 @@ export default class Find implements PrimaryClass {
     }
   }
   update(): void | Promise<void> {}
-  async destroy(): Promise<void> {
+  async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    await modal.waittime()
+    if (!instant) await modal.waittime()
     this.isLocked = false
     this.el.remove()
   }

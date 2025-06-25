@@ -1,4 +1,3 @@
-import swiper from "../../manager/swiper"
 import userState from "../../main/userState"
 import Account from "../content/Account"
 import Settings from "../content/Settings"
@@ -9,6 +8,7 @@ import { IChatsF } from "../../types/db.types"
 import db from "../../manager/db"
 import noMessage from "../../helper/noMessage"
 import Room from "../content/Room"
+import adap from "../../main/adaptiveState"
 
 export default [
   {
@@ -38,7 +38,7 @@ export default [
           roomdata: group.r
         })
       }
-      swiper(new Room({ data: group.r, users: group.u, chats: group }), userState.currcontent)
+      adap.swipe(new Room({ data: group.r, users: group.u, chats: group }))
     }
   },
   {
@@ -46,7 +46,7 @@ export default [
     txt: "APP_ACCOUNT",
     c: "fa-solid fa-circle-user fa-fw",
     run: async () => {
-      swiper(new Account(), userState.currcontent)
+      adap.swipe(new Account())
     }
   },
   {
@@ -54,7 +54,7 @@ export default [
     txt: "APP_SETTINGS",
     c: "fa-solid fa-gear fa-fw",
     run: async () => {
-      swiper(new Settings(), userState.currcontent)
+      adap.swipe(new Settings())
     }
   }
 ]

@@ -7,24 +7,29 @@ import userState from "../../main/userState"
 import { IRoomDataF, IUserF } from "../../types/db.types"
 import { PrimaryClass } from "../../types/userState.types"
 import db from "../../manager/db"
-import swiper from "../../manager/swiper"
 import Room from "./Room"
 import Friends from "../center/Friends"
 import FriendBuilder from "../../properties/FriendBuilder"
+import adap from "../../main/adaptiveState"
 
 export default class Profile implements PrimaryClass {
   readonly role: string
-  public isLocked: boolean
+  king: "center" | "content"
+  isLocked: boolean
   private el: HTMLDivElement
-  public user: IUserF
+  user: IUserF
   private room?: Room
   private card?: FriendBuilder
-  constructor(s: { user: IUserF; room?: Room; card?: FriendBuilder }) {
+  private btnBack: HTMLDivElement
+  classBefore?: PrimaryClass
+  constructor(s: { user: IUserF; room?: Room; card?: FriendBuilder; classBefore?: PrimaryClass }) {
+    this.king = "content"
     this.role = "profile"
     this.isLocked = false
     this.user = s.user
     this.room = s.room
     this.card = s.card
+    this.classBefore = s.classBefore
   }
   createElement(): void {
     this.el = kel("div", "Profile pmcontent")
@@ -47,6 +52,7 @@ export default class Profile implements PrimaryClass {
       <div class="chp options">
       </div>
     </div>`
+    this.btnBack = this.el.querySelector(".btn-back") as HTMLDivElement
   }
   writeDetail(): void {
     this.renImage()
@@ -77,7 +83,7 @@ export default class Profile implements PrimaryClass {
     ebio.innerText = this.user.bio || lang.ACC_NOBIO
   }
   btnListener(): void {
-    // btn-chat
+    this.btnBack.onclick = () => adap.swipe(this.classBefore)
     const btnChat = <HTMLDivElement>this.el.querySelector(".btn-chat")
     btnChat.onclick = () => {
       const roomDetail: IRoomDataF = {
@@ -88,7 +94,8 @@ export default class Profile implements PrimaryClass {
         badges: this.user.badges,
         image: this.user.image
       }
-      swiper(new Room({ data: roomDetail, users: [this.user], card: this.card }), userState.currcontent)
+      const classBefore = this.classBefore?.role === "room" ? this.classBefore.classBefore : this
+      adap.swipe(new Room({ data: roomDetail, users: [this.user], card: this.card, classBefore }))
     }
   }
   clearOptions(eoptions: HTMLDivElement): void {
@@ -195,12 +202,11 @@ export default class Profile implements PrimaryClass {
     btn_b.onclick = async () => this.actXhr(btn_b, "ignorefriend", "PROF_CONF_IGNORE")
   }
   update(): void | Promise<void> {}
-  async destroy(newer?: PrimaryClass): Promise<void> {
+  async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    await modal.waittime()
+    if (!instant) await modal.waittime()
     this.isLocked = false
     this.el.remove()
-    if (newer) newer.run()
   }
   run(): void {
     userState.content = this

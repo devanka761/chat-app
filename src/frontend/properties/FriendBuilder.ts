@@ -1,9 +1,10 @@
 import { kel } from "../helper/kel"
 import setbadge from "../helper/setbadge"
+import adap from "../main/adaptiveState"
 import userState from "../main/userState"
-import swiper from "../manager/swiper"
 import Profile from "../pm/content/Profile"
 import { IUserF } from "../types/db.types"
+import { PrimaryClass } from "../types/userState.types"
 
 export default class FriendBuilder {
   private el: HTMLDivElement
@@ -12,8 +13,10 @@ export default class FriendBuilder {
   private img: HTMLImageElement
   private userName: HTMLDivElement
   private displayName: HTMLDivElement
-  constructor({ user }: { user: IUserF }) {
-    this.user = user
+  private parent?: PrimaryClass
+  constructor(s: { user: IUserF; parent?: PrimaryClass }) {
+    this.user = s.user
+    this.parent = s.parent
   }
   private createElement(): void {
     this.el = kel("div", "card", { id: `friendlist-${this.user.id}` })
@@ -47,12 +50,12 @@ export default class FriendBuilder {
   }
   private clickListener(): void {
     this.el.onclick = () => {
-      if (userState.currcontent?.role === "profile") {
-        if (userState.currcontent.isLocked) return
-        const profile = userState.currcontent as Profile
+      if (userState.content?.role === "profile") {
+        if (userState.content.isLocked) return
+        const profile = userState.content as Profile
         if (profile.user.id === this.user.id) return
       }
-      swiper(new Profile({ user: this.user, card: this }), userState.currcontent)
+      adap.swipe(new Profile({ user: this.user, card: this, classBefore: this.parent }))
     }
   }
   private init(): void {

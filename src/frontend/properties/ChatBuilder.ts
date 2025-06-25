@@ -1,9 +1,10 @@
 import { kel } from "../helper/kel"
 import sdate from "../helper/sdate"
 import setbadge from "../helper/setbadge"
+import adap from "../main/adaptiveState"
 import { transpileChat } from "../main/transpileChat"
 import userState from "../main/userState"
-import swiper from "../manager/swiper"
+import Chats from "../pm/center/Chats"
 import Room from "../pm/content/Room"
 import { IMessageF, IRoomDataF, IUserF } from "../types/db.types"
 
@@ -19,11 +20,13 @@ export default class ChatBuilder {
   private eunread: HTMLDivElement
   private timestamp: HTMLDivElement
   private unread: number
-  constructor({ data, users, chat }: { data: IRoomDataF; users: IUserF[]; chat: IMessageF }) {
-    this.data = data
-    this.users = users
-    this.chat = chat
+  private parent?: Chats
+  constructor(s: { data: IRoomDataF; users: IUserF[]; chat: IMessageF; parent?: Chats }) {
+    this.data = s.data
+    this.users = s.users
+    this.chat = s.chat
     this.unread = 0
+    this.parent = s.parent
   }
   private createElement(): void {
     this.el = kel("div", "card", { id: `chatlist-${this.data.id}` })
@@ -92,15 +95,15 @@ export default class ChatBuilder {
   }
   private clickListener(): void {
     this.el.onclick = () => {
-      if (userState.currcontent?.role === "room") {
-        if (userState.currcontent.isLocked) return
-        const room = userState.currcontent as Room
+      if (userState.content?.role === "room") {
+        if (userState.content.isLocked) return
+        const room = userState.content as Room
         if (room.key === this.data.id) return
       }
       const roomDetail: IRoomDataF = this.data
       if (this.data.badges) roomDetail.badges = this.data.badges
       if (this.data.image) roomDetail.image = this.data.image
-      swiper(new Room({ data: roomDetail, users: this.users }), userState.currcontent)
+      adap.swipe(new Room({ data: roomDetail, users: this.users, classBefore: this.parent }))
     }
   }
   private init(): void {

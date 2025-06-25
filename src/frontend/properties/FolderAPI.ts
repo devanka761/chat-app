@@ -31,4 +31,7 @@ export default class FolderAPI {
       }
     })
   }
+  remove(folder_name: string): void {
+    this.data = this.data.filter((folder) => folder.json.type !== folder_name)
+  }
 }

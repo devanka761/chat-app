@@ -4,6 +4,7 @@ import { PrimaryClass } from "../../types/userState.types"
 import { eroot, kel, qutor } from "../../helper/kel"
 import { klang, lang } from "../../helper/lang"
 import { Languages } from "../../types/helper.types"
+import adap from "../../main/adaptiveState"
 
 function SelectLang() {
   return {
@@ -33,12 +34,16 @@ const notiflist: { id: string; label: string; actived?: boolean }[] = [
 ]
 
 export default class Settings implements PrimaryClass {
-  public role: string
-  public isLocked: boolean
+  readonly role: string
+  king: "center" | "content"
+  isLocked: boolean
   private el: HTMLDivElement
   private elang: HTMLParagraphElement | null
   private ecolor: HTMLParagraphElement | null
+  private btnBack: HTMLDivElement
+  classBefore?: PrimaryClass
   constructor() {
+    this.king = "content"
     this.role = "settings"
     this.isLocked = false
   }
@@ -81,6 +86,7 @@ export default class Settings implements PrimaryClass {
     </div>`
     this.elang = qutor(".userlang .outer .chp-f p", this.el) as HTMLParagraphElement
     this.ecolor = qutor(".usercolor .outer .chp-f p", this.el) as HTMLParagraphElement
+    this.btnBack = this.el.querySelector(".btn-back") as HTMLDivElement
   }
   writeSettings() {
     if (this.elang) {
@@ -109,6 +115,7 @@ export default class Settings implements PrimaryClass {
     })
   }
   btnListener() {
+    this.btnBack.onclick = () => adap.swipe(this.classBefore)
     const btnLang = qutor(".btn-lang", this.el)
     if (btnLang)
       btnLang.onclick = async () => {
@@ -163,9 +170,9 @@ export default class Settings implements PrimaryClass {
       }
   }
   update(): void | Promise<void> {}
-  async destroy(): Promise<void> {
+  async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    await modal.waittime()
+    if (!instant) await modal.waittime()
     this.isLocked = false
     this.el.remove()
   }

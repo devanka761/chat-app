@@ -15,12 +15,7 @@ export default class FriendsAPI {
     this.data.push(friend)
     return friend
   }
-  remove(friend_id: string): boolean {
-    const friend = this.get(friend_id)
-    if (friend) {
-      this.data = this.data.filter((contact) => contact.user.id !== friend_id)
-      return true
-    }
-    return false
+  remove(friend_id: string): void {
+    this.data = this.data.filter((contact) => contact.user.id !== friend_id)
   }
 }

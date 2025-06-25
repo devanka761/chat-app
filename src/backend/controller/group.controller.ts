@@ -9,7 +9,7 @@ import { getUser } from "./profile.controller"
 export function createGroup(uid: string, s: { name: string }): IRepTempB {
   const cdb = db.ref.c
   const hasMany = Object.keys(cdb).filter((k) => cdb[k].o === uid)
-  if (hasMany.length >= 2) return { code: 400, msg: "GRPS_OWN_MAX" }
+  if (hasMany.length >= 20) return { code: 400, msg: "GRPS_OWN_MAX" }
 
   s.name = s.name.trim()
 
@@ -105,7 +105,7 @@ export function resetLink(uid: string, s: { id: string }): IRepTempB {
 
 export function setLeave(uid: string, roomid: string): IRepTempB {
   const cdb = db.ref.c[roomid]
-  if (!cdb) return { code: 404, msg: "GRPS_404" }
+  if (!cdb) return { code: 200, msg: "GRPS_404" }
   if (cdb.o === uid) return setDisband(uid, roomid)
 
   if (!cdb.u.find((usr) => usr === uid)) return { code: 400 }

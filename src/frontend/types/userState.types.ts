@@ -11,7 +11,9 @@ export interface UserLocked {
 export interface PrimaryClass {
   readonly role: string
   isLocked: boolean
-  destroy(): Promise<void>
+  king?: "center" | "content"
+  classBefore?: PrimaryClass
+  destroy(arg?: any): Promise<void>
   update(...args: any[]): void | Promise<void>
   run(): any
 }

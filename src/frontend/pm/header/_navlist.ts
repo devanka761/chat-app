@@ -1,5 +1,4 @@
-import userState from "../../main/userState"
-import swiper from "../../manager/swiper"
+import adap from "../../main/adaptiveState"
 import Chats from "../center/Chats"
 import Find from "../center/Find"
 import Friends from "../center/Friends"
@@ -10,7 +9,7 @@ export default [
     txt: "APP_SEARCH",
     c: "fa-solid fa-magnifying-glass",
     run: async () => {
-      swiper(new Find(), userState.currcenter)
+      adap.swipe(new Find())
     }
   },
   {
@@ -18,7 +17,7 @@ export default [
     txt: "APP_CHATS",
     c: "fa-solid fa-comments",
     run: async () => {
-      swiper(new Chats(), userState.currcenter)
+      adap.swipe(new Chats())
     }
   },
   {
@@ -26,7 +25,7 @@ export default [
     txt: "APP_FRIENDS",
     c: "fa-solid fa-address-book",
     run: async () => {
-      swiper(new Friends(), userState.currcenter)
+      adap.swipe(new Friends())
     }
   }
 ]

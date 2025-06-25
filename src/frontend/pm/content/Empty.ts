@@ -6,10 +6,13 @@ import { PrimaryClass } from "../../types/userState.types"
 
 export default class Empty implements PrimaryClass {
   readonly role: string
-  public isLocked: boolean
+  king: "center" | "content"
+  isLocked: boolean
   private el: HTMLDivElement
   constructor() {
+    this.king = "content"
     this.role = "empty"
+    this.isLocked = false
   }
   createElement() {
     this.el = kel("div", "Empty pmcontent")
@@ -25,9 +28,9 @@ export default class Empty implements PrimaryClass {
     </div>`
   }
   update(): void {}
-  async destroy(): Promise<void> {
+  async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    await modal.waittime()
+    if (!instant) await modal.waittime()
     this.isLocked = false
     this.el.remove()
   }

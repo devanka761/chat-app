@@ -4,7 +4,7 @@ import modal from "../../helper/modal"
 import userState from "../../main/userState"
 import { PrimaryClass } from "../../types/userState.types"
 import _optionlist from "./_optionlist"
-import { HeaderBar } from "./HeaderBar"
+import HeaderBar from "./HeaderBar"
 
 export default class OptionHeaderBuilder {
   public el: HTMLDivElement
@@ -21,7 +21,7 @@ export default class OptionHeaderBuilder {
     _optionlist.forEach((btn) => {
       const elnav = kel("div", `btn btn-${btn.id}`)
 
-      const centerClass = userState.currcenter as PrimaryClass
+      const centerClass = userState.center as PrimaryClass
       if (centerClass.role === btn.id) {
         elnav.classList.add("selected")
       } else if ((!centerClass || !centerClass.role) && btn.id === "chats") {
@@ -31,10 +31,10 @@ export default class OptionHeaderBuilder {
       this.el.append(elnav)
       elnav.onclick = async () => {
         if (this.isLocked) return
-        if (userState.currcenter?.role === btn.id) return
-        if (userState.currcontent?.role === btn.id) return
-        if (userState.currcenter?.isLocked) return
-        if (userState.currcontent?.isLocked) return
+        if (userState.center?.role === btn.id) return
+        if (userState.content?.role === btn.id) return
+        if (userState.center?.isLocked) return
+        if (userState.content?.isLocked) return
         this.isLocked = true
         await btn.run()
         this.isLocked = false

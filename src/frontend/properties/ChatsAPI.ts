@@ -15,4 +15,7 @@ export default class ChatsAPI {
     this.data.push(user_chat)
     return this
   }
+  remove(user_chat_id: string): void {
+    this.data = this.data.filter((ch) => ch.id !== user_chat_id)
+  }
 }

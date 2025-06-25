@@ -1,9 +1,9 @@
 import { kel } from "../../helper/kel"
 import { lang } from "../../helper/lang"
+import userState from "../../main/userState"
 import db from "../../manager/db"
 import { TFriendsTypeF } from "../../types/room.types"
 import Friends from "../center/Friends"
-import Tab from "../header/Nav"
 
 export default class ContactCard {
   readonly role: string
@@ -37,7 +37,8 @@ export default class ContactCard {
     this.unread = db.me.req?.length || 0
   }
   set unread(num: number) {
-    Tab.update("friends")
+    const tab = userState.tab
+    if (tab) tab.update("friends")
     if (num < 1) {
       if (this.eunread) this.el.removeChild(this.eunread)
       return

@@ -4,13 +4,15 @@ import modal from "../../helper/modal"
 import sdate from "../../helper/sdate"
 import setbadge from "../../helper/setbadge"
 import xhr from "../../helper/xhr"
+import adap from "../../main/adaptiveState"
 import userState from "../../main/userState"
 import db from "../../manager/db"
 import { PrimaryClass } from "../../types/userState.types"
 
 export default class Account implements PrimaryClass {
-  public isLocked: boolean
   readonly role: string
+  king: "center" | "content"
+  isLocked: boolean
   private el: HTMLDivElement
   private wall: HTMLDivElement
   private btnImg?: HTMLDivElement | null
@@ -18,14 +20,19 @@ export default class Account implements PrimaryClass {
   private btnDname?: HTMLDivElement | null
   private btnBio?: HTMLDivElement | null
   private btnLogout: HTMLAnchorElement
-  constructor() {
+  private btnBack: HTMLDivElement
+  classBefore?: PrimaryClass
+  constructor(s?: { classBefore?: PrimaryClass }) {
+    this.king = "content"
     this.role = "account"
     this.isLocked = false
+    this.classBefore = s?.classBefore
   }
   private createElement() {
     this.el = kel("div", "Account pmcontent")
-    const top = kel("div", "top")
-    top.innerHTML = `<div class="btn btn-back"><i class="fa-solid fa-arrow-left"></i></div><div class="sect-title">${lang.APP_ACCOUNT}</div>`
+    this.btnBack = kel("div", "btn btn-back", { e: `<i class="fa-solid fa-arrow-left"></i>` })
+    const etitle = kel("div", "sect-title", { e: lang.APP_ACCOUNT })
+    const top = kel("div", "top", { e: [this.btnBack, etitle] })
 
     this.wall = kel("div", "wall")
     this.el.append(top, this.wall)
@@ -40,6 +47,7 @@ export default class Account implements PrimaryClass {
     this.renUserSignIn()
   }
   private btnListener(): void {
+    this.btnBack.onclick = () => adap.swipe(this.classBefore)
     this.imgListener()
     this.unameListener()
     this.dnameListener()
@@ -374,9 +382,9 @@ export default class Account implements PrimaryClass {
     }
   }
   update(): void | Promise<void> {}
-  async destroy(): Promise<void> {
+  async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    await modal.waittime()
+    if (!instant) await modal.waittime()
     this.isLocked = false
     this.el.remove()
   }

@@ -32,4 +32,7 @@ export default class ContactsAPI {
       }
     })
   }
+  remove(contact_name: string): void {
+    this.data = this.data.filter((contact) => contact.type !== contact_name)
+  }
 }

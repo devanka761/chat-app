@@ -1,19 +1,20 @@
 import { eroot, kel } from "../../helper/kel"
 import { lang } from "../../helper/lang"
+import modal from "../../helper/modal"
 import userState from "../../main/userState"
 import db from "../../manager/db"
 import { PrimaryClass } from "../../types/userState.types"
-import _navlist from "./_navlist"
 import HeaderBar from "./HeaderBar"
+import _navlist from "./_navlist"
 
-export class Nav implements PrimaryClass {
+export default class Tab implements PrimaryClass {
   readonly role: string
   public isLocked: boolean
   private el: HTMLDivElement
   private box: HTMLDivElement
   private list: { [key: string]: HTMLDivElement }
   constructor() {
-    this.role = "nav"
+    this.role = "tab"
     this.isLocked = false
     this.list = {}
   }
@@ -25,7 +26,7 @@ export class Nav implements PrimaryClass {
     _navlist.forEach((btn) => {
       const elnav = kel("div", `btn nav-${btn.id}`)
 
-      const centerClass = <PrimaryClass>userState.currcenter
+      const centerClass = userState.center as PrimaryClass
       if (centerClass.role === btn.id) {
         elnav.classList.add("selected")
       } else if ((!centerClass || !centerClass.role) && btn.id === "chats") {
@@ -36,18 +37,26 @@ export class Nav implements PrimaryClass {
       this.list[btn.id] = elnav
       elnav.onclick = async () => {
         if (this.isLocked) return
-        if (userState.currcenter?.role === btn.id) return
-        if (userState.currcontent?.role === btn.id) return
-        if (userState.currcenter?.isLocked) return
-        if (userState.currcontent?.isLocked) return
+        if (userState.center?.role === btn.id) return
+        if (userState.content?.role === btn.id) return
+        if (userState.center?.isLocked) return
+        if (userState.content?.isLocked) return
         this.isLocked = true
         await btn.run()
         this.el.querySelectorAll(".selected").forEach((elod) => elod.classList.remove("selected"))
         elnav.classList.add("selected")
-        HeaderBar.AppName = lang[btn.txt]
+        const headerbar = userState.header as HeaderBar
+        headerbar.AppName = lang[btn.txt]
         this.isLocked = false
       }
     })
+  }
+  enable(role: string): void {
+    const currnav = this.box.querySelector(`.btn nav-${role}`)
+    if (currnav) {
+      this.box.querySelectorAll(".selected").forEach((elod) => elod.classList.remove("selected"))
+      currnav.classList.add("selected")
+    }
   }
   update(tabname?: string): void {
     if (tabname && this[`${tabname}Unseen`]) {
@@ -73,7 +82,12 @@ export class Nav implements PrimaryClass {
       this.list[tab].classList.remove("unseen")
     }
   }
-  async destroy(): Promise<void> {}
+  async destroy(instant?: boolean): Promise<void> {
+    this.el.classList.add("out")
+    if (!instant) await modal.waittime()
+    this.isLocked = false
+    this.el.remove()
+  }
   run(): void {
     userState.tab = this
     this.createElement()
@@ -82,6 +96,3 @@ export class Nav implements PrimaryClass {
     this.update()
   }
 }
-
-const Tab = new Nav()
-export default Tab
