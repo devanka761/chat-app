@@ -16,6 +16,7 @@ import { IRepB } from "../../../backend/types/validate.types"
 import { lang } from "../../helper/lang"
 import RoomRecorder from "../parts/RoomRecorder"
 import RoomTab from "../parts/RoomTab"
+import FriendBuilder from "../../properties/FriendBuilder"
 
 export default class Room implements PrimaryClass {
   readonly role: string
@@ -35,16 +36,18 @@ export default class Room implements PrimaryClass {
   public opt?: HTMLDivElement
   public optRetrying?: HTMLDivElement
   public mediaToLoad: number
-  constructor(s: { data: IRoomDataF; users: IUserF[]; chats?: IChatsF }) {
+  private card?: FriendBuilder
+  constructor(s: { data: IRoomDataF; users: IUserF[]; chats?: IChatsF; card?: FriendBuilder }) {
     this.role = "room"
     this.isLocked = false
     this.users = s.users
     this.chats = s.chats
     this.data = s.data
+    this.card = s.card
     this.id = s.data.id
     this.form = new RoomForm({ room: this })
     this.field = new RoomField({ room: this })
-    this.tab = new RoomTab({ data: s.data, room: this, users: s.users })
+    this.tab = new RoomTab({ data: s.data, room: this, users: s.users, card: s.card })
     this.recorder = new RoomRecorder({ room: this })
     this.mediaToLoad = 1
   }
@@ -163,14 +166,15 @@ export default class Room implements PrimaryClass {
     return await this.createNewMessage(s)
   }
   processUpdate(s: IMessageUpdateF): void {
-    if (s.isFirst) {
+    let dbchat = db.c.find((k) => k.r.id === this.data.id)
+    if (!dbchat) {
       db.c.push({
         m: [],
         r: this.data,
         u: this.users
       })
     }
-    const dbchat = db.c.find((k) => k.r.id === this.data.id)
+    dbchat = db.c.find((k) => k.r.id === this.data.id)
     if (dbchat) {
       const oldDB = dbchat.m.find((ch) => ch.id === s.chat.id)
       if (oldDB) {

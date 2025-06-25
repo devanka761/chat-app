@@ -1,6 +1,6 @@
 import FriendBuilder from "./FriendBuilder"
 
-export default class FriendsAPI {
+export default class FindAPI {
   private data: FriendBuilder[]
   constructor({ data }: { data: FriendBuilder[] }) {
     this.data = data

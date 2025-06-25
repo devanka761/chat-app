@@ -52,7 +52,7 @@ export default class FriendBuilder {
         const profile = userState.currcontent as Profile
         if (profile.user.id === this.user.id) return
       }
-      swiper(new Profile({ user: this.user }), userState.currcontent)
+      swiper(new Profile({ user: this.user, card: this }), userState.currcontent)
     }
   }
   private init(): void {

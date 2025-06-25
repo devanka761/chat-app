@@ -1,7 +1,9 @@
 import { kel } from "../../helper/kel"
 import { lang } from "../../helper/lang"
+import db from "../../manager/db"
 import { TFriendsTypeF } from "../../types/room.types"
 import Friends from "../center/Friends"
+import Tab from "../header/Nav"
 
 export default class ContactCard {
   readonly role: string
@@ -30,6 +32,24 @@ export default class ContactCard {
   off(): void {
     this.el.classList.remove("on")
   }
+  updateUnread(): void {
+    if (this.typeName !== "request") return
+    this.unread = db.me.req?.length || 0
+  }
+  set unread(num: number) {
+    Tab.update("friends")
+    if (num < 1) {
+      if (this.eunread) this.el.removeChild(this.eunread)
+      return
+    }
+
+    if (!this.eunread) {
+      this.eunread = kel("i", "num")
+      this.el.append(this.eunread)
+    }
+
+    this.eunread.innerHTML = num.toString()
+  }
   get type(): string {
     return this.typeName
   }
@@ -38,6 +58,7 @@ export default class ContactCard {
   }
   run(): this {
     this.createElement()
+    this.updateUnread()
     this.clickListener()
     return this
   }

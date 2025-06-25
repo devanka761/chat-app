@@ -86,9 +86,4 @@ export interface IChatsF {
 export interface Databases {
   me: MeDB
   c: IChatsF[]
-  unread: {
-    g?: (string | number | boolean)[]
-    c?: (string | number | boolean)[]
-    r?: (string | number | boolean)[]
-  }
 }

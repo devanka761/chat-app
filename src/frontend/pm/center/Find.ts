@@ -2,47 +2,23 @@ import { kel, eroot } from "../../helper/kel"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import notip from "../../helper/notip"
-import setbadge from "../../helper/setbadge"
 import xhr from "../../helper/xhr"
 import userState from "../../main/userState"
 import resetform from "../../manager/resetform"
-import swiper from "../../manager/swiper"
+import FindAPI from "../../properties/FindAPI"
+import FriendBuilder from "../../properties/FriendBuilder"
 import { IUserF } from "../../types/db.types"
 import { PrimaryClass } from "../../types/userState.types"
-import Profile from "../content/Profile"
 
-function user_card(s: IUserF): { [key: string]: HTMLDivElement } {
-  const { username, displayname, image, badges } = s
-  const card = kel("div", "card")
-  const eleft = kel("div", "left")
-  // const eright = kel("div", "right")
-  const ecimg = kel("div", "img")
-  const img = new Image()
-  img.onerror = () => (img.src = "/assets/user.jpg")
-  img.alt = username
-  img.src = image ? `/file/user/${image}` : "/assets/user.jpg"
-  img.width = 50
-  const edetail = kel("div", "detail")
-  const eusername = kel("div", "name", { e: `${username}` })
-  const elastchat = kel("div", "last")
-  elastchat.innerText = displayname
-  if (badges) setbadge(eusername, badges)
-
-  card.append(eleft /*eright*/)
-  eleft.append(ecimg, edetail)
-  ecimg.append(img)
-  edetail.append(eusername, elastchat)
-  // eright.append(elastts, eunread)
-
-  return { card, eusername, elastchat }
-}
 export default class Find implements PrimaryClass {
   readonly role: string
   public isLocked: boolean
   private el: HTMLDivElement
+  private list: FindAPI
   constructor() {
     this.role = "find"
     this.isLocked = false
+    this.list = new FindAPI({ data: [] })
   }
   private createElement() {
     this.el = kel("div", "Chats pmcenter")
@@ -101,29 +77,24 @@ export default class Find implements PrimaryClass {
         this.isLocked = false
         return
       }
-      while (cardlist.lastChild) {
-        cardlist.lastChild.remove()
-      }
+
+      if (this.list.entries.length >= 1)
+        this.list.entries.forEach((usr) => {
+          this.list.remove(usr.id)
+          cardlist.removeChild(usr.html)
+        })
       this.isLocked = false
       userResult.forEach((usr) => {
-        const { card } = user_card(usr)
-        cardlist.append(card)
-        card.onclick = async () => {
-          if (userState.currcontent?.isLocked) return
-          if (userState.currcontent?.role === "profile") {
-            if ((userState.currcontent as Profile)?.user?.id === usr.id) return
-          }
-          swiper(new Profile({ user: usr }), userState.currcontent)
-        }
+        const card = new FriendBuilder({ user: usr }).run()
+        cardlist.append(card.html)
+        // card.onclick = async () => {
+        //   if (userState.currcontent?.isLocked) return
+        //   if (userState.currcontent?.role === "profile") {
+        //     if ((userState.currcontent as Profile)?.user?.id === usr.id) return
+        //   }
+        //   swiper(new Profile({ user: usr }), userState.currcontent)
+        // }
       })
-      if (userResult.length === 1) {
-        const usr = userResult[0]
-        if (userState.currcontent?.isLocked) return
-        if (userState.currcontent?.role === "profile") {
-          if ((userState.currcontent as Profile)?.user?.id === usr.id) return
-        }
-        swiper(new Profile({ user: usr }), userState.currcontent)
-      }
       this.isLocked = false
     }
     btnRandom.onclick = () => {

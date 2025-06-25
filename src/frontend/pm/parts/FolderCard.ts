@@ -46,7 +46,7 @@ export default class FolderCard {
     this.unread = curUnread.length
   }
   set unread(num: number) {
-    Tab.update("chats", num >= 1)
+    Tab.update("chats")
     if (num < 1) {
       if (this.eunread) this.el.removeChild(this.eunread)
       return

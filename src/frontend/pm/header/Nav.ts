@@ -47,14 +47,24 @@ export class Nav implements PrimaryClass {
       }
     })
   }
-  private writeUnseen(): void {
-    this.unseenChats()
+  update(tabname?: string): void {
+    if (tabname && this[`${tabname}Unseen`]) {
+      this[`${tabname}Unseen`]()
+      return
+    }
+    this.chatsUnseen()
+    this.friendsUnseen()
   }
-  private unseenChats(): void {
+  private chatsUnseen(): void {
     const unseen = db.c.find((k) => k.m.find((msg) => msg.userid !== db.me.id && (!msg.readers || msg.readers.find((usr) => usr !== db.me.id))))
-    this.update("chats", unseen ? true : false)
+    this.writeUnseen("chats", unseen ? true : false)
   }
-  update(tab: string, unseen?: boolean): void {
+  private friendsUnseen(): void {
+    const unseen = db.me.req && db.me.req.length >= 1
+    this.writeUnseen("friends", unseen)
+  }
+  private writeUnseen(tab: string, unseen?: boolean): void {
+    // this.writeUnseen()
     if (unseen && this.list[tab]) {
       this.list[tab].classList.add("unseen")
     } else if (this.list[tab]) {
@@ -67,7 +77,7 @@ export class Nav implements PrimaryClass {
     this.createElement()
     eroot().append(this.el)
     this.writeNav()
-    this.writeUnseen()
+    this.update()
   }
 }
 

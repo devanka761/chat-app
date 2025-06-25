@@ -1,5 +1,6 @@
 import { IUserF } from "../../frontend/types/db.types"
 import db from "../main/db"
+import { convertUser } from "../main/helper"
 import zender from "../main/zender"
 import { IRepTempB } from "../types/validate.types"
 
@@ -8,8 +9,8 @@ function isFriend(uid: string, userid: string): number {
   const isfriend = Object.values(cdb).find((ch) => ch.u.includes(uid) && ch.u.includes(userid) && ch.f === 1)
   if (isfriend) return 1
   const udb = db.ref.u
-  if (udb[userid].req?.includes(uid)) return 2
-  if (udb[uid].req?.includes(userid)) return 3
+  if (udb[userid].req?.find((usr) => usr === uid)) return 2
+  if (udb[uid].req?.find((usr) => usr === userid)) return 3
   return 0
 }
 
@@ -112,7 +113,7 @@ export function acceptfriend(uid: string, s: { userid: string }): IRepTempB {
   db.save("u", "c")
 
   zender(uid, s.userid, "acceptfriend", { id: uid })
-  return { code: 200, data: { user: getUser(uid, s.userid) } }
+  return { code: 200, data: { user: getUser(uid, s.userid), room: convertUser(s.userid) } }
 }
 export function ignorefriend(uid: string, s: { userid: string }): IRepTempB {
   const udb = db.ref.u[s.userid]

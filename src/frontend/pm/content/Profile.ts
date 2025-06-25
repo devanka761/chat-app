@@ -9,6 +9,8 @@ import { PrimaryClass } from "../../types/userState.types"
 import db from "../../manager/db"
 import swiper from "../../manager/swiper"
 import Room from "./Room"
+import Friends from "../center/Friends"
+import FriendBuilder from "../../properties/FriendBuilder"
 
 export default class Profile implements PrimaryClass {
   readonly role: string
@@ -16,11 +18,13 @@ export default class Profile implements PrimaryClass {
   private el: HTMLDivElement
   public user: IUserF
   private room?: Room
-  constructor(s: { user: IUserF; room?: Room }) {
+  private card?: FriendBuilder
+  constructor(s: { user: IUserF; room?: Room; card?: FriendBuilder }) {
     this.role = "profile"
     this.isLocked = false
     this.user = s.user
     this.room = s.room
+    this.card = s.card
   }
   createElement(): void {
     this.el = kel("div", "Profile pmcontent")
@@ -84,7 +88,7 @@ export default class Profile implements PrimaryClass {
         badges: this.user.badges,
         image: this.user.image
       }
-      swiper(new Room({ data: roomDetail, users: [this.user] }), userState.currcontent)
+      swiper(new Room({ data: roomDetail, users: [this.user], card: this.card }), userState.currcontent)
     }
   }
   clearOptions(eoptions: HTMLDivElement): void {
@@ -122,30 +126,48 @@ export default class Profile implements PrimaryClass {
     const userData = setreq.data.user as IUserF
     this.user = userData
     const { isFriend } = userData
+    this.user.isFriend = isFriend
+    if (this.card) this.card.user.isFriend = isFriend
 
-    const currChat = Object.values(db.c).find((k) => {
-      return k.u.find((usr) => usr.id === this.user.id)
-      // return db.c[k].u.find((usr) => usr.id === this.user.id)
-    })
-    const currUser = currChat?.u.find((usr) => usr.id === this.user.id)
-    if (currUser) {
-      currUser.isFriend = isFriend
-      if (isFriend === 1 && db.me.req) {
+    if (db.me.req) {
+      if (isFriend === 1) {
         db.me.req = db.me.req.filter((usr) => usr.id !== userData.id)
-        if (db.unread.r) db.unread.r = db.unread.r.filter((k) => k !== currUser.id)
       } else if (isFriend === 2) {
-        db.me.req = (db.me.req || []).filter((usr) => usr.id !== userData.id)
+        db.me.req = db.me.req.filter((usr) => usr.id !== userData.id)
       } else if (isFriend === 3) {
-        if (!db.me.req) db.me.req = []
         db.me.req.push(userData)
-      } else if (db.me.req) {
+      } else {
         db.me.req = db.me.req.filter((usr) => usr.id !== userData.id)
       }
+    } else if (isFriend === 3) {
+      db.me.req = []
+      db.me.req.push(userData)
     }
+
+    this.processChatReq(isFriend || 0, setreq.data)
 
     this.isLocked = false
     this.renOptions()
     return { ok: true, data: { user: userData } }
+  }
+  processChatReq(isFriend: number, s: { user: IUserF; room: IRoomDataF }): void {
+    let currChat = db.c.find((ch) => ch.r.id === s.user.id)
+    if (!currChat && isFriend === 1) {
+      db.c.push({
+        r: s.room,
+        u: [s.user],
+        m: []
+      })
+    }
+    currChat = db.c.find((ch) => ch.r.id === s.user.id)
+    const currUser = currChat?.u.find((usr) => usr.id === s.user.id)
+    if (currChat && currUser) currUser.isFriend = isFriend
+
+    if (!userState.center) return
+    if (userState.center.role === "friends") {
+      const friendCenter = userState.center as Friends
+      friendCenter.update(isFriend, s)
+    }
   }
   actNotFriend(eoption: HTMLDivElement): void {
     const btn = kel("div", "btn sb", { e: `<i class="fa-solid fa-user-plus"></i> ${lang.PROF_ADD}` })

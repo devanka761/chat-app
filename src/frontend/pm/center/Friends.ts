@@ -6,14 +6,14 @@ import db from "../../manager/db"
 import ContactsAPI from "../../properties/ContactAPI"
 import FriendBuilder from "../../properties/FriendBuilder"
 import FriendsAPI from "../../properties/FriendsAPI"
-import { IUserF } from "../../types/db.types"
+import { IRoomDataF, IUserF } from "../../types/db.types"
 import { TFriendsTypeF } from "../../types/room.types"
 import { PrimaryClass } from "../../types/userState.types"
 import ContactCard from "../parts/ContactCard"
 
 const typeOrder: { [key: string]: number } = {
-  friend: 1,
-  request: 2
+  friend: 2,
+  request: 1
 }
 
 export default class Friends implements PrimaryClass {
@@ -74,7 +74,43 @@ export default class Friends implements PrimaryClass {
       }
     })
   }
-  update() {}
+  update(isFriend: number, s: { user: IUserF; room: IRoomDataF }): void {
+    if (isFriend === 1) {
+      this.addToFriend(s.user)
+    } else if (isFriend === 3) {
+      this.addToReq(s.user)
+    } else {
+      this.removeFromList(s.user)
+    }
+    this.contacts.entries.forEach((folder) => {
+      folder.updateUnread()
+    })
+  }
+  addToFriend(user: IUserF): void {
+    const friend = this.list.get(user.id) || this.list.add(new FriendBuilder({ user: user })).run()
+    friend.user.isFriend = 1
+    this.card_list.prepend(friend.html)
+    if (this.contacts.enabled === "friend") {
+      return friend.show()
+    }
+    friend.hide()
+  }
+  addToReq(user: IUserF): void {
+    const friend = this.list.get(user.id) || this.list.add(new FriendBuilder({ user: user })).run()
+    friend.user.isFriend = 3
+    this.card_list.prepend(friend.html)
+    if (this.contacts.enabled === "request") {
+      return friend.show()
+    }
+    friend.hide()
+  }
+  removeFromList(user: IUserF): void {
+    const friend = this.list.get(user.id)
+    if (friend) {
+      this.card_list.removeChild(friend.html)
+      this.list.remove(friend.id)
+    }
+  }
   async destroy(): Promise<void> {
     this.el.classList.add("out")
     await modal.waittime()

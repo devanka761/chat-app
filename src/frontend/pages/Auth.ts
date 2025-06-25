@@ -67,6 +67,7 @@ export default class Auth {
     this.el.remove()
     auth_container?.remove()
     headerBar.run()
+    // new Find().run()
     new Chats().run()
     Tab.run()
     if (isUser.data.isFirst) {

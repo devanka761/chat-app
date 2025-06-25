@@ -46,7 +46,7 @@ export default class Chats implements PrimaryClass {
       return 0
     })
     cdb
-      .filter((ch) => ch.m && ch.m.length >= 1)
+      .filter((ch) => ch.r.type === "group" || (ch.m && ch.m.length >= 1))
       .forEach((ch) => {
         const unread = ch.m.filter((ct) => {
           return ct.userid !== db.me.id && ct.type !== "deleted" && !ct.readers?.includes(db.me.id)
