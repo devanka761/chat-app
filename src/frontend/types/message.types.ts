@@ -1,4 +1,4 @@
-import { IMessageF, MessageTypeF } from "./db.types"
+import { IMessageF, IRoomDataF, IUserF, MessageTypeF } from "./db.types"
 
 export type msgValidTypes = ["audio", "file", "video", "image", "voice"]
 
@@ -22,7 +22,7 @@ export interface IWritterF {
 export type MessageOptionType = "profile" | "copy" | "download" | "reply" | "edit" | "retry" | "delete" | "cancel"
 
 export interface IMessageUpdateF {
-  isFirst: boolean
-  roomid: string
+  roomdata: IRoomDataF
   chat: IMessageF
+  users: IUserF[]
 }

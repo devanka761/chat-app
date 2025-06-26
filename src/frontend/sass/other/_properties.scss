@@ -253,8 +253,8 @@ $bg: #3f464e;
   right: 20px;
   width: fit-content;
   max-width: 400px;
-  background-color: v.$pm1;
-  color: v.$px1;
+  background-color: v.$bar_active;
+  color: v.$white;
   padding: 20px;
   border-radius: 14px;
   display: flex;
@@ -283,6 +283,7 @@ $bg: #3f464e;
       }
     }
     .text {
+      max-width: 200px;
       .top {
         font-weight: bold;
         word-break: break-all;

@@ -23,9 +23,10 @@ export interface IRepB extends IRepTempB {
   ok: boolean
   msg: string
 }
-export interface Zender {
+
+export interface IZender {
   key: string
   from: string
   type: string
-  [key: string]: string | number | boolean
+  [key: string]: any
 }

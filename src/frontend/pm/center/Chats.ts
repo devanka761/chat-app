@@ -118,20 +118,18 @@ export default class Chats implements PrimaryClass {
     this.folders.entries.forEach((folder) => folder.updateUnread())
     this.writeIfEmpty(db.c)
   }
-  update(s: { chat: IMessageF; users: IUserF[]; roomid: string; isFirst: boolean; roomdata: IRoomDataF }): void {
-    if (s.isFirst) {
-      const firstcard = new ChatBuilder({ data: s.roomdata, users: s.users, chat: s.chat, parent: this })
-      firstcard.run()
-      this.list.add(firstcard)
+  update(s: { chat: IMessageF; users: IUserF[]; roomdata: IRoomDataF }): void {
+    let card = this.list.get(s.roomdata.id)
+    if (!card) {
+      card = new ChatBuilder({ data: s.roomdata, users: s.users, chat: s.chat, parent: this }).run()
+      this.list.add(card)
     }
+    const read = s.chat.userid === db.me.id || (s.chat.readers && s.chat.readers.find((usr) => usr === db.me.id)) || s.chat.type === "deleted"
+    if (!read) card.addUnread(1)
+    card.updateChat(s.chat, s.roomdata)
+    this.card_list.prepend(card.html)
+    this.setTypeList(this.folders.enabled)
 
-    const card = this.list.get(s.roomdata.id)
-    if (card) {
-      if (s.chat.userid !== db.me.id) card.addUnread()
-      card.updateChat(s.chat, s.roomdata)
-      this.card_list.prepend(card.html)
-      this.setTypeList(this.folders.enabled)
-    }
     this.folders.entries.forEach((folder) => folder.updateUnread())
     this.writeIfEmpty(db.c)
   }

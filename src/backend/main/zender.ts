@@ -1,16 +1,23 @@
-import { Zender } from "../types/validate.types"
+import { IZender } from "../types/validate.types"
 import db from "./db"
 import { rNumber } from "./helper"
+import relay from "./relay"
 
-export default function zender(uid: string, userid: string, type: string, s: { [key: string]: string | number | boolean }): void {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Zend = { [key: string]: any }
+
+export default function zender(uid: string, userid: string, type: string, s?: Zend): boolean {
   const udb = db.ref.u[userid]
-  if (!udb || !udb.peer) return
-  const data: Zender = {
-    key: `${uid}_${Date.now().toString()}_${rNumber(3)}`,
+  if (userid === uid) return true
+  if (!udb || !udb.socket) return false
+  const data: IZender = {
+    key: `${uid}-${Date.now().toString(36)}_${rNumber(3)}`,
     from: uid,
     type: type,
     ...s
   }
-  if (!udb.zzz) db.ref.u[userid].zzz = []
-  db.ref.u[userid].zzz?.push(data)
+  const client = relay.get(udb.socket)
+  if (!client) return false
+  client.socket.send(JSON.stringify(data))
+  return true
 }

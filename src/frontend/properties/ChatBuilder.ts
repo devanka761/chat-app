@@ -18,6 +18,7 @@ export default class ChatBuilder {
   private username: HTMLDivElement
   private lastchat: HTMLDivElement
   private eunread: HTMLDivElement
+  private eright: HTMLDivElement
   private timestamp: HTMLDivElement
   private unread: number
   private parent?: Chats
@@ -61,11 +62,11 @@ export default class ChatBuilder {
     this.timestamp = kel("div", "last", { e: sdate.dateOrTime(this.chat.timestamp) })
     this.eunread = kel("div", "unread", { e: this.unread.toString() })
 
-    const eright = kel("div", "right")
-    eright.append(this.timestamp)
-    if (this.unread >= 1) eright.append(this.eunread)
+    this.eright = kel("div", "right")
+    this.eright.append(this.timestamp)
+    if (this.unread >= 1) this.eright.append(this.eunread)
 
-    this.el.append(eleft, eright)
+    this.el.append(eleft, this.eright)
   }
   updateData(newData: IRoomDataF): void {
     const folder = this.data.type
@@ -85,12 +86,22 @@ export default class ChatBuilder {
   }
   addUnread(n?: number): this {
     this.unread = this.unread + (n || 1)
-    if (this.eunread) this.eunread.innerHTML = this.unread.toString()
+    if (this.eright && !this.eright.contains(this.eunread)) {
+      this.eright.append(this.eunread)
+    }
+    this.eunread.innerHTML = this.unread.toString()
     return this
   }
   setUnread(n: number): this {
     this.unread = n
-    if (this.eunread) this.eunread.innerHTML = this.unread.toString()
+    if (this.unread >= 1 && this.eright) {
+      if (!this.eright.contains(this.eunread)) {
+        this.eright.append(this.eunread)
+      }
+      this.eunread.innerHTML = this.unread.toString()
+    } else if (this.eright) {
+      if (this.eright.contains(this.eunread)) this.eright.removeChild(this.eunread)
+    }
     return this
   }
   private clickListener(): void {

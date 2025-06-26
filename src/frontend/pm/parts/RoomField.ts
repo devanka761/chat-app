@@ -43,7 +43,7 @@ export default class RoomField {
     return this.el
   }
   scrollToBottom(): void {
-    if (this.preload) this.el.removeChild(this.preload)
+    if (this.preload && this.el.contains(this.preload)) this.el.removeChild(this.preload)
     this.el.classList.remove("asset-loading")
     this.el.scrollTop = this.el.scrollHeight
   }

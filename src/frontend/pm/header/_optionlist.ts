@@ -34,7 +34,6 @@ export default [
           chat: noMessage(),
           users: group.u,
           roomid: createdGroup.data.roomid,
-          isFirst: true,
           roomdata: group.r
         })
       }

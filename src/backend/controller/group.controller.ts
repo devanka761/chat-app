@@ -37,7 +37,7 @@ export function createGroup(uid: string, s: { name: string }): IRepTempB {
     r: convertGroup(chat_id)
   }
 
-  return { code: 200, data: { isFirst: true, roomid: chat_id, group: groupData } }
+  return { code: 200, data: { roomid: chat_id, group: groupData } }
 }
 
 export function setGroupname(uid: string, s: { gname: string; id: string }): IRepTempB {

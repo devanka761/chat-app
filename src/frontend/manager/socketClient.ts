@@ -1,3 +1,6 @@
+import { IZender } from "../../backend/types/validate.types"
+import processClient from "../main/processClient"
+
 export class SocketClient {
   ws?: WebSocket
   id?: string
@@ -12,8 +15,13 @@ export class SocketClient {
     this.ws.onclose = () => {
       console.log("closed")
     }
-    this.ws.onmessage = (msg) => {
-      console.log("msg", msg.data)
+    this.ws.onmessage = (data) => {
+      try {
+        const msg = JSON.parse(data.data.toString()) as IZender
+        processClient.run(msg.type, msg)
+      } catch (err) {
+        console.error(err)
+      }
     }
     this.ws.onopen = () => {
       if (this.ws)

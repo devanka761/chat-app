@@ -194,10 +194,8 @@ export default class Room implements PrimaryClass {
       if (dbchat && dbchat.m[dbchat.m.length - 1].id !== s.chat.id) return
       userState.center.update({
         chat: s.chat,
-        users: this.users,
-        roomid: s.roomid,
-        isFirst: s.isFirst,
-        roomdata: this.data
+        users: s.users,
+        roomdata: s.roomdata
       })
     }
   }
@@ -221,12 +219,32 @@ export default class Room implements PrimaryClass {
     message.deleted = true
     this.processUpdate(messageDeleted.data)
   }
-  update(): void | Promise<void> {}
+  update(s: IMessageUpdateF): void | Promise<void> {
+    const ch = s.chat
+    const msg = this.field.list.get(s.chat.id)
+    if (msg && s.chat.type === "deleted") {
+      msg.deleted = true
+      return
+    }
+    if (msg) {
+      msg.setTimeStamp(s.chat.timestamp)
+      msg.setText(s.chat.text as string)
+      msg.setEdited(s.chat.edited)
+      msg.clickListener()
+      return
+    }
+    const user: IUserF = ch.userid === db.me.id ? db.me : this.users.find((usr) => usr.id === ch.userid) || noUser()
+    const newMessage = new MessageBuilder(s.chat, user, this)
+    this.field.send(newMessage.run())
+  }
   async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
     if (!instant) await modal.waittime()
     this.isLocked = false
     this.el.remove()
+    this.field.list.entries.forEach((ch) => {
+      this.field.list.remove(ch.id)
+    })
   }
   get key(): string {
     return this.data.id

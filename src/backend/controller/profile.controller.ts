@@ -55,7 +55,7 @@ export function addfriend(uid: string, s: { userid: string }): IRepTempB {
   }
   db.ref.u[s.userid].req?.push(uid)
   db.save("u")
-  zender(uid, s.userid, "addfriend", { id: uid })
+  zender(uid, s.userid, "addfriend", { user: getUser(s.userid, uid) })
   return { code: 200, data: { user: getUser(uid, s.userid) } }
 }
 export function unfriend(uid: string, s: { userid: string }): IRepTempB {
@@ -72,7 +72,7 @@ export function unfriend(uid: string, s: { userid: string }): IRepTempB {
   delete db.ref.c[friendkey].f
   db.save("u", "c")
 
-  zender(uid, s.userid, "unfriend", { id: uid })
+  zender(uid, s.userid, "unfriend", { user: getUser(s.userid, uid) })
   return { code: 200, data: { user: getUser(uid, s.userid) } }
 }
 export function cancelfriend(uid: string, s: { userid: string }): IRepTempB {
@@ -82,7 +82,7 @@ export function cancelfriend(uid: string, s: { userid: string }): IRepTempB {
   db.ref.u[s.userid].req = udb.req.filter((key) => key !== uid)
   db.save("u")
 
-  zender(uid, s.userid, "cancelfriend", { id: uid })
+  zender(uid, s.userid, "cancelfriend", { user: getUser(s.userid, uid) })
   return { code: 200, data: { user: getUser(uid, s.userid) } }
 }
 export function acceptfriend(uid: string, s: { userid: string }): IRepTempB {
@@ -112,7 +112,7 @@ export function acceptfriend(uid: string, s: { userid: string }): IRepTempB {
   db.ref.c[friendkey].ts = Date.now()
   db.save("u", "c")
 
-  zender(uid, s.userid, "acceptfriend", { id: uid })
+  zender(uid, s.userid, "acceptfriend", { user: getUser(s.userid, uid) })
   return { code: 200, data: { user: getUser(uid, s.userid), room: convertUser(s.userid) } }
 }
 export function ignorefriend(uid: string, s: { userid: string }): IRepTempB {
@@ -123,6 +123,6 @@ export function ignorefriend(uid: string, s: { userid: string }): IRepTempB {
   if (mdb.req?.includes(s.userid)) db.ref.u[uid].req = mdb.req.filter((key) => key !== s.userid)
   db.save("u")
 
-  zender(uid, s.userid, "ignorefriend", { id: uid })
+  zender(uid, s.userid, "ignorefriend", { user: getUser(s.userid, uid) })
   return { code: 200, data: { user: getUser(uid, s.userid) } }
 }

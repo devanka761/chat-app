@@ -49,14 +49,14 @@ export default class FolderCard {
     const tab = userState.tab
     if (tab) tab.update("chats")
     if (num < 1) {
-      if (this.eunread) this.el.removeChild(this.eunread)
+      if (this.eunread && this.el.contains(this.eunread)) this.el.removeChild(this.eunread)
       return
     }
 
     if (!this.eunread) {
       this.eunread = kel("i", "num")
-      this.el.append(this.eunread)
     }
+    if (!this.el.contains(this.eunread)) this.el.append(this.eunread)
 
     this.eunread.innerHTML = num.toString()
   }

@@ -4,15 +4,16 @@ import db from "../main/db"
 import { TRoomTypeF } from "../../frontend/types/room.types"
 import { IWritterF } from "../../frontend/types/message.types"
 import { IRepTempB } from "../types/validate.types"
-import { convertMessage, escapeWhiteSpace, minimizeMessage, msgNotValid, msgValidTypes, normalizeMessage } from "../main/helper"
+import { convertGroup, convertMessage, convertUser, escapeWhiteSpace, minimizeMessage, msgNotValid, msgValidTypes, normalizeMessage } from "../main/helper"
 import { IMessageTempF } from "../../frontend/types/db.types"
 import { IMessageKeyB } from "../types/db.types"
+import zender from "../main/zender"
+import { getUser } from "./profile.controller"
 
 export async function sendMessage(uid: string, room_id: string, room_type: TRoomTypeF, s: IWritterF): Promise<IRepTempB> {
   if (s.text) s.text = escapeWhiteSpace(s.text)
   const notvalid = msgNotValid(s)
   if (notvalid) return { code: 400, msg: notvalid }
-  let isFirst = false
   const cdb = db.ref.c
   let chatkey =
     room_type === "user"
@@ -24,7 +25,6 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
   if (s.edit && chatkey) return editMessage(uid, chatkey, room_id, room_type, s)
   if (room_type === "group" && !chatkey) return { code: 404 }
   if (!chatkey) {
-    isFirst = true
     chatkey = `${uid}u${room_id}`
     db.ref.c[chatkey] = {
       u: [uid, room_id],
@@ -34,7 +34,6 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
     db.save("c")
   }
   if (!db.ref.c[chatkey].c) {
-    isFirst = true
     db.ref.c[chatkey].c = chatkey
     db.save("c")
   }
@@ -81,7 +80,20 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
   dbOld[chat_id] = minimizeMessage(uid, newChat)
   db.fileSet(chatkey, "room", dbOld)
 
-  return { code: 200, data: { isFirst, roomid: chatkey, chat: { ...newChat, id: chat_id } } }
+  const chatData = { ...newChat, id: chat_id }
+  const dataZender = {
+    chat: chatData,
+    roomdata: cdb[chatkey].t === "user" ? convertUser(uid) : convertGroup(chatkey),
+    users: cdb[chatkey].u.map((usr) => getUser(usr, uid))
+  }
+  const dataRep = {
+    chat: chatData,
+    roomdata: cdb[chatkey].t === "user" ? convertUser(room_id) : convertGroup(chatkey),
+    users: cdb[chatkey].u.map((usr) => getUser(uid, usr))
+  }
+
+  cdb[chatkey].u.forEach((usr) => zender(uid, usr, "sendmessage", dataZender))
+  return { code: 200, data: dataRep }
 }
 
 export function editMessage(uid: string, chatkey: string, room_id: string, room_type: TRoomTypeF, s: IWritterF): IRepTempB {
@@ -111,7 +123,20 @@ export function editMessage(uid: string, chatkey: string, room_id: string, room_
   dbOld[s.edit].e = Date.now()
   db.fileSet(chatkey, "room", dbOld)
 
-  return { code: 200, data: { isFirst: false, roomid: chatkey, chat: { ...normalizeMessage(s.edit, dbOld[s.edit]) } } }
+  const chatData = { ...normalizeMessage(s.edit, dbOld[s.edit]) }
+  const dataZender = {
+    chat: chatData,
+    roomdata: cdb.t === "user" ? convertUser(uid) : convertGroup(chatkey),
+    users: cdb.u.map((usr) => getUser(usr, uid))
+  }
+  const dataRep = {
+    chat: chatData,
+    roomdata: cdb.t === "user" ? convertUser(room_id) : convertGroup(chatkey),
+    users: cdb.u.map((usr) => getUser(uid, usr))
+  }
+  cdb.u.forEach((usr) => zender(uid, usr, "editmessage", dataZender))
+
+  return { code: 200, data: dataRep }
 }
 
 export function delMessage(uid: string, target: string, room: string, message_id: string): IRepTempB {
@@ -144,5 +169,18 @@ export function delMessage(uid: string, target: string, room: string, message_id
   delete dbOld[message_id].i
   db.fileSet(chatkey, "room", dbOld)
 
-  return { code: 200, data: { isFirst: false, roomid: chatkey, chat: { ...normalizeMessage(message_id, dbOld[message_id]) } } }
+  const chatData = { ...normalizeMessage(message_id, dbOld[message_id]) }
+  const dataZender = {
+    chat: chatData,
+    roomdata: cdb[chatkey].t === "user" ? convertUser(uid) : convertGroup(chatkey),
+    users: cdb[chatkey].u.map((usr) => getUser(usr, uid))
+  }
+  const dataRep = {
+    chat: chatData,
+    roomdata: cdb[chatkey].t === "user" ? convertUser(target) : convertGroup(chatkey),
+    users: cdb[chatkey].u.map((usr) => getUser(uid, usr))
+  }
+  cdb[chatkey].u.forEach((usr) => zender(uid, usr, "deletemessage", dataZender))
+
+  return { code: 200, data: dataRep }
 }
