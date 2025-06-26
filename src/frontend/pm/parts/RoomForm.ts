@@ -57,7 +57,7 @@ export default class RoomForm {
     this.btnAttach.onclick = () => this.findFile()
     this.btnVoice.onclick = () => {
       if (this.canSend) {
-        this.textarea.focus()
+        // this.textarea.focus()
         return this.sendMessage()
       }
       this.clearForm()
@@ -117,48 +117,46 @@ export default class RoomForm {
     inp.click()
   }
   private setAttachment(file: File): void {
-    if (this.edit) this.edit.close()
-    if (this.attachment) this.attachment.close()
+    if (this.edit) this.closeEdit()
+    if (this.attachment) this.closeAttachment()
     this.attachment = new AttachmentBuilder({ file: file, form: this })
     this.attachment.run()
     this.bottom.prepend(this.attachment.html)
     if (this.reply) this.bottom.prepend(this.reply.html)
-    this.focus()
     this.growArea()
+    this.autofocus()
   }
   closeAttachment(): void {
     if (!this.attachment) return
-    this.focus()
     this.attachment.close()
     this.growArea()
+    this.autofocus()
   }
   setReply(msgid: string): void {
-    this.focus()
-    if (this.edit) this.edit.close()
-    if (this.reply) this.reply.close()
+    if (this.edit) this.closeEdit()
+    if (this.reply) this.closeReply()
     this.reply = new ReplyBuilder({ id: msgid, form: this })
     this.reply.run()
     this.bottom.prepend(this.reply.html)
     this.growArea()
+    this.autofocus()
   }
   closeReply(): void {
     if (!this.reply) return
-    this.focus()
     this.reply.close()
     this.growArea()
   }
   setEdit(msgid: string): void {
-    this.focus()
-    if (this.reply) this.reply.close()
-    if (this.attachment) this.attachment.close()
-    if (this.edit) this.edit.close()
+    if (this.reply) this.closeReply()
+    if (this.attachment) this.closeAttachment()
+    if (this.edit) this.closeEdit()
     this.edit = new EditBuilder({ id: msgid, form: this })
     this.edit.run()
     this.bottom.prepend(this.edit.html)
     this.growArea()
+    this.autofocus()
   }
   closeEdit(): void {
-    this.focus()
     if (!this.edit) return
     this.edit.close()
     this.textarea.value = ""
@@ -187,6 +185,9 @@ export default class RoomForm {
     this.textarea.style.height = `${textareaHeight}px`
     const currHeight: number = textareaHeight < 30 ? textareaHeight + mediaHeight + 31 : textareaHeight + mediaHeight + 24
     this.room.resizeMiddle(currHeight)
+  }
+  private autofocus(): void {
+    this.textarea.focus()
   }
   private async focus(): Promise<void> {
     this.textarea.readOnly = true

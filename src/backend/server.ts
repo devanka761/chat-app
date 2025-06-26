@@ -148,6 +148,8 @@ wss.on("connection", (ws, req) => {
   // })
 
   ws.on("close", () => {
+    const userid = Object.keys(db.ref.u).find((k) => db.ref.u[k].socket === client.id)
+    if (userid) delete db.ref.u[userid].socket
     relay.remove(client.id)
     console.log(`Disconnected  ${client.id}`)
   })
