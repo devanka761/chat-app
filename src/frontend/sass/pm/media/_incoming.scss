@@ -1,0 +1,142 @@
+@use "../../variables" as v;
+
+.incoming {
+  z-index: 28;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #1e1f2280;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .box {
+    background-color: v.$px2;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px v.$black;
+    width: calc(100% - 20px);
+    max-width: 400px;
+    animation: slide_down_in 0.25s;
+    border: 1px solid v.$pm1;
+    .caller {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      .img {
+        width: 40px;
+        height: 40px;
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+          -o-object-fit: cover;
+          -o-object-position: center;
+          border-radius: 50%;
+        }
+      }
+      .name {
+        .displayname {
+          font-weight: bold;
+        }
+        .username {
+          font-size: 0.8rem;
+        }
+      }
+    }
+    .calltype {
+      margin: 20px 0;
+      width: 100%;
+      text-align: center;
+    }
+    .callactions {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      .btn {
+        width: calc(100% / 2);
+        padding: 10px;
+        border-radius: 10px;
+        text-align: center;
+        color: v.$white;
+        font-weight: bold;
+      }
+      .btn-decline {
+        background-color: v.$sred;
+      }
+      .btn-answer {
+        background-color: v.$sgreen;
+      }
+    }
+    .callaction {
+      margin-top: 10px;
+      width: 100%;
+      .btn-ignore {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        text-align: center;
+        background-color: v.$px1;
+        color: v.$cred;
+      }
+    }
+  }
+  &:not(:has(.ignored)).out {
+    .box {
+      animation: slide_down_out 0.25s forwards;
+    }
+  }
+  &.ignored {
+    width: fit-content;
+    height: fit-content;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #00000000;
+    .box {
+      width: fit-content;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: row-reverse;
+      padding: 5px 10px;
+      gap: 10px;
+      border-radius: 24px;
+      animation: slide_up_in 0.25s;
+      cursor: pointer;
+      .callaction,
+      .callactions {
+        display: none;
+      }
+      .calltype {
+        margin: 0;
+        animation: none;
+        font-size: 1.25rem;
+        span {
+          display: none;
+        }
+      }
+      .caller {
+        display: block;
+        .img {
+          width: 24px;
+          height: 24px;
+        }
+        .name {
+          display: none;
+        }
+      }
+    }
+    &.out {
+      .box {
+        animation: slide_up_out 0.25s forwards;
+      }
+    }
+  }
+}

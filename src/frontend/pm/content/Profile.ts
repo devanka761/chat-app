@@ -1,4 +1,4 @@
-import { eroot, kel } from "../../helper/kel"
+import { eroot, kel, qutor } from "../../helper/kel"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import setbadge from "../../helper/setbadge"
@@ -11,6 +11,8 @@ import Room from "./Room"
 import Friends from "../center/Friends"
 import FriendBuilder from "../../properties/FriendBuilder"
 import adap from "../../main/adaptiveState"
+import VoiceCall from "../media/VoiceCall"
+import Incoming from "../media/Incoming"
 
 export default class Profile implements PrimaryClass {
   readonly role: string
@@ -20,8 +22,14 @@ export default class Profile implements PrimaryClass {
   user: IUserF
   private room?: Room
   private card?: FriendBuilder
+  private wall: HTMLDivElement
+  private actions: HTMLDivElement
+  private options?: HTMLDivElement | null
   private btnBack: HTMLDivElement
   classBefore?: PrimaryClass
+  private btnChat: HTMLDivElement
+  private btnVoiceCall: HTMLDivElement
+  private btnVideoCall: HTMLDivElement
   constructor(s: { user: IUserF; room?: Room; card?: FriendBuilder; classBefore?: PrimaryClass }) {
     this.king = "content"
     this.role = "profile"
@@ -33,36 +41,33 @@ export default class Profile implements PrimaryClass {
   }
   createElement(): void {
     this.el = kel("div", "Profile pmcontent")
-    this.el.innerHTML = `
-    <div class="top">
-      <div class="btn btn-back"><i class="fa-solid fa-arrow-left"></i></div>
-      <div class="sect-title">${lang.APP_PROFILE}</div>
-    </div>
-    <div class="wall">
-      <div class="chp displayname"><p></p></div>
-      <div class="chp img">
-      </div>
-      <div class="chp username"><p></p></div>
-      <div class="chp bio"><p></p></div>
-      <div class="chp actions">
-        <div class="btn btn-chat"><i class="fa-solid fa-comment-dots"></i><p>${lang.PROF_BTN_CHAT}</p></div>
-        <div class="btn btn-call"><i class="fa-solid fa-phone"></i><p>${lang.PROF_BTN_VOICE}</p></div>
-        <div class="btn btn-video"><i class="fa-solid fa-video"></i><p>${lang.PROF_BTN_VIDEO}</p></div>
-      </div>
-      <div class="chp options">
-      </div>
-    </div>`
-    this.btnBack = this.el.querySelector(".btn-back") as HTMLDivElement
   }
-  writeDetail(): void {
+  writeTab(): void {
+    this.btnBack = kel("div", "btn btn-back")
+    this.btnBack.innerHTML = '<i class="fa-solid fa-arrow-left"></i>'
+    const title = kel("div", "sect-title", { e: lang.APP_PROFILE })
+    const tab = kel("div", "top", { e: [this.btnBack, title] })
+    this.el.append(tab)
+  }
+  writeWall(): void {
+    this.wall = kel("div", "wall")
+    this.renDname()
     this.renImage()
     this.renUname()
-    this.renDname()
     this.renBio()
+    this.el.append(this.wall)
+  }
+  writeDetail(): void {
+    this.writeTab()
+    this.writeWall()
+    this.renActions()
+    this.renOptions()
   }
   renImage(): void {
-    const eimage = <HTMLDivElement>this.el.querySelector(".wall .img")
-    if (eimage.lastChild) eimage.lastChild.remove()
+    let eimage = qutor(".img", this.wall)
+    if (!eimage) eimage = kel("div", "chp img")
+    if (!this.wall.contains(eimage)) this.wall.append(eimage)
+    while (eimage.lastChild) eimage.lastChild.remove()
     const img = new Image()
     img.onerror = () => (img.src = "/assets/user.jpg")
     img.src = this.user.image ? `/file/user/${this.user.image}` : "/assets/user.jpg"
@@ -70,22 +75,30 @@ export default class Profile implements PrimaryClass {
     eimage.prepend(img)
   }
   renUname(): void {
-    const euname = <HTMLParagraphElement>this.el.querySelector(".wall .username p")
+    let euname = qutor(".username", this.wall)
+    if (!euname) euname = kel("div", "chp username")
+    if (!this.wall.contains(euname)) this.wall.append(euname)
     euname.innerHTML = this.user.username
     if (this.user.badges) setbadge(euname, this.user.badges)
   }
   renDname(): void {
-    const edname = <HTMLParagraphElement>this.el.querySelector(".wall .displayname p")
+    let edname = qutor(".displayname", this.wall)
+    if (!edname) edname = kel("div", "chp displayname")
+    if (!this.wall.contains(edname)) this.wall.append(edname)
     edname.innerText = this.user.displayname
   }
   renBio(): void {
-    const ebio = <HTMLParagraphElement>this.el.querySelector(".wall .bio p")
-    ebio.innerText = this.user.bio || lang.ACC_NOBIO
+    let ebio = qutor(".bio", this.wall)
+    if (!ebio) ebio = kel("div", "chp bio")
+    if (!this.wall.contains(ebio)) this.wall.append(ebio)
+    let p = qutor("p", ebio)
+    if (!p) p = kel("p")
+    if (!ebio.contains(p)) ebio.append(p)
+    p.innerText = this.user.bio || lang.ACC_NOBIO
   }
   btnListener(): void {
     this.btnBack.onclick = () => adap.swipe(this.classBefore)
-    const btnChat = <HTMLDivElement>this.el.querySelector(".btn-chat")
-    btnChat.onclick = () => {
+    this.btnChat.onclick = () => {
       const roomDetail: IRoomDataF = {
         id: this.user.id,
         long: this.user.displayname,
@@ -97,17 +110,39 @@ export default class Profile implements PrimaryClass {
       const classBefore = this.classBefore?.role === "room" ? this.classBefore.classBefore : this
       adap.swipe(new Room({ data: roomDetail, users: [this.user], card: this.card, classBefore }))
     }
+    this.btnVoiceCall.onclick = () => {
+      console.log("testing call")
+      // const voiceCall = new VoiceCall({ user: this.user })
+      // voiceCall.run()
+      const incoming = new Incoming({ user: this.user })
+      incoming.run()
+    }
   }
-  clearOptions(eoptions: HTMLDivElement): void {
-    while (eoptions.lastChild) eoptions.lastChild.remove()
+  renActions(): void {
+    this.btnChat = kel("div", "btn btn-chat")
+    this.btnChat.innerHTML = `<i class="fa-solid fa-comment-dots"></i><span>${lang.PROF_BTN_CHAT}</span>`
+
+    this.btnVoiceCall = kel("div", "btn btn-call")
+    this.btnVoiceCall.innerHTML = `<i class="fa-solid fa-phone"></i><span>${lang.PROF_BTN_VOICE}</span>`
+
+    this.btnVideoCall = kel("div", "btn btn-video")
+    this.btnVideoCall.innerHTML = `<i class="fa-solid fa-video"></i><span>${lang.PROF_BTN_VIDEO}</span>`
+
+    this.actions = kel("div", "chp actions", { e: [this.btnChat, this.btnVoiceCall, this.btnVideoCall] })
+    this.wall.append(this.actions)
   }
   renOptions(): void {
-    const eoption = <HTMLDivElement>this.el.querySelector(".wall .options")
-    this.clearOptions(eoption)
-    if (!this.user.isFriend || this.user.isFriend === 0) return this.actNotFriend(eoption)
-    if (this.user.isFriend === 1) return this.actFriend(eoption)
-    if (this.user.isFriend === 2) return this.actSent(eoption)
-    if (this.user.isFriend === 3) return this.actReceived(eoption)
+    this.options = qutor(".options", this.wall) as HTMLDivElement | null
+    if (!this.options) this.options = kel("div", "chp options")
+    if (!this.wall.contains(this.options)) this.wall.append(this.options)
+    this.clearOptions()
+    if (!this.user.isFriend || this.user.isFriend === 0) return this.actNotFriend()
+    if (this.user.isFriend === 1) return this.actFriend()
+    if (this.user.isFriend === 2) return this.actSent()
+    if (this.user.isFriend === 3) return this.actReceived()
+  }
+  clearOptions(): void {
+    while (this.options && this.options.lastChild) this.options.lastChild.remove()
   }
   async actXhr(eoption: HTMLDivElement, ref: string, useconfirm?: string): Promise<{ ok: boolean; data?: { user: IUserF } }> {
     if (this.isLocked) return { ok: false }
@@ -176,28 +211,28 @@ export default class Profile implements PrimaryClass {
       friendCenter.update(isFriend, s)
     }
   }
-  actNotFriend(eoption: HTMLDivElement): void {
+  actNotFriend(): void {
     const btn = kel("div", "btn sb", { e: `<i class="fa-solid fa-user-plus"></i> ${lang.PROF_ADD}` })
-    eoption.append(btn)
+    this.options?.append(btn)
     btn.onclick = async () => this.actXhr(btn, "addfriend")
   }
-  actFriend(eoption: HTMLDivElement): void {
+  actFriend(): void {
     const btn = kel("div", "btn sr", { e: `<i class="fa-solid fa-user-minus"></i> ${lang.PROF_UNFRIEND}` })
     btn.classList.add("btn", "sr")
-    eoption.append(btn)
+    this.options?.append(btn)
     btn.onclick = async () => this.actXhr(btn, "unfriend", "PROF_CONF_UNFRIEND")
   }
-  actSent(eoption: HTMLDivElement): void {
-    eoption.innerHTML = `<div class="note sy">${lang.PROF_WAIT}</div>`
+  actSent(): void {
+    if (this.options) this.options.innerHTML = `<div class="note sy">${lang.PROF_WAIT}</div>`
     const btn = kel("div", "btn sr", { e: `<i class="fa-solid fa-user-xmark"></i> ${lang.PROF_CANCEL}` })
-    eoption.append(btn)
+    this.options?.append(btn)
     btn.onclick = async () => this.actXhr(btn, "cancelfriend", "PROF_CONF_CANCEL")
   }
-  actReceived(eoption: HTMLDivElement): void {
+  actReceived(): void {
     const btn_a = kel("div", "btn sg", { e: `<i class="fa-solid fa-user-check"></i> ${lang.PROF_ACCEPT}` })
     const btn_b = kel("div", "btn sr", { e: `<i class="fa-solid fa-user-xmark"></i> ${lang.PROF_IGNORE}` })
 
-    eoption.append(btn_a, btn_b)
+    this.options?.append(btn_a, btn_b)
     btn_a.onclick = async () => this.actXhr(btn_a, "acceptfriend")
     btn_b.onclick = async () => this.actXhr(btn_b, "ignorefriend", "PROF_CONF_IGNORE")
   }
@@ -213,7 +248,6 @@ export default class Profile implements PrimaryClass {
     this.createElement()
     eroot().append(this.el)
     this.writeDetail()
-    this.renOptions()
     this.btnListener()
   }
 }

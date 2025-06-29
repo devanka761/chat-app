@@ -2,6 +2,7 @@ import { PrimaryClass, UserLocked, UserNotif } from "../types/userState.types"
 import appConfig from "../../backend/config/public.config.json"
 import HeaderBar from "../pm/header/HeaderBar"
 import Tab from "../pm/header/Tab"
+import VoiceCall from "../pm/media/VoiceCall"
 
 class UserState {
   public notif: UserNotif
@@ -10,6 +11,7 @@ class UserState {
   private currtab: Tab | null
   private currcenter: PrimaryClass | null
   private currcontent: PrimaryClass | null
+  private currMedia: VoiceCall | null
   public locked: UserLocked
   private saveKey: string
   constructor() {
@@ -18,6 +20,7 @@ class UserState {
     this.currtab = null
     this.currcenter = null
     this.currcontent = null
+    this.currMedia = null
     this.saveKey = "Kirimin_Local"
   }
   set header(newheader: HeaderBar | null) {
@@ -43,6 +46,12 @@ class UserState {
   }
   get content(): PrimaryClass | null {
     return this.currcontent
+  }
+  set media(newmedia: VoiceCall | null) {
+    this.currMedia = newmedia
+  }
+  get media(): VoiceCall | null {
+    return this.currMedia
   }
   save(): void {
     window.localStorage.setItem(

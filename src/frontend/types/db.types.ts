@@ -52,6 +52,8 @@ export interface IUserF {
 }
 export type MessageTypeF = "text" | "image" | "video" | "audio" | "file" | "deleted" | "call" | "voice"
 
+export type CallTypeF = "incoming" | "outgoing" | "rejected" | "missed"
+
 export interface IMessageTempF {
   userid: string
   timestamp: number

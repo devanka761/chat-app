@@ -10,6 +10,8 @@
 @use "./pm/content/Account";
 @use "./pm/content/Profile";
 @use "./pm/content/Room";
+@use "./pm/media/call";
+@use "./pm/media/incoming";
 
 // this should be at the bottom of the page
 @use "./nrw";
