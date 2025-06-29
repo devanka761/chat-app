@@ -7,8 +7,11 @@ import Chats from "../pm/center/Chats"
 import Friends from "../pm/center/Friends"
 import Room from "../pm/content/Room"
 import Tab from "../pm/header/Tab"
+import Incoming from "../pm/media/Incoming"
+import VoiceCall from "../pm/media/VoiceCall"
 import { IRoomDataF, IUserF } from "../types/db.types"
 import { IMessageUpdateF } from "../types/message.types"
+import { ICallUpdateF } from "../types/peer.types"
 import userState from "./userState"
 
 class ProcessClient {
@@ -232,6 +235,18 @@ class ProcessClient {
         })
       }
     }
+  }
+  offer(s: ICallUpdateF) {
+    const incoming = new Incoming({ data: s })
+    incoming.run()
+  }
+  answer(s: ICallUpdateF) {
+    if (!userState.media) return
+    const voiceCall = userState.media as VoiceCall
+    voiceCall.peer.handleSignal(s)
+  }
+  candidate(s: ICallUpdateF) {
+    this.answer(s)
   }
   run(type: string, data: IZender): void {
     if (!this[type]) return

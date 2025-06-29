@@ -89,7 +89,7 @@
   }
   &:not(:has(.ignored)).out {
     .box {
-      animation: slide_down_out 0.25s forwards;
+      animation: slide_down_out 0.2s forwards;
     }
   }
   &.ignored {
@@ -135,7 +135,7 @@
     }
     &.out {
       .box {
-        animation: slide_up_out 0.25s forwards;
+        animation: slide_up_out 0.2s forwards;
       }
     }
   }

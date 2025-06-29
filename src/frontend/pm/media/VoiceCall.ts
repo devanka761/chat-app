@@ -1,7 +1,11 @@
 import { eroot, kel } from "../../helper/kel"
 import { lang } from "../../helper/lang"
+import modal from "../../helper/modal"
 import setbadge from "../../helper/setbadge"
 import userState from "../../main/userState"
+import { PeerCallHandler } from "../../manager/Peer"
+import getPeerStream from "../../manager/peerStream"
+import socketClient from "../../manager/socketClient"
 import { IUserF } from "../../types/db.types"
 
 export default class VoiceCall {
@@ -16,9 +20,15 @@ export default class VoiceCall {
   private btnHangUp: HTMLDivElement
   private leftAct: HTMLDivElement
   private rightAct: HTMLDivElement
+  private mediaStream: MediaStream | null
+  private peerMedia: HTMLAudioElement | null
+  peer: PeerCallHandler
   constructor(s: { user: IUserF }) {
     this.user = s.user
     this.isLocked = false
+    this.mediaStream = null
+    this.peerMedia = null
+    this.run()
   }
   private createElement(): void {
     this.el = kel("div", "call")
@@ -66,16 +76,71 @@ export default class VoiceCall {
     this.btnHangUp = kel("div", "btn btn-hangup", { e: '<i class="fa-solid fa-phone-hangup fa-fw"></i>' })
     this.rightAct.append(this.btnHangUp)
   }
-  private init(): void {
+  async call() {
+    const stream = await getPeerStream()
+    if (!stream) {
+      this.off()
+      await modal.alert(lang.CONTENT_NO_MEDIA_DEVICES)
+      return
+    }
+    this.peer.call(stream)
+  }
+  async answer(offer: RTCSessionDescriptionInit) {
+    const stream = await getPeerStream()
+    if (!stream) {
+      this.off()
+      await modal.alert(lang.CONTENT_NO_MEDIA_DEVICES)
+      return
+    }
+    this.peer.answer(stream, offer)
+  }
+  run(): void {
+    userState.media = this
     this.createElement()
     eroot().append(this.el)
     this.writeBackground()
     this.writeTab()
     this.writeActions()
+    this.startHandler()
+    this.btnListener()
   }
-  run(): this {
-    userState.media = this
-    this.init()
-    return this
+  off(): void {
+    this.peer.hangup()
+  }
+  private btnListener(): void {
+    this.btnHangUp.onclick = () => {
+      this.off()
+    }
+  }
+  private startHandler(): void {
+    this.peer = new PeerCallHandler({
+      onSignal: (data) => {
+        socketClient.send({ ...data, to: this.user.id })
+      },
+      onStream: (stream) => {
+        console.log("streaming...")
+        this.peerMedia = new Audio()
+        this.peerMedia.srcObject = stream
+        this.peerMedia.play()
+      },
+      onDisconnected: () => {
+        this.off()
+        if (this.peerMedia) {
+          this.peerMedia.pause()
+          this.peerMedia.remove()
+          this.peerMedia = null
+        }
+        console.log("disconnected")
+      },
+      onConnectionFailed: () => {
+        this.off()
+        if (this.peerMedia) {
+          this.peerMedia.pause()
+          this.peerMedia.remove()
+          this.peerMedia = null
+        }
+        console.log("connection failed")
+      }
+    })
   }
 }

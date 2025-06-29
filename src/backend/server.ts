@@ -17,6 +17,7 @@ import { sessionUserBinder } from "./main/binder"
 import { TRelay } from "./types/relay.types"
 import relay from "./main/relay"
 import { parse } from "url"
+import processSocketMessages from "./controller/socket.controller"
 
 if (!fs.existsSync("./dist")) fs.mkdirSync("./dist")
 if (!fs.existsSync("./dist/sessions")) {
@@ -138,14 +139,16 @@ wss.on("connection", (ws, req) => {
     console.error(err)
   })
 
-  // ws.on("message", (data) => {
-  //   try {
-  //     const msg = JSON.parse(data.toString())
-  //     console.log("msg", msg)
-  //   } catch (err) {
-  //     console.error("Failed to parse JSON:", err)
-  //   }
-  // })
+  ws.on("message", (data) => {
+    const userid = Object.keys(db.ref.u).find((k) => db.ref.u[k].socket === client.id)
+    if (!userid) return
+    try {
+      const msg = JSON.parse(data.toString())
+      processSocketMessages({ ...msg, from: clientId, uid: userid })
+    } catch (err) {
+      console.error("Failed to parse JSON:", err)
+    }
+  })
 
   ws.on("close", () => {
     const userid = Object.keys(db.ref.u).find((k) => db.ref.u[k].socket === client.id)

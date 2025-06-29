@@ -12,7 +12,6 @@ import Friends from "../center/Friends"
 import FriendBuilder from "../../properties/FriendBuilder"
 import adap from "../../main/adaptiveState"
 import VoiceCall from "../media/VoiceCall"
-import Incoming from "../media/Incoming"
 
 export default class Profile implements PrimaryClass {
   readonly role: string
@@ -112,10 +111,10 @@ export default class Profile implements PrimaryClass {
     }
     this.btnVoiceCall.onclick = () => {
       console.log("testing call")
-      // const voiceCall = new VoiceCall({ user: this.user })
-      // voiceCall.run()
-      const incoming = new Incoming({ user: this.user })
-      incoming.run()
+      const voiceCall = new VoiceCall({ user: this.user })
+      voiceCall.call()
+      // const incoming = new Incoming({ user: this.user })
+      // incoming.run()
     }
   }
   renActions(): void {

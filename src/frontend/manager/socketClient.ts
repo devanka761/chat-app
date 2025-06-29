@@ -24,19 +24,23 @@ export class SocketClient {
       }
     }
     this.ws.onopen = () => {
-      if (this.ws)
-        this.ws.send(
-          JSON.stringify({
-            type: "kirimin",
-            payload: {
-              testing: "berhasil gak?"
-            }
-          })
-        )
+      // if (this.ws)
+      //   this.ws.send(
+      //     JSON.stringify({
+      //       type: "kirimin",
+      //       payload: {
+      //         testing: "berhasil gak?"
+      //       }
+      //     })
+      //   )
     }
   }
   close(): void {
     if (this.ws) this.ws.close()
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  send(data: any): void {
+    if (this.ws) this.ws.send(JSON.stringify({ ...data, identifier: "kirimin" }))
   }
   run(s: { id: string; host: string }): this {
     this.id = s.id

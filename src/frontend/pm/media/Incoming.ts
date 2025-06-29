@@ -1,7 +1,10 @@
 import { eroot, kel } from "../../helper/kel"
 import { lang } from "../../helper/lang"
+import modal from "../../helper/modal"
 import setbadge from "../../helper/setbadge"
 import { IUserF } from "../../types/db.types"
+import { ICallUpdateF } from "../../types/peer.types"
+import VoiceCall from "./VoiceCall"
 
 export default class Incoming {
   isLocked: boolean
@@ -11,9 +14,11 @@ export default class Incoming {
   private btnDecline: HTMLDivElement
   private btnIgnore: HTMLDivElement
   user: IUserF
-  constructor(s: { user: IUserF }) {
+  private data: ICallUpdateF
+  constructor(s: { data: ICallUpdateF }) {
     this.isLocked = false
-    this.user = s.user
+    this.user = s.data.user
+    this.data = s.data
   }
   createElement(): void {
     this.box = kel("div", "box")
@@ -67,12 +72,38 @@ export default class Incoming {
     callActions.append(this.btnIgnore)
     this.box.append(callActions)
   }
+  btnListener(): void {
+    this.el.onclick = async (e) => {
+      if (e.target instanceof Node === false) return
+      if (this.btnIgnore.contains(e.target)) {
+        this.el.classList.add("out")
+        await modal.waittime(190)
+        this.el.classList.remove("out")
+        this.el.classList.add("ignored")
+      } else if (this.btnAnswer.contains(e.target)) {
+        this.destroy()
+        const voiceCall = new VoiceCall({ user: this.user })
+        voiceCall.answer(this.data.sdp)
+      } else {
+        if (this.el.classList.contains("ignored")) {
+          this.el.classList.add("out")
+          await modal.waittime(190)
+          this.el.classList.remove("out")
+          this.el.classList.remove("ignored")
+        }
+      }
+    }
+  }
   init(): void {
     this.createElement()
     eroot().append(this.el)
     this.writeCaller()
     this.writeCallType()
     this.writeCallActions()
+    this.btnListener()
+  }
+  destroy(): void {
+    this.el.remove()
   }
   run(): this {
     this.init()
