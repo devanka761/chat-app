@@ -351,7 +351,7 @@ $errorbg: #3d2b31;
             background-color: #00000000;
             padding: 10px;
             &:hover {
-              background-color: rgba($color: v.$pm1, $alpha: 0.25);
+              background-color: rgba($color: v.$pm1, $alpha: 0.2);
             }
             &.opt-profile {
               color: v.$cgreen;
@@ -379,6 +379,7 @@ $errorbg: #3d2b31;
         }
         .avatar {
           flex-shrink: 0;
+          min-width: 40px;
           cursor: pointer;
           img {
             width: 40px;
@@ -547,7 +548,7 @@ $errorbg: #3d2b31;
           .vc {
             padding: 10px;
             border-radius: 10px;
-            background-color: #2b2d3180;
+            background-color: rgba($color: v.$px25, $alpha: 0.5);
             display: flex;
             justify-content: left;
             align-items: center;
@@ -572,28 +573,34 @@ $errorbg: #3d2b31;
                 color: v.$softwhite;
               }
             }
-            &.missed {
+            &.ct-missed {
               color: v.$cred;
               .vc-icon::before {
                 content: "\e226";
               }
             }
-            &.rejected {
+            &.ct-rejected {
               color: v.$cred;
               .vc-icon::before {
                 content: "\e225";
               }
             }
-            &.outgoing {
+            &.ct-outgoing {
               color: v.$cgreen;
               .vc-icon::before {
                 content: "\e224";
               }
             }
-            &.incoming {
+            &.ct-incoming {
               color: v.$cgreen;
               .vc-icon::before {
                 content: "\e223";
+              }
+            }
+            &.ct-now {
+              color: v.$yellow;
+              .vc-icon::before {
+                content: "\f2a0";
               }
             }
           }
@@ -611,8 +618,8 @@ $errorbg: #3d2b31;
               -ms-user-select: text;
             }
             .edited {
-              color: v.$softwhite;
-              font-size: 0.8rem;
+              color: v.$swhite;
+              font-size: 0.7rem;
               text-align: right;
             }
             &.del {
@@ -676,12 +683,7 @@ $errorbg: #3d2b31;
           margin-top: 0;
         }
         &.follow {
-          margin-top: 2px;
-          .field {
-            .sender {
-              display: none;
-            }
-          }
+          margin-top: 3px;
         }
         &.highlight {
           animation: bgTrans 5s;

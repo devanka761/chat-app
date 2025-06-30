@@ -100,7 +100,8 @@ export function normalizeMessage(message_id: string, s: IMessageB): IMessageF {
     reply: s.r,
     edited: s.e,
     source: s.i,
-    readers: s.w
+    readers: s.w,
+    duration: s.dur
   }
 }
 export function minimizeMessage(uid: string, s: IMessageTempF): IMessageB {

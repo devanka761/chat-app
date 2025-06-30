@@ -42,7 +42,7 @@ export default class FolderCard {
             return k.m && k.m.length >= 1
           })
         : db.c.filter((k) => k.r.type === this.typeName && k.m && k.m.length >= 1)
-    const curUnread = cdb.filter((k) => k.m.find((msg) => msg.userid !== db.me.id && (!msg.readers || msg.readers.find((usr) => usr !== db.me.id))))
+    const curUnread = cdb.filter((k) => k.m.find((msg) => msg.userid !== db.me.id && msg.type !== "call" && msg.type !== "deleted" && (!msg.readers || !msg.readers.find((usr) => usr === db.me.id))))
     this.unread = curUnread.length
   }
   set unread(num: number) {

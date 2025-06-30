@@ -44,9 +44,8 @@ export interface IMessageB {
   i?: string
   d?: boolean
   r?: string
-  v?: string
+  dur?: number
   vc?: 1 | 0
-  rj?: 1 | 0
 }
 
 export interface IChatB {

@@ -67,7 +67,7 @@ export default class Tab implements PrimaryClass {
     this.friendsUnseen()
   }
   private chatsUnseen(): void {
-    const unseen = db.c.find((k) => k.m.find((msg) => msg.userid !== db.me.id && (!msg.readers || msg.readers.find((usr) => usr !== db.me.id))))
+    const unseen = db.c.find((k) => k.m.find((msg) => msg.userid !== db.me.id && msg.type !== "call" && msg.type !== "deleted" && (!msg.readers || !msg.readers.find((usr) => usr === db.me.id))))
     this.writeUnseen("chats", unseen ? true : false)
   }
   private friendsUnseen(): void {

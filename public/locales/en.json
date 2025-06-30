@@ -143,6 +143,7 @@
   "CALL_PLS": "Start the call by going to your friends' chat or profile then tap the Voice Call button",
   "CALL_REJECTION": "rejected",
   "CALL_OFFLINE": "User unreachable",
+  "CALL_NOW": "In Call",
   "CALL_MUTED":"muted",
   "CALL_DEAFEN":"deafen",
   "CALL_REJECTED": "Rejected",

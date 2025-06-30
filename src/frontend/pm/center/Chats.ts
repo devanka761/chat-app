@@ -51,7 +51,7 @@ export default class Chats implements PrimaryClass {
       .filter((ch) => ch.r.type === "group" || (ch.m && ch.m.length >= 1))
       .forEach((ch) => {
         const unread = ch.m.filter((ct) => {
-          return ct.userid !== db.me.id && ct.type !== "deleted" && !ct.readers?.includes(db.me.id)
+          return ct.userid !== db.me.id && ct.type !== "deleted" && ct.type !== "call" && !ct.readers?.includes(db.me.id)
         }).length
 
         const lastchat = ch.m[ch.m.length - 1] || noMessage()
@@ -124,7 +124,7 @@ export default class Chats implements PrimaryClass {
       card = new ChatBuilder({ data: s.roomdata, users: s.users, chat: s.chat, parent: this }).run()
       this.list.add(card)
     }
-    const read = s.chat.userid === db.me.id || (s.chat.readers && s.chat.readers.find((usr) => usr === db.me.id)) || s.chat.type === "deleted"
+    const read = s.chat.userid === db.me.id || (s.chat.readers && s.chat.readers.find((usr) => usr === db.me.id)) || s.chat.type === "deleted" || s.chat.type === "call" || s.chat.id === "-1"
     if (!read) card.addUnread(1)
     card.updateChat(s.chat, s.roomdata)
     this.card_list.prepend(card.html)
@@ -132,6 +132,11 @@ export default class Chats implements PrimaryClass {
 
     this.folders.entries.forEach((folder) => folder.updateUnread())
     this.writeIfEmpty(db.c)
+  }
+  setUnread(roomid: string, unread: number) {
+    const card = this.list.get(roomid)
+    if (card) card.setUnread(unread)
+    this.folders.entries.forEach((folder) => folder.updateUnread())
   }
   async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")

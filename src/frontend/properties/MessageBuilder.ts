@@ -14,6 +14,7 @@ import { TStatusIcon, TStatusText } from "../types/room.types"
 import OptionMsgBuilder from "./OptionMsgBuilder"
 import AudioBuilder from "./AudioBuilder"
 import { escapeWhiteSpace } from "../helper/escaper"
+import CallMsgBuilder from "./CallMsgBuilder"
 
 const statusIcon: TStatusIcon = {
   pending: '<i class="fa-duotone fa-solid fa-spinner-third fa-spin"></i>',
@@ -54,23 +55,34 @@ export default class MessageBuilder {
   private attach?: HTMLDivElement
   private textMessage: HTMLParagraphElement
   private textEdidted: HTMLSpanElement
-  private sendStatus: HTMLDivElement
+  private sendStatus?: HTMLDivElement | null
   private optmenu: HTMLDivElement
   public room: Room
   private optLocked: boolean
   private isRetry: boolean
   public raw?: IWritterF
   private lastStatus?: TStatusText
-  constructor(message: IMessageF, user: IUserF, room: Room, raw?: IWritterF) {
+  private call?: CallMsgBuilder
+  private index: number
+  private isNewUser: boolean
+  constructor(message: IMessageF, user: IUserF, room: Room, raw?: IWritterF, istemp?: boolean) {
     this.s = message
     this.user = user
     this.room = room
     this.optLocked = false
     this.isRetry = false
+    this.index = room.field.list.entries.length
     if (raw) this.raw = raw
+    this.run(istemp || false)
   }
   private createElement(): void {
+    const messageBefore = this.room.field.list.getByIndex(this.index - 1)
+    const userBefore = messageBefore?.user
+
+    this.isNewUser = !userBefore || userBefore.id !== this.user.id
+
     this.el = kel("div", "card")
+    if (!this.isNewUser) this.el.classList.add("follow")
     this.field = kel("div", "field")
     if (this.user.id === db.me.id) {
       this.el.classList.add("me")
@@ -82,11 +94,13 @@ export default class MessageBuilder {
     }
   }
   private renderUser(): void {
-    this.sender = kel("div", "chp sender")
-    this.sender.innerText = this.user.username
-    if (this.user.badges) setbadge(this.sender, this.user.badges)
-    this.field.append(this.sender)
-    if (this.avatar) {
+    if (this.isNewUser) {
+      this.sender = kel("div", "chp sender")
+      this.sender.innerText = this.user.username
+      if (this.user.badges) setbadge(this.sender, this.user.badges)
+      this.field.append(this.sender)
+    }
+    if (this.avatar && this.isNewUser) {
       this.img = new Image()
       this.img.onerror = () => (this.img.src = "/assets/user.jpg")
       this.img.alt = this.user.username
@@ -192,7 +206,10 @@ export default class MessageBuilder {
     this.field.append(this.attach)
   }
   private renderCall(): void {
-    // <div class="chp vc"><div class="vc-icon"></div><div class="vc-message"><p>Voice Call</p></div></div>
+    if (this.s.type !== "call") return
+    if (this.s.duration === undefined || this.s.duration === null) return
+    this.call = new CallMsgBuilder({ user: this.user, duration: this.s.duration })
+    this.field.append(this.call.html)
   }
   private renderText(): void {
     this.textMessage = kel("p")
@@ -208,9 +225,13 @@ export default class MessageBuilder {
     if (this.s.text) this.textMessage.innerText = escapeWhiteSpace(this.s.text)
   }
   private renderTime(): void {
+    const timeParent = kel("div", "chp time")
     this.timestamp = kel("div", "ts", { e: sdate.parseTime(this.s.timestamp) })
-    this.sendStatus = kel("div", "status")
-    const timeParent = kel("div", "chp time", { e: [this.timestamp, this.sendStatus] })
+    timeParent.append(this.timestamp)
+    if (this.user.id === db.me.id) {
+      this.sendStatus = kel("div", "status")
+      timeParent.append(this.sendStatus)
+    }
     this.field.append(timeParent)
   }
   set deleted(isDeleted: boolean) {
@@ -302,12 +323,12 @@ export default class MessageBuilder {
     if (["image", "video", "audio", "file"].find((ity) => ity === this.s.type)) {
       this.optmenu.append(new OptionMsgBuilder({ ...optConfig, optype: "download" }).run())
     }
-    if (this.s.text && this.s.text.length >= 1) {
+    if (this.s.text && this.s.text.length >= 1 && this.s.type !== "deleted") {
       this.optmenu.append(new OptionMsgBuilder({ ...optConfig, optype: "copy" }).run())
     }
     if (this.s.type === "deleted") {
       if (this.user.id === db.me.id) {
-        this.optmenu.remove()
+        this.closeOptmenu()
         return
       }
       this.el.prepend(this.optmenu)
@@ -345,7 +366,7 @@ export default class MessageBuilder {
         if (this.optmenu?.contains(target)) return
         if ((this.s.type === "video" || this.s.type === "voice" || this.s.type === "audio") && this.attach?.contains(target)) return
         if (this.reply?.contains(target)) return
-        if (this.s.type === "deleted" || this.lastStatus === "pending") return
+        if (this.s.type === "call" || this.lastStatus === "pending") return
       }
       if (this.optmenu && this.el.contains(this.optmenu)) return
       this.renderOptmenu(...args)
@@ -364,6 +385,7 @@ export default class MessageBuilder {
     return this.lastStatus
   }
   setStatus(statusText: TStatusText): void {
+    if (!this.sendStatus) return
     this.lastStatus = statusText
     if (statusText === "failed") {
       this.clickListener("retry", "cancel")
@@ -430,7 +452,7 @@ export default class MessageBuilder {
     this.attachFile(this.attach, this.s.source, false)
     return this
   }
-  run(isTemp?: boolean): this {
+  private run(isTemp?: boolean): this {
     this.init(isTemp || false)
     return this
   }

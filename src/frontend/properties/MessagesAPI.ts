@@ -11,6 +11,9 @@ export class MessagesAPI {
   get(message_id: string): MessageBuilder | null {
     return this.data.find((msg) => msg.id === message_id) || null
   }
+  getByIndex(index: number): MessageBuilder | null {
+    return this.data[index] || null
+  }
   add(msg: MessageBuilder): this {
     this.data.push(msg)
     return this

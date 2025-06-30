@@ -237,6 +237,17 @@ class ProcessClient {
       }
     }
   }
+  private readAllMessages(s: IZender) {
+    if (userState.content && userState.content.role === "room") {
+      const roomContent = userState.content as Room
+      if (roomContent.data.id !== s.from) return
+      roomContent.field.list.entries.forEach((msg) => {
+        if (msg.json.user.id === db.me.id) {
+          msg.setStatus("read")
+        }
+      })
+    }
+  }
   private offer(s: ICallUpdateF) {
     if (userState.incoming || userState.media) return
     const incoming = new Incoming({ data: s })

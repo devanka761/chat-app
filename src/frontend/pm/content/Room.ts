@@ -17,6 +17,9 @@ import { lang } from "../../helper/lang"
 import RoomRecorder from "../parts/RoomRecorder"
 import RoomTab from "../parts/RoomTab"
 import FriendBuilder from "../../properties/FriendBuilder"
+import Tab from "../header/Tab"
+import Chats from "../center/Chats"
+import socketClient from "../../manager/socketClient"
 
 export default class Room implements PrimaryClass {
   readonly role: string
@@ -80,12 +83,16 @@ export default class Room implements PrimaryClass {
     const chats = collection.find((ch) => ch.r.id === this.data.id)
     if (chats) {
       chats.m.forEach((ch) => {
+        if (ch.userid !== db.me.id && (!ch.readers || !ch.readers.find((usr) => usr === db.me.id))) {
+          if (!ch.readers) ch.readers = []
+          ch.readers.push(db.me.id)
+        }
         const user: IUserF = ch.userid === db.me.id ? db.me : chats.u.find((usr) => usr.id === ch.userid) || noUser()
         if (msgValidTypes.find((ity) => ity === ch.type)) {
           this.mediaToLoad++
         }
         const message = new MessageBuilder(ch, user, this)
-        this.field.send(message.run())
+        this.field.send(message)
         if (ch.userid === db.me.id) {
           if (this.data.type === "user" && ch.readers?.includes(this.data.id)) {
             message.setStatus("read")
@@ -94,6 +101,13 @@ export default class Room implements PrimaryClass {
           }
         }
       })
+      if (userState.center && userState.center.role === "chats") {
+        const chatscenter = userState.center as Chats | null
+        if (chatscenter) chatscenter.setUnread(this.data.id, 0)
+      }
+      const roottab = userState.tab as Tab | null
+      if (roottab) roottab.update("chats")
+      socketClient.send({ type: "readAllMessages", roomtype: this.data.type, roomid: this.data.id })
     }
     this.checkIfMediaReady()
   }
@@ -130,14 +144,14 @@ export default class Room implements PrimaryClass {
     const msg: IMessageF = messageSent.data.chat
     message.setTimeStamp(msg.timestamp)
     message.update(msg)
-    message.setStatus("sent")
+    if (message.currentStatus === "pending") message.setStatus("sent")
     message.clickListener()
     this.processUpdate(messageSent.data)
   }
   async createNewMessage(s: IWritterF): Promise<void> {
     const msg = { ...convertMessage(db.me.id, s), id: Date.now().toString(36) }
-    const message: MessageBuilder = new MessageBuilder(msg, db.me, this, s)
-    this.field.send(message.run(true))
+    const message: MessageBuilder = new MessageBuilder(msg, db.me, this, s, true)
+    this.field.send(message)
     this.sendNewMessage(s, message)
   }
   async sendEditedMessage(s: IWritterF): Promise<void> {
@@ -162,7 +176,7 @@ export default class Room implements PrimaryClass {
     const msg: IMessageF = messageSent.data.chat
     message.setTimeStamp(msg.timestamp)
     message.setText(msg.text as string)
-    message.setStatus("sent")
+    if (message.currentStatus === "pending") message.setStatus("sent")
     message.setEdited(msg.edited)
     message.clickListener()
     this.processUpdate(messageSent.data)
@@ -226,6 +240,20 @@ export default class Room implements PrimaryClass {
       msg.deleted = true
       return
     }
+
+    if (ch.userid !== db.me.id && (!ch.readers || !ch.readers.find((usr) => usr === db.me.id))) {
+      if (!ch.readers) ch.readers = []
+      ch.readers.push(db.me.id)
+    }
+
+    if (userState.center && userState.center.role === "chats") {
+      const chatscenter = userState.center as Chats
+      if (chatscenter) chatscenter.setUnread(this.data.id, 0)
+    }
+    const roottab = userState.tab as Tab | null
+    if (roottab) roottab.update("chats")
+    socketClient.send({ type: "readAllMessages", roomtype: this.data.type, roomid: this.data.id })
+
     if (msg) {
       msg.setTimeStamp(s.chat.timestamp)
       msg.setText(s.chat.text as string)
@@ -234,8 +262,9 @@ export default class Room implements PrimaryClass {
       return
     }
     const user: IUserF = ch.userid === db.me.id ? db.me : this.users.find((usr) => usr.id === ch.userid) || noUser()
+
     const newMessage = new MessageBuilder(s.chat, user, this)
-    this.field.send(newMessage.run())
+    this.field.send(newMessage)
   }
   async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
