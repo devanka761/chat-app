@@ -28,9 +28,15 @@ export class PeerCallHandler {
       this.remoteStream.addTrack(e.track)
     }
 
+    this.peerConnection.oniceconnectionstatechange = () => {
+      const state = this.peerConnection.iceConnectionState
+      if (state === "closed" || state === "disconnected" || state === "failed") {
+        this.options.onUnavailable?.()
+      }
+    }
+
     this.peerConnection.onconnectionstatechange = () => {
       const state = this.peerConnection.connectionState
-      console.log(state)
       if (state === "disconnected" || state === "closed") {
         this.options.onDisconnected?.()
       } else if (state === "failed") {
@@ -45,12 +51,9 @@ export class PeerCallHandler {
   }
 
   private setupDataChannelEvents(channel: RTCDataChannel): void {
-    channel.onopen = () => {
-      console.log("data channel opened")
-    }
-    channel.onerror = (err) => {
-      console.error("Data channel error", err)
-    }
+    channel.onopen = () => {}
+    channel.onerror = () => {}
+    channel.onclose = () => {}
     channel.onmessage = (e) => {
       try {
         this.options.onMessage?.(e.data.toString())
@@ -87,6 +90,10 @@ export class PeerCallHandler {
   }
 
   async handleSignal(data: SignalData): Promise<void> {
+    if (this.peerConnection.signalingState === "closed") {
+      this.hangup()
+      return
+    }
     if (data.type === "offer" || data.type === "answer") {
       if (!data.sdp) {
         console.error("Failed to get RTCSessionDescriptionInit", data.sdp)
@@ -98,6 +105,7 @@ export class PeerCallHandler {
       try {
         await this.peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate))
       } catch (e) {
+        this.hangup()
         console.error("Failed to add ICE candidate:", e)
       }
     }
@@ -111,8 +119,6 @@ export class PeerCallHandler {
   send(message: string) {
     if (this.dataChannel && this.dataChannel.readyState === "open") {
       this.dataChannel.send(message)
-    } else {
-      console.warn("Data channel is not ready to send a message")
     }
   }
 

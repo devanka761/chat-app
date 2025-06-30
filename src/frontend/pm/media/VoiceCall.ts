@@ -1,4 +1,4 @@
-import { epm, kel, qutor } from "../../helper/kel"
+import { epm, eroot, kel, qutor } from "../../helper/kel"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import setbadge from "../../helper/setbadge"
@@ -25,6 +25,8 @@ export default class VoiceCall {
   peer: PeerCallHandler
   private microphone: boolean
   private speaker: boolean
+  waiting?: string | null
+  calltimeout: ReturnType<typeof setTimeout> | null
   constructor(s: { user: IUserF }) {
     this.user = s.user
     this.isLocked = false
@@ -80,32 +82,41 @@ export default class VoiceCall {
     this.btnHangUp = kel("div", "btn btn-hangup", { e: '<i class="fa-solid fa-phone-hangup fa-fw"></i>' })
     this.rightAct.append(this.btnHangUp)
   }
-  async call(): Promise<void> {
+  private async setMediaStream(): Promise<void> {
     this.mediaStream = await getPeerStream()
     if (!this.mediaStream) {
-      this.off()
       await modal.alert(lang.CONTENT_NO_MEDIA_DEVICES)
-      return
+      this.destroy()
     }
+  }
+  async call(): Promise<void> {
+    await this.setMediaStream()
+    if (!this.mediaStream) return
+    if (this.waiting && this.waiting === "hangup") {
+      return this.destroy()
+    }
+    this.timestamp.innerHTML = lang.CALL_CALLING
     this.peer.call(this.mediaStream)
   }
   async answer(offer: RTCSessionDescriptionInit): Promise<void> {
-    this.mediaStream = await getPeerStream()
-    if (!this.mediaStream) {
-      this.off()
-      await modal.alert(lang.CONTENT_NO_MEDIA_DEVICES)
-      return
+    await this.setMediaStream()
+    if (!this.mediaStream) return
+    if (this.waiting && this.waiting === "hangup") {
+      return this.destroy()
     }
+    this.timestamp.innerHTML = lang.CALL_CONNECTING
     this.peer.answer(this.mediaStream, offer)
   }
   private enableActions(): void {
+    this.clearTime()
     this.microphone = true
     this.speaker = true
     this.leftAct.classList.remove("disabled")
+    this.timestamp.innerHTML = lang.CALL_CONNECTING
     this.btnListener()
   }
   private btnListener(): void {
-    this.el.onclick = (event) => {
+    this.el.onclick = async (event) => {
       const { target } = event
       if (target instanceof Node === false) return
       if (this.btnMute.contains(target)) {
@@ -132,7 +143,7 @@ export default class VoiceCall {
         this.peerMedia.volume = Number(this.speaker)
 
         const icon = qutor("i", this.btnDeafen)
-        if (this.microphone) {
+        if (this.speaker) {
           this.btnDeafen.classList.remove("active")
           icon?.classList.remove("fa-volume-slash")
           icon?.classList.add("fa-volume")
@@ -144,7 +155,25 @@ export default class VoiceCall {
 
         this.peer.send("speaker-" + (this.speaker ? "on" : "off"))
       } else if (this.btnHangUp.contains(target)) {
-        this.off()
+        socketClient.send({ type: "hangup", to: this.user.id })
+        this.peer.send("hangup")
+        this.destroy()
+      } else if (this.btnMinimize.contains(target)) {
+        this.el.classList.add("out")
+        await modal.waittime(500)
+        epm().classList.add("movedown")
+        this.el.classList.remove("out")
+        this.el.classList.add("minimized")
+        await modal.waittime(500)
+        epm().classList.remove("movedown")
+        epm().classList.add("oncall")
+      } else if (this.el.classList.contains("minimized")) {
+        this.el.classList.add("out")
+        epm().classList.remove("oncall")
+        epm().classList.add("moveup")
+        await modal.waittime(500)
+        this.el.classList.remove("out", "minimized")
+        epm().classList.remove("moveup")
       }
     }
   }
@@ -172,21 +201,43 @@ export default class VoiceCall {
       if (this.actInfo.contains(card)) this.actInfo.removeChild(card)
     }
   }
-  deafen(speaker: boolean) {
-    this.peer.send("speaker-" + (speaker ? "on" : "off"))
+  off(): void {
+    this.peer.hangup()
+    if (this.peerMedia) {
+      this.peerMedia.pause()
+      this.peerMedia.remove()
+      this.peerMedia = null
+    }
+    if (this.mediaStream) {
+      this.mediaStream.getTracks().forEach((track) => track.stop())
+      this.mediaStream = null
+    }
+  }
+  clearTime() {
+    if (this.calltimeout) {
+      clearTimeout(this.calltimeout)
+      this.calltimeout = null
+    }
+  }
+  async destroy(): Promise<void> {
+    this.clearTime()
+    this.off()
+    if (this.el) this.el.remove()
+    epm().classList.remove("oncall")
+    userState.media = null
   }
   run(): void {
     userState.media = this
     this.createElement()
-    epm().append(this.el)
+    eroot().append(this.el)
     this.writeBackground()
     this.writeTab()
     this.writeActions()
     this.startHandler()
     this.btnListener()
-  }
-  off(): void {
-    this.peer.hangup()
+    this.calltimeout = setTimeout(() => {
+      this.btnHangUp.click()
+    }, 10000)
   }
   private startHandler(): void {
     this.peer = new PeerCallHandler({
@@ -213,28 +264,16 @@ export default class VoiceCall {
           case "speaker-off":
             this.infoDeafen(true)
             break
+          case "hangup":
+            this.destroy()
+            break
           default:
             break
         }
       },
-      onDisconnected: () => {
-        this.off()
-        if (this.peerMedia) {
-          this.peerMedia.pause()
-          this.peerMedia.remove()
-          this.peerMedia = null
-        }
-        console.log("disconnected")
-      },
-      onConnectionFailed: () => {
-        this.off()
-        if (this.peerMedia) {
-          this.peerMedia.pause()
-          this.peerMedia.remove()
-          this.peerMedia = null
-        }
-        console.log("connection failed")
-      }
+      onDisconnected: () => this.destroy(),
+      onUnavailable: () => this.destroy(),
+      onConnectionFailed: () => this.destroy()
     })
   }
 }

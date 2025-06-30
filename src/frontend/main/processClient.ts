@@ -1,6 +1,7 @@
 import { IZender } from "../../backend/types/validate.types"
 import { escapeHTML } from "../helper/escaper"
 import { lang } from "../helper/lang"
+import modal from "../helper/modal"
 import notip from "../helper/notip"
 import db from "../manager/db"
 import Chats from "../pm/center/Chats"
@@ -45,7 +46,7 @@ class ProcessClient {
       friendcenter.update(user.isFriend || 0, { user, room })
     }
   }
-  unfriend(s: { user: IUserF }): void {
+  private unfriend(s: { user: IUserF }): void {
     const user = s.user
     const room: IRoomDataF = {
       id: user.id,
@@ -69,7 +70,7 @@ class ProcessClient {
       friendcenter.update(user.isFriend || 0, { user, room })
     }
   }
-  acceptfriend(s: { user: IUserF }): void {
+  private acceptfriend(s: { user: IUserF }): void {
     const user = s.user
     if (db.me.req) {
       db.me.req = db.me.req.filter((usr) => usr.id !== user.id)
@@ -112,7 +113,7 @@ class ProcessClient {
       friendCenter.update(user.isFriend || 0, { user, room })
     }
   }
-  cancelfriend(s: { user: IUserF }): void {
+  private cancelfriend(s: { user: IUserF }): void {
     const user = s.user
     const room: IRoomDataF = {
       id: user.id,
@@ -138,7 +139,7 @@ class ProcessClient {
     }
   }
   // ignorefriend
-  sendmessage(s: IMessageUpdateF): void {
+  private sendmessage(s: IMessageUpdateF): void {
     let dbchat = db.c.find((k) => k.r.id === s.roomdata.id)
     if (!dbchat) {
       db.c.push({
@@ -176,7 +177,7 @@ class ProcessClient {
       }
     }
   }
-  editmessage(s: IMessageUpdateF): void {
+  private editmessage(s: IMessageUpdateF): void {
     const dbchat = db.c.find((k) => k.r.id === s.roomdata.id)
     if (dbchat) {
       const oldDB = dbchat.m.find((ch) => ch.id === s.chat.id)
@@ -205,7 +206,7 @@ class ProcessClient {
       }
     }
   }
-  deletemessage(s: IMessageUpdateF): void {
+  private deletemessage(s: IMessageUpdateF): void {
     const dbchat = db.c.find((k) => k.r.id === s.roomdata.id)
     if (dbchat) {
       const oldDB = dbchat.m.find((ch) => ch.id === s.chat.id)
@@ -236,17 +237,45 @@ class ProcessClient {
       }
     }
   }
-  offer(s: ICallUpdateF) {
+  private offer(s: ICallUpdateF) {
+    if (userState.incoming || userState.media) return
     const incoming = new Incoming({ data: s })
     incoming.run()
   }
-  answer(s: ICallUpdateF) {
+  private answer(s: ICallUpdateF) {
     if (!userState.media) return
     const voiceCall = userState.media as VoiceCall
     voiceCall.peer.handleSignal(s)
   }
-  candidate(s: ICallUpdateF) {
+  private candidate(s: ICallUpdateF) {
     this.answer(s)
+  }
+  private hangup(s: ICallUpdateF) {
+    const voiceCall = userState.media as VoiceCall | null
+    if (voiceCall && s.user.id === voiceCall.user.id) {
+      voiceCall.waiting = "hangup"
+      voiceCall.destroy()
+    }
+    const incomingCall = userState.incoming as Incoming | null
+    if (incomingCall && s.user.id === incomingCall.user.id) {
+      incomingCall.destroy()
+    }
+  }
+  private reject(s: ICallUpdateF) {
+    const voiceCall = userState.media as VoiceCall | null
+    if (voiceCall && s.user.id === voiceCall.user.id) {
+      notip({ ic: "phone-hangup", a: s.user.username, b: lang.CALL_REJECTION, c: "4" })
+      voiceCall.destroy()
+      modal.alert({ ic: "phone-hangup", msg: `${s.user.username} ${lang.CALL_REJECTION}` })
+    }
+  }
+  private calloffline(s: ICallUpdateF) {
+    const voiceCall = userState.media as VoiceCall | null
+    if (voiceCall && s.user.id === voiceCall.user.id) {
+      notip({ ic: "signal-slash", a: s.user.username, b: lang.CALL_OFFLINE, c: "4" })
+      voiceCall.destroy()
+      modal.alert({ ic: "signal-slash", msg: `${s.user.username} ${lang.CALL_OFFLINE}` })
+    }
   }
   run(type: string, data: IZender): void {
     if (!this[type]) return

@@ -4,22 +4,38 @@ import { ISocketB, TSocketHandlerB } from "../types/relay.types"
 import { getUser } from "./profile.controller"
 
 const socketMessage: TSocketHandlerB = {
-  offer: (uid, from, data) => {
+  calls: (uid, from, data) => {
     if (!data.to) return
     const udb = db.ref.u[data.to as string]
-    if (!udb || !udb.socket) return
+    if (!udb || !udb.socket) {
+      const sender = relay.get(from)
+      if (sender) {
+        const user = getUser(uid, data.to as string)
+        sender.socket.send(JSON.stringify({ type: "calloffline", user }))
+      }
+      return
+    }
     const peerid = udb.socket
     const target = relay.get(peerid)
     const user = getUser(data.to as string, uid)
     if (target && target.socket.readyState === WebSocket.OPEN) {
-      target.socket.send(JSON.stringify({ ...data, from, user }))
+      target.socket.send(JSON.stringify({ ...data, user }))
     }
   },
+  offer: (uid, from, data) => {
+    socketMessage.calls(uid, from, data)
+  },
   answer: (uid, from, data) => {
-    socketMessage.offer(uid, from, data)
+    socketMessage.calls(uid, from, data)
   },
   candidate: (uid, from, data) => {
-    socketMessage.offer(uid, from, data)
+    socketMessage.calls(uid, from, data)
+  },
+  hangup: (uid, from, data) => {
+    socketMessage.calls(uid, from, data)
+  },
+  reject: (uid, from, data) => {
+    socketMessage.calls(uid, from, data)
   }
 }
 

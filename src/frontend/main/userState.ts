@@ -3,6 +3,7 @@ import appConfig from "../../backend/config/public.config.json"
 import HeaderBar from "../pm/header/HeaderBar"
 import Tab from "../pm/header/Tab"
 import VoiceCall from "../pm/media/VoiceCall"
+import Incoming from "../pm/media/Incoming"
 
 class UserState {
   public notif: UserNotif
@@ -12,6 +13,7 @@ class UserState {
   private currcenter: PrimaryClass | null
   private currcontent: PrimaryClass | null
   private currMedia: VoiceCall | null
+  private currIncoming: Incoming | null
   public locked: UserLocked
   private saveKey: string
   constructor() {
@@ -52,6 +54,12 @@ class UserState {
   }
   get media(): VoiceCall | null {
     return this.currMedia
+  }
+  set incoming(newincoming: Incoming | null) {
+    this.currIncoming = newincoming
+  }
+  get incoming(): Incoming | null {
+    return this.currIncoming
   }
   save(): void {
     window.localStorage.setItem(

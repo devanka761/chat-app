@@ -17,6 +17,7 @@ export type PeerCallHandlerOptions = {
   onConnectionFailed?: () => void
   onStream?: (stream: MediaStream) => void
   onMessage?: (message: string) => void
+  onUnavailable?: () => void
 }
 
 export type TSocketMessageF = {

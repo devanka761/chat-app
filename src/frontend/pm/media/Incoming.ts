@@ -2,6 +2,8 @@ import { epm, kel } from "../../helper/kel"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import setbadge from "../../helper/setbadge"
+import userState from "../../main/userState"
+import socketClient from "../../manager/socketClient"
 import { IUserF } from "../../types/db.types"
 import { ICallUpdateF } from "../../types/peer.types"
 import VoiceCall from "./VoiceCall"
@@ -84,6 +86,9 @@ export default class Incoming {
         this.destroy()
         const voiceCall = new VoiceCall({ user: this.user })
         voiceCall.answer(this.data.sdp)
+      } else if (this.btnDecline.contains(e.target)) {
+        this.destroy()
+        socketClient.send({ type: "reject", to: this.user.id })
       } else {
         if (this.el.classList.contains("ignored")) {
           this.el.classList.add("out")
@@ -104,8 +109,10 @@ export default class Incoming {
   }
   destroy(): void {
     this.el.remove()
+    userState.incoming = null
   }
   run(): this {
+    userState.incoming = this
     this.init()
     return this
   }
