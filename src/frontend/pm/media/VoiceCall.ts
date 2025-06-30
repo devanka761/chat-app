@@ -1,4 +1,4 @@
-import { eroot, kel, qutor } from "../../helper/kel"
+import { epm, kel, qutor } from "../../helper/kel"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import setbadge from "../../helper/setbadge"
@@ -102,30 +102,51 @@ export default class VoiceCall {
     this.microphone = true
     this.speaker = true
     this.leftAct.classList.remove("disabled")
-    this.actionsListener()
-  }
-  private actionsListener(): void {
-    this.btnMute.onclick = () => {
-      if (!this.mediaStream) return
-      this.microphone = !this.microphone
-      this.mediaStream.getTracks().forEach((track) => {
-        track.enabled = this.microphone
-      })
-      const icon = qutor("i", this.btnMute)
-      if (this.microphone) {
-        this.btnMute.classList.remove("active")
-        icon?.classList.remove("fa-microphone-slash")
-        icon?.classList.add("fa-microphone")
-      } else {
-        this.btnMute.classList.add("active")
-        icon?.classList.remove("fa-microphone")
-        icon?.classList.add("fa-microphone-slash")
-      }
-      this.peer.send("microphone-" + (this.microphone ? "on" : "off"))
-    }
+    this.btnListener()
   }
   private btnListener(): void {
-    this.btnHangUp.onclick = () => this.off()
+    this.el.onclick = (event) => {
+      const { target } = event
+      if (target instanceof Node === false) return
+      if (this.btnMute.contains(target)) {
+        if (!this.mediaStream || !this.peerMedia) return
+        this.microphone = !this.microphone
+        this.mediaStream.getTracks().forEach((track) => {
+          track.enabled = this.microphone
+        })
+        const icon = qutor("i", this.btnMute)
+        if (this.microphone) {
+          this.btnMute.classList.remove("active")
+          icon?.classList.remove("fa-microphone-slash")
+          icon?.classList.add("fa-microphone")
+        } else {
+          this.btnMute.classList.add("active")
+          icon?.classList.remove("fa-microphone")
+          icon?.classList.add("fa-microphone-slash")
+        }
+        this.peer.send("microphone-" + (this.microphone ? "on" : "off"))
+      } else if (this.btnDeafen.contains(target)) {
+        if (!this.peerMedia || !this.mediaStream) return
+        this.speaker = !this.speaker
+
+        this.peerMedia.volume = Number(this.speaker)
+
+        const icon = qutor("i", this.btnDeafen)
+        if (this.microphone) {
+          this.btnDeafen.classList.remove("active")
+          icon?.classList.remove("fa-volume-slash")
+          icon?.classList.add("fa-volume")
+        } else {
+          this.btnDeafen.classList.add("active")
+          icon?.classList.remove("fa-volume")
+          icon?.classList.add("fa-volume-slash")
+        }
+
+        this.peer.send("speaker-" + (this.speaker ? "on" : "off"))
+      } else if (this.btnHangUp.contains(target)) {
+        this.off()
+      }
+    }
   }
   infoMute(isMute: boolean) {
     let card = qutor(".mute", this.actInfo)
@@ -157,7 +178,7 @@ export default class VoiceCall {
   run(): void {
     userState.media = this
     this.createElement()
-    eroot().append(this.el)
+    epm().append(this.el)
     this.writeBackground()
     this.writeTab()
     this.writeActions()

@@ -1,4 +1,4 @@
-import { eroot, kel } from "../../helper/kel"
+import { epm, kel } from "../../helper/kel"
 import modal from "../../helper/modal"
 import noUser from "../../helper/noUser"
 import userState from "../../main/userState"
@@ -128,7 +128,7 @@ export default class Friends implements PrimaryClass {
   run(): void {
     userState.center = this
     this.createElement()
-    eroot().append(this.el)
+    epm().append(this.el)
     this.writeTypeList()
     this.writeFriendList()
     this.setTypeList(this.contacts.enabled)

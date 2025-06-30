@@ -1,7 +1,7 @@
 import modal from "../../helper/modal"
 import userState from "../../main/userState"
 import { PrimaryClass } from "../../types/userState.types"
-import { eroot, kel, qutor } from "../../helper/kel"
+import { epm, kel, qutor } from "../../helper/kel"
 import { klang, lang } from "../../helper/lang"
 import { Languages } from "../../types/helper.types"
 import adap from "../../main/adaptiveState"
@@ -179,7 +179,7 @@ export default class Settings implements PrimaryClass {
   run(): void {
     userState.content = this
     this.createElement()
-    eroot().append(this.el)
+    epm().append(this.el)
     this.writeSettings()
     this.btnListener()
   }

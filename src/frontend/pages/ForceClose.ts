@@ -1,4 +1,4 @@
-import { kel, eroot } from "../helper/kel"
+import { kel, epm } from "../helper/kel"
 import { ForceCloseObject } from "../types/cloud.types"
 
 export default class ForceClose {
@@ -25,7 +25,7 @@ export default class ForceClose {
     this.el.append(ebox)
   }
   destroyAll() {
-    const appel = eroot()
+    const appel = epm()
     while (appel.lastChild) appel.lastChild.remove()
     appel.append(this.el)
   }

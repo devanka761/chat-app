@@ -6,7 +6,7 @@ import { PrimaryClass } from "../../types/userState.types"
 import { IChatsF, IMessageF, IRoomDataF, IUserF } from "../../types/db.types"
 import ChatsAPI from "../../properties/ChatsAPI"
 import ChatBuilder from "../../properties/ChatBuilder"
-import { kel, eroot } from "../../helper/kel"
+import { kel, epm } from "../../helper/kel"
 import { TChatsTypeF } from "../../types/room.types"
 import FolderCard from "../parts/FolderCard"
 import FolderAPI from "../../properties/FolderAPI"
@@ -148,7 +148,7 @@ export default class Chats implements PrimaryClass {
   run(): void {
     userState.center = this
     this.createElement()
-    eroot().append(this.el)
+    epm().append(this.el)
     this.writeTypeList()
     this.writeChatList()
     this.setTypeList(this.folders.enabled)

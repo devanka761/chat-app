@@ -1,4 +1,4 @@
-import { eroot, kel } from "../../helper/kel"
+import { epm, kel } from "../../helper/kel"
 import setbadge from "../../helper/setbadge"
 import adap from "../../main/adaptiveState"
 import db from "../../manager/db"
@@ -86,7 +86,7 @@ export default class Member {
   init(): void {
     if (this.user.id === db.me.id) this.user = db.me
     this.createElement()
-    eroot().append(this.el)
+    epm().append(this.el)
     this.writeUser()
     this.btnListener()
   }

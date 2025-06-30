@@ -9,7 +9,7 @@ import { IRepB } from "../../backend/types/validate.types"
 import HeaderBar from "../pm/header/HeaderBar"
 import { LangObject, Languages } from "../types/helper.types"
 import db from "../manager/db"
-import { kel } from "../helper/kel"
+import { eroot, kel } from "../helper/kel"
 import Empty from "../pm/content/Empty"
 import socketClient from "../manager/socketClient"
 import adap from "../main/adaptiveState"
@@ -67,6 +67,8 @@ export default class Auth {
     this.initializeData(isUser.data ?? {})
     this.el.remove()
     auth_container?.remove()
+    const epm: HTMLDivElement = kel("div", "pm")
+    eroot().append(epm)
     adap.setHeader(new HeaderBar())
     const newcontent = isUser.data.isFirst ? new Account() : new Empty()
     adap.setCenter(new Chats())

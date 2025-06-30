@@ -8,6 +8,9 @@ export function qutor(classnames: string, parent?: HTMLElement | null): HTMLElem
 export function eroot(): HTMLDivElement {
   return document.querySelector(".app") as HTMLDivElement
 }
+export function epm(): HTMLDivElement {
+  return document.querySelector(".app .pm") as HTMLDivElement
+}
 
 const idAliases = ["id", "#"] as const
 const childAliases = ["child", "e"] as const

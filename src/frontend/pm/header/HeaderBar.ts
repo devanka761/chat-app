@@ -1,4 +1,4 @@
-import { eroot, kel, qutor } from "../../helper/kel"
+import { epm, kel, qutor } from "../../helper/kel"
 import modal from "../../helper/modal"
 import userState from "../../main/userState"
 import { PrimaryClass } from "../../types/userState.types"
@@ -67,7 +67,7 @@ export default class HeaderBar implements PrimaryClass {
   run(): void {
     userState.header = this
     this.createElement()
-    eroot().append(this.el)
+    epm().append(this.el)
     this.btnListener()
   }
 }

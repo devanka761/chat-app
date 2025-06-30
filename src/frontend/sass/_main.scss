@@ -111,12 +111,21 @@ input[type="checkbox"]:checked::before {
   overflow-x: hidden;
   overflow-y: hidden;
 }
-.fuwi {
+.pm {
   position: absolute;
-  bottom: 0;
   left: 0;
+  bottom: 0;
   width: 100%;
   height: 100%;
+  &.oncall {
+    height: calc(100% - 35px);
+  }
+  &.movedown {
+    animation: pm_move_down 0.5s forwards;
+  }
+  &.moveup {
+    animation: pm_move_up 0.5s forwards;
+  }
 }
 .center {
   text-align: center;

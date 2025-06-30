@@ -1,4 +1,4 @@
-import { eroot, kel, qutor } from "../../helper/kel"
+import { epm, kel, qutor } from "../../helper/kel"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import sdate from "../../helper/sdate"
@@ -391,7 +391,7 @@ export default class Account implements PrimaryClass {
   run(): void {
     userState.content = this
     this.createElement()
-    eroot().append(this.el)
+    epm().append(this.el)
     this.writeDetail()
     this.btnListener()
   }

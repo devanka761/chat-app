@@ -1,4 +1,4 @@
-import { eroot, kel } from "../../helper/kel"
+import { epm, kel } from "../../helper/kel"
 import modal from "../../helper/modal"
 import noUser from "../../helper/noUser"
 import userState from "../../main/userState"
@@ -252,7 +252,7 @@ export default class Room implements PrimaryClass {
   run(): void {
     userState.content = this
     this.createElement()
-    eroot().append(this.el)
+    epm().append(this.el)
     this.writeData()
   }
 }

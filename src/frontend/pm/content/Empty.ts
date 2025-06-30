@@ -1,4 +1,4 @@
-import { eroot, kel } from "../../helper/kel"
+import { epm, kel } from "../../helper/kel"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import userState from "../../main/userState"
@@ -37,6 +37,6 @@ export default class Empty implements PrimaryClass {
   run(): void {
     userState.content = this
     this.createElement()
-    eroot().append(this.el)
+    epm().append(this.el)
   }
 }

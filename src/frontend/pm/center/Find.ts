@@ -1,4 +1,4 @@
-import { kel, eroot } from "../../helper/kel"
+import { kel, epm } from "../../helper/kel"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import notip from "../../helper/notip"
@@ -115,7 +115,7 @@ export default class Find implements PrimaryClass {
   run(): void {
     userState.center = this
     this.createElement()
-    eroot().append(this.el)
+    epm().append(this.el)
     this.renderBtn()
   }
 }
