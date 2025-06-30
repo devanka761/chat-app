@@ -138,6 +138,8 @@
   "POSTS_CREATE": "Buat Postingan",
   "POSTS_SHARE": "Bagikan",
   "POSTS_CHOOSE_IMG": "Pilih Gambar",
+  "CALL_MUTED":"menonaktifkan microphone",
+  "CALL_DEAFEN":"menonaktifkan suara",
   "CALL_PREPARING":"Mempersiapkan",
   "CALL_CALLING":"Memanggil",
   "CALL_RINGING":"Berdering",

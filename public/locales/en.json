@@ -141,6 +141,8 @@
   "CALL_RINGING":"Ringing",
   "CALL_PLS": "Start the call by going to your friends' chat or profile then tap the Voice Call button",
   "CALL_MAX_PING_TRIES_LIMIT": "User unreachable",
+  "CALL_MUTED":"muted",
+  "CALL_DEAFEN":"deafen",
   "CALL_REJECTED": "Rejected",
   "CALL_MISSED_1": "No Answer",
   "CALL_MISSED_2": "Missed",

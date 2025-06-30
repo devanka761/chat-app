@@ -104,13 +104,7 @@ export default class RoomRecorder {
   private async destroyMedia(): Promise<void> {
     if (this.mediaStream) {
       await modal.waittime(1000)
-      for (const track of this.mediaStream.getTracks()) {
-        track.enabled = false
-        track.stop()
-        await modal.waittime(100)
-        this.mediaStream.removeTrack(track)
-        await modal.waittime(100)
-      }
+      this.mediaStream.getTracks().forEach((track) => track.stop())
     }
     this.mediaRecorder = null
     this.mediaStream = null

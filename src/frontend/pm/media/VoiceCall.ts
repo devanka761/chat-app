@@ -1,4 +1,4 @@
-import { eroot, kel } from "../../helper/kel"
+import { eroot, kel, qutor } from "../../helper/kel"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import setbadge from "../../helper/setbadge"
@@ -23,11 +23,15 @@ export default class VoiceCall {
   private mediaStream: MediaStream | null
   private peerMedia: HTMLAudioElement | null
   peer: PeerCallHandler
+  private microphone: boolean
+  private speaker: boolean
   constructor(s: { user: IUserF }) {
     this.user = s.user
     this.isLocked = false
     this.mediaStream = null
     this.peerMedia = null
+    this.microphone = false
+    this.speaker = false
     this.run()
   }
   private createElement(): void {
@@ -76,23 +80,79 @@ export default class VoiceCall {
     this.btnHangUp = kel("div", "btn btn-hangup", { e: '<i class="fa-solid fa-phone-hangup fa-fw"></i>' })
     this.rightAct.append(this.btnHangUp)
   }
-  async call() {
-    const stream = await getPeerStream()
-    if (!stream) {
+  async call(): Promise<void> {
+    this.mediaStream = await getPeerStream()
+    if (!this.mediaStream) {
       this.off()
       await modal.alert(lang.CONTENT_NO_MEDIA_DEVICES)
       return
     }
-    this.peer.call(stream)
+    this.peer.call(this.mediaStream)
   }
-  async answer(offer: RTCSessionDescriptionInit) {
-    const stream = await getPeerStream()
-    if (!stream) {
+  async answer(offer: RTCSessionDescriptionInit): Promise<void> {
+    this.mediaStream = await getPeerStream()
+    if (!this.mediaStream) {
       this.off()
       await modal.alert(lang.CONTENT_NO_MEDIA_DEVICES)
       return
     }
-    this.peer.answer(stream, offer)
+    this.peer.answer(this.mediaStream, offer)
+  }
+  private enableActions(): void {
+    this.microphone = true
+    this.speaker = true
+    this.leftAct.classList.remove("disabled")
+    this.actionsListener()
+  }
+  private actionsListener(): void {
+    this.btnMute.onclick = () => {
+      if (!this.mediaStream) return
+      this.microphone = !this.microphone
+      this.mediaStream.getTracks().forEach((track) => {
+        track.enabled = this.microphone
+      })
+      const icon = qutor("i", this.btnMute)
+      if (this.microphone) {
+        this.btnMute.classList.remove("active")
+        icon?.classList.remove("fa-microphone-slash")
+        icon?.classList.add("fa-microphone")
+      } else {
+        this.btnMute.classList.add("active")
+        icon?.classList.remove("fa-microphone")
+        icon?.classList.add("fa-microphone-slash")
+      }
+      this.peer.send("microphone-" + (this.microphone ? "on" : "off"))
+    }
+  }
+  private btnListener(): void {
+    this.btnHangUp.onclick = () => this.off()
+  }
+  infoMute(isMute: boolean) {
+    let card = qutor(".mute", this.actInfo)
+    if (!card) {
+      card = kel("div", "card mute")
+      card.innerHTML = `<i class="fa-solid fa-microphone-slash"></i> <span>${this.user.username} ${lang.CALL_MUTED}</span>`
+    }
+    if (isMute) {
+      if (!this.actInfo.contains(card)) this.actInfo.append(card)
+    } else {
+      if (this.actInfo.contains(card)) this.actInfo.removeChild(card)
+    }
+  }
+  infoDeafen(isDeafen: boolean) {
+    let card = qutor(".deafen", this.actInfo)
+    if (!card) {
+      card = kel("div", "card deafen")
+      card.innerHTML = `<i class="fa-solid fa-volume-slash"></i> <span>${this.user.username} ${lang.CALL_DEAFEN}</span>`
+    }
+    if (isDeafen) {
+      if (!this.actInfo.contains(card)) this.actInfo.append(card)
+    } else {
+      if (this.actInfo.contains(card)) this.actInfo.removeChild(card)
+    }
+  }
+  deafen(speaker: boolean) {
+    this.peer.send("speaker-" + (speaker ? "on" : "off"))
   }
   run(): void {
     userState.media = this
@@ -107,21 +167,34 @@ export default class VoiceCall {
   off(): void {
     this.peer.hangup()
   }
-  private btnListener(): void {
-    this.btnHangUp.onclick = () => {
-      this.off()
-    }
-  }
   private startHandler(): void {
     this.peer = new PeerCallHandler({
       onSignal: (data) => {
         socketClient.send({ ...data, to: this.user.id })
       },
       onStream: (stream) => {
-        console.log("streaming...")
         this.peerMedia = new Audio()
         this.peerMedia.srcObject = stream
         this.peerMedia.play()
+        this.enableActions()
+      },
+      onMessage: (message) => {
+        switch (message) {
+          case "microphone-on":
+            this.infoMute(false)
+            break
+          case "microphone-off":
+            this.infoMute(true)
+            break
+          case "speaker-on":
+            this.infoDeafen(false)
+            break
+          case "speaker-off":
+            this.infoDeafen(true)
+            break
+          default:
+            break
+        }
       },
       onDisconnected: () => {
         this.off()

@@ -6,6 +6,7 @@ export class PeerCallHandler {
   private localStream?: MediaStream
   private remoteStream?: MediaStream
   private options: PeerCallHandlerOptions
+  private dataChannel?: RTCDataChannel
   constructor(options: PeerCallHandlerOptions) {
     this.options = options
     this.peerConnection = new RTCPeerConnection(peerConfiguration)
@@ -36,6 +37,27 @@ export class PeerCallHandler {
         this.options.onConnectionFailed?.()
       }
     }
+
+    this.peerConnection.ondatachannel = (e) => {
+      this.dataChannel = e.channel
+      this.setupDataChannelEvents(this.dataChannel)
+    }
+  }
+
+  private setupDataChannelEvents(channel: RTCDataChannel): void {
+    channel.onopen = () => {
+      console.log("data channel opened")
+    }
+    channel.onerror = (err) => {
+      console.error("Data channel error", err)
+    }
+    channel.onmessage = (e) => {
+      try {
+        this.options.onMessage?.(e.data.toString())
+      } catch (err) {
+        console.warn("Message is not valid " + e.data, err)
+      }
+    }
   }
 
   async call(stream: MediaStream): Promise<void> {
@@ -43,6 +65,9 @@ export class PeerCallHandler {
     stream.getTracks().forEach((track) => {
       this.peerConnection.addTrack(track, stream)
     })
+
+    this.dataChannel = this.peerConnection.createDataChannel("control")
+    this.setupDataChannelEvents(this.dataChannel)
 
     const offer = await this.peerConnection.createOffer()
     await this.peerConnection.setLocalDescription(offer)
@@ -82,6 +107,15 @@ export class PeerCallHandler {
     this.peerConnection.getSenders().forEach((sender) => sender.track?.stop())
     this.peerConnection.close()
   }
+
+  send(message: string) {
+    if (this.dataChannel && this.dataChannel.readyState === "open") {
+      this.dataChannel.send(message)
+    } else {
+      console.warn("Data channel is not ready to send a message")
+    }
+  }
+
   getRemoteStream(): MediaStream | undefined {
     return this.remoteStream
   }
