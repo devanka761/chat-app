@@ -85,10 +85,10 @@ export default class Incoming {
       } else if (this.btnAnswer.contains(e.target)) {
         this.destroy()
         const voiceCall = new VoiceCall({ user: this.user })
-        voiceCall.answer(this.data.sdp)
+        voiceCall.answer(this.data.sdp, this.data.callKey)
       } else if (this.btnDecline.contains(e.target)) {
         this.destroy()
-        socketClient.send({ type: "reject", to: this.user.id })
+        socketClient.send({ type: "reject", to: this.user.id, callKey: this.data.callKey })
       } else {
         if (this.el.classList.contains("ignored")) {
           this.el.classList.add("out")

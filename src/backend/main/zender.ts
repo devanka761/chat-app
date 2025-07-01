@@ -8,7 +8,7 @@ type Zend = { [key: string]: any }
 
 export default function zender(uid: string, userid: string, type: string, s?: Zend): boolean {
   const udb = db.ref.u[userid]
-  if (userid === uid) return true
+  if (userid === uid && (!s || !s.force)) return true
   if (!udb || !udb.socket) return false
   const data: IZender = {
     key: `${uid}-${Date.now().toString(36)}_${rNumber(3)}`,
@@ -16,6 +16,7 @@ export default function zender(uid: string, userid: string, type: string, s?: Ze
     type: type,
     ...s
   }
+  delete data.force
   const client = relay.get(udb.socket)
   if (!client) return false
   client.socket.send(JSON.stringify(data))

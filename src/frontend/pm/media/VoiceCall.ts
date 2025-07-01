@@ -98,14 +98,14 @@ export default class VoiceCall {
     this.timestamp.innerHTML = lang.CALL_CALLING
     this.peer.call(this.mediaStream)
   }
-  async answer(offer: RTCSessionDescriptionInit): Promise<void> {
+  async answer(offer: RTCSessionDescriptionInit, callKey?: string): Promise<void> {
     await this.setMediaStream()
     if (!this.mediaStream) return
     if (this.waiting && this.waiting === "hangup") {
       return this.destroy()
     }
     this.timestamp.innerHTML = lang.CALL_CONNECTING
-    this.peer.answer(this.mediaStream, offer)
+    this.peer.answer(this.mediaStream, offer, callKey)
   }
   private enableActions(): void {
     this.clearTime()
@@ -155,7 +155,6 @@ export default class VoiceCall {
 
         this.peer.send("speaker-" + (this.speaker ? "on" : "off"))
       } else if (this.btnHangUp.contains(target)) {
-        socketClient.send({ type: "hangup", to: this.user.id })
         this.peer.send("hangup")
         this.destroy()
       } else if (this.btnMinimize.contains(target)) {
@@ -202,6 +201,7 @@ export default class VoiceCall {
     }
   }
   off(): void {
+    socketClient.send({ type: "hangup", to: this.user.id })
     this.peer.hangup()
     if (this.peerMedia) {
       this.peerMedia.pause()

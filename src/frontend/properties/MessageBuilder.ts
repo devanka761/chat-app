@@ -62,7 +62,7 @@ export default class MessageBuilder {
   private isRetry: boolean
   public raw?: IWritterF
   private lastStatus?: TStatusText
-  private call?: CallMsgBuilder
+  call?: CallMsgBuilder
   private index: number
   private isNewUser: boolean
   constructor(message: IMessageF, user: IUserF, room: Room, raw?: IWritterF, istemp?: boolean) {
@@ -228,7 +228,7 @@ export default class MessageBuilder {
     const timeParent = kel("div", "chp time")
     this.timestamp = kel("div", "ts", { e: sdate.parseTime(this.s.timestamp) })
     timeParent.append(this.timestamp)
-    if (this.user.id === db.me.id) {
+    if (this.user.id === db.me.id && this.s.type !== "call") {
       this.sendStatus = kel("div", "status")
       timeParent.append(this.sendStatus)
     }
@@ -326,7 +326,7 @@ export default class MessageBuilder {
     if (this.s.text && this.s.text.length >= 1 && this.s.type !== "deleted") {
       this.optmenu.append(new OptionMsgBuilder({ ...optConfig, optype: "copy" }).run())
     }
-    if (this.s.type === "deleted") {
+    if (this.s.type === "deleted" || this.s.type === "call") {
       if (this.user.id === db.me.id) {
         this.closeOptmenu()
         return
@@ -336,7 +336,7 @@ export default class MessageBuilder {
       return
     }
     this.optmenu.append(new OptionMsgBuilder({ ...optConfig, optype: "reply" }).run())
-    if (this.s.type !== "voice" && this.s.type !== "call" && this.user.id === db.me.id) {
+    if (this.s.type !== "voice" && this.user.id === db.me.id) {
       this.optmenu.append(new OptionMsgBuilder({ ...optConfig, optype: "edit" }).run())
     }
 
@@ -366,7 +366,7 @@ export default class MessageBuilder {
         if (this.optmenu?.contains(target)) return
         if ((this.s.type === "video" || this.s.type === "voice" || this.s.type === "audio") && this.attach?.contains(target)) return
         if (this.reply?.contains(target)) return
-        if (this.s.type === "call" || this.lastStatus === "pending") return
+        if (this.lastStatus === "pending") return
       }
       if (this.optmenu && this.el.contains(this.optmenu)) return
       this.renderOptmenu(...args)

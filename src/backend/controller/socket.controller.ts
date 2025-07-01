@@ -3,13 +3,26 @@ import relay from "../main/relay"
 import zender from "../main/zender"
 import { IMessageKeyB } from "../types/db.types"
 import { ISocketB, TSocketHandlerB } from "../types/relay.types"
+import { createAnswer, createCallKey, forceExitCall, rejectCall } from "./call.controller"
 import { getUser } from "./profile.controller"
 
 const socketMessage: TSocketHandlerB = {
   calls: (uid, from, data) => {
     if (!data.to) return
     const udb = db.ref.u[data.to as string]
-    if (!udb || !udb.socket) {
+    if (!udb) return
+    if (data.type === "offer") {
+      const callKey = createCallKey(uid, data.to as string)
+      if (!callKey) return
+      data.callKey = callKey
+    } else if (data.type === "answer") {
+      if (!data.to || !data.callKey) return
+      if (!createAnswer(uid, data.to as string, data.callKey as string)) return
+    } else if (data.type === "reject") {
+      if (data.to && data.callKey) rejectCall(uid, data.to as string, data.callKey as string)
+    }
+
+    if (!udb.socket) {
       const sender = relay.get(from)
       if (sender) {
         const user = getUser(uid, data.to as string)
@@ -25,6 +38,7 @@ const socketMessage: TSocketHandlerB = {
     }
   },
   offer: (uid, from, data) => {
+    forceExitCall(uid)
     socketMessage.calls(uid, from, data)
   },
   answer: (uid, from, data) => {
@@ -35,6 +49,7 @@ const socketMessage: TSocketHandlerB = {
   },
   hangup: (uid, from, data) => {
     socketMessage.calls(uid, from, data)
+    forceExitCall(uid)
   },
   reject: (uid, from, data) => {
     socketMessage.calls(uid, from, data)

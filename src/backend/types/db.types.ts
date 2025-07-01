@@ -83,8 +83,8 @@ export interface Post {
 
 export interface Call {
   t: 1 | 0
-  o: number
-  st: 0
+  o: string
+  st: number
   u: Array<{ id: string; j: boolean }>
 }
 

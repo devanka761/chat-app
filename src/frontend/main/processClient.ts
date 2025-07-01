@@ -176,14 +176,17 @@ class ProcessClient {
         })
       }
     }
+    userState.tab?.update("chats")
   }
   private editmessage(s: IMessageUpdateF): void {
     const dbchat = db.c.find((k) => k.r.id === s.roomdata.id)
-    if (dbchat) {
-      const oldDB = dbchat.m.find((ch) => ch.id === s.chat.id)
-      if (oldDB) {
+    const oldDB = dbchat?.m.find((ch) => ch.id === s.chat.id)
+    if (oldDB) {
+      if (s.chat.type === "text") {
         oldDB.text = s.chat.text
         oldDB.edited = s.chat.edited
+      } else if (s.chat.type === "call") {
+        oldDB.duration = s.chat.duration
       }
     }
 
@@ -205,6 +208,7 @@ class ProcessClient {
         })
       }
     }
+    userState.tab?.update("chats")
   }
   private deletemessage(s: IMessageUpdateF): void {
     const dbchat = db.c.find((k) => k.r.id === s.roomdata.id)
@@ -236,8 +240,19 @@ class ProcessClient {
         })
       }
     }
+    userState.tab?.update("chats")
   }
   private readAllMessages(s: IZender) {
+    const cdb = db.c.find((ch) => ch.r.type === "user" && ch.r.id === s.from)
+    if (cdb) {
+      cdb.m
+        .filter((msg) => msg.userid === db.me.id && (!msg.readers || !msg.readers.find((usr) => usr === s.from)))
+        .forEach((msg) => {
+          if (!msg.readers) msg.readers = []
+          msg.readers.push(s.from)
+        })
+    }
+
     if (userState.content && userState.content.role === "room") {
       const roomContent = userState.content as Room
       if (roomContent.data.id !== s.from) return
@@ -247,6 +262,7 @@ class ProcessClient {
         }
       })
     }
+    userState.tab?.update("chats")
   }
   private offer(s: ICallUpdateF) {
     if (userState.incoming || userState.media) return

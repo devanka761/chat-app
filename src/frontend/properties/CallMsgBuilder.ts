@@ -14,6 +14,7 @@ export default class CallMsgBuilder {
   constructor(s: { user: IUserF; duration: number }) {
     this.user = s.user
     this.duration = s.duration
+    this.type = "now"
     this.run()
   }
   createElement(): void {
@@ -25,6 +26,7 @@ export default class CallMsgBuilder {
     this.el = kel("div", "chp vc", { e: [this.vcicon, msg] })
   }
   setType(): this {
+    const oldtype = this.type
     if (this.duration === -2) {
       this.type = "now"
     } else if (this.duration === -1) {
@@ -34,6 +36,7 @@ export default class CallMsgBuilder {
     } else if (this.duration >= 1) {
       this.type = db.me.id === this.user.id ? "outgoing" : "incoming"
     }
+    this.el.classList.remove("ct-" + oldtype)
     this.el.classList.add("ct-" + this.type)
     if (this.type === "missed") {
       const isMe = db.me.id === this.user.id
@@ -49,6 +52,7 @@ export default class CallMsgBuilder {
   }
   update(duration: number): this {
     this.duration = duration
+    this.setType()
     return this
   }
   init(): void {

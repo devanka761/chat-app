@@ -102,7 +102,7 @@ export default class Room implements PrimaryClass {
         }
       })
       if (userState.center && userState.center.role === "chats") {
-        const chatscenter = userState.center as Chats | null
+        const chatscenter = userState.center as Chats
         if (chatscenter) chatscenter.setUnread(this.data.id, 0)
       }
       const roottab = userState.tab as Tab | null
@@ -141,12 +141,12 @@ export default class Room implements PrimaryClass {
       this.isLocked = false
       return
     }
+    this.processUpdate(messageSent.data)
     const msg: IMessageF = messageSent.data.chat
     message.setTimeStamp(msg.timestamp)
     message.update(msg)
     if (message.currentStatus === "pending") message.setStatus("sent")
     message.clickListener()
-    this.processUpdate(messageSent.data)
   }
   async createNewMessage(s: IWritterF): Promise<void> {
     const msg = { ...convertMessage(db.me.id, s), id: Date.now().toString(36) }
@@ -173,13 +173,13 @@ export default class Room implements PrimaryClass {
       message.clickListener()
       return
     }
+    this.processUpdate(messageSent.data)
     const msg: IMessageF = messageSent.data.chat
     message.setTimeStamp(msg.timestamp)
     message.setText(msg.text as string)
     if (message.currentStatus === "pending") message.setStatus("sent")
     message.setEdited(msg.edited)
     message.clickListener()
-    this.processUpdate(messageSent.data)
   }
   async sendWritter(s: IWritterF): Promise<void> {
     if (s.edit) return await this.sendEditedMessage(s)
@@ -230,8 +230,8 @@ export default class Room implements PrimaryClass {
       this.isLocked = false
       return
     }
-    message.deleted = true
     this.processUpdate(messageDeleted.data)
+    message.deleted = true
   }
   update(s: IMessageUpdateF): void | Promise<void> {
     const ch = s.chat
@@ -252,13 +252,19 @@ export default class Room implements PrimaryClass {
     }
     const roottab = userState.tab as Tab | null
     if (roottab) roottab.update("chats")
-    socketClient.send({ type: "readAllMessages", roomtype: this.data.type, roomid: this.data.id })
+    setTimeout(() => {
+      socketClient.send({ type: "readAllMessages", roomtype: this.data.type, roomid: this.data.id })
+    }, 1000)
 
     if (msg) {
-      msg.setTimeStamp(s.chat.timestamp)
-      msg.setText(s.chat.text as string)
-      msg.setEdited(s.chat.edited)
-      msg.clickListener()
+      if (s.chat.type === "text" && msg.json.message.type === "text") {
+        msg.setTimeStamp(s.chat.timestamp)
+        msg.setText(s.chat.text as string)
+        msg.setEdited(s.chat.edited)
+        msg.clickListener()
+      } else if (s.chat.type === "call" && msg.json.message.type === "call") {
+        msg.call?.update(s.chat.duration ?? 0)
+      }
       return
     }
     const user: IUserF = ch.userid === db.me.id ? db.me : this.users.find((usr) => usr.id === ch.userid) || noUser()

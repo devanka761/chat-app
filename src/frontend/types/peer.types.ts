@@ -4,6 +4,7 @@ export type SignalData = {
   type: "offer" | "answer" | "candidate"
   sdp?: RTCSessionDescriptionInit
   candidate?: RTCIceCandidateInit
+  callKey?: string
 }
 
 export interface ICallUpdateF extends SignalData {

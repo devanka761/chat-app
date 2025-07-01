@@ -109,12 +109,33 @@ export default class Profile implements PrimaryClass {
       const classBefore = this.classBefore?.role === "room" ? this.classBefore.classBefore : this
       adap.swipe(new Room({ data: roomDetail, users: [this.user], card: this.card, classBefore }))
     }
-    this.btnVoiceCall.onclick = () => {
-      console.log("testing call")
+    this.btnVoiceCall.onclick = async () => {
+      const onMedia = userState.media || userState.incoming
+      if (onMedia) {
+        this.isLocked = true
+        await modal.alert(lang.CALL_INCALL)
+        this.isLocked = false
+        return
+      }
+      if (this.user.isFriend !== 1) {
+        this.isLocked = true
+        await modal.alert(lang.PROF_ALR_NOFRIEND_1)
+        this.isLocked = false
+        return
+      }
       const voiceCall = new VoiceCall({ user: this.user })
       voiceCall.call()
-      // const incoming = new Incoming({ user: this.user })
-      // incoming.run()
+    }
+    this.btnVideoCall.onclick = async () => {
+      this.isLocked = true
+      const useVoiceCall = await modal.confirm({
+        ic: "helmet-safety",
+        msg: lang.CALL_VIDEO_DEVELOPMENT,
+        okx: "VOICE CALL"
+      })
+      this.isLocked = false
+      if (!useVoiceCall) return
+      this.btnVoiceCall.click()
     }
   }
   renActions(): void {

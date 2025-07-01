@@ -77,7 +77,7 @@ export class PeerCallHandler {
     this.options.onSignal({ type: "offer", sdp: offer })
   }
 
-  async answer(stream: MediaStream, offer: RTCSessionDescriptionInit): Promise<void> {
+  async answer(stream: MediaStream, offer: RTCSessionDescriptionInit, callKey?: string): Promise<void> {
     this.localStream = stream
     stream.getTracks().forEach((track) => {
       this.peerConnection.addTrack(track, stream)
@@ -86,7 +86,7 @@ export class PeerCallHandler {
     await this.peerConnection.setRemoteDescription(offer)
     const answer = await this.peerConnection.createAnswer()
     await this.peerConnection.setLocalDescription(answer)
-    this.options.onSignal({ type: "answer", sdp: answer })
+    this.options.onSignal({ type: "answer", sdp: answer, callKey: callKey })
   }
 
   async handleSignal(data: SignalData): Promise<void> {
