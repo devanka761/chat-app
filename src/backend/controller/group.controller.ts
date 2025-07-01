@@ -5,6 +5,7 @@ import { convertGroup, rNumber } from "../main/helper"
 import { IChatB } from "../types/db.types"
 import { IRepTempB } from "../types/validate.types"
 import { getUser } from "./profile.controller"
+import zender from "../main/zender"
 
 export function createGroup(uid: string, s: { name: string }): IRepTempB {
   const cdb = db.ref.c
@@ -140,5 +141,16 @@ function setDisband(uid: string, roomid: string): IRepTempB {
   delete db.ref.c[roomid]
   db.save("c")
 
+  return { code: 200 }
+}
+
+export function kickMember(uid: string, userid: string, roomid: string): IRepTempB {
+  const gdb = db.ref.c[roomid]
+  if (!gdb) return { code: 404, msg: "GRPS_404" }
+  if (gdb.o !== uid) return { code: 404, msg: "GRPS_OWNER_FEATURE" }
+  if (!gdb.u.find((usr) => usr === userid)) return { code: 404, msg: "FIND_NOTFOUND" }
+  db.ref.c[roomid].u = db.ref.c[roomid].u.filter((usr) => usr !== userid)
+  db.save("c")
+  zender(uid, userid, "memberkick", { groupid: roomid })
   return { code: 200 }
 }

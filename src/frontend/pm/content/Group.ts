@@ -18,8 +18,8 @@ export default class Group implements PrimaryClass {
   readonly role: string
   king: "center" | "content"
   isLocked: boolean
-  private group: IRoomDataF
-  private users: IUserF[]
+  group: IRoomDataF
+  users: IUserF[]
   private el: HTMLDivElement
   private wall: HTMLDivElement
   private btnImg?: HTMLDivElement | null
@@ -215,7 +215,6 @@ export default class Group implements PrimaryClass {
   }
   private renMemberNew(usr: IUserF): void {
     const member = new Member({ group: this.group, user: usr, parent: this })
-    member.run()
     if (!this.ul) return
     if (member.isOwner) {
       this.ul.prepend(member.html)

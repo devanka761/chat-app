@@ -317,7 +317,7 @@ export default class MessageBuilder {
       this.fixElHeight(this.optmenu)
       return
     }
-    if (this.user.id !== db.me.id) {
+    if (this.user.id !== db.me.id && this.user.id !== "-1") {
       this.optmenu.append(new OptionMsgBuilder({ ...optConfig, optype: "profile" }).run())
     }
     if (["image", "video", "audio", "file"].find((ity) => ity === this.s.type)) {

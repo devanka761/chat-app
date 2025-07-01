@@ -1,5 +1,5 @@
 import express, { Request, Response, Router } from "express"
-import { createGroup, resetLink, setGroupname, setImg, setLeave } from "../controller/group.controller"
+import { createGroup, kickMember, resetLink, setGroupname, setImg, setLeave } from "../controller/group.controller"
 import { rep } from "../main/helper"
 import { cdUser, isUser } from "../main/middlewares"
 import validate from "../main/validate"
@@ -48,9 +48,15 @@ router.post("/reset-link", express.json({ limit: "100KB" }), (req: Request, res:
   return
 })
 
+router.post("/kick/:roomid/:userid", express.json({ limit: "100KB" }), (req: Request, res: Response) => {
+  const { roomid, userid } = req.params
+  const memberKick = rep(kickMember(req.user?.id as string, userid, roomid))
+  res.status(memberKick.code).json(memberKick)
+})
+
 router.post("/leave/:id", express.json({ limit: "100KB" }), (req: Request, res: Response) => {
   const { id } = req.params
-  const leaveGroup = rep(setLeave(<string>req.user?.id, id))
+  const leaveGroup = rep(setLeave(req.user?.id as string, id))
   res.status(leaveGroup.code).json(leaveGroup)
   return
 })

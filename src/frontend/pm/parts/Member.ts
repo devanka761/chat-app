@@ -1,5 +1,8 @@
 import { epm, kel } from "../../helper/kel"
+import { lang } from "../../helper/lang"
+import modal from "../../helper/modal"
 import setbadge from "../../helper/setbadge"
+import xhr from "../../helper/xhr"
 import adap from "../../main/adaptiveState"
 import db from "../../manager/db"
 import { IRoomDataF, IUserF } from "../../types/db.types"
@@ -16,12 +19,13 @@ export default class Member {
   private btnKick?: HTMLElement | null
   private left: HTMLSpanElement
   private right?: HTMLSpanElement | null
-  private parent?: Group
+  private parent: Group
   constructor(s: { group: IRoomDataF; user: IUserF; parent: Group }) {
     this.isLocked = false
     this.group = s.group
     this.user = s.user
     this.parent = s.parent
+    this.run()
   }
   createElement(): void {
     this.left = kel("span", "left")
@@ -73,9 +77,31 @@ export default class Member {
   }
   private kickListener(): void {
     if (this.right && db.me.id === this.group.owner && this.user.id !== db.me.id)
-      this.right.onclick = () => {
-        console.log("kicking")
+      this.right.onclick = async () => {
+        if (this.isLocked) return
+        this.isLocked = true
+        const kickMessage = lang.GRPS_KICK_CONFIRM.replace("{uname}", this.user.username)
+        const confKick = await modal.confirm(kickMessage)
+        if (!confKick) {
+          this.isLocked = false
+          return
+        }
+        const kickedMember = await modal.loading(xhr.post(`/x/group/kick/${this.group.id}/${this.user.id}`))
+        if (!kickedMember || !kickedMember.ok) {
+          await modal.alert(lang[kickedMember.msg] || lang.ERROR)
+          this.isLocked = false
+          return
+        }
+        this.remove()
       }
+  }
+  remove(): void {
+    this.parent.users = this.parent.users.filter((usr) => usr.id !== this.user.id)
+    const group = db.c.find((ch) => ch.r.id === this.parent.group.id)
+    if (group) {
+      group.u = group.u.filter((usr) => usr.id !== this.user.id)
+    }
+    this.el.remove()
   }
   get html(): HTMLLIElement {
     return this.el

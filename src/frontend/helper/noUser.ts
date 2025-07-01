@@ -3,7 +3,7 @@ import { lang } from "./lang"
 export default function noUser(): IUserF {
   return {
     id: "-1",
-    username: lang.DELETED_USER,
-    displayname: lang.DELETED_USER
+    username: lang.FORMER_MEMBER,
+    displayname: lang.FORMER_MEMBER
   }
 }
