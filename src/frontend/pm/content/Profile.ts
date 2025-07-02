@@ -12,6 +12,7 @@ import Friends from "../center/Friends"
 import FriendBuilder from "../../properties/FriendBuilder"
 import adap from "../../main/adaptiveState"
 import VoiceCall from "../media/VoiceCall"
+import Tab from "../header/Tab"
 
 export default class Profile implements PrimaryClass {
   readonly role: string
@@ -224,6 +225,9 @@ export default class Profile implements PrimaryClass {
     currChat = db.c.find((ch) => ch.r.id === s.user.id)
     const currUser = currChat?.u.find((usr) => usr.id === s.user.id)
     if (currChat && currUser) currUser.isFriend = isFriend
+
+    const roottab = userState.tab as Tab | null
+    if (roottab) roottab.update("friends")
 
     if (!userState.center) return
     if (userState.center.role === "friends") {

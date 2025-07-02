@@ -214,7 +214,6 @@ export default class Group implements PrimaryClass {
   }
   private renMemberTitle(): void {
     if (!this.membersTitle) return
-    console.log(this.users.length, this.users)
     this.membersTitle.innerHTML = `Members ${this.users.length}/10`
   }
   private renMemberNew(usr: IUserF): void {

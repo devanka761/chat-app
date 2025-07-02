@@ -1,4 +1,5 @@
 import adap from "../../main/adaptiveState"
+import Calls from "../center/Calls"
 import Chats from "../center/Chats"
 import Find from "../center/Find"
 import Friends from "../center/Friends"
@@ -8,7 +9,7 @@ export default [
     id: "find",
     txt: "APP_SEARCH",
     c: "fa-solid fa-magnifying-glass",
-    run: async () => {
+    run: () => {
       adap.swipe(new Find())
     }
   },
@@ -16,7 +17,7 @@ export default [
     id: "chats",
     txt: "APP_CHATS",
     c: "fa-solid fa-comments",
-    run: async () => {
+    run: () => {
       adap.swipe(new Chats())
     }
   },
@@ -24,8 +25,16 @@ export default [
     id: "friends",
     txt: "APP_FRIENDS",
     c: "fa-solid fa-address-book",
-    run: async () => {
+    run: () => {
       adap.swipe(new Friends())
+    }
+  },
+  {
+    id: "calls",
+    txt: "APP_CALLS",
+    c: "fa-solid fa-phone",
+    run: () => {
+      adap.swipe(new Calls())
     }
   }
 ]

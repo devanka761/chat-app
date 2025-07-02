@@ -1,4 +1,5 @@
 import { epm, kel } from "../../helper/kel"
+import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import noUser from "../../helper/noUser"
 import userState from "../../main/userState"
@@ -51,6 +52,7 @@ export default class Friends implements PrimaryClass {
       this.list.add(card)
       this.card_list.append(card.html)
     })
+    this.writeIfEmpty()
   }
   private writeTypeList(): void {
     Object.keys(typeOrder)
@@ -64,6 +66,16 @@ export default class Friends implements PrimaryClass {
         this.contacts.add(card)
         this.type_list.append(card.html)
       })
+  }
+  private writeIfEmpty(): void {
+    const oldNomore: HTMLParagraphElement | null = this.el.querySelector(".nomore")
+    if (this.list.entries.length < 1) {
+      if (oldNomore) return
+      const nomore = kel("p", "nomore", { e: `${lang.CHTS_NOCHAT}<br/>${lang.CHTS_PLS}` })
+      this.card_list.prepend(nomore)
+    } else {
+      if (oldNomore) oldNomore.remove()
+    }
   }
   setTypeList(friendType: TFriendsTypeF = "friend"): void {
     this.contacts.enabled = friendType
@@ -87,6 +99,7 @@ export default class Friends implements PrimaryClass {
     this.contacts.entries.forEach((folder) => {
       folder.updateUnread()
     })
+    this.writeIfEmpty()
   }
   addToFriend(user: IUserF): void {
     const friend = this.list.get(user.id) || this.list.add(new FriendBuilder({ user: user })).run()
@@ -112,6 +125,7 @@ export default class Friends implements PrimaryClass {
       this.card_list.removeChild(friend.html)
       this.list.remove(friend.id)
     }
+    this.writeIfEmpty()
   }
   async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")

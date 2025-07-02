@@ -4,6 +4,7 @@ import { lang } from "../helper/lang"
 import modal from "../helper/modal"
 import notip from "../helper/notip"
 import db from "../manager/db"
+import Calls from "../pm/center/Calls"
 import Chats from "../pm/center/Chats"
 import Friends from "../pm/center/Friends"
 import Empty from "../pm/content/Empty"
@@ -179,6 +180,12 @@ class ProcessClient {
         })
       }
     }
+
+    if (s.chat.type === "call" && s.chat.duration != -2 && userState.center?.role === "calls") {
+      const callcenter = userState.center as Calls
+      callcenter.addToList({ message: s.chat, users: s.users })
+    }
+
     userState.tab?.update("chats")
   }
   private editmessage(s: IMessageUpdateF): void {
@@ -210,6 +217,10 @@ class ProcessClient {
           roomdata: roomdata.r
         })
       }
+    }
+    if (s.chat.type === "call" && s.chat.duration != -2 && userState.center?.role === "calls") {
+      const callcenter = userState.center as Calls
+      callcenter.addToList({ message: s.chat, users: s.users })
     }
     userState.tab?.update("chats")
   }

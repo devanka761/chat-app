@@ -1,5 +1,7 @@
 import { escapeHTML } from "../helper/escaper"
+import { kel } from "../helper/kel"
 import { lang } from "../helper/lang"
+import sdate from "../helper/sdate"
 import db from "../manager/db"
 import { IMessageF, IUserF } from "../types/db.types"
 
@@ -37,4 +39,28 @@ export function transpileChat(s: IMessageF, lastuser?: IUserF | null, noStatus?:
   }
 
   return text
+}
+
+export function transpileCall(s: IMessageF): string {
+  const parent = kel("p")
+  const icon = kel("span", "call-icon")
+  const incoming = '<i class="fa-solid fa-arrow-down-left"></i>'
+  const outgoing = '<i class="fa-solid fa-arrow-up-right"></i>'
+
+  icon.innerHTML = s.userid === db.me.id ? outgoing : incoming
+
+  const text = kel("span", "call-text")
+
+  if (s.duration === -2) {
+    icon.classList.add("y")
+  } else if (s.duration && s.duration >= 1) {
+    icon.classList.add("g")
+    text.prepend(`${sdate.durrTime(s.duration)} • `)
+  } else {
+    icon.classList.add("r")
+  }
+
+  text.append(sdate.parseTime(s.timestamp))
+  parent.append(icon, text)
+  return parent.innerHTML
 }

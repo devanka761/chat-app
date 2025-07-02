@@ -61,7 +61,13 @@ export default class Chats implements PrimaryClass {
         this.list.add(card)
         this.card_list.append(card.html)
       })
-    this.writeIfEmpty(cdb)
+    this.writeIfEmpty()
+    this.renderGlobalCard()
+  }
+  private renderGlobalCard(): void {
+    const card = kel("div", "btn btn-global")
+    card.innerHTML = '<i class="fa-solid fa-earth-asia"></i> <span>Global Chat</span>'
+    this.card_list.append(card)
   }
   private writeTypeList(): void {
     Object.keys(typeOrder)
@@ -76,12 +82,12 @@ export default class Chats implements PrimaryClass {
         this.type_list.append(card.html)
       })
   }
-  private writeIfEmpty(cdb: IChatsF[]): void {
+  private writeIfEmpty(): void {
     const oldNomore: HTMLParagraphElement | null = this.el.querySelector(".nomore")
-    if (cdb.length < 1) {
+    if (this.list.entries.length < 1) {
       if (oldNomore) return
       const nomore = kel("p", "nomore", { e: `${lang.CHTS_NOCHAT}<br/>${lang.CHTS_PLS}` })
-      this.card_list.append(nomore)
+      this.card_list.prepend(nomore)
     } else {
       if (oldNomore) oldNomore.remove()
     }
@@ -112,10 +118,6 @@ export default class Chats implements PrimaryClass {
     const card = this.list.get(roomdata.id)
     if (card) card.updateData(roomdata)
   }
-  deleteMember(userid: string, roomid: string): void {
-    const card = this.list.get(roomid)
-    if (!card) return
-  }
   deleteData(roomid: string): void {
     const card = this.list.get(roomid)
     if (card) {
@@ -123,7 +125,7 @@ export default class Chats implements PrimaryClass {
       this.list.remove(roomid)
     }
     this.folders.entries.forEach((folder) => folder.updateUnread())
-    this.writeIfEmpty(db.c)
+    this.writeIfEmpty()
   }
   update(s: { chat: IMessageF; users: IUserF[]; roomdata: IRoomDataF }): void {
     let card = this.list.get(s.roomdata.id)
@@ -138,7 +140,7 @@ export default class Chats implements PrimaryClass {
     this.setTypeList(this.folders.enabled)
 
     this.folders.entries.forEach((folder) => folder.updateUnread())
-    this.writeIfEmpty(db.c)
+    this.writeIfEmpty()
   }
   setUnread(roomid: string, unread: number) {
     const card = this.list.get(roomid)

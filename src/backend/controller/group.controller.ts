@@ -10,7 +10,7 @@ import zender from "../main/zender"
 export function createGroup(uid: string, s: { name: string }): IRepTempB {
   const cdb = db.ref.c
   const hasMany = Object.keys(cdb).filter((k) => cdb[k].o === uid)
-  if (hasMany.length >= 20) return { code: 400, msg: "GRPS_OWN_MAX" }
+  if (hasMany.length >= 2) return { code: 400, msg: "GRPS_OWN_MAX" }
 
   s.name = s.name.trim()
 

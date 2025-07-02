@@ -82,15 +82,17 @@ export default class Find implements PrimaryClass {
         return
       }
 
-      if (this.list.entries.length >= 1)
+      if (this.list.entries.length >= 1) {
         this.list.entries.forEach((usr) => {
           this.list.remove(usr.id)
           cardlist.removeChild(usr.html)
         })
+      }
       this.isLocked = false
       userResult.forEach((usr) => {
         const card = new FriendBuilder({ user: usr, parent: this }).run()
         cardlist.append(card.html)
+        this.list.add(card)
         // card.onclick = async () => {
         //   if (userState.currcontent?.isLocked) return
         //   if (userState.currcontent?.role === "profile") {
@@ -111,6 +113,7 @@ export default class Find implements PrimaryClass {
     if (!instant) await modal.waittime()
     this.isLocked = false
     this.el.remove()
+    this.list.entries.forEach((usr) => this.list.remove(usr.id))
   }
   run(): void {
     userState.center = this
