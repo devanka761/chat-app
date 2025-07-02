@@ -29,7 +29,7 @@ export default class Room implements PrimaryClass {
   private el: HTMLDivElement
   data: IRoomDataF
   private chats?: IChatsF
-  private users: IUserF[]
+  users: IUserF[]
   private top: HTMLDivElement
   private middle: HTMLDivElement
   private bottom: HTMLDivElement

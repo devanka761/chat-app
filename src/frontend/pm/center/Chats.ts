@@ -25,7 +25,7 @@ export default class Chats implements PrimaryClass {
   isLocked: boolean
   private el: HTMLDivElement
   private card_list: HTMLDivElement
-  private list: ChatsAPI
+  list: ChatsAPI
   private folders: FolderAPI
   private type_list: HTMLDivElement
   constructor() {
@@ -90,7 +90,7 @@ export default class Chats implements PrimaryClass {
     this.folders.enabled = chatType
     if (chatType === "user" || chatType === "group") {
       this.list.entries.forEach((chat) => {
-        if (chat.json.data.type === chatType) {
+        if (chat.data.type === chatType) {
           chat.show()
         } else {
           chat.hide()
@@ -98,7 +98,7 @@ export default class Chats implements PrimaryClass {
       })
     } else if (chatType === "unread") {
       this.list.entries.forEach((chat) => {
-        if (chat.json.unread < 1) {
+        if (chat.unread < 1) {
           chat.hide()
         } else {
           chat.show()
@@ -112,9 +112,16 @@ export default class Chats implements PrimaryClass {
     const card = this.list.get(roomdata.id)
     if (card) card.updateData(roomdata)
   }
+  deleteMember(userid: string, roomid: string): void {
+    const card = this.list.get(roomid)
+    if (!card) return
+  }
   deleteData(roomid: string): void {
     const card = this.list.get(roomid)
-    if (card) card.html.remove()
+    if (card) {
+      card.html.remove()
+      this.list.remove(roomid)
+    }
     this.folders.entries.forEach((folder) => folder.updateUnread())
     this.writeIfEmpty(db.c)
   }

@@ -4,15 +4,18 @@ import modal from "../../helper/modal"
 import setbadge from "../../helper/setbadge"
 import xhr from "../../helper/xhr"
 import adap from "../../main/adaptiveState"
+import userState from "../../main/userState"
 import db from "../../manager/db"
 import { IRoomDataF, IUserF } from "../../types/db.types"
+import Chats from "../center/Chats"
 import Group from "../content/Group"
 import Profile from "../content/Profile"
+import Room from "../content/Room"
 
 export default class Member {
   public isLocked: boolean
   private group: IRoomDataF
-  private user: IUserF
+  user: IUserF
   private el: HTMLLIElement
   private img: HTMLImageElement
   private username: HTMLElement
@@ -97,11 +100,30 @@ export default class Member {
   }
   remove(): void {
     this.parent.users = this.parent.users.filter((usr) => usr.id !== this.user.id)
+    if (this.parent.room) {
+      this.parent.room.users = this.parent.room.users.filter((usr) => usr.id !== this.user.id)
+      this.parent.room.tab.users = this.parent.room.users
+    }
+    if (this.parent.classBefore?.role === "room") {
+      const roomContent = this.parent.classBefore as Room
+      roomContent.users = roomContent.users.filter((usr) => usr.id !== this.user.id)
+      roomContent.tab.users = roomContent.users
+    }
     const group = db.c.find((ch) => ch.r.id === this.parent.group.id)
     if (group) {
       group.u = group.u.filter((usr) => usr.id !== this.user.id)
     }
+
+    if (userState.center?.role === "chats") {
+      const chatsCenter = userState.center as Chats
+      const chatCard = chatsCenter.list.get(this.group.id)
+      if (chatCard) {
+        chatCard.users = chatCard.users.filter((usr) => usr.id !== this.user.id)
+      }
+    }
+
     this.el.remove()
+    this.parent.updateMemberLength()
   }
   get html(): HTMLLIElement {
     return this.el

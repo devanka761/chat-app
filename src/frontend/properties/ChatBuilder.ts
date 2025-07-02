@@ -10,8 +10,8 @@ import { IMessageF, IRoomDataF, IUserF } from "../types/db.types"
 
 export default class ChatBuilder {
   private el: HTMLDivElement
-  private data: IRoomDataF
-  private users: IUserF[]
+  data: IRoomDataF
+  users: IUserF[]
   private chat: IMessageF
 
   private img: HTMLImageElement
@@ -20,7 +20,7 @@ export default class ChatBuilder {
   private eunread: HTMLDivElement
   private eright: HTMLDivElement
   private timestamp: HTMLDivElement
-  private unread: number
+  unread: number
   private parent?: Chats
   constructor(s: { data: IRoomDataF; users: IUserF[]; chat: IMessageF; parent?: Chats }) {
     this.data = s.data
@@ -140,9 +140,6 @@ export default class ChatBuilder {
   }
   get html(): HTMLDivElement {
     return this.el
-  }
-  get json() {
-    return { data: this.data, user: this.users, unread: this.unread }
   }
   run(): this {
     this.init()

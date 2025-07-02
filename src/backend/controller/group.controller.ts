@@ -111,6 +111,10 @@ export function setLeave(uid: string, roomid: string): IRepTempB {
 
   if (!cdb.u.find((usr) => usr === uid)) return { code: 400 }
 
+  cdb.u.forEach((usr) => {
+    zender(uid, usr, "memberleave", { groupid: roomid })
+  })
+
   db.ref.c[roomid].u = cdb.u.filter((usr) => usr !== uid)
   db.save("c")
   return { code: 200 }
@@ -138,6 +142,10 @@ function setDisband(uid: string, roomid: string): IRepTempB {
     fs.rmSync(chatpath, { recursive: true, force: true })
   }
 
+  cdb.u.forEach((usr) => {
+    zender(uid, usr, "memberkick", { groupid: roomid })
+  })
+
   delete db.ref.c[roomid]
   db.save("c")
 
@@ -149,8 +157,13 @@ export function kickMember(uid: string, userid: string, roomid: string): IRepTem
   if (!gdb) return { code: 404, msg: "GRPS_404" }
   if (gdb.o !== uid) return { code: 404, msg: "GRPS_OWNER_FEATURE" }
   if (!gdb.u.find((usr) => usr === userid)) return { code: 404, msg: "FIND_NOTFOUND" }
+  zender(uid, userid, "memberkick", { groupid: roomid })
+  gdb.u
+    .filter((usr) => usr !== uid)
+    .forEach((usr) => {
+      zender(userid, usr, "memberleave", { groupid: roomid })
+    })
   db.ref.c[roomid].u = db.ref.c[roomid].u.filter((usr) => usr !== userid)
   db.save("c")
-  zender(uid, userid, "memberkick", { groupid: roomid })
   return { code: 200 }
 }

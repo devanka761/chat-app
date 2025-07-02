@@ -6,6 +6,8 @@ import notip from "../helper/notip"
 import db from "../manager/db"
 import Chats from "../pm/center/Chats"
 import Friends from "../pm/center/Friends"
+import Empty from "../pm/content/Empty"
+import Group from "../pm/content/Group"
 import Room from "../pm/content/Room"
 import Tab from "../pm/header/Tab"
 import Incoming from "../pm/media/Incoming"
@@ -13,6 +15,7 @@ import VoiceCall from "../pm/media/VoiceCall"
 import { IRoomDataF, IUserF } from "../types/db.types"
 import { IMessageUpdateF } from "../types/message.types"
 import { ICallUpdateF } from "../types/peer.types"
+import adap from "./adaptiveState"
 import userState from "./userState"
 
 class ProcessClient {
@@ -242,7 +245,7 @@ class ProcessClient {
     }
     userState.tab?.update("chats")
   }
-  private readAllMessages(s: IZender) {
+  private readAllMessages(s: IZender): void {
     const cdb = db.c.find((ch) => ch.r.type === "user" && ch.r.id === s.from)
     if (cdb) {
       cdb.m
@@ -264,7 +267,65 @@ class ProcessClient {
     }
     userState.tab?.update("chats")
   }
-  private offer(s: ICallUpdateF) {
+  private memberleave(s: IZender): void {
+    const gdb = db.c.find((ch) => ch.r.id === s.groupid)
+    if (!gdb) return
+
+    const udb = gdb.u.find((usr) => usr.id === s.from)
+    if (!udb) return
+
+    if (userState.center?.role === "chats") {
+      const chatsCenter = userState.center as Chats
+      const chatCard = chatsCenter.list.get(s.groupid)
+      if (chatCard) {
+        chatCard.users = chatCard.users.filter((usr) => usr.id !== s.from)
+      }
+    }
+    if (userState.content?.role === "room") {
+      const roomContent = userState.content as Room
+      if (roomContent.data.id === s.groupid) {
+        console.log("running")
+        console.log(s.from)
+        roomContent.users = roomContent.users.filter((usr) => usr.id !== s.from)
+        roomContent.tab.users = roomContent.users
+      }
+    }
+    if (userState.content?.role === "group") {
+      const groupContent = userState.content as Group
+      if (groupContent.group.id === s.groupid) {
+        groupContent.members.remove(s.from)
+      }
+    }
+
+    gdb.u = gdb.u.filter((usr) => usr.id !== s.from)
+
+    // if (group) {
+    //   group.u = group.u.filter((usr) => usr.id !== this.user.id)
+    // }
+
+    // const udb = gdb.u.
+  }
+  private memberkick(s: IZender): void {
+    const gdb = db.c.find((ch) => ch.r.id === s.groupid)
+    if (gdb) db.c = db.c.filter((ch) => ch.r.id !== s.groupid)
+    if (userState.center?.role === "chats") {
+      const chatsCenter = userState.center as Chats
+      chatsCenter.deleteData(s.groupid)
+    }
+    if (userState.content?.role === "room") {
+      const roomContent = userState.content as Room
+      if (roomContent.data.id === s.groupid) {
+        adap.swipe(new Empty())
+      }
+    }
+    if (userState.content?.role === "group") {
+      const groupContent = userState.content as Group
+      if (groupContent.group.id === s.groupid) {
+        adap.swipe(new Empty())
+      }
+    }
+  }
+  private offer(s: ICallUpdateF): void {
     if (userState.incoming || userState.media) return
     const incoming = new Incoming({ data: s })
     incoming.run()
@@ -274,10 +335,10 @@ class ProcessClient {
     const voiceCall = userState.media as VoiceCall
     voiceCall.peer.handleSignal(s)
   }
-  private candidate(s: ICallUpdateF) {
+  private candidate(s: ICallUpdateF): void {
     this.answer(s)
   }
-  private hangup(s: ICallUpdateF) {
+  private hangup(s: ICallUpdateF): void {
     const voiceCall = userState.media as VoiceCall | null
     if (voiceCall && s.user.id === voiceCall.user.id) {
       voiceCall.waiting = "hangup"
@@ -288,7 +349,7 @@ class ProcessClient {
       incomingCall.destroy()
     }
   }
-  private reject(s: ICallUpdateF) {
+  private reject(s: ICallUpdateF): void {
     const voiceCall = userState.media as VoiceCall | null
     if (voiceCall && s.user.id === voiceCall.user.id) {
       notip({ ic: "phone-hangup", a: s.user.username, b: lang.CALL_REJECTION, c: "4" })
@@ -296,7 +357,7 @@ class ProcessClient {
       modal.alert({ ic: "phone-hangup", msg: `${s.user.username} ${lang.CALL_REJECTION}` })
     }
   }
-  private calloffline(s: ICallUpdateF) {
+  private calloffline(s: ICallUpdateF): void {
     const voiceCall = userState.media as VoiceCall | null
     if (voiceCall && s.user.id === voiceCall.user.id) {
       notip({ ic: "signal-slash", a: s.user.username, b: lang.CALL_OFFLINE, c: "4" })

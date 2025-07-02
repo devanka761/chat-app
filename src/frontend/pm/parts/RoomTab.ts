@@ -12,7 +12,7 @@ export default class RoomTab {
   public isLocked: boolean
   public room: Room
   private data: IRoomDataF
-  private users: IUserF[]
+  users: IUserF[]
   private top: HTMLDivElement
   private right: HTMLDivElement
   private left: HTMLDivElement

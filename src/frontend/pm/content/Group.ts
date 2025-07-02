@@ -7,6 +7,7 @@ import xhr from "../../helper/xhr"
 import adap from "../../main/adaptiveState"
 import userState from "../../main/userState"
 import db from "../../manager/db"
+import MembersAPI from "../../properties/MembersAPI"
 import { IRoomDataF, IUserF } from "../../types/db.types"
 import { PrimaryClass } from "../../types/userState.types"
 import Chats from "../center/Chats"
@@ -20,13 +21,14 @@ export default class Group implements PrimaryClass {
   isLocked: boolean
   group: IRoomDataF
   users: IUserF[]
+  members: MembersAPI
   private el: HTMLDivElement
   private wall: HTMLDivElement
   private btnImg?: HTMLDivElement | null
   private btnGname?: HTMLDivElement | null
   private btnInvite?: HTMLDivElement | null
   private btnLeave: HTMLAnchorElement
-  private room?: Room
+  room?: Room
   private membersTitle?: HTMLDivElement | null
   private ul?: HTMLUListElement | null
   private btnBack: HTMLDivElement
@@ -38,6 +40,7 @@ export default class Group implements PrimaryClass {
     this.group = s.group
     this.users = s.users
     this.room = s.room
+    this.members = new MembersAPI({ data: [] })
     this.classBefore = s.classBefore
   }
   private createElement() {
@@ -211,10 +214,12 @@ export default class Group implements PrimaryClass {
   }
   private renMemberTitle(): void {
     if (!this.membersTitle) return
+    console.log(this.users.length, this.users)
     this.membersTitle.innerHTML = `Members ${this.users.length}/10`
   }
   private renMemberNew(usr: IUserF): void {
     const member = new Member({ group: this.group, user: usr, parent: this })
+    this.members.add(member)
     if (!this.ul) return
     if (member.isOwner) {
       this.ul.prepend(member.html)
@@ -386,6 +391,9 @@ export default class Group implements PrimaryClass {
     if (!userState.center || userState.center.role !== "chats") return
     const chatCenter = userState.center as Chats
     chatCenter.deleteData(this.group.id)
+  }
+  updateMemberLength(): void {
+    this.renMemberTitle()
   }
   update(): void | Promise<void> {}
   async destroy(instant?: boolean): Promise<void> {
