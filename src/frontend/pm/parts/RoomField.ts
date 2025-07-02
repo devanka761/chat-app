@@ -13,9 +13,11 @@ export default class RoomField {
   private middle: HTMLDivElement
   public list: MessagesAPI
   private preload: HTMLDivElement | undefined | null
+  private autoScroll: boolean
   constructor(s: { room: Room }) {
     this.role = "roomfield"
     this.isLocked = false
+    this.autoScroll = false
     this.room = s.room
     this.list = new MessagesAPI({ data: [] })
   }
@@ -26,6 +28,9 @@ export default class RoomField {
   send(message: MessageBuilder): MessageBuilder {
     this.list.add(message)
     this.el.append(message.html)
+    if (this.autoScroll) {
+      this.scrollToBottom()
+    }
     return message
   }
   remove(msg: string | MessageBuilder): void {
@@ -42,14 +47,34 @@ export default class RoomField {
   get html(): HTMLDivElement {
     return this.el
   }
-  scrollToBottom(): void {
+  preloaded(btnGotolast: HTMLDivElement): void {
     if (this.preload && this.el.contains(this.preload)) this.el.removeChild(this.preload)
     this.el.classList.remove("asset-loading")
-    this.el.scrollTop = this.el.scrollHeight
+    this.scrollToBottom()
+    btnGotolast.onclick = () => this.scrollToBottom()
+  }
+  private scrollToBottom(): void {
+    this.el.scrollTop = this.el.scrollHeight - this.el.clientHeight
+  }
+  private checkGoToLast(): void {
+    if (this.autoScroll) {
+      this.room.hideGotolast()
+    } else {
+      this.room.showGotolast()
+    }
+  }
+  listenScroll(): void {
+    this.el.onscroll = () => {
+      const currentScroll = this.el.scrollHeight - this.el.scrollTop
+      const targetScroll = this.el.clientHeight + 70
+      this.autoScroll = currentScroll <= targetScroll
+      this.checkGoToLast()
+    }
   }
   run(middle: HTMLDivElement) {
     this.middle = middle
     this.createElement()
     this.middle.append(this.el)
+    this.listenScroll()
   }
 }

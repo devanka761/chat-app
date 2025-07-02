@@ -43,6 +43,7 @@ export default class Room implements PrimaryClass {
   private card?: FriendBuilder
   private btnBack: HTMLDivElement
   classBefore?: PrimaryClass
+  private gotolast: HTMLDivElement
   constructor(s: { data: IRoomDataF; users: IUserF[]; chats?: IChatsF; card?: FriendBuilder; classBefore?: PrimaryClass }) {
     this.king = "content"
     this.role = "room"
@@ -62,9 +63,18 @@ export default class Room implements PrimaryClass {
   private createElement(): void {
     this.top = kel("div", "top")
     this.middle = kel("div", "mid")
+    this.gotolast = kel("div", "gotolast hide")
+    this.gotolast.innerHTML = '<i class="fa-solid fa-chevrons-down"></i>'
+    this.middle.append(this.gotolast)
     this.bottom = kel("div", "bottom")
 
     this.el = kel("div", "Room pmcontent", { e: [this.top, this.middle, this.bottom] })
+  }
+  showGotolast(): void {
+    if (this.gotolast.classList.contains("hide")) this.gotolast.classList.remove("hide")
+  }
+  hideGotolast(): void {
+    if (!this.gotolast.classList.contains("hide")) this.gotolast.classList.add("hide")
   }
   private writeData(): void {
     this.writeTab()
@@ -115,7 +125,7 @@ export default class Room implements PrimaryClass {
     if (this.mediaToLoad < 0) return
     this.mediaToLoad--
     if (this.mediaToLoad === 0) {
-      this.field.scrollToBottom()
+      this.field.preloaded(this.gotolast)
       this.mediaToLoad = 1
     }
   }
