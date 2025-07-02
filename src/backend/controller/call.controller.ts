@@ -54,7 +54,7 @@ export function forceExitCall(uid: string): void {
   callKeys.forEach((k) => {
     setToMessage(k, vdb[k])
     const usr = vdb[k].u.find((usr) => usr.id !== uid)?.id
-    if (usr) zender(uid, usr, "hangup")
+    if (usr) zender(uid, usr, "hangup", { user: getUser(usr, uid) })
     delete db.ref.v[k]
   })
 }

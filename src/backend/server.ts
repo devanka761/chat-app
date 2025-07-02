@@ -18,6 +18,7 @@ import { TRelay } from "./types/relay.types"
 import relay from "./main/relay"
 import { parse } from "url"
 import processSocketMessages from "./controller/socket.controller"
+import { forceExitCall } from "./controller/call.controller"
 
 if (!fs.existsSync("./dist")) fs.mkdirSync("./dist")
 if (!fs.existsSync("./dist/sessions")) {
@@ -67,21 +68,6 @@ app.get("/", (req: Request, res: Response) => {
   res.render("home")
   return
 })
-
-// const server = ExpressPeerServer(appService, {
-//   key: peerKey,
-//   allow_discovery: true
-// })
-
-// server.on("error", console.error)
-// server.on("message", (c, msg) => {
-//   // console.log(c.getId(), msg)
-// })
-// server.on("connection", (c) => {
-//   console.log("connected", c.getId())
-//   c.send(JSON.stringify({ data: "hehehe" }))
-// })
-// app.use("/cloud", server)
 
 app.use("/", (req: Request, res: Response) => {
   res.status(404).json({ ok: false, code: 404, msg: "NOT_FOUND" })
@@ -152,7 +138,11 @@ wss.on("connection", (ws, req) => {
 
   ws.on("close", () => {
     const userid = Object.keys(db.ref.u).find((k) => db.ref.u[k].socket === client.id)
-    if (userid) delete db.ref.u[userid].socket
+    if (userid) {
+      delete db.ref.u[userid].socket
+      forceExitCall(userid)
+    }
+
     relay.remove(client.id)
     console.log(`Disconnected  ${client.id}`)
   })

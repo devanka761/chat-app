@@ -1,6 +1,7 @@
 import { epm, eroot, kel, qutor } from "../../helper/kel"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
+import sdate from "../../helper/sdate"
 import setbadge from "../../helper/setbadge"
 import userState from "../../main/userState"
 import { PeerCallHandler } from "../../manager/Peer"
@@ -27,6 +28,8 @@ export default class VoiceCall {
   private speaker: boolean
   waiting?: string | null
   calltimeout: ReturnType<typeof setTimeout> | null
+  callinterval: ReturnType<typeof setInterval> | null
+  private startTime: number
   constructor(s: { user: IUserF }) {
     this.user = s.user
     this.isLocked = false
@@ -34,6 +37,7 @@ export default class VoiceCall {
     this.peerMedia = null
     this.microphone = false
     this.speaker = false
+    this.startTime = 0
     this.run()
   }
   private createElement(): void {
@@ -114,6 +118,14 @@ export default class VoiceCall {
     this.leftAct.classList.remove("disabled")
     this.timestamp.innerHTML = lang.CALL_CONNECTING
     this.btnListener()
+    this.startInterval()
+  }
+  private startInterval(): void {
+    this.startTime = Date.now()
+    this.timestamp.innerHTML = sdate.durrNumber(Date.now() - this.startTime)
+    this.callinterval = setInterval(() => {
+      this.timestamp.innerHTML = sdate.durrNumber(Date.now() - this.startTime)
+    }, 1000)
   }
   private btnListener(): void {
     this.el.onclick = async (event) => {
@@ -217,6 +229,11 @@ export default class VoiceCall {
     if (this.calltimeout) {
       clearTimeout(this.calltimeout)
       this.calltimeout = null
+    }
+    if (this.callinterval) {
+      clearInterval(this.callinterval)
+      this.callinterval = null
+      this.startTime = 0
     }
   }
   async destroy(): Promise<void> {

@@ -6,6 +6,10 @@ import Group from "../content/Group"
 import FriendBuilder from "../../properties/FriendBuilder"
 import adap from "../../main/adaptiveState"
 import { PrimaryClass } from "../../types/userState.types"
+import userState from "../../main/userState"
+import modal from "../../helper/modal"
+import { lang } from "../../helper/lang"
+import VoiceCall from "../media/VoiceCall"
 
 export default class RoomTab {
   readonly role: string
@@ -80,7 +84,48 @@ export default class RoomTab {
   }
   private btnListener(): void {
     this.btnBack.onclick = () => adap.swipe(this.classBefore)
+    this.btnCallListener()
     this.userListener()
+  }
+  private btnCallListener(): void {
+    if (this.btnVoice)
+      this.btnVoice.onclick = async () => {
+        if (this.isLocked) return
+        this.isLocked = true
+        const onMedia = userState.media || userState.incoming
+        const user = this.users.find((usr) => usr.id === this.data.id)
+        if (!user) {
+          await modal.alert(lang.FIND_NOTFOUND)
+          this.isLocked = false
+          return
+        }
+        if (onMedia) {
+          await modal.alert(lang.CALL_INCALL)
+          this.isLocked = false
+          return
+        }
+        if (user.isFriend !== 1) {
+          await modal.alert(lang.PROF_ALR_NOFRIEND_1)
+          this.isLocked = false
+          return
+        }
+        this.isLocked = false
+        const voiceCall = new VoiceCall({ user: user })
+        voiceCall.call()
+      }
+    if (this.btnVideo)
+      this.btnVideo.onclick = async () => {
+        if (this.isLocked) return
+        this.isLocked = true
+        const useVoiceCall = await modal.confirm({
+          ic: "helmet-safety",
+          msg: lang.CALL_VIDEO_DEVELOPMENT,
+          okx: "VOICE CALL"
+        })
+        this.isLocked = false
+        if (!useVoiceCall) return
+        if (this.btnVoice) this.btnVoice.click()
+      }
   }
   private userListener(): void {
     this.userParent.onclick = () => {

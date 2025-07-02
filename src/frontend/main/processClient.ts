@@ -373,7 +373,7 @@ class ProcessClient {
     if (voiceCall && s.user.id === voiceCall.user.id) {
       notip({ ic: "signal-slash", a: s.user.username, b: lang.CALL_OFFLINE, c: "4" })
       voiceCall.destroy()
-      modal.alert({ ic: "signal-slash", msg: `${s.user.username} ${lang.CALL_OFFLINE}` })
+      modal.alert({ ic: "signal-slash", msg: lang.CALL_OFFLINE })
     }
   }
   run(type: string, data: IZender): void {
