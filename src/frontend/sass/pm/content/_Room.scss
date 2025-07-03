@@ -15,6 +15,7 @@ $errorbg: #3d2b31;
   background-color: v.$px25;
   .top {
     position: absolute;
+    z-index: 1;
     top: 0;
     left: 0;
     background-color: v.$px2;
@@ -25,8 +26,10 @@ $errorbg: #3d2b31;
     align-items: center;
     // gap: 10px;
     .left {
+      background-color: v.$px2;
       flex-grow: 1;
-      padding: 10px;
+      padding: 0 10px;
+      height: 100%;
       display: flex;
       justify-content: left;
       align-items: center;
@@ -79,14 +82,40 @@ $errorbg: #3d2b31;
       }
     }
     .right {
+      background-color: v.$px2;
       flex-shrink: 0;
-      padding: 10px 20px;
+      height: 100%;
+      padding: 0 20px;
       display: flex;
       justify-content: right;
       align-items: center;
       gap: 20px;
       .btn {
         font-size: 1.2em;
+      }
+    }
+    .options {
+      background-color: v.$pm2;
+      position: absolute;
+      padding: 7px 0;
+      z-index: -1;
+      top: 60px;
+      right: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px v.$black;
+      overflow: hidden;
+      animation: slide_down_in 0.25s;
+      .btn {
+        background-color: v.$pm2;
+        padding: 14px;
+        padding-right: 28px;
+        &:hover {
+          background-color: v.$pm1;
+          color: v.$black;
+        }
+      }
+      &.out {
+        animation: slide_down_out 0.25s forwards;
       }
     }
   }

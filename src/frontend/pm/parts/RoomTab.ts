@@ -10,6 +10,7 @@ import userState from "../../main/userState"
 import modal from "../../helper/modal"
 import { lang } from "../../helper/lang"
 import VoiceCall from "../media/VoiceCall"
+import OptionRoomTabBuilder from "./OptionRoomTabBuilder"
 
 export default class RoomTab {
   readonly role: string
@@ -30,6 +31,7 @@ export default class RoomTab {
   private btnMore: HTMLDivElement
   private card?: FriendBuilder
   classBefore?: PrimaryClass
+  private options?: OptionRoomTabBuilder | null
   constructor(s: { room: Room; data: IRoomDataF; users: IUserF[]; card?: FriendBuilder; classBefore?: PrimaryClass }) {
     this.role = "roomform"
     this.isLocked = false
@@ -59,9 +61,9 @@ export default class RoomTab {
     this.left = kel("div", "left", { e: [this.btnBack, this.userParent] })
   }
   private createRight(): void {
-    this.btnVideo = kel("div", "btn btn-video", { e: `<i class="fa-solid fa-video"></i>` })
-    this.btnVoice = kel("div", "btn btn-call", { e: `<i class="fa-solid fa-phone"></i>` })
-    this.btnMore = kel("div", "btn btn-more", { e: `<i class="fa-solid fa-ellipsis-vertical"></i>` })
+    this.btnVideo = kel("div", "btn btn-video", { e: `<i class="fa-solid fa-video fa-fw"></i>` })
+    this.btnVoice = kel("div", "btn btn-call", { e: `<i class="fa-solid fa-phone fa-fw"></i>` })
+    this.btnMore = kel("div", "btn btn-more", { e: `<i class="fa-solid fa-ellipsis-vertical fa-fw"></i>` })
     this.right = kel("div", "right", { e: [this.btnVideo, this.btnVoice, this.btnMore] })
   }
   private createElement(): void {
@@ -84,13 +86,27 @@ export default class RoomTab {
   }
   private btnListener(): void {
     this.btnBack.onclick = () => adap.swipe(this.classBefore)
+
+    this.btnMore.onclick = () => {
+      if (this.options) return
+      this.options = new OptionRoomTabBuilder({ tab: this, top: this.top })
+    }
+
     this.btnCallListener()
     this.userListener()
+  }
+  closeOptions(): void {
+    if (this.options) this.options = null
   }
   private btnCallListener(): void {
     if (this.btnVoice)
       this.btnVoice.onclick = async () => {
         if (this.isLocked) return
+        if (this.data.type !== "user") {
+          await modal.alert(lang.CALL_NOT_USER)
+          this.isLocked = false
+          return
+        }
         this.isLocked = true
         const onMedia = userState.media || userState.incoming
         const user = this.users.find((usr) => usr.id === this.data.id)
