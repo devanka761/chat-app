@@ -16,8 +16,7 @@ async function efetch(method: IReqType, url: string, s?: any): Promise<IRepB> {
       return res
     })
     .catch((err) => {
-      console.log("error nih", err)
-      return { code: 404, ok: false, msg: "ERROR" }
+      return { code: 404, ok: false, msg: "ERROR", errors: err }
     })
 }
 

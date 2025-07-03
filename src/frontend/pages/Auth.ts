@@ -8,7 +8,6 @@ import { IAccountB } from "../../backend/types/account.types"
 import { IRepB } from "../../backend/types/validate.types"
 import HeaderBar from "../pm/header/HeaderBar"
 import { LangObject, Languages } from "../types/helper.types"
-import db from "../manager/db"
 import { eroot, kel } from "../helper/kel"
 import Empty from "../pm/content/Empty"
 import socketClient from "../manager/socketClient"
@@ -77,12 +76,7 @@ export default class Auth {
     adap.launch()
   }
   private initializeData(s: IAccountB): void {
-    // if (s.peer) cloud.run(s.peer)
-    if (s.socket) socketClient.run(s.socket)
-    if (s.me) db.me = s.me
-    if (s.c) db.c = s.c
-    // const clientData = new ClientData({ id: k });
-    // clientData.init(cloud_hb.s[k]);
+    socketClient.run(s)
   }
   private writeForm(): void {
     auth_container = this.el

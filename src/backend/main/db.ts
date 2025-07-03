@@ -19,7 +19,7 @@ class DevankaLocal {
       console.info(`Folder - ${filefolder} - Updated!`)
     }
     Object.keys(this.ref)
-      .filter((file) => !["t", "v"].includes(file))
+      .filter((file) => !["t"].includes(file))
       .forEach((file) => {
         const fileKey = file as keyof Databases
         if (!fs.existsSync(`${dirpath}/${fileKey}.json`)) {

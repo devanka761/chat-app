@@ -295,8 +295,6 @@ class ProcessClient {
     if (userState.content?.role === "room") {
       const roomContent = userState.content as Room
       if (roomContent.data.id === s.groupid) {
-        console.log("running")
-        console.log(s.from)
         roomContent.users = roomContent.users.filter((usr) => usr.id !== s.from)
         roomContent.tab.users = roomContent.users
       }

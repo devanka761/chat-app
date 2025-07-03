@@ -83,7 +83,7 @@ $bg: #3f464e;
   }
 }
 .modal {
-  z-index: 99;
+  z-index: 98;
   position: fixed;
   top: 0;
   left: 0;
@@ -247,7 +247,7 @@ $bg: #3f464e;
 }
 
 .notip {
-  z-index: 98;
+  z-index: 99;
   position: absolute;
   top: 20px;
   right: 20px;
@@ -305,16 +305,21 @@ $bg: #3f464e;
     color: v.$white;
   }
   &.y {
-    background-color: v.$black;
+    background-color: v.$px1;
     border: 1px solid v.$yellow;
     color: v.$yellow;
+  }
+  &.p {
+    background-color: v.$px1;
+    border: 1px solid v.$pm1;
+    color: v.$pm1;
   }
   &.r {
     background-color: v.$cred;
     color: v.$white;
   }
   &.rb {
-    background-color: v.$black;
+    background-color: v.$px1;
     color: v.$cred;
     border: 1px solid v.$cred;
   }

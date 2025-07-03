@@ -1,39 +1,11 @@
 import fs from "fs"
 import db from "../main/db"
 import { getUser } from "./profile.controller"
-import { convertGroup, convertUser, escapeWhiteSpace, genhex, isProd, normalizeMessage, peerKey, rUid } from "../main/helper"
+import { convertGroup, convertUser, escapeWhiteSpace, isProd, normalizeMessage, rUid } from "../main/helper"
 import cfg from "../main/cfg"
-import { IChatsF, IRoomDataF, MeDB, PeerDB, SocketDB } from "../../frontend/types/db.types"
+import { IChatsF, IRoomDataF, MeDB, SocketDB } from "../../frontend/types/db.types"
 import { IRepTempB } from "../types/validate.types"
 import { IAccountB } from "../types/account.types"
-
-function _initPeer(_uid: string): PeerDB {
-  const peerid = genhex()
-  // db.ref.u[uid].peer = peerid
-  const data: PeerDB = {
-    peerid,
-    peerConfig: {
-      host: <string>(isProd ? cfg.TURN_HOST : cfg.APP_HOST),
-      port: <number>cfg.APP_PORT,
-      key: peerKey,
-      path: "cloud"
-    }
-  }
-  if (isProd) {
-    delete data.peerConfig.port
-    data.peerConfig.config = {
-      iceServers: [
-        { urls: `stun:${cfg.TURN_HOST}:${cfg.TURN_PORT}` },
-        {
-          urls: `turn:${cfg.TURN_HOST}:${cfg.TURN_PORT}`,
-          username: <string>cfg.TURN_USERNAME,
-          credential: <string>cfg.TURN_PASSWORD
-        }
-      ]
-    }
-  }
-  return data
-}
 
 function initSocketClient(uid: string): SocketDB {
   const id = rUid()
@@ -66,8 +38,8 @@ export function getMe(uid: string): IRepTempB {
 
   const data: IAccountB = {
     me: meData,
-    socket: initSocketClient(uid)
-    // peer: initPeer(uid)
+    socket: initSocketClient(uid),
+    v: db.ref.k.v
   }
 
   const cdb = db.ref.c

@@ -68,14 +68,14 @@ class AdaptiveState {
       if (!userState.tab) this.lasttab.run()
     }
   }
-  swipe(newer: PrimaryClass = new Empty()): void {
+  swipe(newer: PrimaryClass = new Empty(), instant?: boolean): void {
     if (this.isNarrow) {
       if (newer.role === "empty") {
         userState.tab = this.lasttab
         userState.header = this.lastheader
         const newers = [this.lastcenter, userState.tab, userState.header]
         const olders = [this.lastcontent]
-        swiper(newers, olders)
+        swiper(newers, olders, instant)
         userState.tab.enable(this.lastcenter.role)
       } else if (newer.king === "content") {
         const currentOlder = (userState.center || userState.content) as PrimaryClass
@@ -86,7 +86,7 @@ class AdaptiveState {
         } else {
           olders.push(currentOlder)
         }
-        swiper(newers, olders)
+        swiper(newers, olders, instant)
       } else if (newer.king === "center") {
         const currentOlder = (userState.center || userState.content) as PrimaryClass
         const olders: PrimaryClass[] = [currentOlder]
@@ -96,11 +96,11 @@ class AdaptiveState {
           newers.push(this.lastheader, this.lasttab)
         }
 
-        swiper(newers, olders)
+        swiper(newers, olders, instant)
       }
     } else {
       const older = (newer.king === "content" ? userState.content : userState.center) as PrimaryClass
-      swiper([newer], [older])
+      swiper([newer], [older], instant)
     }
 
     if (newer.king === "center") this.lastcenter = newer

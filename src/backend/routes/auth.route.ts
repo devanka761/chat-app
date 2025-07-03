@@ -10,7 +10,7 @@ const router: Router = express.Router()
 router.use(express.json({ limit: "100KB" }))
 
 router.get("/isUser", (req: Request, res: Response) => {
-  const isLogged = isUserLogged(req.user?.id)
+  const isLogged = rep(isUserLogged(req.user?.id))
   res.status(isLogged.code).json(isLogged)
   return
 })

@@ -8,7 +8,7 @@ let nindex = 0
 let ndone = 0
 let nshowtime: ReturnType<typeof setTimeout> | null = null
 
-const cl = { "1": "g", "2": "y", "3": "r", "4": "rb" }
+const cl = { "1": "g", "2": "y", "3": "r", "4": "rb", "5": "p" }
 
 class Notip {
   readonly a: string

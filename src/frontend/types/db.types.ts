@@ -10,26 +10,6 @@ export interface SocketDB {
   host: string
 }
 
-export interface PeerDB {
-  peerid: string
-  peerConfig: {
-    host: string
-    port?: number
-    key: string
-    path: string
-    config?: {
-      iceServers: [
-        { urls: string },
-        {
-          urls: string
-          username: string
-          credential: string
-        }
-      ]
-    }
-  }
-}
-
 export interface MeDB {
   id: string
   username: string
@@ -89,4 +69,5 @@ export interface IChatsF {
 export interface Databases {
   me: MeDB
   c: IChatsF[]
+  version: number
 }

@@ -18,7 +18,8 @@ import { TRelay } from "./types/relay.types"
 import relay from "./main/relay"
 import { parse } from "url"
 import processSocketMessages from "./controller/socket.controller"
-import { forceExitCall } from "./controller/call.controller"
+import { forceExitCall, terminateAllCalls } from "./controller/call.controller"
+import publicConfig from "./config/public.config.json"
 
 if (!fs.existsSync("./dist")) fs.mkdirSync("./dist")
 if (!fs.existsSync("./dist/sessions")) {
@@ -30,6 +31,14 @@ if (!db.ref.k.v) {
   db.ref.k.v = 1
   db.save("k")
 }
+
+if (publicConfig.update) {
+  db.ref.k.v++
+  db.save("k")
+}
+
+terminateAllCalls()
+
 const app: Application = express()
 
 const SessionFileStorage: FileStore = SessionFileStore(session)

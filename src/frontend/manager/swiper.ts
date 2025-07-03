@@ -1,12 +1,12 @@
 import userState from "../main/userState"
 import { PrimaryClass } from "../types/userState.types"
 
-export default function swiper(newers: PrimaryClass[], olders: PrimaryClass[]): void {
+export default function swiper(newers: PrimaryClass[], olders: PrimaryClass[], instant?: boolean): void {
   const olderlocked = olders.find((older) => older.isLocked)
   if (olderlocked) return
 
   olders.forEach((older) => {
-    older.destroy()
+    older.destroy(instant)
     if (older.king === "center") {
       userState.center = null
     } else if (older.king === "content") {

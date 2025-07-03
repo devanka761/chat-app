@@ -56,6 +56,7 @@ export function forceExitCall(uid: string): void {
     const usr = vdb[k].u.find((usr) => usr.id !== uid)?.id
     if (usr) zender(uid, usr, "hangup", { user: getUser(usr, uid) })
     delete db.ref.v[k]
+    db.save("v")
   })
 }
 
@@ -78,6 +79,8 @@ export function createCallKey(uid: string, targetid: string): string | null {
     delete db.ref.v[callKey]
     return null
   }
+
+  db.save("v")
   return callKey
 }
 
@@ -92,6 +95,7 @@ export function createAnswer(uid: string, senderid: string, callKey: string): bo
   const userCall = db.ref.v[callKey].u.find((usr) => usr.id === uid)
   if (!userCall) return false
   userCall.j = true
+  db.save("v")
 
   return true
 }
@@ -100,4 +104,10 @@ export function rejectCall(uid: string, senderid: string, callKey: string): void
   const vdb = db.ref.v
   if (!vdb[callKey]) return
   db.ref.v[callKey].st = -1
+  db.save("v")
+}
+
+export function terminateAllCalls(): void {
+  const vdb = db.ref.v
+  Object.keys(vdb).forEach((k) => forceExitCall(vdb[k].o))
 }
