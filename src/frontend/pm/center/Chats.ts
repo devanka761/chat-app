@@ -11,6 +11,9 @@ import { TChatsTypeF } from "../../types/room.types"
 import FolderCard from "../parts/FolderCard"
 import FolderAPI from "../../properties/FolderAPI"
 import noMessage from "../../helper/noMessage"
+import xhr from "../../helper/xhr"
+import adap from "../../main/adaptiveState"
+import Room from "../content/Room"
 
 const typeOrder: { [key: string]: number } = {
   all: 1,
@@ -68,6 +71,47 @@ export default class Chats implements PrimaryClass {
     const card = kel("div", "btn btn-global")
     card.innerHTML = '<i class="fa-solid fa-earth-asia"></i> <span>Global Chat</span>'
     this.card_list.append(card)
+    card.onclick = async () => {
+      if (this.isLocked) return
+
+      const hasGlobalChat = db.c.find((ch) => ch.r.id === "696969")
+      if (hasGlobalChat) {
+        this.setGlobalChats(hasGlobalChat)
+        this.isLocked = false
+        return
+      }
+
+      this.isLocked = true
+      const getGlobalChats = await modal.loading(xhr.get("/x/room/get-global"))
+      if (!getGlobalChats || !getGlobalChats.ok) {
+        await modal.alert(lang[getGlobalChats.msg] || lang.ERROR)
+        this.isLocked = false
+        return
+      }
+      this.setGlobalChats(getGlobalChats.data)
+      this.isLocked = false
+    }
+  }
+  private setGlobalChats(data: IChatsF): void {
+    if (!db.c.find((ch) => ch.r.id === data.r.id)) {
+      db.c.push(data)
+      this.update({
+        chat: data.m[data.m.length - 1],
+        users: data.u,
+        roomdata: data.r
+      })
+    }
+
+    if (userState.content?.role === "room") {
+      if (userState.content.isLocked) return
+      const room = userState.content as Room
+      if (room.key === data.r.id) return
+    }
+    const newRoomChat = new Room({
+      data: data.r,
+      users: data.u
+    })
+    adap.swipe(newRoomChat)
   }
   private writeTypeList(): void {
     Object.keys(typeOrder)

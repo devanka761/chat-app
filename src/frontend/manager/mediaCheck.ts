@@ -1,7 +1,7 @@
 const mediaExtension = {
   image: ["jpg", "jpeg", "png", "webp", "svg"],
   video: ["mp4", "3gp", "flv", "mov", "mkv"],
-  audio: ["ogg", "mp3", "wav", "m4a"]
+  audio: ["ogg", "mp3", "wav", "m4a", "opus"]
 }
 
 export default function mediaCheck(filename: string): keyof typeof mediaExtension | undefined {

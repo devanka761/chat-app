@@ -28,18 +28,46 @@ export function getUser(uid: string, userid: string): IUserF {
   return data
 }
 
-export function searchUser(uid: string, userid: string) {
+export function searchUser(uid: string, userid: string): IRepTempB {
+  userid = userid.toLowerCase()
+  if (userid === "user" || userid === "user7") return searchRandom(uid)
   const udb = db.ref.u
+
   const users = Object.values(udb)
     .filter((usr) => {
-      return usr.id !== uid && (usr.id === userid || usr.uname?.toLowerCase().includes(userid.toLowerCase().toString()))
+      return usr.id !== uid && (usr.id === userid || usr.uname?.toLowerCase().includes(userid))
     })
+    .slice(0, 20)
     .map((usr) => {
       return getUser(uid, usr.id)
     })
 
   if (users.length < 1) return { code: 404, msg: "FIND_NOTFOUND" }
   return { code: 200, data: { users } }
+}
+
+function userRandom(users: string[]): string {
+  return users[Math.floor(Math.random() * users.length)]
+}
+
+function searchRandom(uid: string): IRepTempB {
+  const udb = db.ref.u
+  const users = Object.values(udb)
+    .filter((usr) => {
+      return usr.id !== uid
+    })
+    .map((usr) => usr.id)
+
+  const maxlength = users.length > 20 ? 20 : users.length
+  const findArr: string[] = []
+
+  for (let i = 0; i < maxlength; i++) {
+    findArr.push(userRandom(users.filter((k) => !findArr.includes(k))))
+  }
+
+  const userlist = findArr.map((k) => getUser(uid, k))
+
+  return { code: 200, data: { users: userlist } }
 }
 
 export function addfriend(uid: string, s: { userid: string }): IRepTempB {

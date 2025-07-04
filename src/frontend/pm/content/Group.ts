@@ -137,7 +137,7 @@ export default class Group implements PrimaryClass {
       })
       outer.append(this.btnGname)
     }
-    if (this.group.badges) setbadge(chpValue, this.group.badges)
+    if (this.group.badges) setbadge(p, this.group.badges)
   }
   private renInvite(): void {
     if (!this.group.link) return
@@ -177,7 +177,6 @@ export default class Group implements PrimaryClass {
       })
       outer.append(this.btnInvite)
     }
-    if (this.group.badges) setbadge(chpValue, this.group.badges)
   }
   private renMembers(): void {
     let chp = qutor(".chp.groupmember", this.wall)

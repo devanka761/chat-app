@@ -11,6 +11,7 @@ import modal from "../../helper/modal"
 import { lang } from "../../helper/lang"
 import VoiceCall from "../media/VoiceCall"
 import OptionRoomTabBuilder from "./OptionRoomTabBuilder"
+import setbadge from "../../helper/setbadge"
 
 export default class RoomTab {
   readonly role: string
@@ -74,6 +75,11 @@ export default class RoomTab {
   updateUser(newData?: IRoomDataF): void {
     if (newData) this.data = newData
     this.userName.innerText = this.data.short
+
+    if (this.data.badges) {
+      setbadge(this.userName, this.data.badges)
+    }
+
     if (this.displayName) this.displayName.innerText = this.data.long
 
     if (this.data.image) {

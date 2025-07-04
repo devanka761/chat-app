@@ -1,0 +1,39 @@
+@use "../../variables" as v;
+
+$topheight: 60px;
+
+.Posts {
+  background-color: v.$px25;
+  .top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: v.$px2;
+    font-weight: 500;
+    height: $topheight;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.25em;
+    .btn {
+      position: absolute;
+      left: 10px;
+    }
+    .sec-title {
+      font-weight: bold;
+    }
+  }
+  .wall {
+    position: absolute;
+    top: $topheight;
+    left: 0;
+    width: 100%;
+    height: calc(100% - $topheight);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+}

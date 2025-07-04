@@ -1,7 +1,6 @@
 import { kel, epm } from "../../helper/kel"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
-import notip from "../../helper/notip"
 import xhr from "../../helper/xhr"
 import userState from "../../main/userState"
 import resetform from "../../manager/resetform"
@@ -65,47 +64,45 @@ export default class Find implements PrimaryClass {
         return
       }
       resetform(form)
-      const eloading = kel("div", "card", { e: `<div class="getload"><div class="spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div>LOADING</div>` })
-      cardlist.prepend(eloading)
-      await modal.waittime(1000)
-      const searchResult = await xhr.get(`/x/profile/search/${data.search_id}`)
-      eloading.remove()
-      if (!searchResult || !searchResult.ok) {
-        await modal.alert(lang[searchResult.msg] || lang.ERROR)
-        this.isLocked = false
-        return
-      }
-      const userResult = (<unknown>searchResult?.data?.users || []) as IUserF[]
-      if (userResult.length < 1) {
-        await modal.alert(lang.FIND_NOTFOUND)
-        this.isLocked = false
-        return
-      }
-
-      if (this.list.entries.length >= 1) {
-        this.list.entries.forEach((usr) => {
-          this.list.remove(usr.id)
-          cardlist.removeChild(usr.html)
-        })
-      }
-      this.isLocked = false
-      userResult.forEach((usr) => {
-        const card = new FriendBuilder({ user: usr, parent: this }).run()
-        cardlist.append(card.html)
-        this.list.add(card)
-        // card.onclick = async () => {
-        //   if (userState.currcontent?.isLocked) return
-        //   if (userState.currcontent?.role === "profile") {
-        //     if ((userState.currcontent as Profile)?.user?.id === usr.id) return
-        //   }
-        //   swiper(new Profile({ user: usr }), userState.currcontent)
-        // }
-      })
-      this.isLocked = false
+      this.searchUser(data.search_id, cardlist)
     }
     btnRandom.onclick = () => {
-      notip({ a: "Judul", b: "Keterangan", c: 0 })
+      if (this.isLocked) return
+      this.isLocked = true
+      this.searchUser("user", cardlist)
     }
+  }
+  private async searchUser(search_id: string, cardlist: HTMLDivElement): Promise<void> {
+    const eloading = kel("div", "card", { e: `<div class="getload"><div class="spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div>LOADING</div>` })
+    cardlist.prepend(eloading)
+    await modal.waittime(1000)
+    const searchResult = await xhr.get(`/x/profile/search/${search_id}`)
+    eloading.remove()
+    if (!searchResult || !searchResult.ok) {
+      await modal.alert(lang[searchResult.msg] || lang.ERROR)
+      this.isLocked = false
+      return
+    }
+    const userResult = (<unknown>searchResult?.data?.users || []) as IUserF[]
+    if (userResult.length < 1) {
+      await modal.alert(lang.FIND_NOTFOUND)
+      this.isLocked = false
+      return
+    }
+
+    if (this.list.entries.length >= 1) {
+      this.list.entries.forEach((usr) => {
+        this.list.remove(usr.id)
+        cardlist.removeChild(usr.html)
+      })
+    }
+    this.isLocked = false
+    userResult.forEach((usr) => {
+      const card = new FriendBuilder({ user: usr, parent: this }).run()
+      cardlist.append(card.html)
+      this.list.add(card)
+    })
+    this.isLocked = false
   }
   update(): void | Promise<void> {}
   async destroy(instant?: boolean): Promise<void> {

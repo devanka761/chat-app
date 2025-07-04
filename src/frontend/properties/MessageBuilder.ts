@@ -140,6 +140,7 @@ export default class MessageBuilder {
     eattach.append(parent)
   }
   private attachVideo(eattach: HTMLDivElement, url: string, isTemp: boolean): void {
+    let firstReady = false
     const parent = kel("div", "img")
     const vid = kel("video")
     vid.onerror = () => {
@@ -147,7 +148,12 @@ export default class MessageBuilder {
       parent.remove()
       this.attachFile(eattach, url, isTemp)
     }
-    vid.oncanplay = () => this.room.checkIfMediaReady()
+    vid.oncanplay = () => {
+      if (!firstReady) {
+        firstReady = true
+        this.room.checkIfMediaReady()
+      }
+    }
     vid.controls = true
     vid.setAttribute("controlsList", "nodownload")
     vid.src = isTemp ? url : `/file/media/${this.room.data.type}/${this.room.id}/${url}`
@@ -155,6 +161,7 @@ export default class MessageBuilder {
     eattach.append(parent)
   }
   private attachAudio(eattach: HTMLDivElement, url: string, isTemp: boolean): void {
+    let firstReady = false
     if (this.s.type !== "audio" && this.s.type !== "voice") {
       return this.attachFile(eattach, url, isTemp)
     }
@@ -173,7 +180,10 @@ export default class MessageBuilder {
     }
     audio.oncanplay = () => {
       if (!eattach.contains(voice.html)) eattach.prepend(voice.html)
-      this.room.checkIfMediaReady()
+      if (!firstReady) {
+        firstReady = true
+        this.room.checkIfMediaReady()
+      }
     }
     audio.onloadedmetadata = () => {
       voice.text = audio.duration

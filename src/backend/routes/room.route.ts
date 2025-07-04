@@ -1,5 +1,5 @@
 import express, { Request, Response, Router } from "express"
-import { delMessage, sendMessage } from "../controller/room.controller"
+import { delMessage, getGlobalChats, sendMessage } from "../controller/room.controller"
 import { rep } from "../main/helper"
 import { cdUser, isUser } from "../main/middlewares"
 import {} from "../../frontend/types/room.types"
@@ -28,6 +28,11 @@ router.post("/delMessage/:chat_type/:chat_id/:message_id", express.json({ limit:
   const setroom = rep(delMessage(req.user?.id as string, chat_id, chat_type, message_id))
   res.status(setroom.code).json(setroom)
   return
+})
+router.get("/get-global", express.json({ limit: "200KB" }), (req: Request, res: Response) => {
+  const globalchat = rep(getGlobalChats(req.user?.id as string))
+
+  res.status(globalchat.code).json(globalchat)
 })
 
 export default router

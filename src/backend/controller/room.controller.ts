@@ -5,7 +5,7 @@ import { TRoomTypeF } from "../../frontend/types/room.types"
 import { IWritterF } from "../../frontend/types/message.types"
 import { IRepTempB } from "../types/validate.types"
 import { convertGroup, convertMessage, convertUser, escapeWhiteSpace, minimizeMessage, msgNotValid, msgValidTypes, normalizeMessage } from "../main/helper"
-import { IMessageTempF } from "../../frontend/types/db.types"
+import { IChatsF, IMessageTempF, IUserF } from "../../frontend/types/db.types"
 import { IMessageKeyB } from "../types/db.types"
 import zender from "../main/zender"
 import { getUser } from "./profile.controller"
@@ -20,7 +20,7 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
       ? Object.keys(cdb).find((k) => {
           return cdb[k].t === "user" && cdb[k].u.find((usr) => usr === uid) && cdb[k].u.find((usr) => usr === room_id)
         })
-      : Object.keys(cdb).find((k) => cdb[k].t === "group" && k === room_id && cdb[k].u.find((usr) => usr === uid))
+      : Object.keys(cdb).find((k) => room_id === "696969" || (cdb[k].t === "group" && k === room_id && cdb[k].u.find((usr) => usr === uid)))
   if (s.edit && !chatkey) return { code: 400 }
   if (s.edit && chatkey) return editMessage(uid, chatkey, room_id, room_type, s)
   if (room_type === "group" && !chatkey) return { code: 404 }
@@ -80,19 +80,23 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
   dbOld[chat_id] = minimizeMessage(uid, newChat)
   db.fileSet(chatkey, "room", dbOld)
 
+  const users = room_id === "696969" ? getGlobalMembers(uid, dbOld) : cdb[chatkey].u
+
   const chatData = { ...newChat, id: chat_id }
   const dataZender = {
     chat: chatData,
     roomdata: cdb[chatkey].t === "user" ? convertUser(uid) : convertGroup(chatkey),
-    users: cdb[chatkey].u.map((usr) => getUser(usr, uid))
+    users: users.map((usr) => getUser(usr, uid))
   }
   const dataRep = {
     chat: chatData,
     roomdata: cdb[chatkey].t === "user" ? convertUser(room_id) : convertGroup(chatkey),
-    users: cdb[chatkey].u.map((usr) => getUser(uid, usr))
+    users: users.map((usr) => getUser(uid, usr))
   }
 
-  cdb[chatkey].u.forEach((usr) => zender(uid, usr, "sendmessage", dataZender))
+  const onlineUsers = room_id === "696969" ? getAllOnlineUsers() : users
+  onlineUsers.forEach((usr) => zender(uid, usr, "sendmessage", dataZender))
+
   return { code: 200, data: dataRep }
 }
 
@@ -124,17 +128,21 @@ export function editMessage(uid: string, chatkey: string, room_id: string, room_
   db.fileSet(chatkey, "room", dbOld)
 
   const chatData = { ...normalizeMessage(s.edit, dbOld[s.edit]) }
+
+  const users = room_id === "696969" ? getGlobalMembers(uid, dbOld) : cdb.u
+
   const dataZender = {
     chat: chatData,
     roomdata: cdb.t === "user" ? convertUser(uid) : convertGroup(chatkey),
-    users: cdb.u.map((usr) => getUser(usr, uid))
+    users: users.map((usr) => getUser(usr, uid))
   }
   const dataRep = {
     chat: chatData,
     roomdata: cdb.t === "user" ? convertUser(room_id) : convertGroup(chatkey),
-    users: cdb.u.map((usr) => getUser(uid, usr))
+    users: users.map((usr) => getUser(uid, usr))
   }
-  cdb.u.forEach((usr) => zender(uid, usr, "editmessage", dataZender))
+  const onlineUsers = room_id === "696969" ? getAllOnlineUsers() : users
+  onlineUsers.forEach((usr) => zender(uid, usr, "editmessage", dataZender))
 
   return { code: 200, data: dataRep }
 }
@@ -146,7 +154,7 @@ export function delMessage(uid: string, target: string, room: string, message_id
       ? Object.keys(cdb).find((k) => {
           return cdb[k].t === "user" && cdb[k].u.find((usr) => usr === uid) && cdb[k].u.find((usr) => usr === target)
         })
-      : Object.keys(cdb).find((k) => cdb[k].t === "group" && k === target && cdb[k].u.find((usr) => usr === uid))
+      : Object.keys(cdb).find((k) => target === "696969" || (cdb[k].t === "group" && k === target && cdb[k].u.find((usr) => usr === uid)))
 
   if (!chatkey) return { code: 404 }
 
@@ -170,17 +178,64 @@ export function delMessage(uid: string, target: string, room: string, message_id
   db.fileSet(chatkey, "room", dbOld)
 
   const chatData = { ...normalizeMessage(message_id, dbOld[message_id]) }
+
+  const users = target === "696969" ? getGlobalMembers(uid, dbOld) : cdb[chatkey].u
+
   const dataZender = {
     chat: chatData,
     roomdata: cdb[chatkey].t === "user" ? convertUser(uid) : convertGroup(chatkey),
-    users: cdb[chatkey].u.map((usr) => getUser(usr, uid))
+    users: users.map((usr) => getUser(usr, uid))
   }
   const dataRep = {
     chat: chatData,
     roomdata: cdb[chatkey].t === "user" ? convertUser(target) : convertGroup(chatkey),
-    users: cdb[chatkey].u.map((usr) => getUser(uid, usr))
+    users: users.map((usr) => getUser(uid, usr))
   }
-  cdb[chatkey].u.forEach((usr) => zender(uid, usr, "deletemessage", dataZender))
+
+  const onlineUsers = target === "696969" ? getAllOnlineUsers() : users
+
+  onlineUsers.forEach((usr) => zender(uid, usr, "deletemessage", dataZender))
 
   return { code: 200, data: dataRep }
+}
+
+function getAllOnlineUsers(): string[] {
+  const udb = db.ref.u
+
+  const usr = Object.keys(udb)
+    .filter((k) => {
+      return udb[k].socket
+    })
+    .map((k) => udb[k].id)
+
+  return usr
+}
+
+function getGlobalMembers(uid: string, chatsdb: IMessageKeyB): string[] {
+  const usersIds: string[] = []
+
+  Object.keys(chatsdb).forEach((ch) => {
+    if (!usersIds.find((usr) => usr === chatsdb[ch].u)) usersIds.push(chatsdb[ch].u)
+  })
+
+  if (!usersIds.find((usr) => usr === uid)) usersIds.push(uid)
+
+  return usersIds
+}
+
+export function getGlobalChats(uid: string): IRepTempB {
+  const chatsdb = (db.fileGet("696969", "room") || {}) as IMessageKeyB
+
+  const users: IUserF[] = getGlobalMembers(uid, chatsdb).map((usr) => getUser(uid, usr))
+
+  const data: IChatsF = {
+    u: users,
+    r: convertGroup("696969"),
+    m: Object.keys(chatsdb).map((msgkey) => {
+      const rawData = chatsdb[msgkey]
+      return normalizeMessage(msgkey, rawData)
+    })
+  }
+
+  return { code: 200, data }
 }

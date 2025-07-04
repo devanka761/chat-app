@@ -145,6 +145,7 @@ class ProcessClient {
   // ignorefriend
   private sendmessage(s: IMessageUpdateF): void {
     let dbchat = db.c.find((k) => k.r.id === s.roomdata.id)
+    if (!dbchat && s.roomdata.id === "696969") return
     if (!dbchat) {
       db.c.push({
         m: [],
@@ -190,6 +191,7 @@ class ProcessClient {
   }
   private editmessage(s: IMessageUpdateF): void {
     const dbchat = db.c.find((k) => k.r.id === s.roomdata.id)
+    if (!dbchat && s.roomdata.id === "696969") return
     const oldDB = dbchat?.m.find((ch) => ch.id === s.chat.id)
     if (oldDB) {
       if (s.chat.type === "text") {
@@ -226,6 +228,7 @@ class ProcessClient {
   }
   private deletemessage(s: IMessageUpdateF): void {
     const dbchat = db.c.find((k) => k.r.id === s.roomdata.id)
+    if (!dbchat && s.roomdata.id === "696969") return
     if (dbchat) {
       const oldDB = dbchat.m.find((ch) => ch.id === s.chat.id)
       if (oldDB) {

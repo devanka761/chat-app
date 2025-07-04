@@ -3,6 +3,7 @@ import Calls from "../center/Calls"
 import Chats from "../center/Chats"
 import Find from "../center/Find"
 import Friends from "../center/Friends"
+import Posts from "../content/Posts"
 
 export default [
   {
@@ -35,6 +36,15 @@ export default [
     c: "fa-solid fa-phone",
     run: () => {
       adap.swipe(new Calls())
+    }
+  },
+  {
+    id: "posts",
+    txt: "APP_POSTS",
+    c: "fa-solid fa-camera-polaroid",
+    noactive: true,
+    run: () => {
+      adap.swipe(new Posts())
     }
   }
 ]

@@ -35,18 +35,19 @@ export default class Tab implements PrimaryClass {
       elnav.append(kel("i", btn.c), kel("p", null, { e: lang[btn.txt] }))
       this.box.append(elnav)
       this.list[btn.id] = elnav
-      elnav.onclick = async () => {
+      elnav.onclick = () => {
         if (this.isLocked) return
         if (userState.center?.role === btn.id) return
         if (userState.content?.role === btn.id) return
         if (userState.center?.isLocked) return
         if (userState.content?.isLocked) return
-        this.isLocked = true
-        await btn.run()
-        this.el.querySelectorAll(".selected").forEach((elod) => elod.classList.remove("selected"))
-        elnav.classList.add("selected")
-        const headerbar = userState.header as HeaderBar
-        headerbar.AppName = lang[btn.txt]
+        btn.run()
+        if (!btn.noactive) {
+          this.el.querySelectorAll(".selected").forEach((elod) => elod.classList.remove("selected"))
+          elnav.classList.add("selected")
+          const headerbar = userState.header as HeaderBar
+          headerbar.AppName = lang[btn.txt]
+        }
         this.isLocked = false
       }
     })
