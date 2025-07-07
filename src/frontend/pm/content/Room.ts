@@ -124,6 +124,7 @@ export default class Room implements PrimaryClass {
   checkIfMediaReady(): void {
     if (this.mediaToLoad < 0) return
     this.mediaToLoad--
+    this.field.setMediaText(this.mediaToLoad.toString())
     if (this.mediaToLoad === 0) {
       this.field.preloaded(this.gotolast)
       this.mediaToLoad = 1

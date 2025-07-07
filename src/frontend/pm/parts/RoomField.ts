@@ -14,6 +14,7 @@ export default class RoomField {
   public list: MessagesAPI
   private preload: HTMLDivElement | undefined | null
   private autoScroll: boolean
+  private mediaText: HTMLSpanElement
   constructor(s: { room: Room }) {
     this.role = "roomfield"
     this.isLocked = false
@@ -22,7 +23,9 @@ export default class RoomField {
     this.list = new MessagesAPI({ data: [] })
   }
   private createElement() {
-    this.preload = kel("div", "preload", { e: `<i class="fa-solid fa-circle-notch fa-spin fa-fw"></i> ${lang.LOADING}` })
+    this.preload = kel("div", "preload", { e: '<i class="fa-solid fa-circle-notch fa-spin fa-fw"></i>' })
+    this.mediaText = kel("span", "mediatext", { e: `${lang.LOADING} Media` })
+    this.preload.append(this.mediaText)
     this.el = kel("div", "chatlist asset-loading", { e: this.preload })
   }
   send(message: MessageBuilder): MessageBuilder {
@@ -46,6 +49,9 @@ export default class RoomField {
   }
   get html(): HTMLDivElement {
     return this.el
+  }
+  setMediaText(current: string): void {
+    this.mediaText.innerHTML = `${lang.LOADING} Remaining: ${current}`
   }
   preloaded(btnGotolast: HTMLDivElement): void {
     if (this.preload && this.el.contains(this.preload)) this.el.removeChild(this.preload)
