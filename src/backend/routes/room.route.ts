@@ -1,8 +1,9 @@
 import express, { Request, Response, Router } from "express"
-import { delMessage, getGlobalChats, sendMessage } from "../controller/room.controller"
+import { delMessage, sendMessage } from "../controller/room.controller"
 import { rep } from "../main/helper"
 import { cdUser, isUser } from "../main/middlewares"
 import {} from "../../frontend/types/room.types"
+import { getGlobalChats } from "../controller/group.controller"
 
 const router: Router = express.Router()
 

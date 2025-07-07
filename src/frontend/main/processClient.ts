@@ -281,6 +281,35 @@ class ProcessClient {
     }
     userState.tab?.update("chats")
   }
+  private memberjoin(s: IZender): void {
+    const gdb = db.c.find((ch) => ch.r.id === s.groupid)
+    if (!gdb) return
+    const user = s.user as IUserF
+    const userExists = gdb.u.find((usr) => usr.id === s.from)
+    if (userExists) return
+    gdb.u.push(user)
+    if (userState.center?.role === "chats") {
+      const chatsCenter = userState.center as Chats
+      const chatCard = chatsCenter.list.get(s.groupid)
+      if (chatCard && !chatCard.users.find((usr) => usr.id === s.from)) {
+        chatCard.users.push(user)
+      }
+    }
+
+    if (userState.content?.role === "room") {
+      const roomContent = userState.content as Room
+      if (roomContent.data.id === s.groupid && !roomContent.users.find((usr) => usr.id === s.from)) {
+        roomContent.users.push(user)
+        roomContent.tab.users = roomContent.users
+      }
+    }
+    if (userState.content?.role === "group") {
+      const groupContent = userState.content as Group
+      if (groupContent.group.id === s.groupid && !groupContent.members.get(user.id)) {
+        groupContent.addMember(user)
+      }
+    }
+  }
   private memberleave(s: IZender): void {
     const gdb = db.c.find((ch) => ch.r.id === s.groupid)
     if (!gdb) return
@@ -310,12 +339,6 @@ class ProcessClient {
     }
 
     gdb.u = gdb.u.filter((usr) => usr.id !== s.from)
-
-    // if (group) {
-    //   group.u = group.u.filter((usr) => usr.id !== this.user.id)
-    // }
-
-    // const udb = gdb.u.
   }
   private memberkick(s: IZender): void {
     const gdb = db.c.find((ch) => ch.r.id === s.groupid)

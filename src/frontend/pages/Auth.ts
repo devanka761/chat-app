@@ -13,6 +13,8 @@ import Empty from "../pm/content/Empty"
 import socketClient from "../manager/socketClient"
 import adap from "../main/adaptiveState"
 import Tab from "../pm/header/Tab"
+import Invites from "./Invites"
+import db from "../manager/db"
 
 let lang: LangObject = {}
 
@@ -74,9 +76,18 @@ export default class Auth {
     adap.setContent(newcontent)
     adap.setTab(new Tab())
     adap.launch()
+    this.getInviteFrom()
   }
   private initializeData(s: IAccountB): void {
     socketClient.run(s)
+  }
+  private getInviteFrom(): void {
+    const urlParams = new URLSearchParams(window.location.search)
+    const inviteId = urlParams.get("invite")
+    if (inviteId) {
+      if (db.c.find((ch) => ch.r.link === inviteId)) return
+      new Invites({ link: inviteId })
+    }
   }
   private writeForm(): void {
     auth_container = this.el

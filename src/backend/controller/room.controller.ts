@@ -5,10 +5,11 @@ import { TRoomTypeF } from "../../frontend/types/room.types"
 import { IWritterF } from "../../frontend/types/message.types"
 import { IRepTempB } from "../types/validate.types"
 import { convertGroup, convertMessage, convertUser, escapeWhiteSpace, minimizeMessage, msgNotValid, msgValidTypes, normalizeMessage } from "../main/helper"
-import { IChatsF, IMessageTempF, IUserF } from "../../frontend/types/db.types"
+import { IMessageTempF } from "../../frontend/types/db.types"
 import { IMessageKeyB } from "../types/db.types"
 import zender from "../main/zender"
 import { getUser } from "./profile.controller"
+import { getGlobalMembers } from "./group.controller"
 
 export async function sendMessage(uid: string, room_id: string, room_type: TRoomTypeF, s: IWritterF): Promise<IRepTempB> {
   if (s.text) s.text = escapeWhiteSpace(s.text)
@@ -209,33 +210,4 @@ function getAllOnlineUsers(): string[] {
     .map((k) => udb[k].id)
 
   return usr
-}
-
-function getGlobalMembers(uid: string, chatsdb: IMessageKeyB): string[] {
-  const usersIds: string[] = []
-
-  Object.keys(chatsdb).forEach((ch) => {
-    if (!usersIds.find((usr) => usr === chatsdb[ch].u)) usersIds.push(chatsdb[ch].u)
-  })
-
-  if (!usersIds.find((usr) => usr === uid)) usersIds.push(uid)
-
-  return usersIds
-}
-
-export function getGlobalChats(uid: string): IRepTempB {
-  const chatsdb = (db.fileGet("696969", "room") || {}) as IMessageKeyB
-
-  const users: IUserF[] = getGlobalMembers(uid, chatsdb).map((usr) => getUser(uid, usr))
-
-  const data: IChatsF = {
-    u: users,
-    r: convertGroup("696969"),
-    m: Object.keys(chatsdb).map((msgkey) => {
-      const rawData = chatsdb[msgkey]
-      return normalizeMessage(msgkey, rawData)
-    })
-  }
-
-  return { code: 200, data }
 }

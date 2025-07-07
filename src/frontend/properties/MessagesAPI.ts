@@ -20,6 +20,6 @@ export class MessagesAPI {
   }
   remove(message: string | MessageBuilder): void {
     const msgid = typeof message === "string" ? message : message.id
-    this.data = this.data.filter((msg) => msg.id === msgid)
+    this.data = this.data.filter((msg) => msg.id !== msgid)
   }
 }

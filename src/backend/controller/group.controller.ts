@@ -1,8 +1,8 @@
 import fs from "fs"
-import { IChatsF } from "../../frontend/types/db.types"
+import { IChatsF, IUserF } from "../../frontend/types/db.types"
 import db from "../main/db"
-import { convertGroup, rNumber } from "../main/helper"
-import { IChatB } from "../types/db.types"
+import { convertGroup, normalizeMessage, rNumber } from "../main/helper"
+import { IChatB, IMessageKeyB } from "../types/db.types"
 import { IRepTempB } from "../types/validate.types"
 import { getUser } from "./profile.controller"
 import zender from "../main/zender"
@@ -106,6 +106,7 @@ export function resetLink(uid: string, s: { id: string }): IRepTempB {
 
 export function setLeave(uid: string, roomid: string): IRepTempB {
   const cdb = db.ref.c[roomid]
+  if (roomid === "696969") return { code: 200, msg: "GLOBAL_OK" }
   if (!cdb) return { code: 200, msg: "GRPS_404" }
   if (cdb.o === uid) return setDisband(uid, roomid)
 
@@ -166,4 +167,60 @@ export function kickMember(uid: string, userid: string, roomid: string): IRepTem
   db.ref.c[roomid].u = db.ref.c[roomid].u.filter((usr) => usr !== userid)
   db.save("c")
   return { code: 200 }
+}
+
+export function getGroup(uid: string, groupid: string): IChatsF {
+  const cdb = db.ref.c[groupid]
+  const dbchat = db.fileGet(cdb.c as string, "room")
+  const chats: IChatsF = {
+    r: convertGroup(groupid),
+    u: cdb.u.map((usr) => getUser(uid, usr)),
+    m: Object.keys(dbchat).map((msgkey) => {
+      const rawData = dbchat[msgkey]
+      return normalizeMessage(msgkey, rawData)
+    })
+  }
+  return chats
+}
+
+export function joinGroup(uid: string, groupid: string, link: string): IRepTempB {
+  const gdb = db.ref.c[groupid]
+  if (!gdb || !gdb.l || gdb.l !== link) return { code: 404, msg: "INV_NOT_FOUND_DESC" }
+  if (groupid === "696969" || link === "zzzzzz") return getGlobalChats(uid)
+  if (gdb.u.find((usr) => usr === uid)) return { code: 200, data: getGroup(uid, groupid) }
+
+  db.ref.c[groupid].u.push(uid)
+  db.save("c")
+
+  gdb.u.forEach((usr) => zender(uid, usr, "memberjoin", { groupid, user: getUser(usr, uid) }))
+  return { code: 200, data: getGroup(uid, groupid) }
+}
+
+export function getGlobalMembers(uid: string, chatsdb: IMessageKeyB): string[] {
+  const usersIds: string[] = []
+
+  Object.keys(chatsdb).forEach((ch) => {
+    if (!usersIds.find((usr) => usr === chatsdb[ch].u)) usersIds.push(chatsdb[ch].u)
+  })
+
+  if (!usersIds.find((usr) => usr === uid)) usersIds.push(uid)
+
+  return usersIds
+}
+
+export function getGlobalChats(uid: string): IRepTempB {
+  const chatsdb = (db.fileGet("696969", "room") || {}) as IMessageKeyB
+
+  const users: IUserF[] = getGlobalMembers(uid, chatsdb).map((usr) => getUser(uid, usr))
+
+  const data: IChatsF = {
+    u: users,
+    r: convertGroup("696969"),
+    m: Object.keys(chatsdb).map((msgkey) => {
+      const rawData = chatsdb[msgkey]
+      return normalizeMessage(msgkey, rawData)
+    })
+  }
+
+  return { code: 200, data }
 }

@@ -88,8 +88,8 @@ export default class Chats implements PrimaryClass {
         this.isLocked = false
         return
       }
-      this.setGlobalChats(getGlobalChats.data)
       this.isLocked = false
+      this.setGlobalChats(getGlobalChats.data)
     }
   }
   private setGlobalChats(data: IChatsF): void {

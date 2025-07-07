@@ -13,6 +13,7 @@
 @use "./pm/content/Room";
 @use "./pm/media/call";
 @use "./pm/media/incoming";
+@use "./pages/invites";
 
 // this should be at the bottom of the page
 @use "./nrw";

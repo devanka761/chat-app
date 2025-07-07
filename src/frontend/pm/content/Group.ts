@@ -225,6 +225,21 @@ export default class Group implements PrimaryClass {
       this.ul.append(member.html)
     }
   }
+  addMember(user: IUserF): void {
+    if (!this.users.find((usr) => usr.id === user.id)) this.users.push(user)
+    if (this.room && !this.room.users.find((usr) => usr.id === user.id)) {
+      this.room.users.push(user)
+    }
+    if (this.classBefore && this.classBefore.role === "room") {
+      const roomBefore = this.classBefore as Room
+      if (!roomBefore.users.find((usr) => usr.id === user.id)) roomBefore.users.push(user)
+    }
+
+    if (!this.members.get(user.id)) {
+      this.renMemberNew(user)
+      this.renMemberTitle()
+    }
+  }
   private renLeave(): void {
     this.btnLeave = kel("a", "leave")
     this.btnLeave.href = "/x/group/leave"

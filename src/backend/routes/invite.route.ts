@@ -15,7 +15,7 @@ router.get("/:invite_id", (req: Request, res: Response) => {
   if (isJsonRequest) {
     res.status(getInv.code).json(getInv)
   } else {
-    res.json(getInv)
+    res.render("invite", { group: getInv.data.group, members: getInv.data.members })
   }
   return
 })

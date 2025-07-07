@@ -1,5 +1,5 @@
 import express, { Request, Response, Router } from "express"
-import { createGroup, kickMember, resetLink, setGroupname, setImg, setLeave } from "../controller/group.controller"
+import { createGroup, joinGroup, kickMember, resetLink, setGroupname, setImg, setLeave } from "../controller/group.controller"
 import { rep } from "../main/helper"
 import { cdUser, isUser } from "../main/middlewares"
 import validate from "../main/validate"
@@ -58,6 +58,13 @@ router.post("/leave/:id", express.json({ limit: "100KB" }), (req: Request, res: 
   const { id } = req.params
   const leaveGroup = rep(setLeave(req.user?.id as string, id))
   res.status(leaveGroup.code).json(leaveGroup)
+  return
+})
+
+router.post("/join/:id", express.json({ limit: "100KB" }), (req: Request, res: Response) => {
+  const { id } = req.params
+  const joinedGroup = rep(joinGroup(req.user?.id as string, id, req.body?.link || "null"))
+  res.status(joinedGroup.code).json(joinedGroup)
   return
 })
 
