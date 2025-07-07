@@ -1,0 +1,155 @@
+@use "../../variables" as v;
+
+$topheight: 60px;
+
+.Posts {
+  background-color: v.$px25;
+  .top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: v.$px2;
+    font-weight: 500;
+    height: $topheight;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.25em;
+    .btn {
+      position: absolute;
+      left: 10px;
+    }
+    .sec-title {
+      font-weight: bold;
+    }
+  }
+  .wall {
+    position: absolute;
+    top: $topheight;
+    left: 0;
+    width: 100%;
+    height: calc(100% - $topheight);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    .actions {
+      position: sticky;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 10px;
+      .btn-create {
+        width: fit-content;
+        max-width: calc(100% - 20px);
+        margin: 0 auto;
+        padding: 10px;
+        border-radius: 10px;
+        background-color: v.$pm2;
+        color: v.$white;
+        text-align: center;
+      }
+    }
+    .card {
+      padding: 20px 10px;
+      width: calc(100% - 60px);
+      max-width: 600px;
+      margin: 0 auto;
+      .user {
+        width: 100%;
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        .img {
+          flex-shrink: 0;
+          img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center;
+            -o-object-fit: cover;
+            -o-object-position: center;
+          }
+        }
+        .name {
+          flex-grow: 1;
+          overflow: hidden;
+          .dname {
+            font-size: 0.9rem;
+            font-weight: bold;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+          .ts {
+            font-size: 0.8rem;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+        }
+      }
+      .media {
+        width: 100%;
+        height: fit-content;
+        margin: 10px 0;
+        background-color: v.$black;
+        img {
+          display: block;
+          margin: 0 auto;
+          max-width: 100%;
+          max-height: 300px;
+        }
+      }
+      .options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        .opt-visitor {
+          display: flex;
+          justify-content: start;
+          align-items: center;
+          gap: 20px;
+          .btn-likes {
+            i {
+              font-size: 1.5rem;
+            }
+            span {
+              font-size: 1rem;
+            }
+            &.liked {
+              i {
+                color: v.$fuchsia;
+              }
+            }
+          }
+          .btn-comments {
+            i {
+              font-size: 1.5rem;
+            }
+            span {
+              font-size: 1rem;
+            }
+          }
+        }
+        .opt-author {
+          .btn-delete {
+            color: v.$cred;
+            i {
+              font-size: 1.1rem;
+            }
+          }
+        }
+      }
+      .text {
+        text-align: left;
+        word-break: break-all;
+        word-break: break-word;
+        hyphens: none;
+      }
+    }
+  }
+}
