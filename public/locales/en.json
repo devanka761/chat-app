@@ -203,6 +203,7 @@
   "ROOM_TYPE_NOT_FOUND": "Room Chat ID is not found",
   "ROOM_OPT_TAB_EXPORT": "Export Chat",
   "ROOM_OPT_TAB_CLEAR": "Clear Chat",
+  "ROOM_TO_LOAD": "Media to load",
   "OPT_profile": "View Profile",
   "OPT_copy": "Copy Text",
   "OPT_download": "Download File",

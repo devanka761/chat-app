@@ -24,7 +24,7 @@ export default class RoomField {
   }
   private createElement() {
     this.preload = kel("div", "preload", { e: '<i class="fa-solid fa-circle-notch fa-spin fa-fw"></i>' })
-    this.mediaText = kel("span", "mediatext", { e: `${lang.LOADING} Media` })
+    this.mediaText = kel("span", "mediatext", { e: lang.ROOM_TO_LOAD })
     this.preload.append(this.mediaText)
     this.el = kel("div", "chatlist asset-loading", { e: this.preload })
   }
@@ -51,7 +51,7 @@ export default class RoomField {
     return this.el
   }
   setMediaText(current: string): void {
-    this.mediaText.innerHTML = `${lang.LOADING} Remaining: ${current}`
+    this.mediaText.innerHTML = `${lang.ROOM_TO_LOAD}: ${current}`
   }
   preloaded(btnGotolast: HTMLDivElement): void {
     if (this.preload && this.el.contains(this.preload)) this.el.removeChild(this.preload)
