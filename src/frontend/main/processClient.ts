@@ -203,8 +203,10 @@ class ProcessClient {
     }
 
     if (userState.content && userState.content.role === "room") {
+      console.log("editing...")
       const room = userState.content as Room
       if (room.data.id === s.roomdata.id) {
+        console.log("updating...")
         room.update(s)
       }
     }

@@ -36,3 +36,13 @@ export function langFile(langid: string) {
   if (!fs.existsSync(langpath)) return null
   return langpath
 }
+
+export function postFile(postid: string, filename: string): string | null {
+  const pdb = db.ref.p[postid]
+  if (!pdb || pdb.img !== filename) return null
+
+  const filepath = `./dist/stg/post/${filename}`
+  if (!fs.existsSync(filepath)) return null
+
+  return filepath
+}

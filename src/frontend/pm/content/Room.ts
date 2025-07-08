@@ -268,13 +268,13 @@ export default class Room implements PrimaryClass {
     }, 1000)
 
     if (msg) {
-      if (s.chat.type === "text" && msg.json.message.type === "text") {
+      if (s.chat.type === "call" && msg.json.message.type === "call") {
+        msg.call?.update(s.chat.duration ?? 0)
+      } else if (s.chat.text) {
         msg.setTimeStamp(s.chat.timestamp)
         msg.setText(s.chat.text as string)
         msg.setEdited(s.chat.edited)
         msg.clickListener()
-      } else if (s.chat.type === "call" && msg.json.message.type === "call") {
-        msg.call?.update(s.chat.duration ?? 0)
       }
       return
     }

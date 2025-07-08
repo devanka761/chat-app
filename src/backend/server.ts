@@ -11,6 +11,7 @@ import groupRouter from "./routes/group.route"
 import roomRouter from "./routes/room.route"
 import fileRouter from "./routes/file.route"
 import inviteRouter from "./routes/invite.route"
+import postsRouter from "./routes/posts.route"
 import cfg from "./main/cfg"
 import db from "./main/db"
 import { sessionUserBinder } from "./main/binder"
@@ -65,6 +66,7 @@ app.use("/x/account", accountRouter)
 app.use("/x/profile", profileRouter)
 app.use("/x/group", groupRouter)
 app.use("/x/room", roomRouter)
+app.use("/x/posts", postsRouter)
 app.use("/file", fileRouter)
 app.use("/invite", inviteRouter)
 

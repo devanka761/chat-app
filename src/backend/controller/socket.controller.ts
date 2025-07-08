@@ -75,6 +75,25 @@ const socketMessage: TSocketHandlerB = {
     db.fileSet(chatkey, "room", dbOld)
     const dataZender = { roomid }
     cdb[chatkey].u.forEach((usr) => zender(uid, usr, "readAllMessages", dataZender))
+  },
+  postlike: (uid, from, data) => {
+    const postid = data.postid as string
+    const pdb = db.ref.p[postid]
+    if (!pdb) return
+    if (!db.ref.p[postid].l) {
+      db.ref.p[postid].l = []
+    }
+    db.ref.p[postid].l.push(uid)
+    db.save("p")
+  },
+  postunlike: (uid, from, data) => {
+    const postid = data.postid as string
+    const pdb = db.ref.p[postid]
+    if (!pdb) return
+    if (db.ref.p[postid].l && db.ref.p[postid].l.find((usr) => usr === uid)) {
+      db.ref.p[postid].l = db.ref.p[postid].l.filter((usr) => usr !== uid)
+    }
+    db.save("p")
   }
 }
 

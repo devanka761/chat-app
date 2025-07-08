@@ -1,19 +1,140 @@
 import { kel } from "../../helper/kel"
+import modal from "../../helper/modal"
+import sdate from "../../helper/sdate"
+import setbadge from "../../helper/setbadge"
+import socketClient from "../../manager/socketClient"
 import { IUserF } from "../../types/db.types"
+import { IPostF } from "../../types/posts.types"
+import Posts from "../content/Posts"
 
 export default class PostCard {
   isLocked: boolean
   user: IUserF
   private el: HTMLDivElement
-  constructor() {
+  parent: Posts
+  post: IPostF
+  private btnLikes: HTMLDivElement
+  private btnComments: HTMLDivElement
+  private btnDelete: HTMLDivElement
+  private likesCount: HTMLSpanElement
+  private likeIcon: HTMLElement
+  private commentsCount: HTMLSpanElement
+  constructor(s: { parent: Posts; post: IPostF }) {
     this.isLocked = false
+    this.parent = s.parent
+    this.post = s.post
+    this.user = s.post.user
     this.run()
   }
-  createElement(): void {
-    this.el = kel("div", "Posts")
+  private createElement(): void {
+    this.el = kel("div", "card")
+  }
+  private renUser(): void {
+    const euser = kel("div", "user")
+    const imgparent = kel("div", "img")
+    const img = new Image()
+    img.onerror = () => (img.src = "/assets/user.jpg")
+    img.alt = this.user.username
+    img.src = this.user.image ? `/file/user/${this.user.image}` : "/assets/user.jpg"
+    imgparent.append(img)
+    const names = kel("div", "name")
+    const displayName = kel("div", "dname")
+    displayName.innerText = this.user.displayname
+    if (this.user.badges) setbadge(displayName, this.user.badges)
+    const timestamp = kel("div", "ts")
+    timestamp.append(sdate.timeago(this.post.ts, true))
+    names.append(displayName, timestamp)
+
+    euser.append(imgparent, names)
+    this.el.append(euser)
+  }
+  private renMedia(): void {
+    const media = kel("div", "media")
+    const img = new Image()
+    img.onerror = () => (img.src = "/assets/error.jpg")
+    img.alt = this.post.id
+    img.src = `/file/post/${this.post.id}/${this.post.img}`
+    media.append(img)
+    this.el.append(media)
+  }
+  private renOptions(): void {
+    const options = kel("div", "options")
+
+    const optVisitor = kel("div", "opt-visitor")
+    const optAuthor = kel("div", "opt-author")
+    options.append(optVisitor, optAuthor)
+    this.likesCount = kel("span", null, { e: this.post.likes.toString() })
+    this.likeIcon = kel("i", "fa-" + (this.post.liked ? "solid" : "regular") + " fa-heart")
+    this.btnLikes = kel("div", "btn btn-likes", { e: [this.likeIcon, this.likesCount] })
+    if (this.post.liked) {
+      this.btnLikes.classList.add("liked")
+    }
+    this.commentsCount = kel("span", null, { e: this.post.comments.toString() })
+    this.btnComments = kel("div", "btn btn-comments", { e: ['<i class="fa-regular fa-comment"></i>', this.commentsCount] })
+    optVisitor.append(this.btnLikes, this.btnComments)
+    this.btnDelete = kel("div", "btn btn-delete", { e: `<i class="fa-regular fa-trash-xmark"></i>` })
+
+    optAuthor.append(this.btnDelete)
+    this.el.append(options)
+  }
+  private renText(): void {
+    if (!this.post.text) return
+    const text = kel("div", "text")
+    text.innerText = this.post.text
+    this.el.append(text)
+  }
+  get html(): HTMLDivElement {
+    return this.el
+  }
+  private btnListener() {
+    this.btnLikes.onclick = async () => {
+      if (this.isLocked) return
+      this.setLike()
+    }
+
+    this.btnComments.onclick = async () => {
+      if (this.isLocked) return
+      this.isLocked = true
+      await modal.alert({
+        ic: "helmet-safety",
+        msg: "UNDER MAINTENANCE"
+      })
+      this.isLocked = false
+    }
+    this.btnDelete.onclick = async () => {
+      if (this.isLocked) return
+      this.isLocked = true
+      await modal.alert({
+        ic: "helmet-safety",
+        msg: "UNDER MAINTENANCE"
+      })
+      this.isLocked = false
+    }
+  }
+  private setLike(): void {
+    if (this.post.liked) {
+      socketClient.send({ type: "postunlike", postid: this.post.id })
+      this.post.liked = false
+      this.post.likes--
+      this.likeIcon.setAttribute("class", "fa-regular fa-heart")
+      this.btnLikes.classList.remove("liked")
+      this.likesCount.innerHTML = this.post.likes.toString()
+    } else {
+      socketClient.send({ type: "postlike", postid: this.post.id })
+      this.post.liked = true
+      this.post.likes++
+      this.likeIcon.setAttribute("class", "fa-solid fa-heart")
+      this.btnLikes.classList.add("liked")
+      this.likesCount.innerHTML = this.post.likes.toString()
+    }
   }
   run(): this {
     this.createElement()
+    this.renUser()
+    this.renMedia()
+    this.renOptions()
+    this.renText()
+    this.btnListener()
     return this
   }
 }

@@ -69,13 +69,13 @@ export type IMessageKeyB = {
 interface PostCommentObject {
   u: string
   txt: string
-  ts: string
+  ts: number
 }
 
 export interface Post {
   u: string
-  ts: string
-  i: string
+  ts: number
+  img: string
   l?: string[]
   txt?: string
   c?: { [key: string]: PostCommentObject }

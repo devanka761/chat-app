@@ -49,6 +49,15 @@ $topheight: 60px;
         text-align: center;
       }
     }
+    .post-wait {
+      width: 100%;
+      padding: 20px 10px;
+      text-align: center;
+      color: v.$softwhite;
+      i {
+        font-size: 1.5rem;
+      }
+    }
     .card {
       padding: 20px 10px;
       width: calc(100% - 60px);
@@ -118,11 +127,13 @@ $topheight: 60px;
               font-size: 1.5rem;
             }
             span {
+              margin-left: 5px;
               font-size: 1rem;
             }
             &.liked {
               i {
-                color: v.$fuchsia;
+                animation: popup_in 0.25s;
+                color: v.$cred;
               }
             }
           }
@@ -131,6 +142,7 @@ $topheight: 60px;
               font-size: 1.5rem;
             }
             span {
+              margin-left: 5px;
               font-size: 1rem;
             }
           }

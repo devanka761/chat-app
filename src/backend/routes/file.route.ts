@@ -1,5 +1,5 @@
 import express, { Request, Response, Router } from "express"
-import { groupFile, langFile, roomFile, userFile } from "../controller/file.controller"
+import { groupFile, langFile, postFile, roomFile, userFile } from "../controller/file.controller"
 import { isUser } from "../main/middlewares"
 
 const router: Router = express.Router()
@@ -44,6 +44,16 @@ router.get("/media/:roomtype/:roomid/:filename", (req: Request, res: Response) =
     return
   }
   const file = roomFile(<string>req.user?.id, roomtype, roomid, filename)
+  if (file) {
+    res.sendFile(file, { root: "./" })
+    return
+  }
+  res.sendStatus(404)
+  return
+})
+router.get("/post/:postid/:postimg", (req: Request, res: Response) => {
+  const { postid, postimg } = req.params
+  const file = postFile(postid, postimg)
   if (file) {
     res.sendFile(file, { root: "./" })
     return

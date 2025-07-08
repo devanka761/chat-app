@@ -1,9 +1,12 @@
 import { epm, kel } from "../../helper/kel"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
+import xhr from "../../helper/xhr"
 import adap from "../../main/adaptiveState"
 import userState from "../../main/userState"
 import { PrimaryClass } from "../../types/userState.types"
+import PostCard from "../parts/PostCard"
+import { TPostsF } from "../../types/posts.types"
 
 export default class Posts implements PrimaryClass {
   king?: "center" | "content" | undefined
@@ -14,6 +17,7 @@ export default class Posts implements PrimaryClass {
   private el: HTMLDivElement
   private btnCreate: HTMLDivElement
   private actions: HTMLDivElement
+  private preloading: HTMLDivElement
   constructor() {
     this.king = "content"
     this.role = "posts"
@@ -32,9 +36,29 @@ export default class Posts implements PrimaryClass {
     this.actions = kel("div", "actions")
     this.actions.append(this.btnCreate)
     this.wall.append(this.actions)
+    const text = `<i class="fa-solid fa-circle-notch fa-spin"></i> ${lang.LOADING}`
+    this.preloading = kel("div", "post-wait", { e: text })
+    this.wall.prepend(this.preloading)
   }
   private btnListener(): void {
     this.btnBack.onclick = () => adap.swipe()
+  }
+  private async getAllPosts(): Promise<void> {
+    this.isLocked = true
+    const getPosts = await xhr.get("/x/posts")
+    this.preloading.remove()
+    if (!getPosts || !getPosts.ok) {
+      await modal.alert(lang[getPosts.msg] || lang.ERROR)
+      this.isLocked = false
+      return
+    }
+    this.isLocked = false
+
+    const posts: TPostsF = getPosts.data
+    posts.forEach((post) => {
+      const userPost = new PostCard({ parent: this, post })
+      this.wall.prepend(userPost.html)
+    })
   }
   private tempCard(): void {
     const card = kel("div", "card")
@@ -85,6 +109,7 @@ export default class Posts implements PrimaryClass {
     this.createElement()
     epm().append(this.el)
     this.btnListener()
-    this.tempCard()
+    this.getAllPosts()
+    // this.tempCard()
   }
 }

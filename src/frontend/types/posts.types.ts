@@ -7,12 +7,14 @@ export interface ICommentF {
 }
 
 export interface IPostF {
+  id: string
   user: IUserF
   ts: number
   img: string
   text?: string
   likes: number
   comments: number
+  liked: boolean
 }
 
 export type TPostsF = IPostF[]

@@ -37,6 +37,19 @@ class DevankaLocal {
         console.info(`Data - ${fileKey} - Loaded!`)
         this.save(file)
       })
+    this.checkGlobal()
+  }
+  private checkGlobal(): void {
+    if (!this.ref.c["696969"]) {
+      this.ref.c["696969"] = {
+        t: "group",
+        u: [],
+        b: [5],
+        c: "696969",
+        n: "Global",
+        o: "-1"
+      }
+    }
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fileGet(filekey: string, filefolder: string): any {
