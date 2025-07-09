@@ -103,6 +103,10 @@ $topheight: 60px;
       .media {
         width: 100%;
         height: fit-content;
+        min-height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         margin: 10px 0;
         background-color: v.$black;
         img {
@@ -123,11 +127,14 @@ $topheight: 60px;
           align-items: center;
           gap: 20px;
           .btn-likes {
+            display: flex;
+            justify-content: start;
+            align-items: center;
+            gap: 5px;
             i {
               font-size: 1.5rem;
             }
             span {
-              margin-left: 5px;
               font-size: 1rem;
             }
             &.liked {
@@ -138,6 +145,10 @@ $topheight: 60px;
             }
           }
           .btn-comments {
+            display: flex;
+            justify-content: start;
+            align-items: center;
+            gap: 5px;
             i {
               font-size: 1.5rem;
             }
@@ -149,7 +160,7 @@ $topheight: 60px;
         }
         .opt-author {
           .btn-delete {
-            color: v.$cred;
+            color: v.$sred;
             i {
               font-size: 1.1rem;
             }

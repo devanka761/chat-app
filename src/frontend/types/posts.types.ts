@@ -19,3 +19,9 @@ export interface IPostF {
 
 export type TPostsF = IPostF[]
 export type TCommentsF = ICommentF[]
+
+export interface IPostB {
+  file: string
+  name: string
+  text?: string | null
+}

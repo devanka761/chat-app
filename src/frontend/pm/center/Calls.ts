@@ -1,4 +1,5 @@
 import { epm, kel } from "../../helper/kel"
+import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import noAccount from "../../helper/noAccount"
 import userState from "../../main/userState"
@@ -38,11 +39,23 @@ export default class Calls implements PrimaryClass {
         })
     })
     cdb.forEach((chat) => this.addToList(chat))
+    this.writeIfEmpty(cdb)
   }
   addToList(s: { message: IMessageF; users: IUserF[] }): void {
     const user = s.users.find((usr) => usr.id !== db.me.id) || noAccount()
     const call = new CallBuilder({ chat: s.message, user, parent: this })
     this.card_list.prepend(call.html)
+    this.writeIfEmpty([s])
+  }
+  private writeIfEmpty(cdb: { message: IMessageF; users: IUserF[] }[]): void {
+    const oldNomore: HTMLParagraphElement | null = this.el.querySelector(".nomore")
+    if (cdb.length < 1) {
+      if (oldNomore) return
+      const nomore = kel("p", "nomore", { e: `${lang.CHTS_NOCHAT}<br/>${lang.CALL_PLS}` })
+      this.card_list.prepend(nomore)
+    } else {
+      if (oldNomore) oldNomore.remove()
+    }
   }
   update(): void {}
   async destroy(instant?: boolean): Promise<void> {

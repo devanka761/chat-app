@@ -8,6 +8,7 @@ import userState from "../../main/userState"
 import db from "../../manager/db"
 import { IRoomDataF, IUserF } from "../../types/db.types"
 import Chats from "../center/Chats"
+import Account from "../content/Account"
 import Group from "../content/Group"
 import Profile from "../content/Profile"
 import Room from "../content/Room"
@@ -74,8 +75,7 @@ export default class Member {
   }
   private profileListener(): void {
     this.left.onclick = () => {
-      if (this.user.id === db.me.id) return
-      adap.swipe(new Profile({ user: this.user, classBefore: this.parent }))
+      adap.swipe(this.user.id === db.me.id ? new Account({ classBefore: this.parent }) : new Profile({ user: this.user, classBefore: this.parent }))
     }
   }
   private kickListener(): void {

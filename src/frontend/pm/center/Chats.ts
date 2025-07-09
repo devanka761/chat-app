@@ -96,7 +96,7 @@ export default class Chats implements PrimaryClass {
     if (!db.c.find((ch) => ch.r.id === data.r.id)) {
       db.c.push(data)
       this.update({
-        chat: data.m[data.m.length - 1],
+        chat: data.m[data.m.length - 1] || noMessage(),
         users: data.u,
         roomdata: data.r
       })

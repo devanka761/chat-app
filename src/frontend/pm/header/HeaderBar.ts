@@ -1,7 +1,9 @@
 import { epm, kel, qutor } from "../../helper/kel"
+import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import userState from "../../main/userState"
 import { PrimaryClass } from "../../types/userState.types"
+import _navlist from "./_navlist"
 import OptionHeaderBuilder from "./OptionHeaderBuilder"
 
 export default class HeaderBar implements PrimaryClass {
@@ -22,7 +24,7 @@ export default class HeaderBar implements PrimaryClass {
   private createElement(): void {
     this.el = kel("div", "header")
     const appParent = kel("div", "header-identification")
-    this.apptitle = kel("div", "title", { e: "KIRIMIN" })
+    this.apptitle = kel("div", "title")
     this.eactions = kel("div", "actions")
     this.btn_find = kel("div", "btn btn-find", { e: `<i class="fa-solid fa-fw fa-magnifying-glass"></i>` })
     this.btn_settings = kel("div", "btn btn-settings", {
@@ -63,11 +65,20 @@ export default class HeaderBar implements PrimaryClass {
     this.isLocked = false
     this.el.remove()
   }
+  private setInitialName(): void {
+    const hasNavId = _navlist.find((nav) => nav.id === userState.center?.role)
+    if (hasNavId) {
+      this.AppName = lang[hasNavId.txt] || "KIRIMIN"
+    } else {
+      this.AppName = "KIRIMIN"
+    }
+  }
   update(): void {}
   run(): void {
     userState.header = this
     this.createElement()
     epm().append(this.el)
     this.btnListener()
+    this.setInitialName()
   }
 }

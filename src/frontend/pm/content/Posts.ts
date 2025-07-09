@@ -7,6 +7,7 @@ import userState from "../../main/userState"
 import { PrimaryClass } from "../../types/userState.types"
 import PostCard from "../parts/PostCard"
 import { TPostsF } from "../../types/posts.types"
+import CreatePost from "./CreatePost"
 
 export default class Posts implements PrimaryClass {
   king?: "center" | "content" | undefined
@@ -42,6 +43,7 @@ export default class Posts implements PrimaryClass {
   }
   private btnListener(): void {
     this.btnBack.onclick = () => adap.swipe()
+    this.btnCreate.onclick = () => adap.swipe(new CreatePost({ posts: this, classBefore: this }))
   }
   private async getAllPosts(): Promise<void> {
     this.isLocked = true

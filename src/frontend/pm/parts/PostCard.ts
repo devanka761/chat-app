@@ -2,10 +2,14 @@ import { kel } from "../../helper/kel"
 import modal from "../../helper/modal"
 import sdate from "../../helper/sdate"
 import setbadge from "../../helper/setbadge"
+import adap from "../../main/adaptiveState"
+import db from "../../manager/db"
 import socketClient from "../../manager/socketClient"
 import { IUserF } from "../../types/db.types"
 import { IPostF } from "../../types/posts.types"
+import Account from "../content/Account"
 import Posts from "../content/Posts"
+import Profile from "../content/Profile"
 
 export default class PostCard {
   isLocked: boolean
@@ -46,6 +50,9 @@ export default class PostCard {
     names.append(displayName, timestamp)
 
     euser.append(imgparent, names)
+    euser.onclick = () => {
+      adap.swipe(this.user.id === db.me.id ? new Account({ classBefore: this.parent }) : new Profile({ user: this.user, classBefore: this.parent }))
+    }
     this.el.append(euser)
   }
   private renMedia(): void {
@@ -61,20 +68,25 @@ export default class PostCard {
     const options = kel("div", "options")
 
     const optVisitor = kel("div", "opt-visitor")
-    const optAuthor = kel("div", "opt-author")
-    options.append(optVisitor, optAuthor)
-    this.likesCount = kel("span", null, { e: this.post.likes.toString() })
+    options.append(optVisitor)
+    this.likesCount = kel("span")
+    this.likesCount.innerHTML = this.post.likes >= 1 ? this.post.likes.toString() : ""
     this.likeIcon = kel("i", "fa-" + (this.post.liked ? "solid" : "regular") + " fa-heart")
     this.btnLikes = kel("div", "btn btn-likes", { e: [this.likeIcon, this.likesCount] })
     if (this.post.liked) {
       this.btnLikes.classList.add("liked")
     }
-    this.commentsCount = kel("span", null, { e: this.post.comments.toString() })
+    this.commentsCount = kel("span")
+    this.commentsCount.innerHTML = this.post.comments >= 1 ? this.post.comments.toString() : ""
     this.btnComments = kel("div", "btn btn-comments", { e: ['<i class="fa-regular fa-comment"></i>', this.commentsCount] })
     optVisitor.append(this.btnLikes, this.btnComments)
-    this.btnDelete = kel("div", "btn btn-delete", { e: `<i class="fa-regular fa-trash-xmark"></i>` })
 
-    optAuthor.append(this.btnDelete)
+    if (this.user.id === db.me.id) {
+      const optAuthor = kel("div", "opt-author")
+      options.append(optAuthor)
+      this.btnDelete = kel("div", "btn btn-delete", { e: `<i class="fa-regular fa-trash-xmark"></i>` })
+      optAuthor.append(this.btnDelete)
+    }
     this.el.append(options)
   }
   private renText(): void {
@@ -101,15 +113,16 @@ export default class PostCard {
       })
       this.isLocked = false
     }
-    this.btnDelete.onclick = async () => {
-      if (this.isLocked) return
-      this.isLocked = true
-      await modal.alert({
-        ic: "helmet-safety",
-        msg: "UNDER MAINTENANCE"
-      })
-      this.isLocked = false
-    }
+    if (this.btnDelete)
+      this.btnDelete.onclick = async () => {
+        if (this.isLocked) return
+        this.isLocked = true
+        await modal.alert({
+          ic: "helmet-safety",
+          msg: "UNDER MAINTENANCE"
+        })
+        this.isLocked = false
+      }
   }
   private setLike(): void {
     if (this.post.liked) {
@@ -118,14 +131,14 @@ export default class PostCard {
       this.post.likes--
       this.likeIcon.setAttribute("class", "fa-regular fa-heart")
       this.btnLikes.classList.remove("liked")
-      this.likesCount.innerHTML = this.post.likes.toString()
+      this.likesCount.innerHTML = this.post.likes >= 1 ? this.post.likes.toString() : ""
     } else {
       socketClient.send({ type: "postlike", postid: this.post.id })
       this.post.liked = true
       this.post.likes++
       this.likeIcon.setAttribute("class", "fa-solid fa-heart")
       this.btnLikes.classList.add("liked")
-      this.likesCount.innerHTML = this.post.likes.toString()
+      this.likesCount.innerHTML = this.post.likes >= 1 ? this.post.likes.toString() : ""
     }
   }
   run(): this {
