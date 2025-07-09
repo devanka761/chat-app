@@ -66,7 +66,7 @@ export default class PostCard {
     const img = new Image()
     img.onerror = () => (img.src = "/assets/error.jpg")
     img.onload = () => mediaPreloader.remove()
-    img.alt = this.post.id
+    img.alt = this.post.img
     img.src = `/file/post/${this.post.id}/${this.post.img}`
     media.append(img)
   }

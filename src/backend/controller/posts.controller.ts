@@ -35,10 +35,11 @@ export function uploadPost(uid: string, s: Partial<IPostB>): IRepTempB {
     s.text = s.text.trim()
     if (s.text.length < 1) s.text = null
   }
+  s.name = s.name.trim().replace(/\s/g, "_")
 
   const dataurl = decodeURIComponent(s.file)
   const buffer = Buffer.from(dataurl.split(",")[1], "base64")
-  if (buffer.length > 3500000) return { code: 413, msg: "ACC_FILE_LIMIT" }
+  if (buffer.length > 2500000) return { code: 413, msg: "ACC_FILE_LIMIT" }
 
   const postPath = "./dist/stg/post"
   if (!fs.existsSync(postPath)) fs.mkdirSync(postPath)

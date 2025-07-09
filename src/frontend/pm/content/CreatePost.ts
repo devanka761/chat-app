@@ -53,6 +53,7 @@ export default class CreatePost implements PrimaryClass {
     this.textarea.placeholder = lang.TYPE_HERE
     this.textarea.maxLength = 300
     this.textarea.autocomplete = "off"
+    this.textarea.oninput = () => this.growTextArea()
     const actions = kel("div", "actions")
     this.btnCancel = kel("div", "btn btn-cancel", { e: lang.CANCEL })
     this.btnSubmit = kel("div", "btn btn-submit", { e: lang.POSTS_SHARE })
@@ -61,6 +62,10 @@ export default class CreatePost implements PrimaryClass {
     field.append(this.btnChooser, this.imgPreview, this.textarea)
     bottom.append(field, actions)
     setTimeout(() => this.fileChooser(), 250)
+  }
+  private growTextArea(): void {
+    this.textarea.style.height = "auto"
+    this.textarea.style.height = this.textarea.scrollHeight + "px"
   }
   private fileChooser(): void {
     const inp = kel("input")

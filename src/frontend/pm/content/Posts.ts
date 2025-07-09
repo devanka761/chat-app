@@ -95,12 +95,13 @@ export default class Posts implements PrimaryClass {
       this.isLocked = false
       return
     }
-    this.isLocked = false
 
     const posts: TPostsF = getPosts.data
     this.post_list = posts
     posts.forEach((post) => this.renPost(post))
     this.writeIfEmpty(posts)
+    await modal.waittime(500)
+    this.isLocked = false
   }
   private renPost(post: IPostF): void {
     const userPost = new PostCard({ parent: this, post })

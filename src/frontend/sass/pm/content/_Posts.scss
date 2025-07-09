@@ -72,6 +72,7 @@ $topheight: 60px;
       width: calc(100% - 60px);
       max-width: 600px;
       margin: 0 auto;
+      animation: slide_down_in 1.5s;
       .user {
         width: 100%;
         display: flex;

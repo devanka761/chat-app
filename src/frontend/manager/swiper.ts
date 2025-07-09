@@ -17,5 +17,11 @@ export default function swiper(newers: PrimaryClass[], olders: PrimaryClass[], i
       userState.header = null
     }
   })
-  newers.forEach((newer) => newer.run())
+  newers.forEach((newer) => {
+    newer.run()
+    if (newer.role !== "posts") {
+      newer.isLocked = true
+      setTimeout(() => (newer.isLocked = false), 500)
+    }
+  })
 }
