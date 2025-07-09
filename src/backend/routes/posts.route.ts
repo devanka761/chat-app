@@ -1,6 +1,6 @@
 import express, { Router, Request, Response } from "express"
 import { rep } from "../main/helper"
-import { deletePost, getPosts, uploadPost } from "../controller/post.controller"
+import { deletePost, getPosts, uploadPost } from "../controller/posts.controller"
 import { cdUser, isUser } from "../main/middlewares"
 
 const router: Router = express.Router()
