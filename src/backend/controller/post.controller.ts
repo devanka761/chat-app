@@ -38,10 +38,10 @@ export function uploadPost(uid: string, s: Partial<IPostB>): IRepTempB {
 
   const dataurl = decodeURIComponent(s.file)
   const buffer = Buffer.from(dataurl.split(",")[1], "base64")
-  if (buffer.length > 2500000) return { code: 413, msg: "ACC_FILE_LIMIT" }
+  if (buffer.length > 3500000) return { code: 413, msg: "ACC_FILE_LIMIT" }
 
   const postPath = "./dist/stg/post"
-  if (!postPath) fs.mkdirSync(postPath)
+  if (!fs.existsSync(postPath)) fs.mkdirSync(postPath)
   const filename: string = rNumber(2).toString(36) + Date.now().toString(36) + s.name
 
   fs.writeFileSync(`${postPath}/${filename}`, buffer)
@@ -53,4 +53,17 @@ export function uploadPost(uid: string, s: Partial<IPostB>): IRepTempB {
   db.ref.p[postkey] = postData
   db.save("p")
   return { code: 200, data: getPost(uid, postkey) }
+}
+
+export function deletePost(uid: string, postid: string): IRepTempB {
+  const pdb = db.ref.p[postid]
+  if (!pdb) return { code: 404, msg: "POSTS_NOT_FOUND" }
+  if (pdb.u !== uid) return { code: 404, msg: "POSTS_NOT_FOUND" }
+
+  const filepath = `./dist/stg/post/${pdb.img}`
+  if (fs.existsSync(filepath)) fs.rmSync(filepath)
+  delete db.ref.p[postid]
+  db.save("p")
+
+  return { code: 200, data: { postid } }
 }

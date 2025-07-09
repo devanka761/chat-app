@@ -1,7 +1,9 @@
 import { kel } from "../../helper/kel"
+import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import sdate from "../../helper/sdate"
 import setbadge from "../../helper/setbadge"
+import xhr from "../../helper/xhr"
 import adap from "../../main/adaptiveState"
 import db from "../../manager/db"
 import socketClient from "../../manager/socketClient"
@@ -55,14 +57,18 @@ export default class PostCard {
     }
     this.el.append(euser)
   }
-  private renMedia(): void {
+  private async renMedia(): Promise<void> {
     const media = kel("div", "media")
+    this.el.append(media)
+    const mediaPreloader = kel("div", "preloader")
+    mediaPreloader.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>'
+    media.append(mediaPreloader)
     const img = new Image()
     img.onerror = () => (img.src = "/assets/error.jpg")
+    img.onload = () => mediaPreloader.remove()
     img.alt = this.post.id
     img.src = `/file/post/${this.post.id}/${this.post.img}`
     media.append(img)
-    this.el.append(media)
   }
   private renOptions(): void {
     const options = kel("div", "options")
@@ -117,11 +123,24 @@ export default class PostCard {
       this.btnDelete.onclick = async () => {
         if (this.isLocked) return
         this.isLocked = true
-        await modal.alert({
-          ic: "helmet-safety",
-          msg: "UNDER MAINTENANCE"
+
+        const confDelete = await modal.confirm({
+          ic: "trash-xmark",
+          msg: lang.POST_DELETE_MSG,
+          okx: lang.CONTENT_CONFIRM_DELETE
         })
-        this.isLocked = false
+        if (!confDelete) {
+          this.isLocked = false
+          return
+        }
+
+        const postDeleted = await modal.loading(xhr.post(`/x/posts/delete-post/${this.post.id}`))
+        if (!postDeleted || !postDeleted.ok) {
+          await modal.alert(lang[postDeleted.msg])
+          this.isLocked = false
+          return
+        }
+        this.el.remove()
       }
   }
   private setLike(): void {

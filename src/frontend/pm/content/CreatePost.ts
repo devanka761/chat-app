@@ -145,11 +145,11 @@ export default class CreatePost implements PrimaryClass {
       lang.UPLOADING
     )
     if (!posted || !posted.ok) {
-      await modal.alert(lang[posted.msg] || lang.ERROR)
+      await modal.alert((lang[posted.msg] || lang.ERROR).replace("{SIZE}", "2.5 MB"))
       this.isLocked = false
       return
     }
-    await modal.loading(modal.waittime(1000), lang.FINISHING)
+    await modal.loading(modal.waittime(2000), lang.FINISHING)
     this.isLocked = false
     adap.swipe(this.classBefore)
   }

@@ -61,7 +61,7 @@ const modal = {
           <p>${typeof s === "string" ? s || "" : s.msg || ""}</p>
         </div>
         <div class="act">
-          <button class="btn btn-ok">${lang.OK || "OK"}</button>
+          <button class="btn btn-cancel btn-ok">${lang.OK || "OK"}</button>
         </div>
       </div>`
 

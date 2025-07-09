@@ -109,7 +109,7 @@ export class SocketClient {
   }
   private async onClosed(): Promise<void> {
     this.ws = undefined
-    qutor(".modal")?.remove()
+    qutor(".modal .btn-cancel")?.click()
     if (userState.media) userState.media.destroy()
     if (userState.incoming) userState.incoming.destroy()
     this.reconnect()

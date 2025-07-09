@@ -121,7 +121,7 @@ export default class Account implements PrimaryClass {
       })
       outer.append(this.btnUname)
     }
-    if (db.me.badges) setbadge(chpValue, db.me.badges)
+    if (db.me.badges) setbadge(p, db.me.badges)
   }
   private renDname(): void {
     let chp = qutor(".chp.userdisplayname", this.wall)
