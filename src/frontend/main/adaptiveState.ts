@@ -1,7 +1,7 @@
 import swiper from "../manager/swiper"
 import Empty from "../pm/content/Empty"
-import HeaderBar from "../pm/header/HeaderBar"
-import Tab from "../pm/header/Tab"
+import HeaderBar from "../pm/parts/header/HeaderBar"
+import Tab from "../pm/parts/header/Tab"
 import { PrimaryClass } from "../types/userState.types"
 import userState from "./userState"
 

@@ -4,13 +4,13 @@ import modal from "../../helper/modal"
 import noUser from "../../helper/noUser"
 import userState from "../../main/userState"
 import db from "../../manager/db"
-import ContactsAPI from "../../properties/ContactAPI"
-import FriendBuilder from "../../properties/FriendBuilder"
-import FriendsAPI from "../../properties/FriendsAPI"
+import ContactsAPI from "../props/friends/ContactAPI"
+import FriendBuilder from "../props/friends/FriendBuilder"
+import FriendsAPI from "../props/friends/FriendsAPI"
 import { IRoomDataF, IUserF } from "../../types/db.types"
 import { TFriendsTypeF } from "../../types/room.types"
 import { PrimaryClass } from "../../types/userState.types"
-import ContactCard from "../parts/ContactCard"
+import ContactCard from "../parts/friends/ContactCard"
 
 const typeOrder: { [key: string]: number } = {
   friend: 2,

@@ -4,7 +4,7 @@ import modal from "../../helper/modal"
 import noAccount from "../../helper/noAccount"
 import userState from "../../main/userState"
 import db from "../../manager/db"
-import CallBuilder from "../../properties/CallBuilder"
+import CallBuilder from "../props/media/CallBuilder"
 import { IMessageF, IUserF } from "../../types/db.types"
 import { PrimaryClass } from "../../types/userState.types"
 

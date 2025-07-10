@@ -1,9 +1,9 @@
 import { PrimaryClass, UserLocked, UserNotif } from "../types/userState.types"
 import appConfig from "../../backend/config/public.config.json"
-import HeaderBar from "../pm/header/HeaderBar"
-import Tab from "../pm/header/Tab"
-import VoiceCall from "../pm/media/VoiceCall"
-import Incoming from "../pm/media/Incoming"
+import HeaderBar from "../pm/parts/header/HeaderBar"
+import Tab from "../pm/parts/header/Tab"
+import VoiceCall from "../pm/parts/media/VoiceCall"
+import Incoming from "../pm/parts/media/Incoming"
 
 class UserState {
   public notif: UserNotif

@@ -9,10 +9,10 @@ import { PrimaryClass } from "../../types/userState.types"
 import db from "../../manager/db"
 import Room from "./Room"
 import Friends from "../center/Friends"
-import FriendBuilder from "../../properties/FriendBuilder"
+import FriendBuilder from "../props/friends/FriendBuilder"
 import adap from "../../main/adaptiveState"
-import VoiceCall from "../media/VoiceCall"
-import Tab from "../header/Tab"
+import VoiceCall from "../parts/media/VoiceCall"
+import Tab from "../parts/header/Tab"
 
 export default class Profile implements PrimaryClass {
   readonly role: string
