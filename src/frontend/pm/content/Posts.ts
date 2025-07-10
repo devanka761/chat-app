@@ -133,6 +133,6 @@ export default class Posts implements PrimaryClass {
     epm().append(this.el)
     this.btnListener()
     this.getAllPosts()
-    // this.tempCard()
+    // this.tempCard();
   }
 }

@@ -1,7 +1,7 @@
 import fs from "fs"
 import db from "../main/db"
 import { IRepTempB } from "../types/validate.types"
-import { IPostB, IPostF, TPostsF } from "../../frontend/types/posts.types"
+import { IPostB, IPostF, TCommentsF, TPostsF } from "../../frontend/types/posts.types"
 import { getUser } from "./profile.controller"
 import { Post } from "../types/db.types"
 import { rNumber } from "../main/helper"
@@ -67,4 +67,20 @@ export function deletePost(uid: string, postid: string): IRepTempB {
   db.save("p")
 
   return { code: 200, data: { postid } }
+}
+
+export function getAllComments(uid: string, postid: string): IRepTempB {
+  const pdb = db.ref.p[postid]
+  if (!pdb) return { code: 404, msg: "POSTS_NOT_FOUND" }
+
+  const dbcomments = pdb.c || {}
+
+  const comments: TCommentsF = Object.keys(dbcomments).map((k) => {
+    return {
+      user: getUser(uid, dbcomments[k].u),
+      text: dbcomments[k].txt,
+      ts: dbcomments[k].ts
+    }
+  })
+  return { code: 200, data: comments }
 }

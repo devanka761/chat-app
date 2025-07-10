@@ -114,7 +114,7 @@ export default class PostCard {
     this.btnComments.onclick = async () => {
       if (this.isLocked) return
       this.isLocked = true
-      const comments = new Comments({ posts: this.parent, postcard: this })
+      const comments = new Comments({ posts: this.parent, postcard: this, post: this.post })
       this.parent.html.append(comments.html)
       this.isLocked = false
     }
