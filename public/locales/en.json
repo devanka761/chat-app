@@ -131,6 +131,7 @@
   "CONTENT_YOU_DELETED": "You deleted this message",
   "CONTENT_EDIT_EXPIRED": "You cannot edit messages that have been sent for more than 15 minutes.",
   "CONTENT_RESEND": "Resend?",
+  "POST_COMMENT_TITLE": "Comments",
   "POST_DELETE_MSG": "Delete this post?",
   "POST_NO_FILE": "Please choose a picture to post",
   "POST_COMMENT_LENGTH": "A comment must contain at least 1 character with a maximum of 500 characters",

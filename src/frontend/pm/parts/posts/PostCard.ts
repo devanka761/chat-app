@@ -12,6 +12,7 @@ import { IPostF } from "../../../types/posts.types"
 import Account from "../../content/Account"
 import Posts from "../../content/Posts"
 import Profile from "../../content/Profile"
+import Comments from "./Comments"
 
 export default class PostCard {
   isLocked: boolean
@@ -113,10 +114,8 @@ export default class PostCard {
     this.btnComments.onclick = async () => {
       if (this.isLocked) return
       this.isLocked = true
-      await modal.alert({
-        ic: "helmet-safety",
-        msg: "UNDER MAINTENANCE"
-      })
+      const comments = new Comments({ posts: this.parent, postcard: this })
+      this.parent.html.append(comments.html)
       this.isLocked = false
     }
     if (this.btnDelete)

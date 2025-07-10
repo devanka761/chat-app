@@ -117,6 +117,9 @@ export default class Posts implements PrimaryClass {
       if (oldNomore) oldNomore.remove()
     }
   }
+  get html(): HTMLDivElement {
+    return this.el
+  }
   update(): void {}
   async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
