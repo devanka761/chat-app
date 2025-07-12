@@ -205,12 +205,14 @@ $topheight: 60px;
     .box {
       width: 100%;
       max-width: 700px;
-      height: 100%;
+      max-height: calc(100% - 20px);
       animation: slide_up_in 0.25s;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: end;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
       border-bottom: 1px solid v.$black;
       background-color: rgba($color: v.$black, $alpha: 0.8);
       backdrop-filter: blur(5px);
@@ -263,8 +265,10 @@ $topheight: 60px;
         }
       }
       .comments-mid {
+        padding: 10px 0;
         width: 100%;
-        flex-grow: 1;
+        // flex-grow: 1;
+        min-height: 250px;
         background-color: rgba($color: v.$pm1, $alpha: 0.1);
         scrollbar-width: thin;
         overflow-y: auto;

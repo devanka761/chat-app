@@ -63,6 +63,9 @@ export default class CommentBuilder {
     this.btnDelete.innerHTML = '<i class="fa-solid fa-trash-can fa-fw"></i>'
     eAction.append(this.btnDelete)
   }
+  set newId(id: string) {
+    this.comment.id = id
+  }
   private btnListener(): void {
     if (this.btnDelete)
       this.btnDelete.onclick = async () => {
@@ -72,6 +75,9 @@ export default class CommentBuilder {
   }
   get html(): HTMLDivElement {
     return this.el
+  }
+  remove(): void {
+    this.el.remove()
   }
   run(): this {
     this.createElement()

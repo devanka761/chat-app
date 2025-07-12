@@ -66,10 +66,14 @@ export type IMessageKeyB = {
   [key: string]: IMessageB
 }
 
-interface PostCommentObject {
+export interface PostCommentObject {
   u: string
   txt: string
   ts: number
+}
+
+export interface PostCommentKeyObject {
+  [key: string]: PostCommentObject
 }
 
 export interface Post {
@@ -78,7 +82,7 @@ export interface Post {
   img: string
   l?: string[]
   txt?: string
-  c?: { [key: string]: PostCommentObject }
+  c?: PostCommentKeyObject
 }
 
 export interface Call {

@@ -2,6 +2,7 @@ import { kel } from "../../../helper/kel"
 import { lang } from "../../../helper/lang"
 import modal from "../../../helper/modal"
 import xhr from "../../../helper/xhr"
+import db from "../../../manager/db"
 import { ICommentF, IPostF, TCommentsF } from "../../../types/posts.types"
 import Posts from "../../content/Posts"
 import CommentBuilder from "../../props/posts/CommentBuilder"
@@ -17,10 +18,14 @@ export default class Comments {
   private box: HTMLDivElement
   private middle: HTMLDivElement
   private post: IPostF
+  private input: HTMLInputElement
+  private button: HTMLButtonElement
+  private list: TCommentsF
   constructor(s: { posts: Posts; postcard: PostCard; post: IPostF }) {
     this.isLocked = false
     this.posts = s.posts
     this.post = s.post
+    this.postcard = s.postcard
     this.run()
   }
   private createElement(): void {
@@ -36,11 +41,24 @@ export default class Comments {
     this.btnClose.innerHTML = '<i class="fa-duotone fa-circle-minus"></i>'
     top.append(title, this.btnClose)
 
-    bottom.innerHTML = `
-    <form class="form" id="post-comment-form" action="/post/comment/add" method="post">
-      <input type="text" name="post-comment-text" id="post-comment-text" autocomplete="off" class="input" maxlength="300" placeholder="Type Here" />
-      <button class="btn btn-post-send" id="post-comment-send"><i class="fa-solid fa-arrow-up"></i></button>
-    </form>`
+    this.form = kel("form", "form")
+    this.form.method = "post"
+    this.form.action = `/x/posts/comment/add/${this.post.id}`
+    this.form.id = `post-comment-form-${this.post.id}`
+    bottom.append(this.form)
+
+    this.input = kel("input", "input")
+    this.input.type = "text"
+    this.input.name = `post-comment-input-${this.post.id}`
+    this.input.id = `post-comment-input-${this.post.id}`
+    this.input.autocomplete = "off"
+    this.input.maxLength = 300
+    this.input.placeholder = lang.TYPE_HERE
+
+    this.button = kel("button", "btn btn-post-send")
+    this.button.id = `post-comment-button-${this.post.id}`
+    this.button.innerHTML = '<i class="fa-solid fa-arrow-up"></i>'
+    this.form.append(this.input, this.button)
   }
   private writeIfEmpty(commentlist: TCommentsF): void {
     const oldNomore: HTMLParagraphElement | null = this.el.querySelector(".nocomment")
@@ -54,20 +72,26 @@ export default class Comments {
   }
   private async getAllComments(): Promise<void> {
     this.isLocked = true
+    const commentPreload = kel("div", "nocomment")
+    commentPreload.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> ${lang.LOADING}`
+    this.middle.append(commentPreload)
     const getComments = await xhr.get(`/x/posts/comments/${this.post.id}`)
+    commentPreload.remove()
     if (!getComments || !getComments.ok) {
       await modal.alert(lang[getComments.msg] || lang.ERROR)
       this.isLocked = false
       return
     }
     this.isLocked = false
-    const commentlist: TCommentsF = getComments.data
-    commentlist.forEach((cmt) => this.renComment(cmt))
-    this.writeIfEmpty(commentlist)
+    this.list = getComments.data
+    this.list.forEach((cmt) => this.renComment(cmt))
+    this.writeIfEmpty(this.list)
   }
-  private renComment(cmt: ICommentF): void {
+  private renComment(cmt: ICommentF): CommentBuilder {
     const comment = new CommentBuilder({ comment: cmt, parent: this, user: cmt.user })
     this.middle.prepend(comment.html)
+    this.writeIfEmpty(this.list)
+    return comment
   }
   private btnListener(): void {
     this.el.onclick = (e) => {
@@ -77,6 +101,38 @@ export default class Comments {
           this.destroy()
         }
       }
+    }
+    this.form.onsubmit = async (e) => {
+      e.preventDefault()
+      if (this.isLocked) return
+      this.isLocked = true
+      const text = this.input.value.trim()
+      this.input.value = ""
+      const rawComment: ICommentF = {
+        id: Date.now().toString(36),
+        user: db.me,
+        ts: Date.now(),
+        text
+      }
+      this.list.push(rawComment)
+      const newComment = this.renComment(rawComment)
+
+      const addedComment = await xhr.post(`/x/posts/comment/add/${this.post.id}`, { text })
+      this.list = this.list.filter((cmt) => cmt.id !== rawComment.id)
+      if (!addedComment || !addedComment.ok) {
+        newComment.remove()
+        await modal.alert(lang[addedComment.msg] || lang.ERROR)
+        this.writeIfEmpty(this.list)
+        this.isLocked = false
+        return
+      }
+
+      newComment.newId = addedComment.data.id
+      this.list.push(addedComment.data)
+      this.writeIfEmpty(this.list)
+
+      this.postcard.addComments()
+      this.isLocked = false
     }
   }
   get html(): HTMLDivElement {

@@ -1,9 +1,9 @@
 import fs from "fs"
 import db from "../main/db"
 import { IRepTempB } from "../types/validate.types"
-import { IPostB, IPostF, TCommentsF, TPostsF } from "../../frontend/types/posts.types"
+import { ICommentB, ICommentF, IPostB, IPostF, TCommentsF, TPostsF } from "../../frontend/types/posts.types"
 import { getUser } from "./profile.controller"
-import { Post } from "../types/db.types"
+import { Post, PostCommentObject } from "../types/db.types"
 import { rNumber } from "../main/helper"
 
 function getPost(uid: string, postid: string): IPostF {
@@ -77,10 +77,38 @@ export function getAllComments(uid: string, postid: string): IRepTempB {
 
   const comments: TCommentsF = Object.keys(dbcomments).map((k) => {
     return {
+      id: k,
       user: getUser(uid, dbcomments[k].u),
       text: dbcomments[k].txt,
       ts: dbcomments[k].ts
     }
   })
   return { code: 200, data: comments }
+}
+export function setNewComment(uid: string, postid: string, s: Partial<ICommentB>): IRepTempB {
+  const pdb = db.ref.p[postid]
+  if (!pdb) return { code: 404, msg: "POSTS_NOT_FOUND" }
+  if (!s || !s.text) return { code: 400, msg: "POST_COMMENT_LENGTH" }
+  s.text = s.text.trim()
+  if (s.text.length < 1 || s.text.length > 300) return { code: 400, msg: "POST_COMMENT_LENGTH" }
+
+  const cmt_id = "c" + Date.now().toString(36)
+
+  const comment: PostCommentObject = {
+    u: uid,
+    ts: Date.now(),
+    txt: s.text
+  }
+
+  if (!db.ref.p[postid].c) db.ref.p[postid].c = {}
+  db.ref.p[postid].c[cmt_id] = comment
+
+  const data: ICommentF = {
+    id: cmt_id,
+    text: comment.txt,
+    ts: comment.ts,
+    user: getUser(uid, uid)
+  }
+
+  return { code: 200, data }
 }

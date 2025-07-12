@@ -136,7 +136,7 @@
   "POST_DELETE_MSG": "Beneran mau hapus postingan ini?",
   "POST_NO_FILE": "Silakan pilih foto/gambar untuk diunggah",
   "POST_COMMENT_TITLE": "Komentar",
-  "POST_COMMENT_LENGTH": "Komentar harus berisi minimal 1 karakter dengan maksimal 500 karakter",
+  "POST_COMMENT_LENGTH": "Komentar harus berisi minimal 1 karakter dengan maksimal 300 karakter",
   "POST_DELETE_CMT": "Hapus komentar ini?",
   "POST_FILTER": "Filter Postingan",
   "POST_FILT_1": "Tampilkan Semua Postingan",

@@ -1,6 +1,7 @@
 import { IUserF } from "./db.types"
 
 export interface ICommentF {
+  id: string
   user: IUserF
   ts: number
   text: string
@@ -24,4 +25,8 @@ export interface IPostB {
   file: string
   name: string
   text?: string | null
+}
+
+export interface ICommentB {
+  text: string
 }
