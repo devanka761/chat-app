@@ -281,6 +281,18 @@ $topheight: 60px;
           display: flex;
           justify-content: left;
           align-items: start;
+          &.process {
+            opacity: 0.8;
+            .data {
+              color: v.$cred;
+              font-style: italic;
+              &-user {
+                .timestamp {
+                  color: v.$cred;
+                }
+              }
+            }
+          }
           .photo {
             padding: 10px;
             flex-shrink: 0;

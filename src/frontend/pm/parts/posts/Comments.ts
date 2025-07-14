@@ -17,7 +17,7 @@ export default class Comments {
   private form: HTMLFormElement
   private box: HTMLDivElement
   private middle: HTMLDivElement
-  private post: IPostF
+  post: IPostF
   private input: HTMLInputElement
   private button: HTMLButtonElement
   private list: TCommentsF
@@ -131,9 +131,16 @@ export default class Comments {
       this.list.push(addedComment.data)
       this.writeIfEmpty(this.list)
 
-      this.postcard.addComments()
+      this.postcard.addComment()
       this.isLocked = false
     }
+  }
+  removeComment(comment_id: string): boolean {
+    if (!this.list.find((cmt) => cmt.id === comment_id)) return false
+
+    this.postcard.removeComment()
+    this.list = this.list.filter((cmt) => cmt.id !== comment_id)
+    return true
   }
   get html(): HTMLDivElement {
     return this.el

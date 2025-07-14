@@ -112,3 +112,13 @@ export function setNewComment(uid: string, postid: string, s: Partial<ICommentB>
 
   return { code: 200, data }
 }
+
+export function deleteComment(uid: string, postid: string, commentid: string): IRepTempB {
+  console.log(postid, commentid)
+  if (!db.ref.p[postid] || !db.ref.p[postid].c) return { code: 404, msg: "POSTS_NOT_FOUND" }
+  if (!db.ref.p[postid].c[commentid]) return { code: 404, msg: "CMT_NOT_FOUND" }
+  delete db.ref.p[postid].c[commentid]
+  db.save("p")
+
+  return { code: 200 }
+}

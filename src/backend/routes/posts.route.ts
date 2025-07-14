@@ -1,6 +1,6 @@
 import express, { Router, Request, Response } from "express"
 import { rep } from "../main/helper"
-import { deletePost, getAllComments, getPosts, setNewComment, uploadPost } from "../controller/posts.controller"
+import { deleteComment, deletePost, getAllComments, getPosts, setNewComment, uploadPost } from "../controller/posts.controller"
 import { cdUser, isUser } from "../main/middlewares"
 
 const router: Router = express.Router()
@@ -28,6 +28,12 @@ router.post("/comment/add/:postid", express.json({ limit: "100KB" }), (req: Requ
   return
 })
 
+router.post("/comment/delete/:postid/:commentid", express.json({ limit: "100KB" }), (req: Request, res: Response) => {
+  const { postid, commentid } = req.params
+  const delComment = rep(deleteComment(req.user?.id as string, postid, commentid))
+  res.status(delComment.code).json(delComment)
+  return
+})
 router.get("/comments/:postid", express.json({ limit: "100KB" }), (req: Request, res: Response) => {
   const { postid } = req.params
   const getComments = rep(getAllComments(req.user?.id as string, postid))

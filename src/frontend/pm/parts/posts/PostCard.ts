@@ -159,8 +159,12 @@ export default class PostCard {
       this.likesCount.innerHTML = this.post.likes >= 1 ? this.post.likes.toString() : ""
     }
   }
-  addComments(): void {
+  addComment(): void {
     this.post.comments++
+    this.commentsCount.innerHTML = this.post.comments >= 1 ? this.post.comments.toString() : ""
+  }
+  removeComment(): void {
+    this.post.comments--
     this.commentsCount.innerHTML = this.post.comments >= 1 ? this.post.comments.toString() : ""
   }
   run(): this {

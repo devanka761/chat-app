@@ -3,6 +3,7 @@ import { lang } from "../../../helper/lang"
 import modal from "../../../helper/modal"
 import sdate from "../../../helper/sdate"
 import setbadge from "../../../helper/setbadge"
+import xhr from "../../../helper/xhr"
 import db from "../../../manager/db"
 import { IUserF } from "../../../types/db.types"
 import { ICommentF } from "../../../types/posts.types"
@@ -69,8 +70,24 @@ export default class CommentBuilder {
   private btnListener(): void {
     if (this.btnDelete)
       this.btnDelete.onclick = async () => {
-        const confDelete = await modal.confirm({ ic: "circle-question", msg: lang.POST_DELETE_MSG, okx: lang.CONTENT_CONFIRM_DELETE })
-        console.log(confDelete)
+        if (this.isLocked) return
+        this.isLocked = true
+        const confDelete = await modal.confirm({ ic: "circle-question", msg: lang.POST_DELETE_CMT, okx: lang.CONTENT_CONFIRM_DELETE })
+        if (!confDelete) {
+          this.isLocked = false
+          return
+        }
+        this.el.classList.add("process")
+        const deletedComment = await xhr.post(`/x/posts/comment/delete/${this.parent.post.id}/${this.comment.id}`)
+        await modal.waittime(1000)
+        this.el.classList.remove("process")
+        if (!deletedComment || !deletedComment.ok) {
+          await modal.alert(lang[deletedComment.msg] || lang.ERROR)
+          this.isLocked = false
+          return
+        }
+        this.parent.removeComment(this.comment.id)
+        this.remove()
       }
   }
   get html(): HTMLDivElement {
