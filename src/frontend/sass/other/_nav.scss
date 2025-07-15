@@ -1,17 +1,18 @@
 @use "../variables" as v;
 @use "./animations";
+
 .nav {
   z-index: 98;
   position: fixed;
   top: 10px;
   right: 10px;
-  background-color: #1e1f2280;
+  background-color: rgba($color: v.$pm2, $alpha: 0.2);
   border-bottom: 1px solid v.$pm1;
   border-left: 1px solid v.$pm1;
   border-radius: 10px;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  animation: slide_left_in 0.5s;
+  animation: nav_in 0.5s;
   .btn-menu {
     padding: 10px 20px;
     margin-left: auto;
@@ -63,6 +64,6 @@
     }
   }
   &.out {
-    animation: slide_left_out 0.5s forwards;
+    animation: nav_out 0.5s forwards;
   }
 }

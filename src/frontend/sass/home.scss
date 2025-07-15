@@ -2,18 +2,28 @@
 @use "./main";
 @use "./other/nav";
 
+.app {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+html {
+  height: 100svh;
+}
+body {
+  overflow: visible;
+}
+
 .main {
   width: 100%;
   height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-  background: linear-gradient(120deg, #272b30, #3f464e, #272b30);
   .sect {
     &#home {
       position: relative;
       padding: 10px;
       width: 100%;
-      min-height: 100dvh;
+      min-height: 100svh;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -27,25 +37,14 @@
         justify-content: center;
         margin-bottom: 20px;
         .icon {
-          width: 100px;
-          height: 100px;
-          text-align: center;
           animation: slide_up_in 1s;
           img {
-            margin: auto;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-            -o-object-fit: cover;
-            -o-object-position: center;
-            &.brd {
-              border-radius: 10px;
-            }
+            max-width: 100px;
+            max-height: 100px;
           }
         }
         .title {
-          font-size: 1.25em;
+          font-size: 1.25rem;
           text-align: center;
           animation: slide_up_in 1s;
           h1 {
@@ -58,24 +57,27 @@
           text-align: center;
           margin-top: 40px;
           animation: slide_down_in 1s;
-          .btn {
-            color: v.$white;
-            border: 1px solid v.$pm1;
+          a.btn {
+            display: block;
+            padding: 10px 20px;
+            font-weight: bold;
+            text-decoration: none;
+            background-color: v.$pm1;
+            min-width: 200px;
+            max-width: 100%;
+            color: v.$px1;
             border-radius: 10px;
             overflow: hidden;
-            a {
-              background-color: v.$pm1;
-              min-width: 150px;
-              max-width: 100%;
-              display: block;
-              padding: 10px;
+            margin-bottom: 10px;
+            &:last-child {
+              margin-bottom: 0;
+            }
+            &.joined {
+              background-color: v.$pm2;
               color: v.$white;
-              font-weight: bold;
-              text-decoration: none;
-              &.joined {
-                background-color: #272b30;
-                color: v.$white;
-              }
+            }
+            &.hide {
+              display: none;
             }
           }
         }
@@ -86,44 +88,66 @@
         left: 10px;
         text-align: left;
         font-family: monospace, monospace;
-        font-size: 0.8em;
+        font-size: 0.8rem;
         animation: slide_right_in 2s;
         p {
           a {
             color: v.$pm1;
             font-weight: bold;
-            text-shadow: v.$textshadow;
           }
         }
       }
     }
-  }
-  &.invite {
-    background: #272b30;
-    .sect {
-      &#home {
-        .card {
-          width: fit-content;
-          height: fit-content;
-          max-width: calc(100% - 40px);
-          max-height: calc(100% - 40px);
-          padding: 40px;
-          background-color: #272b30;
-          border: 1px solid v.$black;
-          border-radius: 20px;
-          box-shadow: 0 0 5px v.$black;
-          .icon {
-            margin-bottom: 20px;
+    &#credits {
+      background-color: v.$px25;
+      padding: 20px;
+      color: v.$softwhite;
+      a {
+        color: v.$pm1;
+        text-decoration: none;
+      }
+      .box {
+        max-width: 800px;
+        margin: 0 auto;
+        .cre {
+          img {
+            padding: 40px 0;
+            display: block;
+            margin: 0 auto;
           }
-          .title {
-            p {
-              span {
-                font-style: italic;
-                font-size: 1em;
-                color: v.$softwhite;
-              }
-            }
+          p {
+            padding: 10px 0;
+            line-height: 2;
+            text-align: justify;
+            text-align-last: center;
           }
+        }
+      }
+    }
+    &#footer {
+      background-color: v.$px25;
+      color: v.$softwhite;
+      .links {
+        background-color: v.$px1;
+        padding: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        a {
+          display: block;
+          text-decoration: none;
+          color: v.$softwhite;
+        }
+      }
+      .author {
+        padding: 20px;
+        font-size: 14px;
+        p {
+          line-height: 1.5;
+          text-align: center;
         }
       }
     }
