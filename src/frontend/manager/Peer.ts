@@ -9,7 +9,7 @@ export class PeerCallHandler {
   private dataChannel?: RTCDataChannel
   constructor(options: PeerCallHandlerOptions) {
     this.options = options
-    this.peerConnection = new RTCPeerConnection(peerConfiguration)
+    this.peerConnection = new RTCPeerConnection(peerConfiguration.config || undefined)
 
     this.setupListeners()
   }

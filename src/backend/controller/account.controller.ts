@@ -6,6 +6,7 @@ import cfg from "../main/cfg"
 import { IChatsF, IRoomDataF, MeDB, SocketDB } from "../../frontend/types/db.types"
 import { IRepTempB } from "../types/validate.types"
 import { IAccountB } from "../types/account.types"
+import { PEER_CONFIG } from "../config/peer.config.json"
 
 function initSocketClient(uid: string): SocketDB {
   const id = rUid()
@@ -62,6 +63,7 @@ export function getMe(uid: string): IRepTempB {
     })
 
   data.c = meChatList
+  data.peer = PEER_CONFIG || null
 
   return { code: 200, data: data }
 }

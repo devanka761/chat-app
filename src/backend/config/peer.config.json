@@ -1,0 +1,12 @@
+{
+  "PEER_CONFIG": {
+    "iceServers": [
+      { "urls": "stun:kirimin.devanka.id:3478" },
+      {
+        "urls": "turn:kirimin.devanka.id:3478",
+        "username": "kirimin",
+        "credential": "kirimin761"
+      }
+    ]
+  }
+}

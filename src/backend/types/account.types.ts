@@ -5,4 +5,5 @@ export interface IAccountB {
   c?: IChatsF[]
   socket?: SocketDB
   v?: number
+  peer?: RTCConfiguration | null
 }

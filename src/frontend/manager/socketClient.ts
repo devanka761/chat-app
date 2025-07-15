@@ -5,6 +5,7 @@ import modal from "../helper/modal"
 import notip from "../helper/notip"
 import xhr from "../helper/xhr"
 import adap from "../main/adaptiveState"
+import peerConfiguration from "../main/peerConfig"
 import processClient from "../main/processClient"
 import userState from "../main/userState"
 import ForceClose from "../pages/ForceClose"
@@ -132,6 +133,7 @@ export class SocketClient {
     if (s.me) db.me = s.me
     if (s.c) db.c = s.c
     if (s.v) db.version = s.v
+    peerConfiguration.config = s.peer
 
     this.start()
   }
