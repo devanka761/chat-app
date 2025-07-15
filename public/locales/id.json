@@ -172,6 +172,7 @@
   "CLOUD_NETWORK_ERR": "Error: Gagal terhubung ke server",
   "CLOUD_DISCONNECTED": "Error: Koneksi terputus dari server",
   "CLOUD_INCOMPATIBLE": "Error: Browser yang kamu gunakan tidak support dengan beberapa fitur Kirimin",
+  "CLOUD_OUTDATED": "Versi app kamu perlu diperbarui untuk dapat digunakan kembali",
   "NOTIP_RECEIVE_MSG": "mengirim pesan",
   "NOTIP_RECIEVE_FRIEND_REQUESTS": "mengirim permintaan pertemanan",
   "NOTIP_RECIEVE_FRIEND_ACCEPT": "menerima permintaan pertemanan",

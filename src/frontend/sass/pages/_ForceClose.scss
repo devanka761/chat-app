@@ -13,6 +13,11 @@
       font-size: 1.5em;
       text-align: center;
       line-height: 2;
+      &.msg-1 {
+        i {
+          font-size: 2.5rem;
+        }
+      }
       &.msg-3 {
         margin-top: 40px;
         a {

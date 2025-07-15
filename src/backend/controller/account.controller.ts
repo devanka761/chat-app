@@ -7,6 +7,7 @@ import { IChatsF, IRoomDataF, MeDB, SocketDB } from "../../frontend/types/db.typ
 import { IRepTempB } from "../types/validate.types"
 import { IAccountB } from "../types/account.types"
 import { PEER_CONFIG } from "../config/peer.config.json"
+import relay from "../main/relay"
 
 function initSocketClient(uid: string): SocketDB {
   const id = rUid()
@@ -35,6 +36,11 @@ export function getMe(uid: string): IRepTempB {
     meData.req = udb.req.map((userid) => {
       return getUser(uid, userid)
     })
+  }
+
+  if (udb.socket) {
+    const client = relay.get(udb.socket)?.socket
+    if (client) client.send(JSON.stringify({ type: "newLoggedIn", uid }))
   }
 
   const data: IAccountB = {

@@ -4,6 +4,7 @@ import { lang } from "../helper/lang"
 import modal from "../helper/modal"
 import notip from "../helper/notip"
 import db from "../manager/db"
+import ForceClose from "../pages/ForceClose"
 import Calls from "../pm/center/Calls"
 import Chats from "../pm/center/Chats"
 import Friends from "../pm/center/Friends"
@@ -20,6 +21,13 @@ import adap from "./adaptiveState"
 import userState from "./userState"
 
 class ProcessClient {
+  private newLoggedIn(): void {
+    // <i class="fa-solid fa-user-secret"></i>
+    new ForceClose({
+      msg_1: '<i class="fa-duotone fa-light fa-user-secret"></i>',
+      msg_2: lang.CLOUD_SAME_TIME
+    })
+  }
   private addfriend(s: { user: IUserF }): void {
     const user = s.user
     const room: IRoomDataF = {

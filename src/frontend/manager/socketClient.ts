@@ -1,6 +1,7 @@
 import { IAccountB } from "../../backend/types/account.types"
 import { IZender } from "../../backend/types/validate.types"
 import { eroot, kel, qutor } from "../helper/kel"
+import { lang } from "../helper/lang"
 import modal from "../helper/modal"
 import notip from "../helper/notip"
 import xhr from "../helper/xhr"
@@ -48,8 +49,8 @@ export class SocketClient {
     this.attemp++
     if (this.attemp >= 4) {
       new ForceClose({
-        msg_1: "Connection Failed",
-        msg_2: "Koneksi Gagal",
+        msg_1: '<i class="fa-duotone fa-solid fa-wifi-slash"></i>',
+        msg_2: lang.CLOUD_TIMEOUT,
         action_url: "/app",
         action_text: "RELOAD"
       })
@@ -67,8 +68,8 @@ export class SocketClient {
     if (reconnectUser.data?.v && reconnectUser.data.v !== db.version) {
       await modal.waittime(4200)
       new ForceClose({
-        msg_1: "Your app version is outdated. Please update to continue.",
-        msg_2: "Versi app kamu perlu diperbarui untuk dapat digunakan kembali.",
+        msg_1: '<i class="fa-duotone fa-solid fa-sign-posts-wrench"></i>',
+        msg_2: lang.CLOUD_OUTDATED,
         action_url: "/app",
         action_text: "UPDATE APP"
       })
