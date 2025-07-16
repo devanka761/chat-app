@@ -38,7 +38,13 @@ export default class Calls implements PrimaryClass {
           cdb.push({ message: msg, users: chats.users })
         })
     })
-    cdb.forEach((chat) => this.addToList(chat))
+    cdb
+      .sort((a, b) => {
+        if (a.message.timestamp > b.message.timestamp) return 1
+        if (a.message.timestamp < b.message.timestamp) return -1
+        return 0
+      })
+      .forEach((chat) => this.addToList(chat))
     this.writeIfEmpty(cdb)
   }
   addToList(s: { message: IMessageF; users: IUserF[] }): void {

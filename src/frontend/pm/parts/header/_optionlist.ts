@@ -9,6 +9,7 @@ import db from "../../../manager/db"
 import noMessage from "../../../helper/noMessage"
 import Room from "../../content/Room"
 import adap from "../../../main/adaptiveState"
+import Invites from "../../../pages/Invites"
 
 export default [
   {
@@ -38,6 +39,23 @@ export default [
         })
       }
       adap.swipe(new Room({ data: group.r, users: group.u, chats: group }))
+    }
+  },
+  {
+    id: "join-group",
+    txt: "APP_JOIN_GROUP",
+    c: "fa-solid fa-plus fa-fw",
+    run: async () => {
+      const groupLink = await modal.prompt({
+        ic: "pencil-mechanical",
+        msg: lang.GRPS_LINK,
+        max: 200
+      })
+      if (!groupLink) return
+      const linkExtracts = groupLink.split("/")
+      const code = linkExtracts[linkExtracts.length - 1]
+      if (db.c.find((ch) => ch.r.link === code)) return
+      new Invites({ link: code })
     }
   },
   {

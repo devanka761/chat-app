@@ -72,7 +72,10 @@ export class PeerCallHandler {
     this.dataChannel = this.peerConnection.createDataChannel("control")
     this.setupDataChannelEvents(this.dataChannel)
 
-    const offer = await this.peerConnection.createOffer()
+    const offer = await this.peerConnection.createOffer({
+      offerToReceiveAudio: true,
+      offerToReceiveVideo: false
+    })
     await this.peerConnection.setLocalDescription(offer)
     this.options.onSignal({ type: "offer", sdp: offer })
   }

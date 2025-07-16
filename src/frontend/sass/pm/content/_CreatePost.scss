@@ -54,6 +54,7 @@ $topheight: 60px;
         margin: 10px auto;
         padding: 5px;
         width: fit-content;
+        max-width: 100%;
         height: fit-content;
         display: flex;
         justify-content: center;
@@ -62,7 +63,7 @@ $topheight: 60px;
         overflow: hidden;
         border-radius: 10px;
         img {
-          max-width: 600px;
+          max-width: 100%;
           max-height: 300px;
         }
       }
