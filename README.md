@@ -1,5 +1,4 @@
-# CHAT APP - Kirimin v2.0.0
-> Lastest Update: 16/05/2025<br>
+# CHAT APP - Kirimin v3.0.0
 - Live Demo: [Kirimin](https://kirimin.devanka.id/)
 - Support Me: [Donasi Saweria](https://saweria.co/devanka)
 - Subscribe: YouTube [Devanka 761](https://www.youtube.com/@devanka761)
@@ -27,9 +26,13 @@ npm install
 npm install
 ```
 
-## KONFIGURASI
+## KONFIGURASI .ENV
 1. Buat file `.env` dan salin isi dari file `.env.example`
 2. Modifikasi file `.env` sesuai dengan kebutuhan config kamu
+
+## KONFIGURASI PUBLIC CONFIG & PEER CONFIG
+- **SOON!**
+
 
 ## JALANKAN
 ### A. Development Mode
@@ -56,6 +59,6 @@ npm run start
 ```
 ##### B.2. Dengan PM2 Script
 ```shell
-pm2 start npm --name "my-chat-app" -- start --max-memory-restart 16G
+pm2 start npm --name "my-chat-app" -- start && pm2 restart "my-chat-app" --max-memory-restart 8G
 ```
 > Unit bisa dengan K (Kilobyte), M (Megabyte), G (Gigabyte)

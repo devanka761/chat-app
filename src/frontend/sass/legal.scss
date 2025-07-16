@@ -1,0 +1,85 @@
+@use "./variables" as v;
+
+$cl: #cacaca;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+  scrollbar-color: v.$pm1 v.$px2;
+  scrollbar-width: thin;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+body {
+  font-family: v.$defonts;
+  background: v.$bg;
+  color: $cl;
+  padding: 0;
+  margin: 0;
+}
+.container {
+  width: 100%;
+  padding: 20px;
+  .title {
+    max-width: 800px;
+    margin: 20px auto;
+    text-align: center;
+  }
+  .field {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    &.flex {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    h3,
+    ol,
+    p,
+    ul {
+      padding: 10px 1em;
+    }
+    .field-desc {
+      ol,
+      ul {
+        margin-left: 2em;
+        li {
+          line-height: 1.5;
+          text-align: justify;
+          text-align-last: left;
+          &::marker {
+            color: v.$pm1;
+          }
+        }
+      }
+      p {
+        line-height: 1.5;
+        text-align: justify;
+        text-align-last: left;
+      }
+    }
+    .btn-read {
+      display: block;
+      color: v.$pm1;
+      padding: 10px 20px;
+      text-align: center;
+      border-bottom: 1px solid v.$pm1;
+      border-left: 1px solid v.$pm1;
+      border-radius: 10px;
+    }
+  }
+  a {
+    text-decoration: none;
+    color: v.$pm1;
+  }
+}

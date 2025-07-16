@@ -1,0 +1,469 @@
+@use "../variables" as v;
+
+$bg: #3f464e;
+
+.B {
+  font-family: monospace, monospace;
+  font-style: normal;
+  margin-left: 5px;
+  font-size: 0.7em;
+  font-weight: bold;
+  color: v.$cred;
+  text-transform: uppercase;
+}
+
+.loading {
+  z-index: 98;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba($color: v.$black, $alpha: 0.75);
+  color: v.$px1;
+  .box {
+    width: fit-content;
+    max-width: calc(100% - 40px);
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    background-color: v.$pm1;
+    padding: 30px 40px;
+    border-radius: 20px;
+    animation: slide_down_in 0.5s;
+    .spinner {
+      font-size: 2em;
+    }
+    p {
+      font-size: 1.5em;
+    }
+  }
+  &.out {
+    .box {
+      animation: slide_down_out 0.5s forwards;
+    }
+  }
+}
+
+.waiting {
+  z-index: 98;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #1e1f2280;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .box {
+    text-align: center;
+    padding: 20px;
+    width: calc(100% - 40px);
+    min-height: 200px;
+    max-height: calc(100% - 40px);
+    max-width: 500px;
+    background-color: $bg;
+    border-radius: 10px;
+    box-shadow: 0 0 10px v.$black;
+    animation: popup_in 0.5s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    p {
+      font-size: 1.5em;
+    }
+  }
+  &.out {
+    .box {
+      animation: popup_out 0.5s forwards;
+    }
+  }
+}
+.modal {
+  z-index: 98;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba($color: v.$black, $alpha: 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: v.$white;
+  .box {
+    text-align: center;
+    padding: 20px;
+    width: calc(100% - 40px);
+    max-width: 500px;
+    max-height: calc(100% - 40px);
+    scrollbar-width: thin;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    background-color: v.$px2;
+    border-radius: 10px;
+    animation: popup_in 0.5s;
+    box-shadow: -3px 3px 5px v.$pm1;
+    .ic {
+      font-size: 2.2em;
+      color: v.$pm1;
+    }
+    .inf {
+      margin: 20px 0;
+      font-weight: 300;
+      font-size: 1.25em;
+      a {
+        color: v.$pm1;
+        text-decoration: none;
+      }
+      p {
+        word-break: break-all;
+        word-break: break-word;
+        hyphens: auto;
+      }
+      img {
+        margin: 0 auto;
+        margin-top: 10px;
+        max-width: 100%;
+        max-height: 300px;
+      }
+      input[type="text"],
+      textarea {
+        margin-top: 10px;
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: v.$black;
+        font-size: 1em;
+      }
+      textarea {
+        scrollbar-width: thin;
+      }
+      input[type="text"] {
+        text-align: center;
+      }
+      .modal-radio-form {
+        width: 100%;
+        margin-top: 10px;
+        .radio {
+          width: 100%;
+          border-radius: 10px;
+          border: 1px solid v.$pm1;
+          margin-bottom: 10px;
+          label {
+            padding: 14px;
+            display: block;
+            display: flex;
+            justify-content: left;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            input[type="radio"] {
+              -webkit-appearance: none;
+              appearance: none;
+              background-color: v.$px1;
+              margin: 0;
+              font: inherit;
+              color: v.$pm1;
+              width: 1.15em;
+              height: 1.15em;
+              border-radius: 50%;
+              display: grid;
+              place-content: center;
+              cursor: pointer;
+            }
+            input[type="radio"]::before {
+              content: "";
+              width: 0.65em;
+              height: 0.65em;
+              border-radius: 50%;
+              transform: scale(0);
+              transition: 120ms transform ease-in-out;
+              box-shadow: inset 1em 1em v.$px2;
+              background-color: v.$pm1;
+            }
+            input[type="radio"]:checked {
+              background-color: v.$pm1;
+              transform: scale(1);
+            }
+            input[type="radio"]:checked::before {
+              transform: scale(1);
+            }
+            p {
+              max-width: calc(100% - (1.15em + 10px));
+            }
+          }
+        }
+      }
+      .radio:has(:checked) {
+        border-color: v.$pm1;
+        background-color: rgba($color: v.$pm1, $alpha: 0.2);
+      }
+    }
+    .acts {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      .btn {
+        width: calc(100% / 2);
+        text-align: center;
+        align-content: center;
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 0.9em;
+        font-weight: bold;
+        color: v.$white;
+      }
+      .btn-cancel {
+        background-color: v.$px1;
+      }
+      .btn-ok {
+        background-color: v.$pm1;
+        color: v.$px1;
+      }
+    }
+    .act {
+      .btn-ok {
+        width: 100%;
+        text-align: center;
+        align-content: center;
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 0.9em;
+        font-weight: bold;
+        background-color: v.$pm1;
+        color: v.$px1;
+      }
+    }
+  }
+  &.out {
+    .box {
+      animation: popup_out 0.5s forwards;
+    }
+  }
+}
+
+.notip {
+  z-index: 99;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: fit-content;
+  max-width: 400px;
+  background-color: v.$bar_active;
+  color: v.$white;
+  padding: 20px;
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  animation: slide_down_in 0.5s;
+  border: 1px solid v.$black;
+  .detail {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    border-right: 1px solid CurrentColor;
+    padding-right: 10px;
+    .icon {
+      font-size: 2.2em;
+      img {
+        width: 44px;
+        height: 44px;
+        object-fit: cover;
+        object-position: center;
+        -o-object-fit: cover;
+        -o-object-position: center;
+        border-radius: 50%;
+      }
+    }
+    .text {
+      max-width: 200px;
+      .top {
+        font-weight: bold;
+        word-break: break-all;
+        word-break: break-word;
+        hyphens: auto;
+      }
+      .bottom {
+        word-break: break-all;
+        word-break: break-word;
+        hyphens: auto;
+      }
+    }
+  }
+  .close {
+    font-size: 2.2em;
+  }
+  &.g {
+    background-color: v.$sgreen;
+    color: v.$white;
+  }
+  &.y {
+    background-color: v.$px1;
+    border: 1px solid v.$yellow;
+    color: v.$yellow;
+  }
+  &.p {
+    background-color: v.$px1;
+    border: 1px solid v.$pm1;
+    color: v.$pm1;
+  }
+  &.r {
+    background-color: v.$cred;
+    color: v.$white;
+  }
+  &.rb {
+    background-color: v.$px1;
+    color: v.$cred;
+    border: 1px solid v.$cred;
+  }
+  &.out {
+    animation: slide_down_out 0.5s forwards;
+  }
+}
+
+.callnotip {
+  z-index: 4;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #1e1f2280;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .box {
+    background-color: $bg;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px v.$black;
+    width: calc(100% - 20px);
+    max-width: 400px;
+    animation: slide_down_in 0.25s;
+    .caller {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      .img {
+        width: 40px;
+        height: 40px;
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+          -o-object-fit: cover;
+          -o-object-position: center;
+          border-radius: 50%;
+        }
+      }
+      .name {
+        .displayname {
+          font-weight: bold;
+        }
+        .username {
+          font-size: 0.8em;
+        }
+      }
+    }
+    .calltype {
+      margin: 20px 0;
+      width: 100%;
+      text-align: center;
+    }
+    .callactions {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      .btn {
+        width: calc(100% / 2);
+        padding: 10px;
+        border-radius: 10px;
+        text-align: center;
+        color: v.$white;
+        font-weight: bold;
+      }
+      .btn-decline {
+        background-color: v.$cred;
+      }
+      .btn-answer {
+        background-color: v.$sgreen;
+      }
+    }
+    .callaction {
+      margin-top: 10px;
+      width: 100%;
+      .btn-ignore {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        text-align: center;
+        background-color: v.$px2;
+      }
+    }
+  }
+  &:not(:has(.ignored)).out {
+    .box {
+      animation: slide_down_out 0.25s forwards;
+    }
+  }
+  &.ignored {
+    width: fit-content;
+    height: fit-content;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #00000000;
+    .box {
+      width: fit-content;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: row-reverse;
+      padding: 5px 10px;
+      gap: 10px;
+      border-radius: 24px;
+      animation: slide_up_in 0.25s;
+      cursor: pointer;
+      border: 1px solid v.$black;
+      .callaction,
+      .callactions {
+        display: none;
+      }
+      .calltype {
+        margin: 0;
+        animation: none;
+        font-size: 1.25em;
+        span {
+          display: none;
+        }
+      }
+      .caller {
+        display: block;
+        .img {
+          width: 24px;
+          height: 24px;
+        }
+        .name {
+          display: none;
+        }
+      }
+    }
+    &.out {
+      .box {
+        animation: slide_up_out 0.25s forwards;
+      }
+    }
+  }
+}

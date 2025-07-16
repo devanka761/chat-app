@@ -1,0 +1,194 @@
+@use "../../variables" as v;
+
+.Chats {
+  background-color: v.$px1;
+  scrollbar-width: thin;
+  overflow-y: auto;
+  overflow-x: hidden;
+  .type-list {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    overflow-x: auto;
+    padding: 10px;
+    max-width: 100%;
+    gap: 10px;
+    scrollbar-width: thin;
+    .card {
+      flex-shrink: 0;
+      width: fit-content;
+      border: 1px solid v.$softwhite;
+      border-radius: 14px;
+      padding: 3px 14px;
+      font-size: 0.9rem;
+      text-align: center;
+      cursor: pointer;
+      i {
+        color: v.$softwhite;
+        font-style: normal;
+        text-transform: capitalize;
+        &.num {
+          margin-left: 5px;
+          color: v.$pm1;
+          font-weight: 600;
+        }
+      }
+      &.on {
+        border-color: v.$pm1;
+        background-color: rgba($color: v.$pm1, $alpha: 0.5);
+        i {
+          color: v.$white;
+        }
+      }
+    }
+  }
+  .search {
+    width: 100%;
+    padding: 10px;
+    border-bottom: 1px solid v.$black;
+    input {
+      width: 100%;
+      padding: 10px;
+      background-color: v.$black;
+      color: v.$white;
+      border-radius: 5px;
+    }
+    .btn {
+      width: 100%;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+      background-color: rgba($color: v.$pm1, $alpha: 0.5);
+      color: v.$white;
+      border-radius: 5px;
+      margin-top: 5px;
+      font-size: 1em;
+    }
+  }
+  .search.flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+  }
+  .card-list {
+    .nomore {
+      padding: 10px;
+      text-align: center;
+      font-style: italic;
+    }
+    .card {
+      padding: 5px;
+      padding-right: 10px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      gap: 10px;
+      .getload {
+        width: 100%;
+        text-align: center;
+        .spinner {
+          font-size: 2em;
+        }
+      }
+      .left {
+        overflow: hidden;
+        display: flex;
+        justify-content: left;
+        align-items: center;
+        .img {
+          flex-shrink: 0;
+          padding: 10px;
+          img {
+            width: 40px;
+            height: 40px;
+            display: block;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center;
+            -o-object-fit: cover;
+            -o-object-position: center;
+          }
+        }
+        .detail {
+          white-space: nowrap;
+          overflow: hidden;
+          .name {
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .last {
+            font-size: 0.8em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            .call-icon {
+              font-size: 0.8rem;
+              margin-right: 7px;
+              &.y {
+                color: v.$yellow;
+              }
+              &.g {
+                color: v.$cgreen;
+              }
+              &.r {
+                color: v.$cred;
+              }
+            }
+            .call-text {
+              font-size: 0.9rem;
+              color: v.$softwhite;
+            }
+          }
+        }
+      }
+      .right {
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: end;
+        justify-content: center;
+        gap: 5px;
+        .last {
+          font-size: 0.8em;
+        }
+        .unread {
+          width: 20px;
+          height: 20px;
+          font-size: 0.8em;
+          border-radius: 50%;
+          text-align: center;
+          align-content: center;
+          background-color: v.$pm1;
+          color: v.$black;
+        }
+        .btn {
+          font-size: 1.25em;
+        }
+      }
+      &.hidden {
+        display: none;
+      }
+      &:hover {
+        background-color: rgba($color: v.$pm2, $alpha: 0.5);
+      }
+    }
+    .btn-global {
+      position: sticky;
+      bottom: 10px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      margin-right: auto;
+      margin-left: auto;
+      width: fit-content;
+      padding: 10px;
+      background-color: v.$pm1;
+      color: v.$px1;
+      border-radius: 10px;
+    }
+  }
+}

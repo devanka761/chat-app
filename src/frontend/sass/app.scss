@@ -1,0 +1,20 @@
+@use "./main";
+@use "./other/properties";
+@use "./pages/Auth";
+@use "./pages/ForceClose";
+@use "./sect/header";
+@use "./pm/pm";
+@use "./pm/header/tabs";
+@use "./pm/center/Chats";
+@use "./pm/content/Empty";
+@use "./pm/content/Account";
+@use "./pm/content/Profile";
+@use "./pm/content/Room";
+@use "./pm/content/Posts";
+@use "./pm/content/CreatePost";
+@use "./pm/media/call";
+@use "./pm/media/incoming";
+@use "./pages/invites";
+
+// this should be at the bottom of the page
+@use "./nrw";

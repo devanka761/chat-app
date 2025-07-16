@@ -1,0 +1,69 @@
+$bg: #0b111d;
+
+$px1: #0b111d;
+$px25: #0f1621;
+$px2: #1c222c;
+$pm1: #a395e8;
+$pm2: #2d3048;
+
+$bar_bg: #3f4146;
+$bar_active: #3c426f;
+
+$fuchsia: #eb459d;
+
+$white: #f0f2f3;
+$softwhite: #abadaf;
+$swhite: #888b91;
+$black: #00000b;
+
+$blurple: #5865f1;
+$sgreen: #3aa761;
+$sred: #da373b;
+$sgray: #4e5057;
+$syellow: #bda94e;
+$yellow: #fee75b;
+
+$cred: #ff6e6e;
+$cgreen: #6ccc71;
+
+$darkcream: #cab05c;
+
+$neonpurple: #64538b;
+$neonpink: #64354b;
+$neonbg: linear-gradient(135deg, #64354b, #64538b);
+$noenbg: linear-gradient(135deg, #64538b, #64354b);
+$rewardbg: linear-gradient(135deg, #ffc0cb, #800080);
+
+$textoutline:
+  -1px -1px 0 #000,
+  1px -1px 0 #000,
+  -1px 1px 0 #000,
+  1px 1px 0 #000;
+$textshadow:
+  1px 0 3px #0b0b0b,
+  0 1px 3px #0b0b0b,
+  -1px 0 3px #0b0b0b,
+  0 -1px 3px #0b0b0b,
+  1px 1px 10px #0b0b0b,
+  1px -1px 10px #0b0b0b,
+  -1px 1px 10px #0b0b0b,
+  -1px -1px 10px #0b0b0b;
+
+$defonts:
+  system-ui,
+  -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  Roboto,
+  Oxygen,
+  Ubuntu,
+  Cantarell,
+  "Open Sans",
+  "Helvetica Neue",
+  sans-serif;
+
+$fontbiggest: 2.5rem;
+$fontbigger: 2rem;
+$fontbig: 1.75rem;
+$fontmedium: 1.25rem;
+$fontsmall: 0.875rem;

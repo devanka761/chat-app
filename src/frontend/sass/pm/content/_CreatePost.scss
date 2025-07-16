@@ -1,0 +1,107 @@
+@use "../../variables" as v;
+
+$topheight: 60px;
+
+.CreatePost {
+  background-color: v.$px25;
+  .top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: v.$px2;
+    font-weight: 500;
+    height: $topheight;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.25em;
+    .btn {
+      position: absolute;
+      left: 10px;
+    }
+    .sec-title {
+      font-weight: bold;
+    }
+  }
+  .bottom {
+    position: absolute;
+    top: $topheight;
+    left: 0;
+    width: 100%;
+    height: calc(100% - $topheight);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    .field {
+      flex-grow: 1;
+      padding: 20px;
+      left: 0;
+      width: 100%;
+      scrollbar-width: thin;
+      overflow-y: auto;
+      .btn-choose {
+        width: fit-content;
+        padding: 10px;
+        border-radius: 10px;
+        margin: 0 auto;
+        background-color: v.$sgreen;
+        color: v.$white;
+        font-weight: 600;
+      }
+      .preview {
+        margin: 10px auto;
+        padding: 5px;
+        width: fit-content;
+        height: fit-content;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: v.$px1;
+        overflow: hidden;
+        border-radius: 10px;
+        img {
+          max-width: 600px;
+          max-height: 300px;
+        }
+      }
+      textarea {
+        scrollbar-width: thin;
+        overflow: hidden;
+        margin: 0 auto;
+        width: 100%;
+        max-width: 600px;
+        border: 1px solid v.$black;
+        border-radius: 10px;
+        background-color: v.$px1;
+        color: v.$softwhite;
+        padding: 10px;
+        &:focus {
+          border-color: v.$pm1;
+        }
+      }
+    }
+    .actions {
+      flex-shrink: 0;
+      width: 100%;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      .btn {
+        text-transform: uppercase;
+        flex-grow: 1;
+        padding: 10px;
+        border-radius: 10px;
+        background-color: v.$black;
+        color: v.$white;
+        text-align: center;
+        &.btn-submit {
+          background-color: v.$pm2;
+        }
+      }
+    }
+  }
+}

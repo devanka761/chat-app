@@ -1,0 +1,25 @@
+.pmcenter {
+  position: absolute;
+  z-index: 25;
+  top: 50px;
+  left: 100px;
+  width: 350px;
+  height: calc(100% - 50px);
+  animation: slide_right_in 0.5s;
+  &.out {
+    animation: slide_right_out 0.5s forwards;
+  }
+}
+.pmcontent {
+  position: absolute;
+  z-index: 26;
+  top: 0;
+  left: calc(350px + 100px);
+  width: calc(100% - (350px + 100px));
+  height: 100%;
+  animation: slide_left_in 0.5s;
+  &.out {
+    z-index: 24;
+    animation: slide_left_out 0.5s forwards;
+  }
+}

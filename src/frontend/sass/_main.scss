@@ -1,0 +1,142 @@
+@use "./variables" as v;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  height: 100dvh;
+  scroll-behavior: smooth;
+  scrollbar-color: v.$pm1 v.$px2;
+  scrollbar-width: thin;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  font-family: v.$defonts;
+  background: v.$bg;
+  color: v.$softwhite;
+  overflow: hidden;
+}
+
+button,
+input,
+textarea,
+select {
+  outline: none;
+  border: none;
+  font-family: v.$defonts;
+  display: block;
+  font-size: 1em;
+}
+img {
+  pointer-events: none;
+  display: block;
+}
+button,
+.btn,
+[role="button"] {
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+input {
+  color: v.$white;
+}
+textarea {
+  color: v.$white;
+  resize: none;
+  scrollbar-width: thin;
+}
+
+p {
+  line-height: 1.5;
+}
+
+a {
+  color: v.$pm1;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: v.$px1;
+  margin: 0;
+  font: inherit;
+  color: v.$pm1;
+  width: 1.5em;
+  height: 1.5em;
+  border: 0.15rem solid #808080;
+  transform: translateY(-0.075em);
+  display: grid;
+  place-content: center;
+}
+input[type="checkbox"]::before {
+  content: "";
+  width: 1em;
+  height: 1em;
+  transform: scale(0);
+  box-shadow: inset 1rem 1rem v.$pm1;
+  background-color: v.$px1;
+  transform-origin: bottom left;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+.btn-back {
+  display: none;
+}
+.app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+.pm {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  &.oncall {
+    height: calc(100% - 35px);
+  }
+  &.movedown {
+    animation: pm_move_down 0.5s forwards;
+  }
+  &.moveup {
+    animation: pm_move_up 0.5s forwards;
+  }
+}
+.center {
+  text-align: center;
+}
+
+.tpdownload {
+  display: none;
+}
+
+::selection {
+  background: v.$pm1;
+  color: v.$px1;
+}

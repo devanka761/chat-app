@@ -1,0 +1,228 @@
+@use "../../variables" as v;
+
+$topheight: 60px;
+
+.Account {
+  background-color: v.$px25;
+  .top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: v.$px2;
+    font-weight: 500;
+    height: $topheight;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.25em;
+    .btn {
+      position: absolute;
+      left: 10px;
+    }
+    .sec-title {
+      font-weight: bold;
+    }
+  }
+  .top.flex {
+    justify-content: space-between;
+    align-items: center;
+    gap: 0;
+    .left {
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      gap: 10px;
+    }
+    .right {
+      .btn {
+        padding-left: 10px;
+      }
+    }
+  }
+  .wall {
+    position: absolute;
+    top: $topheight;
+    left: 0;
+    width: 100%;
+    height: calc(100% - $topheight);
+    padding: 20px;
+    scrollbar-width: thin;
+    overflow-y: auto;
+    .chp {
+      width: 100%;
+      margin-bottom: 20px;
+      .outer {
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        overflow: hidden;
+        border: 1px solid v.$pm1;
+        border-radius: 10px;
+        .chp-t {
+          text-align: center;
+          padding: 5px;
+          font-size: 0.9em;
+          background-color: v.$black;
+          font-weight: 500;
+        }
+        .chp-f {
+          text-align: center;
+          padding: 10px;
+          p {
+            word-break: break-all;
+            word-break: break-word;
+            hyphens: auto;
+          }
+          label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+        }
+        .chp-e {
+          text-align: center;
+          padding: 5px;
+          font-size: 0.9em;
+          background-color: v.$px2;
+          font-weight: bold;
+          cursor: pointer;
+        }
+        .chp-n {
+          color: v.$yellow;
+          font-style: italic;
+          font-size: 0.9em;
+          text-align: center;
+          padding: 0 5px;
+          margin-bottom: 5px;
+        }
+      }
+    }
+    .userphoto {
+      .outer-img {
+        border: 1px solid v.$pm1;
+        position: relative;
+        margin: 0 auto;
+        width: 150px;
+        height: 150px;
+        border-radius: 20px;
+        overflow: hidden;
+        img {
+          width: 150px;
+          height: 150px;
+          object-fit: cover;
+          object-position: center;
+          -o-object-fit: cover;
+          -o-object-position: center;
+        }
+        .btn {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          margin: 0 auto;
+          text-align: center;
+          padding: 5px;
+          font-size: 1.2em;
+          background-color: #00000080;
+        }
+      }
+    }
+    .userbio {
+      .outer {
+        .chp-f {
+          width: fit-content;
+          margin: 0 auto;
+          p {
+            text-align: justify;
+            text-align-last: left;
+          }
+        }
+      }
+    }
+    .groupinvite {
+      .chp-f {
+        a {
+          display: block;
+          line-height: 1.5;
+          text-decoration: none;
+          word-break: break-all;
+          word-break: break-word;
+          hyphens: none;
+          // border-bottom: 1px solid v.$yellow;
+        }
+      }
+    }
+    .groupmember {
+      .chp-u {
+        ul {
+          list-style: none;
+          li {
+            padding: 7px 10px;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            .left {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              gap: 10px;
+              cursor: pointer;
+              img {
+                flex-shrink: 0;
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+                object-fit: cover;
+                object-position: center;
+                -o-object-fit: cover;
+                -o-object-position: center;
+              }
+              .uname {
+                font-style: normal;
+                word-break: break-all;
+                word-break: break-word;
+                hyphens: auto;
+                .fa-user-crown {
+                  font-size: 0.8em;
+                  color: v.$yellow;
+                  margin-left: 5px;
+                }
+              }
+            }
+            .btn-kick {
+              flex-shrink: 0;
+              color: v.$cred;
+              cursor: pointer;
+            }
+          }
+          li:last-child {
+            border-bottom: none;
+          }
+          li:has(:hover) {
+            background-color: rgba($color: v.$pm1, $alpha: 0.2);
+          }
+        }
+      }
+    }
+    .usersign {
+      text-align: center;
+      a {
+        color: v.$cred;
+        text-decoration: none;
+        border-bottom: 1px solid v.$cred;
+        padding: 0 10px;
+      }
+    }
+    .chp:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

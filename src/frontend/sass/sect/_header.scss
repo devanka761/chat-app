@@ -1,0 +1,62 @@
+@use "../variables" as v;
+
+.header {
+  z-index: 27;
+  position: absolute;
+  top: 0;
+  left: 100px;
+  width: 350px;
+  height: 50px;
+  background-color: v.$px1;
+  animation: slide_right_in 0.5s;
+  &.out {
+    animation: slide_right_out 0.5s forwards;
+  }
+  .header-identification {
+    background-color: v.$px1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    .title {
+      padding: 10px;
+      font-weight: bold;
+      font-size: 1.5em;
+      text-transform: uppercase;
+    }
+    .actions {
+      padding: 10px;
+      display: flex;
+      justify-content: right;
+      align-items: center;
+      gap: 10px;
+      .btn {
+        font-size: 1.25em;
+      }
+    }
+  }
+  .header-options {
+    background-color: v.$px2;
+    position: absolute;
+    padding: 7px 0;
+    z-index: -1;
+    top: 50px;
+    right: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px v.$black;
+    overflow: hidden;
+    animation: slide_down_in 0.25s;
+    .btn {
+      background-color: v.$px2;
+      padding: 14px;
+      padding-right: 28px;
+      &:hover {
+        background-color: v.$pm1;
+        color: v.$black;
+      }
+    }
+    &.out {
+      animation: slide_down_out 0.25s forwards;
+    }
+  }
+}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content" />
+    <meta name="author" content="Devanka" />
+    <meta name="robots" content="notranslate" />
+    <meta name="google" content="notranslate" />
+
+    <link rel="icon" type="image/png" href="/favicon-48x48.png" sizes="48x48" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <title><%= group && group.short ? "Join " + group.short + " on Kirimin" : "Invalid Invitation" %></title>
+  </head>
+  <body>
+    <div class="app">
+      <div class="main" id="main">
+        <div class="card">
+          <div class="icon">
+            <% if(group && group.image) { %>
+              <img src="/file/group/<%= group.image %>" alt="<%= group.short %>" />
+            <% } else { %>
+              <img src="/assets/group.jpg" alt="<%= group?.short ?? "invalid" %>" />
+            <% } %>
+          </div>
+          <div class="title">
+            <h1 class="group-name"><%= group ? group.short : "Invalid" %></h1>
+            <p class="group-members"><%= members ? "Member(s): " + members : "This invitation is invalid or has expired" %></p>
+          </div>
+          <div class="actions">
+            <% if(group) { %>
+              <a class="btn btn-join" href="/app?invite=<%= group.link %>">JOIN</a>
+            <% } else { %>
+              <a class="btn btn-join" href="/app">BACK TO APP</a>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
