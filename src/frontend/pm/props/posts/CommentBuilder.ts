@@ -4,9 +4,12 @@ import modal from "../../../helper/modal"
 import sdate from "../../../helper/sdate"
 import setbadge from "../../../helper/setbadge"
 import xhr from "../../../helper/xhr"
+import adap from "../../../main/adaptiveState"
 import db from "../../../manager/db"
 import { IUserF } from "../../../types/db.types"
 import { ICommentF } from "../../../types/posts.types"
+import Account from "../../content/Account"
+import Profile from "../../content/Profile"
 import Comments from "../../parts/posts/Comments"
 
 export default class CommentBuilder {
@@ -29,6 +32,9 @@ export default class CommentBuilder {
   }
   private renPhoto(): void {
     const imgParent = kel("div", "photo")
+    imgParent.onclick = () => {
+      adap.swipe(this.user.id === db.me.id ? new Account({ classBefore: this.parent.posts }) : new Profile({ user: this.user, classBefore: this.parent.posts }))
+    }
     this.el.append(imgParent)
 
     const img = new Image()
@@ -43,6 +49,9 @@ export default class CommentBuilder {
 
     const eUser = kel("div", "data-user")
     const username = kel("span", "username")
+    username.onclick = () => {
+      adap.swipe(this.user.id === db.me.id ? new Account({ classBefore: this.parent.posts }) : new Profile({ user: this.user, classBefore: this.parent.posts }))
+    }
     username.innerText = this.user.username
     if (this.user.badges) setbadge(username, this.user.badges)
     const timestamp = kel("span", "timestamp")
