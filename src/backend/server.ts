@@ -75,6 +75,15 @@ app.get("/app", (req: Request, res: Response) => {
   return
 })
 
+app.get("/terms", (req: Request, res: Response) => {
+  res.render("terms")
+  return
+})
+app.get("/privacy", (req: Request, res: Response) => {
+  res.render("privacy")
+  return
+})
+
 app.get("/", (req: Request, res: Response) => {
   res.render("home")
   return

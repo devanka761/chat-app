@@ -7,7 +7,9 @@ const appConfig = {
   entry: {
     app: "./src/frontend/app.ts",
     home: "./src/frontend/home.ts",
-    invite: "./src/frontend/invite.ts"
+    invite: "./src/frontend/invite.ts",
+    privacy: "./src/frontend/legal.ts",
+    terms: "./src/frontend/legal.ts"
   },
   entries: {
     app: {
@@ -27,6 +29,18 @@ const appConfig = {
       filename: "invite.ejs",
       template: "invite.ejs",
       chunks: ["invite"]
+    },
+    privacy: {
+      title: "privacy",
+      filename: "privacy.ejs",
+      template: "privacy.ejs",
+      chunks: ["privacy"]
+    },
+    terms: {
+      title: "terms",
+      filename: "terms.ejs",
+      template: "terms.ejs",
+      chunks: ["terms"]
     }
   }
 }

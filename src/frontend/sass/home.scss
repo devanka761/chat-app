@@ -73,6 +73,7 @@ body {
               margin-bottom: 0;
             }
             &.joined {
+              animation: popup_in 0.5s;
               background-color: v.$pm2;
               color: v.$white;
             }
