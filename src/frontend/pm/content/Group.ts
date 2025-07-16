@@ -14,6 +14,8 @@ import Chats from "../center/Chats"
 import Member from "../parts/group/Member"
 import Empty from "./Empty"
 import Room from "./Room"
+import { copyToClipboard } from "../../helper/navigator"
+import notip from "../../helper/notip"
 
 export default class Group implements PrimaryClass {
   readonly role: string
@@ -171,6 +173,12 @@ export default class Group implements PrimaryClass {
     }
     a.href = `/invite/${this.group.link}`
     a.innerHTML = `${window.location.origin}/invite/${this.group.link} <i class="fa-duotone fa-light fa-solid fa-copy"></i>`
+    a.onclick = async (e) => {
+      e.preventDefault()
+      const isCopied = await copyToClipboard(a.href)
+      if (isCopied) notip({ a: `${lang.NP_COPIED}:`, b: a.href, ic: "clipboard-check", c: "1" })
+      return isCopied
+    }
     if (!this.btnInvite && this.group.owner === db.me.id) {
       this.btnInvite = kel("div", "chp-e btn-invite", {
         e: `<i class="fa-solid fa-rotate-right"></i> Reset`

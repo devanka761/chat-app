@@ -6,7 +6,7 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 const appConfig = {
   entry: {
     app: "./src/frontend/app.ts",
-    home: "./src/frontend/home.ts",
+    // home: "./src/frontend/home.ts",
     invite: "./src/frontend/invite.ts"
   },
   entries: {
@@ -16,12 +16,12 @@ const appConfig = {
       template: "app.ejs",
       chunks: ["app"]
     },
-    home: {
-      title: "home",
-      filename: "home.ejs",
-      template: "home.ejs",
-      chunks: ["home"]
-    },
+    //   home: {
+    //     title: "home",
+    //     filename: "home.ejs",
+    //     template: "home.ejs",
+    //     chunks: ["home"]
+    //   },
     invite: {
       title: "invite",
       filename: "invite.ejs",

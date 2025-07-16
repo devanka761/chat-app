@@ -8,7 +8,6 @@ import ForceClose from "../pages/ForceClose"
 import Calls from "../pm/center/Calls"
 import Chats from "../pm/center/Chats"
 import Friends from "../pm/center/Friends"
-import Empty from "../pm/content/Empty"
 import Group from "../pm/content/Group"
 import Room from "../pm/content/Room"
 import Tab from "../pm/parts/header/Tab"
@@ -17,7 +16,6 @@ import VoiceCall from "../pm/parts/media/VoiceCall"
 import { IRoomDataF, IUserF } from "../types/db.types"
 import { IMessageUpdateF } from "../types/message.types"
 import { ICallUpdateF } from "../types/peer.types"
-import adap from "./adaptiveState"
 import userState from "./userState"
 
 class ProcessClient {
@@ -348,24 +346,12 @@ class ProcessClient {
 
     gdb.u = gdb.u.filter((usr) => usr.id !== s.from)
   }
-  private memberkick(s: IZender): void {
+  private async memberkick(s: IZender): Promise<void> {
     const gdb = db.c.find((ch) => ch.r.id === s.groupid)
     if (gdb) db.c = db.c.filter((ch) => ch.r.id !== s.groupid)
     if (userState.center?.role === "chats") {
       const chatsCenter = userState.center as Chats
       chatsCenter.deleteData(s.groupid)
-    }
-    if (userState.content?.role === "room") {
-      const roomContent = userState.content as Room
-      if (roomContent.data.id === s.groupid) {
-        adap.swipe(new Empty())
-      }
-    }
-    if (userState.content?.role === "group") {
-      const groupContent = userState.content as Group
-      if (groupContent.group.id === s.groupid) {
-        adap.swipe(new Empty())
-      }
     }
   }
   private offer(s: ICallUpdateF): void {

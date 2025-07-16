@@ -337,7 +337,7 @@ export default class MessageBuilder {
       this.optmenu.append(new OptionMsgBuilder({ ...optConfig, optype: "copy" }).run())
     }
     if (this.s.type === "deleted" || this.s.type === "call") {
-      if (this.user.id === db.me.id) {
+      if (this.user.id === db.me.id || this.user.id === "-1") {
         this.closeOptmenu()
         return
       }

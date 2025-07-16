@@ -22,9 +22,12 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
           return cdb[k].t === "user" && cdb[k].u.find((usr) => usr === uid) && cdb[k].u.find((usr) => usr === room_id)
         })
       : Object.keys(cdb).find((k) => room_id === "696969" || (cdb[k].t === "group" && k === room_id && cdb[k].u.find((usr) => usr === uid)))
-  if (s.edit && !chatkey) return { code: 400 }
+  if (s.edit && !chatkey) {
+    if (room_type === "group") return { code: 403, msg: "GRP_KICKED" }
+    return { code: 400 }
+  }
   if (s.edit && chatkey) return editMessage(uid, chatkey, room_id, room_type, s)
-  if (room_type === "group" && !chatkey) return { code: 404 }
+  if (room_type === "group" && !chatkey) return { code: 403, msg: "GRP_KICKED" }
   if (!chatkey) {
     chatkey = `${uid}u${room_id}`
     db.ref.c[chatkey] = {
@@ -103,7 +106,7 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
 
 export function editMessage(uid: string, chatkey: string, room_id: string, room_type: TRoomTypeF, s: IWritterF): IRepTempB {
   if (!s.edit) return { code: 404 }
-  if (!chatkey) return { code: 404 }
+  if (!chatkey) return { code: 403, msg: "GRP_KICKED" }
   const cdb = db.ref.c[chatkey]
   if (!cdb) return { code: 404 }
 
@@ -157,7 +160,7 @@ export function delMessage(uid: string, target: string, room: string, message_id
         })
       : Object.keys(cdb).find((k) => target === "696969" || (cdb[k].t === "group" && k === target && cdb[k].u.find((usr) => usr === uid)))
 
-  if (!chatkey) return { code: 404 }
+  if (!chatkey) return { code: 403, msg: "GRP_KICKED" }
 
   const roomkey = chatkey as string
   const dbOld = (db.fileGet(roomkey, "room") || {}) as IMessageKeyB

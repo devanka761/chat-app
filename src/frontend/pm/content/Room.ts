@@ -20,6 +20,7 @@ import FriendBuilder from "../props/friends/FriendBuilder"
 import Tab from "../parts/header/Tab"
 import Chats from "../center/Chats"
 import socketClient from "../../manager/socketClient"
+import adap from "../../main/adaptiveState"
 
 export default class Room implements PrimaryClass {
   readonly role: string
@@ -149,6 +150,12 @@ export default class Room implements PrimaryClass {
       if (messageSent.code === 413) {
         await modal.alert(lang[messageSent.msg]?.replace("{SIZE}", "2 MB") || lang.ERROR)
       }
+      if (messageSent.code === 403) {
+        await modal.alert(lang.GRP_KICKED)
+        this.isLocked = false
+        adap.swipe()
+        return
+      }
       this.isLocked = false
       return
     }
@@ -182,6 +189,10 @@ export default class Room implements PrimaryClass {
       message.setStatus((currStatus || "sent") as TStatusText)
       message.setTimeStamp(message.json.message.timestamp)
       message.clickListener()
+      if (messageSent.code === 403) {
+        adap.swipe()
+        return
+      }
       return
     }
     this.processUpdate(messageSent.data)
@@ -239,6 +250,10 @@ export default class Room implements PrimaryClass {
       message.setStatus((currStatus || "sent") as TStatusText)
       message.clickListener()
       this.isLocked = false
+      if (messageDeleted.code === 403) {
+        adap.swipe()
+        return
+      }
       return
     }
     this.processUpdate(messageDeleted.data)

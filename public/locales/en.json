@@ -116,6 +116,7 @@
   "GRPS_KICK_CONFIRM": "Kick <b>{uname}</b> from group?",
   "GRPS_404": "Group not found",
   "GRPS_OWNER_FEATURE": "This feature can only be accessed by <b>Group Owner</b>",
+  "GRP_KICKED": "You're no longer a member in this group",
   "INV_NOT_FOUND_TITLE": "Invitation Is Not Found",
   "INV_NOT_FOUND_DESC": "This invitation is invalid or has expired",
   "INV_MEMBERS_LENGTH": "Member(s)",
