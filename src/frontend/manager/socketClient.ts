@@ -34,7 +34,7 @@ export class SocketClient {
     this.attemp = 0
   }
   private start(): void {
-    this.ws = new WebSocket(`ws//${this.host}?id=${this.id}`)
+    this.ws = new WebSocket(`wss://${this.host}?id=${this.id}`)
 
     this.ws.addEventListener("error", socketError)
     this.ws.addEventListener("message", socketMessage)
