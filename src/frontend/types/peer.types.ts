@@ -2,14 +2,14 @@ import { IUserF } from "./db.types"
 
 export type SignalData = {
   type: "offer" | "answer" | "candidate"
-  sdp?: RTCSessionDescriptionInit
+  sdp?: RTCSessionDescription | null
   candidate?: RTCIceCandidateInit
   callKey?: string
 }
 
 export interface ICallUpdateF extends SignalData {
   user: IUserF
-  sdp: RTCSessionDescriptionInit
+  sdp: RTCSessionDescription
 }
 
 export type PeerCallHandlerOptions = {

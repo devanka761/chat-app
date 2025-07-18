@@ -73,12 +73,9 @@ export class PeerCallHandler {
     this.setupDataChannelEvents(this.dataChannel)
 
     this.peerConnection.onnegotiationneeded = async () => {
-      const offer = await this.peerConnection.createOffer({
-        offerToReceiveAudio: true,
-        offerToReceiveVideo: false
-      })
+      const offer = await this.peerConnection.createOffer()
       await this.peerConnection.setLocalDescription(offer)
-      this.options.onSignal({ type: "offer", sdp: offer })
+      this.options.onSignal({ type: "offer", sdp: this.peerConnection.localDescription })
     }
   }
 
@@ -91,7 +88,7 @@ export class PeerCallHandler {
     await this.peerConnection.setRemoteDescription(offer)
     const answer = await this.peerConnection.createAnswer()
     await this.peerConnection.setLocalDescription(answer)
-    this.options.onSignal({ type: "answer", sdp: answer, callKey: callKey })
+    this.options.onSignal({ type: "answer", sdp: this.peerConnection.localDescription, callKey: callKey })
   }
 
   async handleSignal(data: SignalData): Promise<void> {
