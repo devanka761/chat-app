@@ -263,9 +263,11 @@ export default class VoiceCall {
       },
       onStream: (stream) => {
         this.peerMedia = new Audio()
+        this.peerMedia.oncanplay = () => {
+          this.peerMedia?.play()
+          this.enableActions()
+        }
         this.peerMedia.srcObject = stream
-        this.peerMedia.play()
-        this.enableActions()
       },
       onMessage: (message) => {
         switch (message) {

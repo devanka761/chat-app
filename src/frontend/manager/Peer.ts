@@ -16,7 +16,7 @@ export class PeerCallHandler {
   private setupListeners(): void {
     this.peerConnection.onicecandidate = (e) => {
       if (e.candidate) {
-        this.options.onSignal({ type: "candidate", candidate: e.candidate.toJSON() })
+        this.options.onSignal({ type: "candidate", candidate: e.candidate })
       }
     }
 
@@ -63,7 +63,7 @@ export class PeerCallHandler {
     }
   }
 
-  async call(stream: MediaStream): Promise<void> {
+  call(stream: MediaStream): void {
     this.localStream = stream
     stream.getTracks().forEach((track) => {
       this.peerConnection.addTrack(track, stream)
@@ -72,12 +72,14 @@ export class PeerCallHandler {
     this.dataChannel = this.peerConnection.createDataChannel("control")
     this.setupDataChannelEvents(this.dataChannel)
 
-    const offer = await this.peerConnection.createOffer({
-      offerToReceiveAudio: true,
-      offerToReceiveVideo: false
-    })
-    await this.peerConnection.setLocalDescription(offer)
-    this.options.onSignal({ type: "offer", sdp: offer })
+    this.peerConnection.onnegotiationneeded = async () => {
+      const offer = await this.peerConnection.createOffer({
+        offerToReceiveAudio: true,
+        offerToReceiveVideo: false
+      })
+      await this.peerConnection.setLocalDescription(offer)
+      this.options.onSignal({ type: "offer", sdp: offer })
+    }
   }
 
   async answer(stream: MediaStream, offer: RTCSessionDescriptionInit, callKey?: string): Promise<void> {
@@ -97,7 +99,7 @@ export class PeerCallHandler {
       this.hangup()
       return
     }
-    if (data.type === "offer" || data.type === "answer") {
+    if (data.type === "answer") {
       if (!data.sdp) {
         console.error("Failed to get RTCSessionDescriptionInit", data.sdp)
         return
@@ -108,7 +110,7 @@ export class PeerCallHandler {
       try {
         await this.peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate))
       } catch (e) {
-        this.hangup()
+        // this.hangup()
         console.error("Failed to add ICE candidate:", e)
       }
     }
