@@ -12,7 +12,6 @@ function showInstallButton(): void {
   if (btnInstall) btnInstall.classList.remove("hide")
 }
 function hideInstallButton(): void {
-  console.log(btnInstall)
   if (btnInstall) btnInstall.classList.add("hide")
 }
 
@@ -31,7 +30,6 @@ function setPWA(): void {
 
       if (pwaInstaller) {
         const confirm_install = await pwaInstaller.prompt()
-        console.log(confirm_install)
         if (confirm_install.outcome === "accepted") {
           PWA_READY = true
         }
@@ -56,7 +54,6 @@ function setPWA(): void {
 
 function setOnResize(): void {
   window.addEventListener("resize", () => {
-    console.log(PWA_READY)
     if (PWA_READY) {
       hideInstallButton()
       window.location.href = "/app"

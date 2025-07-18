@@ -1,11 +1,9 @@
-import { getAudioCapabilities } from "../helper/capabilities"
+import { getAudioCapabilities, getVideoCapabilities } from "../helper/capabilities"
 import peerConfiguration from "../main/peerConfig"
 import { PeerCallHandlerOptions, SignalData } from "../types/peer.types"
 
 export class PeerCallHandler {
   private peerConnection: RTCPeerConnection
-  private localStream?: MediaStream
-  private remoteStream?: MediaStream
   private options: PeerCallHandlerOptions
   private dataChannel?: RTCDataChannel
   constructor(options: PeerCallHandlerOptions) {
@@ -22,11 +20,9 @@ export class PeerCallHandler {
     }
 
     this.peerConnection.ontrack = (e) => {
-      if (!this.remoteStream) {
-        this.remoteStream = new MediaStream()
-        this.options.onStream?.(this.remoteStream)
-      }
-      this.remoteStream.addTrack(e.track)
+      const stream = e.streams[0]
+      this.options.onStream?.(stream)
+      stream.addTrack(e.track)
     }
 
     this.peerConnection.oniceconnectionstatechange = () => {
@@ -65,7 +61,6 @@ export class PeerCallHandler {
   }
 
   call(stream: MediaStream): void {
-    this.localStream = stream
     stream.getTracks().forEach((track) => {
       this.peerConnection.addTrack(track, stream)
     })
@@ -75,14 +70,19 @@ export class PeerCallHandler {
 
     this.peerConnection.onnegotiationneeded = async () => {
       await getAudioCapabilities(20)
-      const offer = await this.peerConnection.createOffer()
+      await getVideoCapabilities(20)
+      this.peerConnection.addTransceiver("audio")
+      this.peerConnection.addTransceiver("video")
+      const offer = await this.peerConnection.createOffer({
+        offerToReceiveAudio: true,
+        offerToReceiveVideo: true
+      })
       await this.peerConnection.setLocalDescription(offer)
       this.options.onSignal({ type: "offer", sdp: this.peerConnection.localDescription })
     }
   }
 
   async answer(stream: MediaStream, offer: RTCSessionDescriptionInit, callKey?: string): Promise<void> {
-    this.localStream = stream
     stream.getTracks().forEach((track) => {
       this.peerConnection.addTrack(track, stream)
     })
@@ -124,9 +124,5 @@ export class PeerCallHandler {
     if (this.dataChannel && this.dataChannel.readyState === "open") {
       this.dataChannel.send(message)
     }
-  }
-
-  getRemoteStream(): MediaStream | undefined {
-    return this.remoteStream
   }
 }

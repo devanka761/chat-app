@@ -1,3 +1,4 @@
+import "webrtc-adapter"
 import Auth from "../pages/Auth"
 
 export default class Init {
