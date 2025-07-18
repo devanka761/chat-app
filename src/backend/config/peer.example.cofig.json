@@ -1,5 +1,6 @@
 {
   "PEER_CONFIG": {
+    "iceCandidatePoolSize": 0,
     "iceServers": [
       { "urls": "stun:contoh-aja.domainkamu.com:3478" },
       {

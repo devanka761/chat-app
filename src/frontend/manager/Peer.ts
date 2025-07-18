@@ -1,3 +1,4 @@
+import { getAudioCapabilities } from "../helper/capabilities"
 import peerConfiguration from "../main/peerConfig"
 import { PeerCallHandlerOptions, SignalData } from "../types/peer.types"
 
@@ -73,6 +74,7 @@ export class PeerCallHandler {
     this.setupDataChannelEvents(this.dataChannel)
 
     this.peerConnection.onnegotiationneeded = async () => {
+      await getAudioCapabilities(20)
       const offer = await this.peerConnection.createOffer()
       await this.peerConnection.setLocalDescription(offer)
       this.options.onSignal({ type: "offer", sdp: this.peerConnection.localDescription })
