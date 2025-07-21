@@ -24,3 +24,7 @@ export type PeerCallHandlerOptions = {
 export type TSocketMessageF = {
   [key: string]: string | number | boolean | null
 }
+
+export type Negotiator = {
+  [key: string]: ICallUpdateF[]
+}

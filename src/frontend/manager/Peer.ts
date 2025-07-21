@@ -20,7 +20,7 @@ export class PeerCallHandler {
     }
 
     this.peerConnection.ontrack = (e) => {
-      const stream = e.streams[0]
+      const stream = new MediaStream()
       this.options.onStream?.(stream)
       stream.addTrack(e.track)
     }

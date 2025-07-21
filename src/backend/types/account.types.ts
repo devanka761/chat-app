@@ -5,5 +5,6 @@ export interface IAccountB {
   c?: IChatsF[]
   socket?: SocketDB
   v?: number
-  peer?: RTCConfiguration | null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  peer?: any | null
 }

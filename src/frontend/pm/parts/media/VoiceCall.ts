@@ -4,6 +4,7 @@ import modal from "../../../helper/modal"
 import sdate from "../../../helper/sdate"
 import setbadge from "../../../helper/setbadge"
 import userState from "../../../main/userState"
+import negotiator from "../../../manager/negotiator"
 import { PeerCallHandler } from "../../../manager/Peer"
 import getPeerStream from "../../../manager/peerStream"
 import socketClient from "../../../manager/socketClient"
@@ -109,7 +110,8 @@ export default class VoiceCall {
       return this.destroy()
     }
     this.timestamp.innerHTML = lang.CALL_CONNECTING
-    this.peer.answer(this.mediaStream, offer, callKey)
+    await this.peer.answer(this.mediaStream, offer, callKey)
+    this.fixNegotiators()
   }
   private enableActions(): void {
     this.clearTime()
@@ -216,7 +218,6 @@ export default class VoiceCall {
     socketClient.send({ type: "hangup", to: this.user.id })
     this.peer.hangup()
     if (this.peerMedia) {
-      this.peerMedia.pause()
       this.peerMedia.remove()
       this.peerMedia = null
     }
@@ -242,6 +243,14 @@ export default class VoiceCall {
     if (this.el) this.el.remove()
     epm().classList.remove("oncall")
     userState.media = null
+  }
+  fixNegotiators(): void {
+    if (negotiator[this.user.id]) {
+      negotiator[this.user.id].forEach((callUpdate) => {
+        this.peer.handleSignal(callUpdate)
+      })
+    }
+    Object.keys(negotiator).forEach((k) => delete negotiator[k])
   }
   run(): void {
     userState.media = this

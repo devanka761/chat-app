@@ -4,6 +4,7 @@ import { lang } from "../helper/lang"
 import modal from "../helper/modal"
 import notip from "../helper/notip"
 import db from "../manager/db"
+import negotiator from "../manager/negotiator"
 import ForceClose from "../pages/ForceClose"
 import Calls from "../pm/center/Calls"
 import Chats from "../pm/center/Chats"
@@ -355,12 +356,20 @@ class ProcessClient {
     }
   }
   private offer(s: ICallUpdateF): void {
-    if (userState.incoming || userState.media) return
+    if (userState.incoming || userState.media) {
+      if (!negotiator[s.user.id]) negotiator[s.user.id] = []
+      negotiator[s.user.id].push(s)
+      return
+    }
     const incoming = new Incoming({ data: s })
     incoming.run()
   }
   private answer(s: ICallUpdateF) {
-    if (!userState.media) return
+    if (!userState.media) {
+      if (!negotiator[s.user.id]) negotiator[s.user.id] = []
+      negotiator[s.user.id].push(s)
+      return
+    }
     const voiceCall = userState.media as VoiceCall
     voiceCall.peer.handleSignal(s)
   }
