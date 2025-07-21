@@ -56,7 +56,7 @@ export default class Posts implements PrimaryClass {
     this.btnCreate = kel("div", "btn btn-create", { e: `<i class="fa-solid fa-plus"></i> ${lang.POSTS_CREATE}` })
     this.actions = kel("div", "actions")
     this.actions.append(this.btnCreate)
-    this.wall.append(this.actions)
+    // this.wall.append(this.actions)
     const text = `<i class="fa-solid fa-circle-notch fa-spin"></i> ${lang.LOADING}`
     this.preloading = kel("div", "post-wait", { e: text })
     this.wall.prepend(this.preloading)
@@ -84,6 +84,7 @@ export default class Posts implements PrimaryClass {
       const filteredPosts = this.currFilter === "mine" ? this.post_list.filter((post) => post.user.id === db.me.id) : this.post_list
       while (this.wall.firstChild) this.wall.firstChild.remove()
       filteredPosts.forEach((post) => this.renPost(post))
+      this.writeIfEmpty(filteredPosts)
     }
   }
   private async getAllPosts(): Promise<void> {
@@ -108,6 +109,8 @@ export default class Posts implements PrimaryClass {
     this.wall.prepend(userPost.html)
   }
   private writeIfEmpty(pdb: TPostsF): void {
+    this.wall.append(this.actions)
+
     const oldNomore: HTMLParagraphElement | null = this.el.querySelector(".nomore")
     if (pdb.length < 1) {
       if (oldNomore) return
