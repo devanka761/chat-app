@@ -2,6 +2,7 @@ import { IZender } from "../../backend/types/validate.types"
 import { escapeHTML } from "../helper/escaper"
 import { lang } from "../helper/lang"
 import modal from "../helper/modal"
+import noMessage from "../helper/noMessage"
 import notip from "../helper/notip"
 import db from "../manager/db"
 import negotiator from "../manager/negotiator"
@@ -287,6 +288,29 @@ class ProcessClient {
       })
     }
     userState.tab?.update("chats")
+  }
+  private clearhistory(s: IZender): void {
+    const gdb = db.c.find((ch) => ch.r.id === s.roomid)
+    if (!gdb) return
+    gdb.m = []
+
+    if (userState.center && userState.center.role === "chats") {
+      const chatCenter = userState.center as Chats
+      chatCenter.update({
+        chat: noMessage(),
+        roomdata: gdb.r,
+        users: gdb.u
+      })
+    }
+    if (userState.content && userState.content.role === "room") {
+      const room = userState.content as Room
+      if (room.data.id === s.roomid) {
+        room.field.list.entries.forEach((msg) => {
+          msg.html.remove()
+          room.field.list.remove(msg.id)
+        })
+      }
+    }
   }
   private memberjoin(s: IZender): void {
     const gdb = db.c.find((ch) => ch.r.id === s.groupid)

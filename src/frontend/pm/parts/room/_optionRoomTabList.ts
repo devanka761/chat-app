@@ -41,13 +41,14 @@ export default [
       }
       const cdb = db.c.find((k) => k.r.id === room.data.id)
       if (cdb) cdb.m = []
-      if (!userState.center || userState.center.role !== "chats") return
-      const chatCenter = userState.center as Chats
-      chatCenter.update({
-        chat: noMessage(),
-        roomdata: room.data,
-        users: room.users
-      })
+      if (userState.center && userState.center.role === "chats") {
+        const chatCenter = userState.center as Chats
+        chatCenter.update({
+          chat: noMessage(),
+          roomdata: room.data,
+          users: room.users
+        })
+      }
       room.field.list.entries.forEach((msg) => {
         msg.html.remove()
         room.field.list.remove(msg.id)

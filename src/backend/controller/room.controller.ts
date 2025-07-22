@@ -244,7 +244,7 @@ export function clearHistory(uid: string, room_type: string, room_id: string): I
   }
 
   cdb[ckey].u.forEach((usr) => {
-    zender(uid, usr, "clearhistory", { roomid: room_id })
+    zender(uid, usr, "clearhistory", { roomid: cdb[ckey].t === "user" ? uid : ckey })
   })
 
   db.fileSet(cdb[ckey].c, "room", {})
