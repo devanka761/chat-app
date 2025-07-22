@@ -84,13 +84,23 @@ app.get("/privacy", (req: Request, res: Response) => {
   return
 })
 
+app.get("/core-api", (req: Request, res: Response) => {
+  res.json({ ok: true, code: 200, msg: "COMING SOON!", data: { status: "This Page Is Under Maintenance" } })
+  return
+})
+
 app.get("/", (req: Request, res: Response) => {
   res.render("home")
   return
 })
 
 app.use("/", (req: Request, res: Response) => {
-  res.status(404).json({ ok: false, code: 404, msg: "NOT_FOUND" })
+  const isJsonRequest = req.headers.accept?.includes("application/json") || req.headers["x-requested-with"] === "XMLHttpRequest"
+  if (req.method.toLowerCase() === "get" && !isJsonRequest) {
+    res.status(404).render("404")
+    return
+  }
+  res.status(404).json({ ok: false, code: 404, msg: "Your requested data is not found", error: "Not Found" })
   return
 })
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -356,11 +356,9 @@ class ProcessClient {
     }
   }
   private offer(s: ICallUpdateF): void {
-    if (userState.incoming || userState.media) {
-      if (!negotiator[s.user.id]) negotiator[s.user.id] = []
-      negotiator[s.user.id].push(s)
-      return
-    }
+    if (!negotiator[s.user.id]) negotiator[s.user.id] = []
+    negotiator[s.user.id].push(s)
+
     const incoming = new Incoming({ data: s })
     incoming.run()
   }

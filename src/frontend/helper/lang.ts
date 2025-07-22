@@ -20,7 +20,7 @@ class KiriminLangs {
   }
   async load(): Promise<void> {
     const file = this.read()
-    this.currLang = file && file.lang === "en" ? "en" : "id"
+    this.currLang = file && file.lang === "id" ? "id" : "en"
     const newLang = await xhr.get(`/file/locales/${this.currLang}`)
     Object.keys(newLang).forEach((k) => (lang[k] = newLang[k]))
   }

@@ -9,7 +9,8 @@ const appConfig = {
     home: "./src/frontend/home.ts",
     invite: "./src/frontend/invite.ts",
     privacy: "./src/frontend/legal.ts",
-    terms: "./src/frontend/legal.ts"
+    terms: "./src/frontend/legal.ts",
+    404: "./src/frontend/404.ts"
   },
   entries: {
     app: {
@@ -41,6 +42,12 @@ const appConfig = {
       filename: "terms.ejs",
       template: "terms.ejs",
       chunks: ["terms"]
+    },
+    404: {
+      title: "404",
+      filename: "404.ejs",
+      template: "404.ejs",
+      chunks: ["404"]
     }
   }
 }

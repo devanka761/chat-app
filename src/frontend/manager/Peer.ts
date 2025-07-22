@@ -71,8 +71,8 @@ export class PeerCallHandler {
     this.peerConnection.onnegotiationneeded = async () => {
       await getAudioCapabilities(20)
       await getVideoCapabilities(20)
-      this.peerConnection.addTransceiver("audio")
-      this.peerConnection.addTransceiver("video")
+      // this.peerConnection.addTransceiver("audio")
+      // this.peerConnection.addTransceiver("video")
       const offer = await this.peerConnection.createOffer({
         offerToReceiveAudio: true,
         offerToReceiveVideo: true

@@ -9,9 +9,38 @@ $bg3: #5d6d80;
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: v.$px1;
+  .splash {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    .icon {
+      img {
+        max-width: 100px;
+        max-height: 100px;
+      }
+    }
+    .title {
+      text-align: center;
+      h1 {
+        word-break: break-all;
+        word-break: break-word;
+        hyphens: auto;
+      }
+    }
+    .splash-loader {
+      p {
+        line-height: 1.5;
+        i {
+          color: v.$blurple;
+        }
+      }
+    }
+  }
   .none {
     i {
       color: #00000001;

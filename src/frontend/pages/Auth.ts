@@ -15,6 +15,8 @@ import adap from "../main/adaptiveState"
 import Tab from "../pm/parts/header/Tab"
 import Invites from "./Invites"
 import db from "../manager/db"
+import { isUnifiedSupported } from "../manager/supports"
+import ForceClose from "./ForceClose"
 
 let lang: LangObject = {}
 
@@ -54,15 +56,36 @@ export default class Auth {
   private el: HTMLDivElement
   private crateElement(): void {
     this.el = kel("div", "Auth")
-    this.el.innerHTML = `<div class="none"><i class="fa-solid fa-map"></i> <i class="fa-regular fa-map"></i> <i class="fa-light fa-map"></i> <i class="fa-thin fa-map"></i> <i class="fa-duotone fa-solid fa-map"></i> <i class="fa-duotone fa-regular fa-map"></i> <i class="fa-duotone fa-light fa-map"></i> <i class="fa-duotone fa-thin fa-map"></i> <i class="fa-sharp fa-solid fa-map"></i> <i class="fa-brands fa-font-awesome"></i> <i class="fa-sharp fa-regular fa-map"></i> <i class="fa-sharp fa-light fa-map"></i> <i class="fa-sharp fa-thin fa-map"></i> <i class="fa-sharp-duotone fa-solid fa-map"></i> <i class="fa-sharp-duotone fa-regular fa-map"></i> <i class="fa-sharp-duotone fa-light fa-map"></i> <i class="fa-sharp-duotone fa-thin fa-map"></i></div>`
+    this.el.innerHTML = `
+    <div class="splash">
+      <div class="icon">
+        <img src="/assets/kirimin_icon.png" alt="KIRIMIN" />
+      </div>
+      <div class="title">
+        <h1>KIRIMIN MESSENGER</h1>
+      </div>
+      <div class="splash-loader">
+        <p><i class="fa-solid fa-circle-notch fa-spin"></i> Initializing ...</p>
+      </div>
+    </div>
+    <div class="none"><i class="fa-solid fa-map"></i> <i class="fa-regular fa-map"></i> <i class="fa-light fa-map"></i> <i class="fa-thin fa-map"></i> <i class="fa-duotone fa-solid fa-map"></i> <i class="fa-duotone fa-regular fa-map"></i> <i class="fa-duotone fa-light fa-map"></i> <i class="fa-duotone fa-thin fa-map"></i> <i class="fa-sharp fa-solid fa-map"></i> <i class="fa-brands fa-font-awesome"></i> <i class="fa-sharp fa-regular fa-map"></i> <i class="fa-sharp fa-light fa-map"></i> <i class="fa-sharp fa-thin fa-map"></i> <i class="fa-sharp-duotone fa-solid fa-map"></i> <i class="fa-sharp-duotone fa-regular fa-map"></i> <i class="fa-sharp-duotone fa-light fa-map"></i> <i class="fa-sharp-duotone fa-thin fa-map"></i></div>`
   }
   private async checkUser(): Promise<void> {
     await klang.klang.load()
     lang = klang.lang
 
-    const isUser: IRepB = await modal.loading(xhr.get("/x/auth/isUser"))
+    const isSupported = isUnifiedSupported()
+    if (!isSupported) {
+      new ForceClose({
+        msg_1: '<i class="fa-duotone fa-light fa-handshake-simple-slash"></i>',
+        msg_2: lang.CLOUD_INCOMPATIBLE
+      })
+      return
+    }
+
+    const isUser: IRepB = await xhr.get("/x/auth/isUser")
     if (isUser.code !== 200) {
-      this.el.querySelector(".none")?.remove()
+      while (this.el.lastChild) this.el.lastChild.remove()
       return this.writeForm()
     }
     this.initializeData(isUser.data ?? {})

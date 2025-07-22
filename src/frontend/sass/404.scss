@@ -1,0 +1,58 @@
+@use "./variables" as v;
+@use "./main";
+
+.container {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  .summary {
+    color: v.$white;
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    .icon {
+      translate: 6px -8px;
+      image-rendering: pixelated;
+      scale: 2;
+    }
+    .errors p {
+      text-align: center;
+      font-size: 1.25em;
+    }
+  }
+  .actions {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    .btn {
+      width: calc((100% / 2) - 10px);
+      min-width: 200px;
+      max-width: 300px;
+      display: block;
+      background-color: v.$pm1;
+      color: v.$px1;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 10px;
+      text-decoration: none;
+      text-align: center;
+    }
+  }
+}
