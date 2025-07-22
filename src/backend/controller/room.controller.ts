@@ -59,11 +59,12 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
       fs.writeFileSync(`${fpath}/${chatkey}/${fname}`, buffer, "base64")
 
       if (s.type === "voice") {
+        const covPath = `${fpath}/${chatkey}`
         const covFname = fname.replace(".ogg", ".mp3")
         const convertAudio: boolean = await new Promise((resolve) => {
-          Ffmpeg(fname)
+          Ffmpeg(`${covPath}/${fname}`)
             .toFormat("mp3")
-            .save(covFname)
+            .save(`${covPath}/${covFname}`)
             .on("end", () => {
               resolve(true)
             })
@@ -71,7 +72,10 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
               resolve(false)
             })
         })
-        if (convertAudio === true) fname = covFname
+        if (convertAudio === true) {
+          fs.rmSync(`${fpath}/${chatkey}/${fname}`)
+          fname = covFname
+        }
       }
 
       newChat.source = fname

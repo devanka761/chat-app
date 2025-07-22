@@ -62,8 +62,14 @@ export default class Posts implements PrimaryClass {
     this.wall.prepend(this.preloading)
   }
   private btnListener(): void {
-    this.btnBack.onclick = () => adap.swipe()
-    this.btnCreate.onclick = () => adap.swipe(new CreatePost({ posts: this, classBefore: this }))
+    this.btnBack.onclick = () => {
+      if (this.isLocked) return
+      adap.swipe()
+    }
+    this.btnCreate.onclick = () => {
+      if (this.isLocked) return
+      adap.swipe(new CreatePost({ posts: this, classBefore: this }))
+    }
     this.btnFilter.onclick = async () => {
       if (this.isLocked) return
       this.isLocked = true
