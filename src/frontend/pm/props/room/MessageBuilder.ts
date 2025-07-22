@@ -120,7 +120,7 @@ export default class MessageBuilder {
     this.reply = kel("div", "chp embed", { e: [replysender, replymsg] })
     this.reply.onclick = () => {
       const msgHTML = msgAPI.html
-      msgHTML.scrollIntoView()
+      msgHTML.scrollIntoView({ behavior: "smooth" })
       msgAPI.highlight()
     }
     this.field.append(this.reply)

@@ -2,6 +2,7 @@ import { kel } from "../../../helper/kel"
 import { lang } from "../../../helper/lang"
 import modal from "../../../helper/modal"
 import userState from "../../../main/userState"
+import db from "../../../manager/db"
 import optionlist from "./_optionRoomTabList"
 import RoomTab from "./RoomTab"
 
@@ -31,7 +32,7 @@ export default class OptionRoomTabBuilder {
         if (userState.center?.isLocked) return
         if (userState.content?.isLocked) return
         this.isLocked = true
-        await btn.run()
+        await btn.run(`${db.me.username}/${this.tab.room.data.short}`)
         this.isLocked = false
       }
     })

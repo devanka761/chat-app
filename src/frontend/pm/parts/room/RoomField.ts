@@ -57,7 +57,11 @@ export default class RoomField {
     if (this.preload && this.el.contains(this.preload)) this.el.removeChild(this.preload)
     this.el.classList.remove("asset-loading")
     this.scrollToBottom()
-    btnGotolast.onclick = () => this.scrollToBottom()
+    btnGotolast.onclick = () => this.smoothToBottom()
+  }
+  private smoothToBottom(): void {
+    const lastEntry = this.list.entries[this.list.entries.length - 1]
+    if (lastEntry) lastEntry.html.scrollIntoView({ behavior: "smooth" })
   }
   private scrollToBottom(): void {
     this.el.scrollTop = this.el.scrollHeight - this.el.clientHeight

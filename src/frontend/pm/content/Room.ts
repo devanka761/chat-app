@@ -142,7 +142,7 @@ export default class Room implements PrimaryClass {
   async sendNewMessage(s: IWritterF, message: MessageBuilder): Promise<void> {
     message.setStatus("pending")
     this.field.html.append(message.html)
-    message.html.scrollIntoView()
+    message.html.scrollIntoView({ behavior: "smooth" })
     const messageSent = await this.sendMessage(s)
     if (!messageSent || !messageSent.ok) {
       message.setStatus("failed")
@@ -177,7 +177,7 @@ export default class Room implements PrimaryClass {
     const message: MessageBuilder | null = this.field.list.get(s.edit)
     if (!message) return
     if (message.json.message.text === s.text) return
-    message.html.scrollIntoView()
+    message.html.scrollIntoView({ behavior: "smooth" })
     const currStatus = message.currentStatus?.toString()
     message.setStatus("pending")
     const messageSent = await this.sendMessage(s)
