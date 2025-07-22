@@ -214,3 +214,41 @@ function getAllOnlineUsers(): string[] {
 
   return usr
 }
+
+export function clearHistory(uid: string, room_type: string, room_id: string): IRepTempB {
+  const cdb = db.ref.c
+  const ckey =
+    room_type === "user"
+      ? Object.keys(cdb).find((k) => {
+          return cdb[k].t === "user" && cdb[k].u.find((usr) => usr === uid) && cdb[k].u.find((usr) => usr === room_id)
+        })
+      : Object.keys(cdb).find((k) => room_id === "696969" || (cdb[k].t === "group" && k === room_id && cdb[k].u.find((usr) => usr === uid)))
+
+  if (!ckey) return { code: 404 }
+
+  if (room_type === "group" && cdb[ckey].o !== uid) return { code: 403, msg: "GRPS_OWNER_FEATURE" }
+  if (room_id === "696969") return { code: 403, msg: "GRPS_OWNER_FEATURE" }
+  if (!cdb[ckey].c) return { code: 200 }
+
+  const roompath = "./dist/stg/room"
+  const mediapath = `${roompath}/${cdb[ckey].c}`
+  const dbpath = "./dist/db/room"
+  const chatpath = `./dist/db/room/${cdb[ckey].c}.json`
+
+  if (fs.existsSync(roompath) || cdb[ckey].c || fs.existsSync(mediapath)) {
+    fs.rmSync(mediapath, { recursive: true, force: true })
+  }
+
+  if (fs.existsSync(dbpath) && cdb[ckey].c && fs.existsSync(chatpath)) {
+    fs.rmSync(chatpath, { recursive: true, force: true })
+  }
+
+  cdb[ckey].u.forEach((usr) => {
+    zender(uid, usr, "clearhistory", { roomid: room_id })
+  })
+
+  db.fileSet(cdb[ckey].c, "room", {})
+  db.save("c")
+
+  return { code: 200 }
+}

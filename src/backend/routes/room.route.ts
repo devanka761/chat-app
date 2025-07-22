@@ -1,5 +1,5 @@
 import express, { Request, Response, Router } from "express"
-import { delMessage, sendMessage } from "../controller/room.controller"
+import { clearHistory, delMessage, sendMessage } from "../controller/room.controller"
 import { rep } from "../main/helper"
 import { cdUser, isUser } from "../main/middlewares"
 import {} from "../../frontend/types/room.types"
@@ -28,6 +28,12 @@ router.post("/delMessage/:chat_type/:chat_id/:message_id", express.json({ limit:
   const { chat_type, chat_id, message_id } = req.params
   const setroom = rep(delMessage(req.user?.id as string, chat_id, chat_type, message_id))
   res.status(setroom.code).json(setroom)
+  return
+})
+router.post("/clear/:room_type/:room_id", express.json({ limit: "100KB" }), (req: Request, res: Response) => {
+  const { room_type, room_id } = req.params
+  const clearroom = rep(clearHistory(req.user?.id as string, room_type, room_id))
+  res.status(clearroom.code).json(clearroom)
   return
 })
 router.get("/get-global", express.json({ limit: "200KB" }), (req: Request, res: Response) => {
