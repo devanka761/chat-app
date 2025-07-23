@@ -87,6 +87,17 @@ export default class VoiceCall {
     this.btnHangUp = kel("div", "btn btn-hangup", { e: '<i class="fa-solid fa-phone-hangup fa-fw"></i>' })
     this.rightAct.append(this.btnHangUp)
   }
+  private writeVideo(): void {
+    // COMING SOON!
+    // <div class="videos">
+    //   <div class="user">
+    //     <video class="user" src="./assets/djwilfexbor.mp4"></video>
+    //   </div>
+    //   <div class="me">
+    //     <video  src="./assets/djwilfexbor.mp4"></video>
+    //   </div>
+    // </div>
+  }
   private async setMediaStream(): Promise<void> {
     this.mediaStream = await getPeerStream()
     if (!this.mediaStream) {
