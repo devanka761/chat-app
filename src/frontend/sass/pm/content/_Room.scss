@@ -640,7 +640,7 @@ $errorbg: #3d2b31;
           }
           .text {
             text-align: left;
-            p {
+            .msg {
               word-break: break-all;
               word-break: break-word;
               hyphens: auto;
@@ -650,6 +650,39 @@ $errorbg: #3d2b31;
               -webkit-user-select: text;
               -moz-user-select: text;
               -ms-user-select: text;
+              ul,
+              ol {
+                margin-left: 1.5rem;
+                li {
+                  ::marker {
+                    margin-right: 1rem;
+                  }
+                }
+              }
+              code {
+                font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
+                background: rgba($color: v.$black, $alpha: 0.25);
+                padding: 5px;
+                border-radius: 5px;
+              }
+              pre {
+                background: rgba($color: v.$black, $alpha: 0.25);
+                padding: 10px;
+                border-radius: 10px;
+                white-space: pre-wrap;
+                overflow-x: auto;
+                code {
+                  padding: 0;
+                  background: none;
+                }
+              }
+              img,
+              video {
+                max-width: 100%;
+                max-height: 300px;
+                display: block;
+                margin: 0 auto;
+              }
             }
             .edited {
               color: v.$swhite;

@@ -148,7 +148,7 @@ export default class Room implements PrimaryClass {
       message.setStatus("failed")
       this.isLocked = true
       if (messageSent.code === 413) {
-        await modal.alert(lang[messageSent.msg]?.replace("{SIZE}", "2 MB") || lang.ERROR)
+        await modal.alert(lang[messageSent.msg]?.replace("{SIZE}", "2.5 MB") || lang.ERROR)
       }
       if (messageSent.code === 403) {
         await modal.alert(lang.GRP_KICKED)

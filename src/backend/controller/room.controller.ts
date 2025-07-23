@@ -4,7 +4,7 @@ import db from "../main/db"
 import { TRoomTypeF } from "../../frontend/types/room.types"
 import { IWritterF } from "../../frontend/types/message.types"
 import { IRepTempB } from "../types/validate.types"
-import { convertGroup, convertMessage, convertUser, escapeWhiteSpace, minimizeMessage, msgNotValid, msgValidTypes, normalizeMessage } from "../main/helper"
+import { convertGroup, convertMessage, convertUser, minimizeMessage, msgNotValid, msgValidTypes, normalizeMessage } from "../main/helper"
 import { IMessageTempF } from "../../frontend/types/db.types"
 import { IMessageKeyB } from "../types/db.types"
 import zender from "../main/zender"
@@ -12,7 +12,7 @@ import { getUser } from "./profile.controller"
 import { getGlobalMembers } from "./group.controller"
 
 export async function sendMessage(uid: string, room_id: string, room_type: TRoomTypeF, s: IWritterF): Promise<IRepTempB> {
-  if (s.text) s.text = escapeWhiteSpace(s.text)
+  if (s.text) s.text = s.text.trim()
   const notvalid = msgNotValid(s)
   if (notvalid) return { code: 400, msg: notvalid }
   const cdb = db.ref.c
