@@ -6,13 +6,13 @@ import cfg from "../main/cfg"
 import { IChatsF, IRoomDataF, MeDB, SocketDB } from "../../frontend/types/db.types"
 import { IRepTempB } from "../types/validate.types"
 import { IAccountB } from "../types/account.types"
-import { PEER_CONFIG } from "../config/peer.config.json"
+import { PEER_CONFIG } from "../../config/peer.config.json"
 import relay from "../main/relay"
 
 function initSocketClient(uid: string): SocketDB {
   const id = rUid()
   db.ref.u[uid].socket = id
-  const host = (isProd ? cfg.APP_DOMAIN : `${cfg.APP_HOST}:${cfg.APP_PORT}`) as string
+  const host = (isProd ? cfg.APP_HOST : `localhost:${cfg.APP_PORT}`) as string
   return { id, host }
 }
 

@@ -11,7 +11,7 @@ import Room from "./Room"
 import Friends from "../center/Friends"
 import FriendBuilder from "../props/friends/FriendBuilder"
 import adap from "../../main/adaptiveState"
-import VoiceCall from "../parts/media/VoiceCall"
+import VCall from "../parts/media/VCall"
 import Tab from "../parts/header/Tab"
 
 export default class Profile implements PrimaryClass {
@@ -124,19 +124,25 @@ export default class Profile implements PrimaryClass {
         this.isLocked = false
         return
       }
-      const voiceCall = new VoiceCall({ user: this.user })
+      const voiceCall = new VCall({ user: this.user })
       voiceCall.call()
     }
     this.btnVideoCall.onclick = async () => {
-      this.isLocked = true
-      const useVoiceCall = await modal.confirm({
-        ic: "helmet-safety",
-        msg: lang.CALL_VIDEO_DEVELOPMENT,
-        okx: "VOICE CALL"
-      })
-      this.isLocked = false
-      if (!useVoiceCall) return
-      this.btnVoiceCall.click()
+      const onMedia = userState.media || userState.incoming
+      if (onMedia) {
+        this.isLocked = true
+        await modal.alert(lang.CALL_INCALL)
+        this.isLocked = false
+        return
+      }
+      if (this.user.isFriend !== 1) {
+        this.isLocked = true
+        await modal.alert(lang.PROF_ALR_NOFRIEND_1)
+        this.isLocked = false
+        return
+      }
+      const videoCall = new VCall({ user: this.user, video: true })
+      videoCall.call()
     }
   }
   renActions(): void {

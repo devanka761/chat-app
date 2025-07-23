@@ -9,7 +9,7 @@ $bg: #3f464e;
   left: 0;
   width: 100%;
   height: 100%;
-  // animation: slide_down_in 0.5s;
+  animation: slide_down_in 0.5s;
   .background {
     position: absolute;
     top: 0;
@@ -106,7 +106,7 @@ $bg: #3f464e;
         margin-top: 10px;
         margin-left: auto;
         padding: 5px 10px;
-        background-color: #3f464e80;
+        background-color: rgba($color: v.$px1, $alpha: 0.7);
         width: fit-content;
         border-radius: 10px;
       }
@@ -159,6 +159,9 @@ $bg: #3f464e;
     .background {
       display: none;
     }
+    .videos {
+      display: none;
+    }
     .top {
       width: fit-content;
       position: relative;
@@ -176,9 +179,11 @@ $bg: #3f464e;
           .displayname,
           .ts {
             display: inline;
+            text-shadow: none;
           }
           .ts {
             margin-left: 1rem;
+            text-shadow: none;
           }
         }
       }

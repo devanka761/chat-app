@@ -6,7 +6,7 @@ import userState from "../../../main/userState"
 import socketClient from "../../../manager/socketClient"
 import { IUserF } from "../../../types/db.types"
 import { ICallUpdateF } from "../../../types/peer.types"
-import VoiceCall from "./VoiceCall"
+import VCall from "./VCall"
 
 export default class Incoming {
   isLocked: boolean
@@ -51,7 +51,11 @@ export default class Incoming {
   }
   writeCallType(): void {
     const callType = kel("div", "calltype fa-bounce", { a: { style: "--fa-animation-duration:4s" } })
-    callType.innerHTML = `<p><i class="fa-solid fa-video fa-shake" style="--fa-animation-duration:2s"></i> <span>Incoming Video Call</span></p>`
+
+    const icname = this.data.video ? "video" : "phone-volume"
+    const ictitle = this.data.video ? lang.INC_VIDEO : lang.INC_VOICE
+
+    callType.innerHTML = `<p><i class="fa-solid fa-${icname} fa-shake" style="--fa-animation-duration:2s"></i> <span>${ictitle}</span></p>`
     this.box.append(callType)
   }
   writeCallActions(): void {
@@ -84,8 +88,8 @@ export default class Incoming {
         this.el.classList.add("ignored")
       } else if (this.btnAnswer.contains(e.target)) {
         this.destroy()
-        const voiceCall = new VoiceCall({ user: this.user })
-        voiceCall.answer(this.data.sdp, this.data.callKey)
+        const vcall = new VCall({ user: this.user, video: this.data.video })
+        vcall.answer(this.data.sdp, this.data.callKey)
       } else if (this.btnDecline.contains(e.target)) {
         this.destroy()
         socketClient.send({ type: "reject", to: this.user.id, callKey: this.data.callKey })

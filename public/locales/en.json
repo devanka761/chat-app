@@ -156,6 +156,7 @@
   "CALL_REJECTION": "rejected",
   "CALL_OFFLINE": "User unreachable",
   "CALL_NOW": "In Call",
+  "CALL_OFFCAM":"paused camera",
   "CALL_MUTED":"muted",
   "CALL_DEAFEN":"deafen",
   "CALL_REJECTED": "Rejected",
@@ -231,5 +232,7 @@
   "FOLDER_group": "Groups",
   "FOLDER_unread": "Unread",
   "CONTACT_friend": "Friend List",
-  "CONTACT_request": "Friend Requests"
+  "CONTACT_request": "Friend Requests",
+  "INC_VOICE": "Incoming Voice Call",
+  "INC_VIDEO": "Incoming Video Call"
 }

@@ -60,7 +60,7 @@ export class PeerCallHandler {
     }
   }
 
-  call(stream: MediaStream): void {
+  call(stream: MediaStream, video: boolean): void {
     stream.getTracks().forEach((track) => {
       this.peerConnection.addTrack(track, stream)
     })
@@ -71,14 +71,12 @@ export class PeerCallHandler {
     this.peerConnection.onnegotiationneeded = async () => {
       await getAudioCapabilities(20)
       await getVideoCapabilities(20)
-      // this.peerConnection.addTransceiver("audio")
-      // this.peerConnection.addTransceiver("video")
       const offer = await this.peerConnection.createOffer({
         offerToReceiveAudio: true,
         offerToReceiveVideo: true
       })
       await this.peerConnection.setLocalDescription(offer)
-      this.options.onSignal({ type: "offer", sdp: this.peerConnection.localDescription })
+      this.options.onSignal({ type: "offer", sdp: this.peerConnection.localDescription, video })
     }
   }
 

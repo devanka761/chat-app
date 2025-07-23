@@ -20,7 +20,7 @@ import relay from "./main/relay"
 import { parse } from "url"
 import processSocketMessages from "./controller/socket.controller"
 import { forceExitCall, terminateAllCalls } from "./controller/call.controller"
-import publicConfig from "./config/public.config.json"
+import serverConfig from "../config/server.config.json"
 
 if (!fs.existsSync("./dist")) fs.mkdirSync("./dist")
 if (!fs.existsSync("./dist/sessions")) {
@@ -33,7 +33,7 @@ if (!db.ref.k.v) {
   db.save("k")
 }
 
-if (publicConfig.update) {
+if (serverConfig.update) {
   db.ref.k.v++
   db.save("k")
 }

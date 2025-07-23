@@ -1,4 +1,4 @@
-import config from "../../backend/config/config"
+import appConfig from "../../config/public.config.json"
 import * as klang from "../helper/lang"
 import modal from "../helper/modal"
 import xhr from "../helper/xhr"
@@ -168,8 +168,8 @@ class SignEmail {
   }
   private formListener(): void {
     const eProviders: HTMLElement = this.el.querySelector(".other-providers") as HTMLElement
-    Object.keys(config)
-      .filter((k) => k.includes("USE_OAUTH") && config[k] === true)
+    Object.keys(appConfig)
+      .filter((k) => k.includes("USE_OAUTH") && appConfig[k] === true)
       .forEach((k) => {
         eProviders.append(loginProvider(k as LoginProvider))
       })
