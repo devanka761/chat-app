@@ -10,7 +10,7 @@ import getPeerStream from "../../../manager/peerStream"
 import socketClient from "../../../manager/socketClient"
 import { IUserF } from "../../../types/db.types"
 
-export default class VoiceCall {
+export default class VCall {
   isLocked: boolean
   private el: HTMLDivElement
   user: IUserF
@@ -19,26 +19,34 @@ export default class VoiceCall {
   private actInfo: HTMLDivElement
   private btnDeafen: HTMLDivElement
   private btnMute: HTMLDivElement
+  private btnCam?: HTMLDivElement
   private btnHangUp: HTMLDivElement
   private leftAct: HTMLDivElement
   private rightAct: HTMLDivElement
+  private videosRenderer?: HTMLDivElement
   private mediaStream: MediaStream | null
-  private peerMedia: HTMLAudioElement | null
+  private peerMedia: HTMLAudioElement | HTMLVideoElement | null
+  private meMedia: HTMLAudioElement | HTMLVideoElement | null
   peer: PeerCallHandler
+  private camera: boolean
   private microphone: boolean
   private speaker: boolean
   waiting?: string | null
   calltimeout: ReturnType<typeof setTimeout> | null
   callinterval: ReturnType<typeof setInterval> | null
   private startTime: number
-  constructor(s: { user: IUserF }) {
+  private videoCall: boolean
+  constructor(s: { user: IUserF; video?: boolean }) {
     this.user = s.user
     this.isLocked = false
     this.mediaStream = null
     this.peerMedia = null
+    this.meMedia = null
+    this.camera = false
     this.microphone = false
     this.speaker = false
     this.startTime = 0
+    this.videoCall = s.video || false
     this.run()
   }
   private createElement(): void {
@@ -84,11 +92,16 @@ export default class VoiceCall {
     this.btnDeafen = kel("div", "btn btn-deafen", { e: '<i class="fa-solid fa-volume fa-fw"></i>' })
     this.btnMute = kel("div", "btn btn-mute", { e: '<i class="fa-solid fa-microphone fa-fw"></i>' })
     this.leftAct.append(this.btnDeafen, this.btnMute)
+    if (this.videoCall) {
+      this.btnCam = kel("div", "btn btn-cam", { e: '<i class="fa-solid fa-video fa-fw"></i>' })
+      this.leftAct.prepend(this.btnCam)
+    }
     this.btnHangUp = kel("div", "btn btn-hangup", { e: '<i class="fa-solid fa-phone-hangup fa-fw"></i>' })
     this.rightAct.append(this.btnHangUp)
   }
-  private writeVideo(): void {
-    // COMING SOON!
+  private writeInitialVideos(): void {
+    this.videosRenderer = kel("div", "videos")
+    this.el.append(this.videosRenderer)
     // <div class="videos">
     //   <div class="user">
     //     <video class="user" src="./assets/djwilfexbor.mp4"></video>
@@ -98,12 +111,33 @@ export default class VoiceCall {
     //   </div>
     // </div>
   }
+  private renderPeerVideo(): void {
+    const peerParent = kel("div", "user")
+    if (this.videosRenderer && this.peerMedia) {
+      peerParent.append(this.peerMedia)
+      this.videosRenderer.append(peerParent)
+    }
+  }
+  private renderMeVideo(): void {
+    const meParent = kel("div", "me")
+    this.meMedia = document.createElement("video")
+    this.meMedia.muted = true
+    if (this.videosRenderer) {
+      meParent.append(this.meMedia)
+      this.videosRenderer.append(meParent)
+      this.meMedia.onloadedmetadata = () => {
+        this.meMedia?.play()
+      }
+      this.meMedia.srcObject = this.mediaStream
+    }
+  }
   private async setMediaStream(): Promise<void> {
-    this.mediaStream = await getPeerStream()
+    this.mediaStream = await getPeerStream(this.videoCall)
     if (!this.mediaStream) {
       await modal.alert(lang.CONTENT_NO_MEDIA_DEVICES)
-      this.destroy()
+      return this.destroy()
     }
+    this.renderMeVideo()
   }
   async call(): Promise<void> {
     await this.setMediaStream()
@@ -112,7 +146,7 @@ export default class VoiceCall {
       return this.destroy()
     }
     this.timestamp.innerHTML = lang.CALL_CALLING
-    this.peer.call(this.mediaStream)
+    this.peer.call(this.mediaStream, this.videoCall)
   }
   async answer(offer: RTCSessionDescriptionInit, callKey?: string): Promise<void> {
     await this.setMediaStream()
@@ -126,6 +160,7 @@ export default class VoiceCall {
   }
   private enableActions(): void {
     this.clearTime()
+    if (this.videoCall) this.camera = true
     this.microphone = true
     this.speaker = true
     this.leftAct.classList.remove("disabled")
@@ -144,10 +179,28 @@ export default class VoiceCall {
     this.el.onclick = async (event) => {
       const { target } = event
       if (target instanceof Node === false) return
-      if (this.btnMute.contains(target)) {
+
+      if (this.btnCam && this.btnCam.contains(target)) {
+        if (!this.mediaStream || !this.peerMedia) return
+        this.camera = !this.camera
+        this.mediaStream.getVideoTracks().forEach((track) => {
+          track.enabled = this.camera
+        })
+        const icon = qutor("i", this.btnCam)
+        if (this.camera) {
+          this.btnCam.classList.remove("active")
+          icon?.classList.remove("fa-video-slash")
+          icon?.classList.add("fa-video")
+        } else {
+          this.btnCam.classList.add("active")
+          icon?.classList.remove("fa-video")
+          icon?.classList.add("fa-video-slash")
+        }
+        this.peer.send("camera-" + (this.camera ? "on" : "off"))
+      } else if (this.btnMute.contains(target)) {
         if (!this.mediaStream || !this.peerMedia) return
         this.microphone = !this.microphone
-        this.mediaStream.getTracks().forEach((track) => {
+        this.mediaStream.getAudioTracks().forEach((track) => {
           track.enabled = this.microphone
         })
         const icon = qutor("i", this.btnMute)
@@ -199,6 +252,18 @@ export default class VoiceCall {
         this.el.classList.remove("out", "minimized")
         epm().classList.remove("moveup")
       }
+    }
+  }
+  infoCam(isOffCam: boolean) {
+    let card = qutor(".offcam", this.actInfo)
+    if (!card) {
+      card = kel("div", "card offcam")
+      card.innerHTML = `<i class="fa-solid fa-video-slash"></i> <span>${this.user.username} ${lang.CALL_OFFCAM}</span>`
+    }
+    if (isOffCam) {
+      if (!this.actInfo.contains(card)) this.actInfo.append(card)
+    } else {
+      if (this.actInfo.contains(card)) this.actInfo.removeChild(card)
     }
   }
   infoMute(isMute: boolean) {
@@ -268,6 +333,7 @@ export default class VoiceCall {
     this.createElement()
     eroot().append(this.el)
     this.writeBackground()
+    if (this.videoCall) this.writeInitialVideos()
     this.writeTab()
     this.writeActions()
     this.startHandler()
@@ -282,15 +348,30 @@ export default class VoiceCall {
         socketClient.send({ ...data, to: this.user.id })
       },
       onStream: (stream) => {
-        this.peerMedia = new Audio()
-        this.peerMedia.oncanplay = () => {
-          this.peerMedia?.play()
-          this.enableActions()
+        if (this.videoCall) {
+          this.peerMedia = document.createElement("video")
+          this.peerMedia.onloadedmetadata = () => {
+            this.peerMedia?.play()
+            this.renderPeerVideo()
+            this.enableActions()
+          }
+        } else {
+          this.peerMedia = new Audio()
+          this.peerMedia.oncanplay = () => {
+            this.peerMedia?.play()
+            this.enableActions()
+          }
         }
         this.peerMedia.srcObject = stream
       },
       onMessage: (message) => {
         switch (message) {
+          case "camera-on":
+            this.infoCam(false)
+            break
+          case "camera-off":
+            this.infoCam(true)
+            break
           case "microphone-on":
             this.infoMute(false)
             break

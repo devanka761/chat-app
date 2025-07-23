@@ -1,7 +1,7 @@
-export default function getPeerStream(): Promise<MediaStream | null> {
+export default function getPeerStream(video: boolean): Promise<MediaStream | null> {
   return new Promise((resolve) => {
     navigator.mediaDevices
-      .getUserMedia({ audio: true })
+      .getUserMedia({ audio: true, video })
       .then((stream) => {
         resolve(stream)
       })

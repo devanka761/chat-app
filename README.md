@@ -2,41 +2,71 @@
 - Live Demo: [Kirimin](https://kirimin.devanka.id/)
 - Support Me: [Donasi Saweria](https://saweria.co/devanka)
 - Subscribe: YouTube [Devanka 761](https://www.youtube.com/@devanka761)
-## FITUR
-1. Perpesanan pribadi, grup, dan global
-2. Dapat mengirim pesan text, gambar, suara, dan file
+## FEATURES
+1. Private, group, and global chats
+2. Support for text, image, video, audio, and other documents
 3. Video Call &amp; Voice Call
-4. Pertemanan untuk akses khusus pribadi
-5. Untaian pada target balasan pesan
-6. Profil pengguna yang berisi username, displayname, bio, foto profil
-7. Postingan publik (layaknya instagram) beserta jumlah like dan komentar
-8. Notifikasi In-App
+4. Friendlist for private call
+5. Chat reply embed
+6. User profile (username, displayname, bio, and profile picture)
+7. Public posts
+8. In-App Notifications
 
-## INSTALASI
+## INSTALL
 ### Via Fork/Clone
-Install semua dependencies dengan **NPM**
+Install all dependencies with **NPM**
 ```shell
 npm install
 ```
 ### Via Download
-1. Extract dan masuk ke dalam folder `chat-app-main`
-2. Buka terminal dan arahkan ke dalam folder `chat-app-main` tersebut
-3. Install semua dependencies dengan **NPM**
+1. Extract and change directory to `chat-app-main` folder
+2. Open terminal and go to `chat-app-main` folder
+3. Install all dependencies with **NPM**
 ```shell
 npm install
 ```
 
-## KONFIGURASI .ENV
-1. Buat file `.env` dan salin isi dari file `.env.example`
-2. Modifikasi file `.env` sesuai dengan kebutuhan config kamu
+## CONFIG: .ENV
+1. Copy file `.env.example` to `.env`
+2. Edit file `.env` based on your preferences
 
-## KONFIGURASI PUBLIC CONFIG & PEER CONFIG
-- **SOON!**
+## CONFIG: SERVER
+`src/config/server.config.json`
+```javascript
+{
+  "webhook": false,
+  // No effect - Not currently used
 
+  "update": false,
+  // Update app version and force users to reload the page after server restart
+}
+```
 
-## JALANKAN
+## CONFIG: PUBLIC
+`src/config/server.config.json`
+```javascript
+{
+  "USE_OAUTH_GOOGLE": true,
+  // Enable Google OAuth login method. If true, edit the client id and client secret inside `.env`.
+
+  "USE_OAUTH_GITHUB": true,
+  // Enable GitHub OAuth login method. If true, edit the client id and client secret inside `.env`.
+
+  "USE_OAUTH_DISCORD": true,
+  // Enable Discord OAuth login method. If true, edit the client id and client secret inside `.env`.
+
+  "SAVE_VERSION": "Kirimin20250620",
+  // Sync users localstorage save version to the latest stable version. If outdated, old save file will be destroyed and generated a new one.
+}
+```
+
+## CONFIG: PEER
+Edit `src/config/peer.config.json` with your **[RTCConfiguration](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection)**
+> see example: `src/config/peer.example.config.json`
+
+## RUN
 ### A. Development Mode
-Buka 2 terminal atau 1 terminal dengan 2 tab
+Open 2 terminals or 1 terminal with 2 tabs
 1. Watch Client Build
 ```shell
 npm run dev:build
@@ -45,20 +75,22 @@ npm run dev:build
 ```shell
 npm run dev:start
 ```
+
 ### B. Production Mode
 
-#### Compile Client Bundle
+#### Bundle frontend sources and compile backend sources
 ```shell
 npm run build
 ```
 #### Start Server
 
-##### B.1. Dengan NPM Script
+##### B.1. With NPM Script
 ```shell
 npm run start
 ```
-##### B.2. Dengan PM2 Script
+##### B.2. With PM2 Script
 ```shell
 pm2 start npm --name "my-chat-app" -- start && pm2 restart "my-chat-app" --max-memory-restart 8G
 ```
-> Unit bisa dengan K (Kilobyte), M (Megabyte), G (Gigabyte)
+> [!NOTE]
+> Units can be K(ilobyte), M(egabyte), G(igabyte)

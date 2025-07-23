@@ -9,7 +9,7 @@ import { PrimaryClass } from "../../../types/userState.types"
 import userState from "../../../main/userState"
 import modal from "../../../helper/modal"
 import { lang } from "../../../helper/lang"
-import VoiceCall from "../media/VoiceCall"
+import VCall from "../media/VCall"
 import OptionRoomTabBuilder from "./OptionRoomTabBuilder"
 import setbadge from "../../../helper/setbadge"
 
@@ -132,21 +132,38 @@ export default class RoomTab {
           return
         }
         this.isLocked = false
-        const voiceCall = new VoiceCall({ user: user })
+        const voiceCall = new VCall({ user: user })
         voiceCall.call()
       }
     if (this.btnVideo)
       this.btnVideo.onclick = async () => {
         if (this.isLocked) return
+        if (this.data.type !== "user") {
+          await modal.alert(lang.CALL_NOT_USER)
+          this.isLocked = false
+          return
+        }
         this.isLocked = true
-        const useVoiceCall = await modal.confirm({
-          ic: "helmet-safety",
-          msg: lang.CALL_VIDEO_DEVELOPMENT,
-          okx: "VOICE CALL"
-        })
+        const onMedia = userState.media || userState.incoming
+        const user = this.users.find((usr) => usr.id === this.data.id)
+        if (!user) {
+          await modal.alert(lang.FIND_NOTFOUND)
+          this.isLocked = false
+          return
+        }
+        if (onMedia) {
+          await modal.alert(lang.CALL_INCALL)
+          this.isLocked = false
+          return
+        }
+        if (user.isFriend !== 1) {
+          await modal.alert(lang.PROF_ALR_NOFRIEND_1)
+          this.isLocked = false
+          return
+        }
         this.isLocked = false
-        if (!useVoiceCall) return
-        if (this.btnVoice) this.btnVoice.click()
+        const videoCall = new VCall({ user: user, video: true })
+        videoCall.call()
       }
   }
   private userListener(): void {

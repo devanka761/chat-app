@@ -5,6 +5,7 @@ export type SignalData = {
   sdp?: RTCSessionDescription | null
   candidate?: RTCIceCandidateInit
   callKey?: string
+  video?: boolean
 }
 
 export interface ICallUpdateF extends SignalData {

@@ -5,9 +5,10 @@
       { "urls": "stun:contoh-aja.domainkamu.com:3478" },
       {
         "urls": "turn:contoh-aja.domainkamu.com:3478",
-        "username": "contohstun",
-        "credential": "ContohPasswordStun123"
+        "username": "contohturn",
+        "credential": "ContohPasswordTurn123"
       }
-    ]
+    ],
+    "iceTransportPolicy": "all"
   }
 }

@@ -150,6 +150,7 @@
   "POSTS_PLS": "Jadilah orang pertama yang membuat postingan!",
   "POSTS_NOT_FOUND": "Postingan Tidak Dapat Ditemukan",
   "CMT_NOT_FOUND": "Komentar Tidak Dapat Ditemukan",
+  "CALL_OFFCAM":"menonaktifkan kamera",
   "CALL_MUTED":"menonaktifkan microphone",
   "CALL_DEAFEN":"menonaktifkan suara",
   "CALL_PREPARING":"Mempersiapkan",
@@ -233,5 +234,7 @@
   "FOLDER_group": "Grup",
   "FOLDER_unread": "Belum Dibaca",
   "CONTACT_friend": "Daftar Teman",
-  "CONTACT_request": "Permintaan Pertemanan"
+  "CONTACT_request": "Permintaan Pertemanan",
+  "INC_VOICE": "Panggilan Suara Masuk",
+  "INC_VIDEO": "Panggilan Video Masuk"
 }

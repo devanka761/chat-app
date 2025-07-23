@@ -1,8 +1,8 @@
 import { PrimaryClass, UserLocked, UserNotif } from "../types/userState.types"
-import appConfig from "../../backend/config/public.config.json"
+import appConfig from "../../config/public.config.json"
 import HeaderBar from "../pm/parts/header/HeaderBar"
 import Tab from "../pm/parts/header/Tab"
-import VoiceCall from "../pm/parts/media/VoiceCall"
+import VCall from "../pm/parts/media/VCall"
 import Incoming from "../pm/parts/media/Incoming"
 
 class UserState {
@@ -12,7 +12,7 @@ class UserState {
   private currtab: Tab | null
   private currcenter: PrimaryClass | null
   private currcontent: PrimaryClass | null
-  private currMedia: VoiceCall | null
+  private currMedia: VCall | null
   private currIncoming: Incoming | null
   public locked: UserLocked
   private saveKey: string
@@ -49,10 +49,10 @@ class UserState {
   get content(): PrimaryClass | null {
     return this.currcontent
   }
-  set media(newmedia: VoiceCall | null) {
+  set media(newmedia: VCall | null) {
     this.currMedia = newmedia
   }
-  get media(): VoiceCall | null {
+  get media(): VCall | null {
     return this.currMedia
   }
   set incoming(newincoming: Incoming | null) {
@@ -67,7 +67,7 @@ class UserState {
       JSON.stringify({
         notif: this.notif,
         color: this.color,
-        saveVersion: appConfig.saveVersion
+        saveVersion: appConfig.SAVE_VERSION
       })
     )
   }
@@ -80,7 +80,7 @@ class UserState {
   async load(): Promise<void> {
     const file = this.read()
     if (file) {
-      if (!file.saveVersion || file.saveVersion !== appConfig.saveVersion) return
+      if (!file.saveVersion || file.saveVersion !== appConfig.SAVE_VERSION) return
       if (file.color) this.color = file.color
       if (file.notif) this.notif = file.notif
     }

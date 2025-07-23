@@ -14,7 +14,7 @@ import Group from "../pm/content/Group"
 import Room from "../pm/content/Room"
 import Tab from "../pm/parts/header/Tab"
 import Incoming from "../pm/parts/media/Incoming"
-import VoiceCall from "../pm/parts/media/VoiceCall"
+import VCall from "../pm/parts/media/VCall"
 import { IRoomDataF, IUserF } from "../types/db.types"
 import { IMessageUpdateF } from "../types/message.types"
 import { ICallUpdateF } from "../types/peer.types"
@@ -392,17 +392,17 @@ class ProcessClient {
       negotiator[s.user.id].push(s)
       return
     }
-    const voiceCall = userState.media as VoiceCall
-    voiceCall.peer.handleSignal(s)
+    const vcall = userState.media as VCall
+    vcall.peer.handleSignal(s)
   }
   private candidate(s: ICallUpdateF): void {
     this.answer(s)
   }
   private hangup(s: ICallUpdateF): void {
-    const voiceCall = userState.media as VoiceCall | null
-    if (voiceCall && s.user.id === voiceCall.user.id) {
-      voiceCall.waiting = "hangup"
-      voiceCall.destroy()
+    const vcall = userState.media as VCall | null
+    if (vcall && s.user.id === vcall.user.id) {
+      vcall.waiting = "hangup"
+      vcall.destroy()
     }
     const incomingCall = userState.incoming as Incoming | null
     if (incomingCall && s.user.id === incomingCall.user.id) {
@@ -410,18 +410,18 @@ class ProcessClient {
     }
   }
   private reject(s: ICallUpdateF): void {
-    const voiceCall = userState.media as VoiceCall | null
-    if (voiceCall && s.user.id === voiceCall.user.id) {
+    const vcall = userState.media as VCall | null
+    if (vcall && s.user.id === vcall.user.id) {
       notip({ ic: "phone-hangup", a: s.user.username, b: lang.CALL_REJECTION, c: "4" })
-      voiceCall.destroy()
+      vcall.destroy()
       modal.alert({ ic: "phone-hangup", msg: `${s.user.username} ${lang.CALL_REJECTION}` })
     }
   }
   private calloffline(s: ICallUpdateF): void {
-    const voiceCall = userState.media as VoiceCall | null
-    if (voiceCall && s.user.id === voiceCall.user.id) {
+    const vcall = userState.media as VCall | null
+    if (vcall && s.user.id === vcall.user.id) {
       notip({ ic: "signal-slash", a: s.user.username, b: lang.CALL_OFFLINE, c: "4" })
-      voiceCall.destroy()
+      vcall.destroy()
       modal.alert({ ic: "signal-slash", msg: lang.CALL_OFFLINE })
     }
   }
