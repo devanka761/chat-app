@@ -1,4 +1,3 @@
-import { marked } from "marked"
 import { kel } from "../../../helper/kel"
 import { lang } from "../../../helper/lang"
 import modal from "../../../helper/modal"
@@ -14,7 +13,7 @@ import { IWritterF, MessageOptionType } from "../../../types/message.types"
 import { TStatusIcon, TStatusText } from "../../../types/room.types"
 import OptionMsgBuilder from "./OptionMsgBuilder"
 import AudioBuilder from "./AudioBuilder"
-import { escapeHTML, renderer } from "../../../helper/escaper"
+import { escapeWhiteSpace } from "../../../helper/escaper"
 import CallMsgBuilder from "./CallMsgBuilder"
 
 const statusIcon: TStatusIcon = {
@@ -233,7 +232,7 @@ export default class MessageBuilder {
       return
     }
     if (this.s.edited) this.textEdidted.innerHTML = `(${lang.CONTENT_EDITED})`
-    if (this.s.text) this.textMessage.innerHTML = marked.use({ renderer, gfm: true, breaks: true }).parse(escapeHTML(this.s.text.trim())).toString()
+    if (this.s.text) this.textMessage.innerText = escapeWhiteSpace(this.s.text)
   }
   private renderTime(): void {
     const timeParent = kel("div", "chp time")
@@ -259,7 +258,7 @@ export default class MessageBuilder {
   set edit(text: string) {
     this.s.text = text
     this.s.edited = Date.now()
-    this.textMessage.innerHTML = marked.use({ renderer, gfm: true, breaks: true }).parse(escapeHTML(this.s.text.trim())).toString()
+    this.textMessage.innerText = escapeWhiteSpace(this.s.text)
     this.textEdidted.innerText = lang.CONTENT_EDITED
   }
   private init(isTemp: boolean): void {
@@ -416,7 +415,7 @@ export default class MessageBuilder {
   }
   setText(txt: string): void {
     this.s.text = txt
-    this.textMessage.innerHTML = marked.use({ renderer, gfm: true, breaks: true }).parse(escapeHTML(this.s.text.trim())).toString()
+    this.textMessage.innerText = escapeWhiteSpace(this.s.text)
   }
   setEdited(ts?: number): void {
     this.s.edited = ts

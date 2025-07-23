@@ -144,8 +144,7 @@ export function convertGroup(group_id: string): IRoomDataF {
 }
 
 export function escapeWhiteSpace(txt: string): string {
-  const transtxt = /(\s)(?=\s)/g
-  return txt.replace(transtxt, "").trim()
+  return txt.replace(/\s{3,}/g, (match) => match.slice(0, 2)).trim()
 }
 
 export function rUid(): string {
