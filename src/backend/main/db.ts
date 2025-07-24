@@ -4,7 +4,7 @@ import { Databases, IUserB } from "../types/db.types"
 const dirpath: string = "./dist/db"
 const stgpath: string = "./dist/stg"
 
-const filefolders: string[] = ["room"]
+const filefolders: string[] = ["room", "kirai"]
 
 class DevankaLocal {
   public ref: Databases

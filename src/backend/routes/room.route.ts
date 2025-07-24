@@ -3,7 +3,7 @@ import { clearHistory, delMessage, sendMessage } from "../controller/room.contro
 import { rep } from "../main/helper"
 import { cdUser, isUser } from "../main/middlewares"
 import {} from "../../frontend/types/room.types"
-import { getGlobalChats } from "../controller/group.controller"
+import { getAIChats, getGlobalChats } from "../controller/group.controller"
 
 const router: Router = express.Router()
 
@@ -36,10 +36,15 @@ router.post("/clear/:room_type/:room_id", express.json({ limit: "100KB" }), (req
   res.status(clearroom.code).json(clearroom)
   return
 })
-router.get("/get-global", express.json({ limit: "200KB" }), (req: Request, res: Response) => {
+router.get("/get-global", express.json({ limit: "100KB" }), (req: Request, res: Response) => {
   const globalchat = rep(getGlobalChats(req.user?.id as string))
 
   res.status(globalchat.code).json(globalchat)
+})
+router.get("/get-kirai", express.json({ limit: "100KB" }), (req: Request, res: Response) => {
+  const aiChats = rep(getAIChats(req.user?.id as string))
+
+  res.status(aiChats.code).json(aiChats)
 })
 
 export default router

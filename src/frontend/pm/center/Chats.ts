@@ -14,7 +14,7 @@ import noMessage from "../../helper/noMessage"
 import xhr from "../../helper/xhr"
 import adap from "../../main/adaptiveState"
 import Room from "../content/Room"
-import { KirAIRoom, KirAIUser } from "../../helper/AccountKirAI"
+import { KirAIRoom } from "../../helper/AccountKirAI"
 
 const typeOrder: { [key: string]: number } = {
   all: 1,
@@ -76,14 +76,32 @@ export default class Chats implements PrimaryClass {
 
     this.card_list.append(btnGenAI, btnGlobal)
     btnGenAI.onclick = async () => {
+      // if (this.isLocked) return
+
+      // if (userState.content?.role === "room") {
+      //   if (userState.content.isLocked) return
+      //   const room = userState.content as Room
+      //   if (room.key === KirAIRoom.id) return
+      // }
+      // adap.swipe(new Room({ data: KirAIRoom, users: [KirAIUser] }))
       if (this.isLocked) return
 
-      if (userState.content?.role === "room") {
-        if (userState.content.isLocked) return
-        const room = userState.content as Room
-        if (room.key === KirAIRoom.id) return
+      const hasAIChat = db.c.find((ch) => ch.r.id === KirAIRoom.id)
+      if (hasAIChat) {
+        this.setGlobalChats(hasAIChat)
+        this.isLocked = false
+        return
       }
-      adap.swipe(new Room({ data: KirAIRoom, users: [KirAIUser] }))
+
+      this.isLocked = true
+      const getAIChats = await modal.loading(xhr.get("/x/room/get-kirai"))
+      if (!getAIChats || !getAIChats.ok) {
+        await modal.alert(lang[getAIChats.msg] || lang.ERROR)
+        this.isLocked = false
+        return
+      }
+      this.isLocked = false
+      this.setGlobalChats(getAIChats.data)
     }
     btnGlobal.onclick = async () => {
       if (this.isLocked) return
