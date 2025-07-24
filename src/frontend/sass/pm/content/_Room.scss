@@ -666,17 +666,21 @@ $errorbg: #3d2b31;
               code {
                 font-size: 0.8rem;
                 font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
-                background: rgba($color: v.$black, $alpha: 0.25);
+                background: rgba($color: v.$black, $alpha: 0.2);
                 padding: 5px;
+                color: rgba($color: v.$darkcream, $alpha: 0.7);
                 border-radius: 5px;
               }
               pre {
-                background: rgba($color: v.$black, $alpha: 0.25);
+                margin: 4px 0;
+                background: rgba($color: v.$black, $alpha: 0.2);
                 padding: 10px;
+                border: 1px solid rgba($color: v.$black, $alpha: 0.1);
                 border-radius: 10px;
                 white-space: pre-wrap;
                 overflow-x: auto;
                 code {
+                  margin: 0 0;
                   padding: 0;
                   background: none;
                 }

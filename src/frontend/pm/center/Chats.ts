@@ -81,9 +81,9 @@ export default class Chats implements PrimaryClass {
       if (userState.content?.role === "room") {
         if (userState.content.isLocked) return
         const room = userState.content as Room
-        if (room.key === "420") return
+        if (room.key === KirAIRoom.id) return
       }
-      adap.swipe(new Room({ data: KirAIRoom(), users: [KirAIUser()] }))
+      adap.swipe(new Room({ data: KirAIRoom, users: [KirAIUser] }))
     }
     btnGlobal.onclick = async () => {
       if (this.isLocked) return

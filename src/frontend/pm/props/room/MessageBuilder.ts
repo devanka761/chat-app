@@ -1,3 +1,4 @@
+import { marked } from "marked"
 import { kel } from "../../../helper/kel"
 import { lang } from "../../../helper/lang"
 import modal from "../../../helper/modal"
@@ -13,8 +14,9 @@ import { IWritterF, MessageOptionType } from "../../../types/message.types"
 import { TStatusIcon, TStatusText } from "../../../types/room.types"
 import OptionMsgBuilder from "./OptionMsgBuilder"
 import AudioBuilder from "./AudioBuilder"
-import { escapeWhiteSpace } from "../../../helper/escaper"
+import { escapeHTML, escapeWhiteSpace, renderer } from "../../../helper/escaper"
 import CallMsgBuilder from "./CallMsgBuilder"
+import { KirAIRoom } from "../../../helper/AccountKirAI"
 
 const statusIcon: TStatusIcon = {
   pending: '<i class="fa-duotone fa-solid fa-spinner-third fa-spin"></i>',
@@ -232,7 +234,13 @@ export default class MessageBuilder {
       return
     }
     if (this.s.edited) this.textEdidted.innerHTML = `(${lang.CONTENT_EDITED})`
-    if (this.s.text) this.textMessage.innerText = escapeWhiteSpace(this.s.text)
+    if (this.s.text) {
+      if (this.user.id === KirAIRoom.id) {
+        this.textMessage.innerHTML = marked.use({ renderer, gfm: true, breaks: true }).parse(escapeHTML(this.s.text)).toString()
+      } else {
+        this.textMessage.innerText = escapeWhiteSpace(this.s.text)
+      }
+    }
   }
   private renderTime(): void {
     const timeParent = kel("div", "chp time")
@@ -371,6 +379,7 @@ export default class MessageBuilder {
   }
   clickListener(...args: MessageOptionType[]): void {
     this.el.onclick = (e) => {
+      if (this.room.data.id === KirAIRoom.id) return
       const { target } = e
       if (target instanceof Node) {
         if (this.optmenu?.contains(target)) return

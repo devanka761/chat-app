@@ -7,6 +7,7 @@ import ReplyBuilder from "../../props/room/ReplyBuilder"
 import AttachmentBuilder from "../../props/room/AttachmentBuilder"
 import EditBuilder from "../../props/room/EditBuilder"
 import MessageWritter from "../../props/room/MessageWritter"
+import { KirAIRoom } from "../../../helper/AccountKirAI"
 
 export default class RoomForm {
   readonly role: string
@@ -42,8 +43,8 @@ export default class RoomForm {
     this.btnImage = kel("div", "btn btn-image", { e: `<i class="fa-solid fa-camera-retro"></i>` })
     const eactions = kel("div", "actions", { e: [this.btnAttach, this.btnImage] })
     const einput = kel("div", "input", { e: [/*eemoji,*/ etextbox] })
-    if (this.room.data.id !== "420") einput.append(eactions)
-    this.btnVoice = kel("div", "btn btn-voice", { e: `<i class="fa-solid fa-${this.room.data.id === "420" ? "paper-plane-top" : "microphone"}"></i>` })
+    if (this.room.data.id !== KirAIRoom.id) einput.append(eactions)
+    this.btnVoice = kel("div", "btn btn-voice", { e: `<i class="fa-solid fa-${this.room.data.id === KirAIRoom.id ? "paper-plane-top" : "microphone"}"></i>` })
     const evoice = kel("div", "voice", { e: this.btnVoice })
     this.el = kel("div", "field", { e: [einput, evoice] })
   }
@@ -59,7 +60,7 @@ export default class RoomForm {
         this.textarea.focus()
         return
       }
-      if (this.room.data.id === "420") return
+      if (this.room.data.id === KirAIRoom.id) return
       this.clearForm()
       this.room.recorder.run(this.bottom)
     }
@@ -76,7 +77,17 @@ export default class RoomForm {
     const key = e.key.toLowerCase()
     if (key === "shift" && this.downed.has(key)) this.downed.delete(key)
   }
+  private sendAIMessage(): void {
+    const text = this.textarea.value.toString()
+    if (!text || text.length < 1) return
+    if (this.isLocked) return
+    if (!this.canSend) return
+    const writter = new MessageWritter().setUserId(db.me.id).setText(text).setTimeStamp()
+    this.room.sendWritter(writter.toJSON())
+    this.clearForm()
+  }
   private sendMessage(): void {
+    if (this.room.id === KirAIRoom.id) return this.sendAIMessage()
     const text = this.textarea.value.toString()
 
     if (this.isLocked) return
@@ -171,7 +182,7 @@ export default class RoomForm {
       this.btnVoice.innerHTML = `<i class="fa-solid fa-paper-plane-top"></i>`
     } else if (this.canSend && this.textarea.value.trim().length < 1 && !this.attachment?.src) {
       this.canSend = false
-      this.btnVoice.innerHTML = `<i class="fa-solid fa-${this.room.data.id === "420" ? "paper-plane-top" : "microphone"}"></i>`
+      this.btnVoice.innerHTML = `<i class="fa-solid fa-${this.room.data.id === KirAIRoom.id ? "paper-plane-top" : "microphone"}"></i>`
     }
     // const eattach: HTMLDivElement | null = this.bottom.querySelector(".attach")
     const attachHeight: number = this.attachment?.html.clientHeight || 0

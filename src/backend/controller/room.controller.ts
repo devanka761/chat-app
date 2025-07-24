@@ -10,11 +10,14 @@ import { IMessageKeyB } from "../types/db.types"
 import zender from "../main/zender"
 import { getUser } from "./profile.controller"
 import { getGlobalMembers } from "./group.controller"
+import { KirAIRoom } from "../../frontend/helper/AccountKirAI"
+import { sendAIChat } from "./genai.controller"
 
 export async function sendMessage(uid: string, room_id: string, room_type: TRoomTypeF, s: IWritterF): Promise<IRepTempB> {
   if (s.text) s.text = escapeWhiteSpace(s.text)
   const notvalid = msgNotValid(s)
   if (notvalid) return { code: 400, msg: notvalid }
+  if (room_id === KirAIRoom.id) return sendAIChat(uid, s.text)
   const cdb = db.ref.c
   let chatkey =
     room_type === "user"
