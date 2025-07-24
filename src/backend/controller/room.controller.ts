@@ -29,6 +29,7 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
   if (s.edit && chatkey) return editMessage(uid, chatkey, room_id, room_type, s)
   if (room_type === "group" && !chatkey) return { code: 403, msg: "GRP_KICKED" }
   if (!chatkey) {
+    if (!db.ref.u[room_id]) return { code: 404, msg: "FIND_NOTFOUND" }
     chatkey = `${uid}u${room_id}`
     db.ref.c[chatkey] = {
       u: [uid, room_id],

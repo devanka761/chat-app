@@ -108,7 +108,7 @@ export default class RoomTab {
     if (this.btnVoice)
       this.btnVoice.onclick = async () => {
         if (this.isLocked) return
-        if (this.data.type !== "user") {
+        if (this.data.type !== "user" || this.data.id === "420") {
           await modal.alert(lang.CALL_NOT_USER)
           this.isLocked = false
           return
@@ -138,7 +138,7 @@ export default class RoomTab {
     if (this.btnVideo)
       this.btnVideo.onclick = async () => {
         if (this.isLocked) return
-        if (this.data.type !== "user") {
+        if (this.data.type !== "user" || this.data.id === "420") {
           await modal.alert(lang.CALL_NOT_USER)
           this.isLocked = false
           return
@@ -168,7 +168,9 @@ export default class RoomTab {
   }
   private userListener(): void {
     this.userParent.onclick = () => {
-      if (this.data.type === "user") {
+      if (this.data.id === "420") {
+        return
+      } else if (this.data.type === "user") {
         const user = this.users.find((usr) => usr.id === this.data.id)
         const classBefore = this.room.classBefore?.role === "profile" ? this.room.classBefore.classBefore : this.room
         adap.swipe(new Profile({ user: user as IUserF, room: this.room, card: this.card, classBefore }))

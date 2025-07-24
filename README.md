@@ -43,7 +43,7 @@ npm install
 ```
 
 ## CONFIG: PUBLIC
-`src/config/server.config.json`
+`src/config/public.config.json`
 ```javascript
 {
   "USE_OAUTH_GOOGLE": true,

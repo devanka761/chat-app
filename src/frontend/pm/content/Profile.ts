@@ -61,7 +61,7 @@ export default class Profile implements PrimaryClass {
     this.writeTab()
     this.writeWall()
     this.renActions()
-    this.renOptions()
+    if (this.user.id !== "420") this.renOptions()
   }
   renImage(): void {
     let eimage = qutor(".img", this.wall)
@@ -118,6 +118,12 @@ export default class Profile implements PrimaryClass {
         this.isLocked = false
         return
       }
+      if (this.user.id === "420") {
+        this.isLocked = true
+        await modal.alert(lang.CALL_NOT_USER)
+        this.isLocked = false
+        return
+      }
       if (this.user.isFriend !== 1) {
         this.isLocked = true
         await modal.alert(lang.PROF_ALR_NOFRIEND_1)
@@ -135,6 +141,12 @@ export default class Profile implements PrimaryClass {
         this.isLocked = false
         return
       }
+      if (this.user.id === "420") {
+        this.isLocked = true
+        await modal.alert(lang.CALL_NOT_USER)
+        this.isLocked = false
+        return
+      }
       if (this.user.isFriend !== 1) {
         this.isLocked = true
         await modal.alert(lang.PROF_ALR_NOFRIEND_1)
@@ -143,6 +155,11 @@ export default class Profile implements PrimaryClass {
       }
       const videoCall = new VCall({ user: this.user, video: true })
       videoCall.call()
+    }
+    if (this.user.id === "420") {
+      this.btnVoiceCall.remove()
+      this.btnVideoCall.remove()
+      return
     }
   }
   renActions(): void {

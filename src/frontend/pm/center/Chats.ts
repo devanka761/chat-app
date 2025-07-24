@@ -6,7 +6,7 @@ import { PrimaryClass } from "../../types/userState.types"
 import { IChatsF, IMessageF, IRoomDataF, IUserF } from "../../types/db.types"
 import ChatsAPI from "../props/chats/ChatsAPI"
 import ChatBuilder from "../props/chats/ChatBuilder"
-import { kel, epm } from "../../helper/kel"
+import { kel, epm, qutor } from "../../helper/kel"
 import { TChatsTypeF } from "../../types/room.types"
 import FolderCard from "../parts/chats/FolderCard"
 import FolderAPI from "../props/chats/FolderAPI"
@@ -14,7 +14,7 @@ import noMessage from "../../helper/noMessage"
 import xhr from "../../helper/xhr"
 import adap from "../../main/adaptiveState"
 import Room from "../content/Room"
-import Find from "./Find"
+import { KirAIRoom, KirAIUser } from "../../helper/AccountKirAI"
 
 const typeOrder: { [key: string]: number } = {
   all: 1,
@@ -69,10 +69,23 @@ export default class Chats implements PrimaryClass {
     this.renderGlobalCard()
   }
   private renderGlobalCard(): void {
-    const card = kel("div", "btn btn-global")
-    card.innerHTML = '<i class="fa-solid fa-earth-asia"></i> <span>Global Chat</span>'
-    this.card_list.append(card)
-    card.onclick = async () => {
+    const btnGenAI = kel("div", "btn btn-genai")
+    btnGenAI.innerHTML = `<i class="fa-solid fa-sparkles"></i> <span>Kir<strong>AI</strong></span>`
+    const btnGlobal = kel("div", "btn btn-global")
+    btnGlobal.innerHTML = '<i class="fa-solid fa-earth-asia"></i> <span>Global Chat</span>'
+
+    this.card_list.append(btnGenAI, btnGlobal)
+    btnGenAI.onclick = async () => {
+      if (this.isLocked) return
+
+      if (userState.content?.role === "room") {
+        if (userState.content.isLocked) return
+        const room = userState.content as Room
+        if (room.key === "420") return
+      }
+      adap.swipe(new Room({ data: KirAIRoom(), users: [KirAIUser()] }))
+    }
+    btnGlobal.onclick = async () => {
       if (this.isLocked) return
 
       const hasGlobalChat = db.c.find((ch) => ch.r.id === "696969")
@@ -135,7 +148,8 @@ export default class Chats implements PrimaryClass {
         const findmore = kel("p", "btn btn-findmore", { e: `<i class="fa-solid fa-magnifying-glass"></i> <span>${lang.FIND_SEARCH}</span>` })
         findmore.onclick = () => {
           if (this.isLocked) return
-          adap.swipe(new Find())
+          const navFind = qutor(".nav-find")
+          if (navFind) navFind.click()
         }
         this.card_list.prepend(findmore)
       }

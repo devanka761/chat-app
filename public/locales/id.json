@@ -167,7 +167,7 @@
   "CALL_ANOTHER": "Pengguna sedang dalam panggilan lain",
   "CALL_VIDEO_DEVELOPMENT": "Fitur -Video Call- sedang dalam pengembangan<br/>Mau coba -Voice Call- saja?",
   "CALL_INCALL":"Kamu sedang berada di panggilan lain<br/>Harap tutup terlebih dahulu untuk melakukan panggilan baru",
-  "CALL_NOT_USER":"Saat ini tidak dapat melakukan panggilan grup.<br/>Hanya dapat melakukan panggilan kepada sesama pengguna.",
+  "CALL_NOT_USER":"Hanya dapat melakukan panggilan kepada sesama pengguna.",
   "INCOMING_DECLINE":"Tolak",
   "INCOMING_ANSWER":"Jawab",
   "INCOMING_IGNORE":"Abaikan",

@@ -32,8 +32,6 @@ export default class RoomForm {
     this.downed = new Set()
   }
   private createElement(): void {
-    // this.btnEmoji = kel("div", "btn btn-emoji", { e: `<i class="fa-solid fa-face-smile"></i>` })
-    // const eemoji = kel("div", "emoji", { e: this.btnEmoji })
     this.textarea = kel("textarea")
     this.textarea.name = "content-input"
     this.textarea.id = "content-input" + this.room.data.id + Date.now().toString(36)
@@ -43,8 +41,9 @@ export default class RoomForm {
     this.btnAttach = kel("div", "btn btn-attach", { e: `<i class="fa-solid fa-paperclip"></i>` })
     this.btnImage = kel("div", "btn btn-image", { e: `<i class="fa-solid fa-camera-retro"></i>` })
     const eactions = kel("div", "actions", { e: [this.btnAttach, this.btnImage] })
-    const einput = kel("div", "input", { e: [/*eemoji,*/ etextbox, eactions] })
-    this.btnVoice = kel("div", "btn btn-voice", { e: `<i class="fa-solid fa-microphone"></i>` })
+    const einput = kel("div", "input", { e: [/*eemoji,*/ etextbox] })
+    if (this.room.data.id !== "420") einput.append(eactions)
+    this.btnVoice = kel("div", "btn btn-voice", { e: `<i class="fa-solid fa-${this.room.data.id === "420" ? "paper-plane-top" : "microphone"}"></i>` })
     const evoice = kel("div", "voice", { e: this.btnVoice })
     this.el = kel("div", "field", { e: [einput, evoice] })
   }
@@ -60,6 +59,7 @@ export default class RoomForm {
         this.textarea.focus()
         return
       }
+      if (this.room.data.id === "420") return
       this.clearForm()
       this.room.recorder.run(this.bottom)
     }
@@ -171,7 +171,7 @@ export default class RoomForm {
       this.btnVoice.innerHTML = `<i class="fa-solid fa-paper-plane-top"></i>`
     } else if (this.canSend && this.textarea.value.trim().length < 1 && !this.attachment?.src) {
       this.canSend = false
-      this.btnVoice.innerHTML = `<i class="fa-solid fa-microphone"></i>`
+      this.btnVoice.innerHTML = `<i class="fa-solid fa-${this.room.data.id === "420" ? "paper-plane-top" : "microphone"}"></i>`
     }
     // const eattach: HTMLDivElement | null = this.bottom.querySelector(".attach")
     const attachHeight: number = this.attachment?.html.clientHeight || 0
