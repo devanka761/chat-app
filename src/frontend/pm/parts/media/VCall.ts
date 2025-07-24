@@ -102,20 +102,12 @@ export default class VCall {
   private writeInitialVideos(): void {
     this.videosRenderer = kel("div", "videos")
     this.el.append(this.videosRenderer)
-    // <div class="videos">
-    //   <div class="user">
-    //     <video class="user" src="./assets/djwilfexbor.mp4"></video>
-    //   </div>
-    //   <div class="me">
-    //     <video  src="./assets/djwilfexbor.mp4"></video>
-    //   </div>
-    // </div>
   }
   private renderPeerVideo(): void {
-    const peerParent = kel("div", "user")
+    const peerParent = this.videosRenderer ? qutor(".user", this.videosRenderer) || kel("div", "user") : kel("div", "user")
     if (this.videosRenderer && this.peerMedia) {
-      peerParent.append(this.peerMedia)
-      this.videosRenderer.append(peerParent)
+      if (!this.videosRenderer.contains(peerParent)) this.videosRenderer.append(peerParent)
+      if (!peerParent.contains(this.peerMedia)) peerParent.append(this.peerMedia)
     }
   }
   private renderMeVideo(): void {
@@ -125,8 +117,13 @@ export default class VCall {
     if (this.videosRenderer) {
       meParent.append(this.meMedia)
       this.videosRenderer.append(meParent)
+      this.meMedia.volume = 0
       this.meMedia.onloadedmetadata = () => {
         this.meMedia?.play()
+        if (this.meMedia) {
+          if (this.meMedia.muted) this.meMedia.muted = false
+          this.meMedia.volume = 0
+        }
       }
       this.meMedia.srcObject = this.mediaStream
     }
@@ -349,16 +346,24 @@ export default class VCall {
       },
       onStream: (stream) => {
         if (this.videoCall) {
-          this.peerMedia = document.createElement("video")
+          if (!this.peerMedia) {
+            this.peerMedia = document.createElement("video")
+            this.peerMedia.muted = true
+          }
           this.peerMedia.onloadedmetadata = () => {
             this.peerMedia?.play()
+            if (this.peerMedia?.muted) this.peerMedia.muted = false
             this.renderPeerVideo()
             this.enableActions()
           }
         } else {
-          this.peerMedia = new Audio()
+          if (!this.peerMedia) {
+            this.peerMedia = new Audio()
+            this.peerMedia.muted = true
+          }
           this.peerMedia.oncanplay = () => {
             this.peerMedia?.play()
+            if (this.peerMedia?.muted) this.peerMedia.muted = false
             this.enableActions()
           }
         }

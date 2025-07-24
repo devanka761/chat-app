@@ -77,6 +77,14 @@
       text-align: center;
       font-style: italic;
     }
+    .btn-findmore {
+      margin: 0 auto;
+      width: fit-content;
+      padding: 10px;
+      background-color: v.$pm1;
+      color: v.$px1;
+      border-radius: 10px;
+    }
     .card {
       padding: 5px;
       padding-right: 10px;

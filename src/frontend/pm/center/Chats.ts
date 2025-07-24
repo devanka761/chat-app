@@ -14,6 +14,7 @@ import noMessage from "../../helper/noMessage"
 import xhr from "../../helper/xhr"
 import adap from "../../main/adaptiveState"
 import Room from "../content/Room"
+import Find from "./Find"
 
 const typeOrder: { [key: string]: number } = {
   all: 1,
@@ -128,12 +129,23 @@ export default class Chats implements PrimaryClass {
   }
   private writeIfEmpty(): void {
     const oldNomore: HTMLParagraphElement | null = this.el.querySelector(".nomore")
+    const oldFindmore: HTMLDivElement | null = this.el.querySelector(".btn-findmore")
     if (this.list.entries.length < 1) {
-      if (oldNomore) return
-      const nomore = kel("p", "nomore", { e: `${lang.CHTS_NOCHAT}<br/>${lang.CHTS_PLS}` })
-      this.card_list.prepend(nomore)
+      if (!oldFindmore) {
+        const findmore = kel("p", "btn btn-findmore", { e: `<i class="fa-solid fa-magnifying-glass"></i> <span>${lang.FIND_SEARCH}</span>` })
+        findmore.onclick = () => {
+          if (this.isLocked) return
+          adap.swipe(new Find())
+        }
+        this.card_list.prepend(findmore)
+      }
+      if (!oldNomore) {
+        const nomore = kel("p", "nomore", { e: `${lang.CHTS_NOCHAT}<br/>${lang.CHTS_PLS}` })
+        this.card_list.prepend(nomore)
+      }
     } else {
       if (oldNomore) oldNomore.remove()
+      if (oldFindmore) oldFindmore.remove()
     }
   }
   public setTypeList(chatType: TChatsTypeF = "all"): void {

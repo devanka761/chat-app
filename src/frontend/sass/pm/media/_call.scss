@@ -51,13 +51,16 @@ $bg: #3f464e;
       position: absolute;
       right: 20px;
       bottom: 20px;
-      width: calc(85%);
-      height: calc(85%);
-      max-width: 300px;
-      max-height: 300px;
+      width: calc(30%);
+      height: calc(30%);
+      max-width: 150px;
+      max-height: 200px;
       display: flex;
       justify-content: end;
       align-items: end;
+      video {
+        border-radius: 10px;
+      }
     }
     .user,
     .me {

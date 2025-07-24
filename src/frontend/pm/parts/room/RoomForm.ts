@@ -56,8 +56,9 @@ export default class RoomForm {
     this.btnAttach.onclick = () => this.findFile()
     this.btnVoice.onclick = () => {
       if (this.canSend) {
-        // this.textarea.focus()
-        return this.sendMessage()
+        this.sendMessage()
+        this.textarea.focus()
+        return
       }
       this.clearForm()
       this.room.recorder.run(this.bottom)
@@ -129,7 +130,6 @@ export default class RoomForm {
     if (!this.attachment) return
     this.attachment.close()
     this.growArea()
-    this.autofocus()
   }
   setReply(msgid: string): void {
     if (this.edit) this.closeEdit()

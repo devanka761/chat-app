@@ -83,7 +83,8 @@ export function setUsername(uid: string, s: { uname: string }): IRepTempB {
   const unamevalid = /^[A-Za-z0-9._]+$/
   const unamedeny = /^user/
   if (!s.uname.match(unamevalid)) return { code: 400, msg: "ACC_FAIL_UNAME_FORMAT" }
-  if (s.uname.match(unamedeny)) return { code: 400, msg: "ACC_FAIL_CLAIMED" }
+  if (s.uname.toLowerCase().match(unamedeny)) return { code: 400, msg: "ACC_FAIL_CLAIMED" }
+  if (s.uname.toLowerCase().includes("admin")) return { code: 400, msg: "ACC_FAIL_CLAIMED" }
   if (dvnkzName.find((usr) => usr === s.uname)) return { code: 400, msg: "ACC_FAIL_CLAIMED" }
   if (s.uname === udb.uname) return { code: 200, data: { text: s.uname } }
 
@@ -97,7 +98,7 @@ export function setDisplayname(uid: string, s: { dname: string }): IRepTempB {
   const udb = db.ref.u[uid]
   if (udb.ld && udb.ld > Date.now()) return { code: 429, msg: "ACC_FAIL_DNAME_COOLDOWN", data: { timestamp: udb.ld } }
   if (s.dname.length > 35) return { code: 400, msg: "ACC_FAIL_DNAME_LENGTH" }
-  if (s.dname === udb.uname) return { code: 200, data: { text: s.dname } }
+  if (s.dname === udb.dname) return { code: 200, data: { text: s.dname } }
 
   db.ref.u[uid].dname = s.dname
   db.ref.u[uid].ld = Date.now() + 1000 * 60 * 60 * 2

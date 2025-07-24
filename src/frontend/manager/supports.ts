@@ -8,6 +8,7 @@ export function isUnifiedSupported(): boolean {
   try {
     tempPc = new RTCPeerConnection()
     tempPc.addTransceiver("audio")
+    tempPc.addTransceiver("video")
     supported = true
   } catch (_) {
     supported = false
