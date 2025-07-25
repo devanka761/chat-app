@@ -15,6 +15,18 @@ import { IMessageF } from "../../frontend/types/db.types"
 
 const ai = new GoogleGenAI({ apiKey: cfg.GENAI_API_KEY })
 
+function removeModels(): void {
+  Object.keys(AIChats).forEach((k) => {
+    if (Date.now() >= AIChats[k].ts && !db.ref.u[k].socket) delete AIChats[k]
+  })
+}
+
+export function startModelRemover(): void {
+  console.info("Starting AI Chat Remover")
+
+  setInterval(removeModels, 1000 * 60 * 60 * 3)
+}
+
 function getModel(uid: string): AIChat {
   const chatsdb = (db.fileGet(`ai${uid}`, "kirai") || {}) as IMessageKeyB
   const messages = Object.keys(chatsdb).map((msgkey) => {

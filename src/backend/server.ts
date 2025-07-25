@@ -21,6 +21,7 @@ import { parse } from "url"
 import processSocketMessages from "./controller/socket.controller"
 import { forceExitCall, terminateAllCalls } from "./controller/call.controller"
 import serverConfig from "../config/server.config.json"
+import { startModelRemover } from "./controller/genai.controller"
 
 if (!fs.existsSync("./dist")) fs.mkdirSync("./dist")
 if (!fs.existsSync("./dist/sessions")) {
@@ -125,6 +126,7 @@ app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
 })
 
 const server = app.listen(PORT, () => {
+  startModelRemover()
   console.log(`ONLINE >> http://localhost:${PORT}`)
   console.log(`APP >> http://localhost:${PORT}/app`)
 })
