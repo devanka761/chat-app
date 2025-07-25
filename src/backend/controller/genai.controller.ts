@@ -1,5 +1,5 @@
 import fs from "fs"
-import { GEN_AI_FEATURE } from "../../config/public.config.json"
+import { GEN_AI_FEATURE, AI_MODEL } from "../../config/public.config.json"
 import { KirAIRoom, KirAIUser } from "../../frontend/helper/AccountKirAI"
 import { IMessageUpdateF } from "../../frontend/types/message.types"
 import AIChats from "../main/aichats"
@@ -12,6 +12,7 @@ import { AIChat, IMessageKeyB } from "../types/db.types"
 import db from "../main/db"
 import { minimizeMessage, normalizeMessage } from "../main/helper"
 import { IMessageF } from "../../frontend/types/db.types"
+import webhookSender from "../main/webhook"
 
 const ai = new GoogleGenAI({ apiKey: cfg.GENAI_API_KEY })
 
@@ -22,8 +23,6 @@ function removeModels(): void {
 }
 
 export function startModelRemover(): void {
-  console.info("Starting AI Chat Remover")
-
   setInterval(removeModels, 1000 * 60 * 60 * 3)
 }
 
@@ -38,10 +37,10 @@ function getModel(uid: string): AIChat {
 
   if (!AIChats[uid]) {
     const model = ai.chats.create({
-      model: "gemini-2.5-flash-lite",
+      model: AI_MODEL,
       history: aihistory,
       config: {
-        systemInstruction: "Your name is KirAI and answer as concisely as possible"
+        systemInstruction: ["From now, your name is KirAI", "Answer as concisely as possible", "Website user and you are currently on is named Kirimin and you only know about the website documentation is at https://github.com/devanka761/chat-app"]
       }
     })
     AIChats[uid] = {
@@ -65,28 +64,32 @@ async function GetAIAnswer(uid: string, user_text: string, aichat: AIChat, chat_
   const aiAnswer = await aichat.model.sendMessage({
     message: user_text.trim(),
     config: {
-      systemInstruction: "Your name is KirAI and answer as concisely as possible."
+      systemInstruction: ["From now, your name is KirAI", "Answer as concisely as possible", "Website user and you are currently on is named Kirimin and you only know about the website documentation is at https://github.com/devanka761/chat-app"]
     }
   })
   AIChats[uid].rate++
   AIChats[uid].ts = Date.now() + 1000 * 60 * 60 * 2
 
-  const newchat = {
+  const ai_text = aiAnswer.text || "**KirAI** Error"
+
+  const newchat: IMessageF = {
     userid: KirAIUser.id,
-    id: chat_id,
+    reply: chat_id,
+    id: "ai" + chat_id,
     timestamp: Date.now(),
-    text: aiAnswer.text
+    text: ai_text
   }
   const data: IMessageUpdateF = {
     chat: newchat,
     roomdata: KirAIRoom,
     users: [KirAIUser, getUser(uid, uid)]
   }
-  zender(KirAIUser.id, uid, "sendmessage", data)
 
+  zender(KirAIUser.id, uid, "sendmessage", data)
+  webhookSender.genai({ userid: KirAIUser.id, chatid: chat_id, text: ai_text })
   const chatsdb = (db.fileGet(`ai${uid}`, "kirai") || {}) as IMessageKeyB
 
-  chatsdb[chat_id] = minimizeMessage(KirAIUser.id, newchat)
+  chatsdb["ai" + chat_id] = minimizeMessage(KirAIUser.id, newchat)
   db.fileSet(`ai${uid}`, "kirai", chatsdb)
 }
 
@@ -108,6 +111,7 @@ export function sendAIChat(uid: string, user_text?: string): IRepTempB {
   zender(KirAIUser.id, uid, "sendmessage", {
     chat: {
       userid: KirAIUser.id,
+      reply: chat_id,
       id: "ai" + chat_id,
       timestamp: Date.now(),
       text: "⌛ ⌛ 🚀 🚀"
@@ -131,7 +135,8 @@ export function sendAIChat(uid: string, user_text?: string): IRepTempB {
 
   chatsdb[chat_id] = minimizeMessage(uid, newchat)
   db.fileSet(`ai${uid}`, "kirai", chatsdb)
-  GetAIAnswer(uid, user_text, getModel(uid), "ai" + chat_id)
+  webhookSender.genai({ userid: uid, chatid: chat_id, text: user_text })
+  GetAIAnswer(uid, user_text, getModel(uid), chat_id)
 
   return { code: 200, data }
 }

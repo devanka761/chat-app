@@ -22,6 +22,7 @@ import processSocketMessages from "./controller/socket.controller"
 import { forceExitCall, terminateAllCalls } from "./controller/call.controller"
 import serverConfig from "../config/server.config.json"
 import { startModelRemover } from "./controller/genai.controller"
+import webhookSender from "./main/webhook"
 
 if (!fs.existsSync("./dist")) fs.mkdirSync("./dist")
 if (!fs.existsSync("./dist/sessions")) {
@@ -153,6 +154,8 @@ wss.on("connection", (ws, req) => {
   const client: TRelay = relay.add(clientId, ws)
   console.log(`Connected     ${client.id}`)
 
+  webhookSender.userLog({ userid: userExist, online: true })
+
   ws.on("error", (err: Error) => {
     console.error(err)
   })
@@ -169,6 +172,7 @@ wss.on("connection", (ws, req) => {
   })
 
   ws.on("close", () => {
+    webhookSender.userLog({ userid: userExist, online: false })
     const userid = Object.keys(db.ref.u).find((k) => db.ref.u[k].socket === client.id)
     if (userid) {
       delete db.ref.u[userid].socket
