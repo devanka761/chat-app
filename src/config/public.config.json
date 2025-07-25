@@ -1,4 +1,5 @@
 {
+  "GEN_AI_FEATURE": false,
   "USE_OAUTH_GOOGLE": true,
   "USE_OAUTH_GITHUB": true,
   "USE_OAUTH_DISCORD": true,

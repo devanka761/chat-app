@@ -11,12 +11,12 @@ import zender from "../main/zender"
 import { getUser } from "./profile.controller"
 import { getGlobalMembers } from "./group.controller"
 import { KirAIRoom } from "../../frontend/helper/AccountKirAI"
-import { sendAIChat } from "./genai.controller"
+import { clearAIChat, sendAIChat } from "./genai.controller"
 
 export async function sendMessage(uid: string, room_id: string, room_type: TRoomTypeF, s: IWritterF): Promise<IRepTempB> {
   if (s.text) s.text = escapeWhiteSpace(s.text)
   const notvalid = msgNotValid(s)
-  if (notvalid) return { code: 400, msg: notvalid }
+  if (notvalid) return { code: 404, msg: notvalid }
   if (room_id === KirAIRoom.id) return sendAIChat(uid, s.text)
   const cdb = db.ref.c
   let chatkey =
@@ -113,14 +113,14 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
 }
 
 export function editMessage(uid: string, chatkey: string, room_id: string, room_type: TRoomTypeF, s: IWritterF): IRepTempB {
-  if (!s.edit) return { code: 404 }
+  if (!s.edit) return { code: 400 }
   if (!chatkey) return { code: 403, msg: "GRP_KICKED" }
   const cdb = db.ref.c[chatkey]
-  if (!cdb) return { code: 404 }
+  if (!cdb) return { code: 400 }
 
   const dbOld = (db.fileGet(chatkey, "room") || {}) as IMessageKeyB
 
-  if (!dbOld[s.edit]) return { code: 404 }
+  if (!dbOld[s.edit]) return { code: 400 }
   if ((!dbOld[s.edit].ty || dbOld[s.edit].ty === "text") && (!s.text || s.text.length < 1)) {
     return { code: 404, msg: "CONTENT_EMPTY" }
   }
@@ -172,7 +172,7 @@ export function delMessage(uid: string, target: string, room: string, message_id
 
   const roomkey = chatkey as string
   const dbOld = (db.fileGet(roomkey, "room") || {}) as IMessageKeyB
-  if (!dbOld[message_id]) return { code: 404 }
+  if (!dbOld[message_id]) return { code: 400 }
 
   dbOld[message_id].d = true
   dbOld[message_id].txt = "deleted"
@@ -224,6 +224,7 @@ function getAllOnlineUsers(): string[] {
 }
 
 export function clearHistory(uid: string, room_type: string, room_id: string): IRepTempB {
+  if (room_id === KirAIRoom.id) return clearAIChat(uid)
   const cdb = db.ref.c
   const ckey =
     room_type === "user"
@@ -232,7 +233,7 @@ export function clearHistory(uid: string, room_type: string, room_id: string): I
         })
       : Object.keys(cdb).find((k) => room_id === "696969" || (cdb[k].t === "group" && k === room_id && cdb[k].u.find((usr) => usr === uid)))
 
-  if (!ckey) return { code: 404 }
+  if (!ckey) return { code: 400 }
 
   if (room_type === "group" && cdb[ckey].o !== uid) return { code: 403, msg: "GRPS_OWNER_FEATURE" }
   if (room_id === "696969") return { code: 403, msg: "GRPS_OWNER_FEATURE" }

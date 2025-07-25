@@ -1,4 +1,4 @@
-import { Chat } from "@google/genai"
+import { AIChat } from "../types/db.types"
 
-const AIChats: { [key: string]: Chat } = {}
+const AIChats: { [key: string]: AIChat } = {}
 export default AIChats

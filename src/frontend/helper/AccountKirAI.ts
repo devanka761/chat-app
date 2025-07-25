@@ -12,6 +12,6 @@ export const KirAIUser: IUserF = {
   username: "kirai",
   displayname: "Kirimin AI",
   bio: "Kirimin Chat Bot",
-  isFriend: 1,
+  isFriend: 0,
   badges: [5]
 }

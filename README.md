@@ -46,14 +46,17 @@ npm install
 `src/config/public.config.json`
 ```javascript
 {
+  "GEN_AI_FEATURE": false,
+  // Enable AI Chat feature (build with Google Generative AI). If true, edit GENAI_API_KEY inside `.env`
+
   "USE_OAUTH_GOOGLE": true,
-  // Enable Google OAuth login method. If true, edit the client id and client secret inside `.env`.
+  // Enable Google OAuth login method. If true, edit GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET inside `.env`.
 
   "USE_OAUTH_GITHUB": true,
-  // Enable GitHub OAuth login method. If true, edit the client id and client secret inside `.env`.
+  // Enable GitHub OAuth login method. If true, edit GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET inside `.env`.
 
   "USE_OAUTH_DISCORD": true,
-  // Enable Discord OAuth login method. If true, edit the client id and client secret inside `.env`.
+  // Enable Discord OAuth login method. If true, edit DISCORD_CLIENT_ID and DISCORD_CLIENT_SECRET inside `.env`.
 
   "SAVE_VERSION": "Kirimin20250620",
   // Sync users localstorage save version to the latest stable version. If outdated, old save file will be destroyed and generated a new one.

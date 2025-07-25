@@ -408,7 +408,7 @@ export default class MessageBuilder {
     this.lastStatus = statusText
     if (statusText === "failed") {
       this.clickListener("retry", "cancel")
-      this.sendStatus.innerHTML = `${statusIcon[statusText]}`
+      this.sendStatus.innerHTML = this.room.data.id === KirAIRoom.id ? "" : `${statusIcon[statusText]}`
       this.sendStatus.classList.add("btn")
       this.el.classList.add("error")
       this.timestamp.innerHTML = lang.FAILED
@@ -424,7 +424,11 @@ export default class MessageBuilder {
   }
   setText(txt: string): void {
     this.s.text = txt
-    this.textMessage.innerText = escapeWhiteSpace(this.s.text)
+    if (this.user.id === KirAIRoom.id) {
+      this.textMessage.innerHTML = marked.use({ renderer, gfm: true, breaks: true }).parse(escapeHTML(this.s.text)).toString()
+    } else {
+      this.textMessage.innerText = escapeWhiteSpace(this.s.text)
+    }
   }
   setEdited(ts?: number): void {
     this.s.edited = ts

@@ -1,3 +1,4 @@
+import appConfig from "../../../config/public.config.json"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import userState from "../../main/userState"
@@ -52,7 +53,7 @@ export default class Chats implements PrimaryClass {
       return 0
     })
     cdb
-      .filter((ch) => ch.r.type === "group" || (ch.m && ch.m.length >= 1))
+      .filter((ch) => ch.r.id !== KirAIRoom.id && (ch.r.type === "group" || (ch.m && ch.m.length >= 1)))
       .forEach((ch) => {
         const unread = ch.m.filter((ct) => {
           return ct.userid !== db.me.id && ct.type !== "deleted" && ct.type !== "call" && !ct.readers?.includes(db.me.id)
@@ -74,16 +75,10 @@ export default class Chats implements PrimaryClass {
     const btnGlobal = kel("div", "btn btn-global")
     btnGlobal.innerHTML = '<i class="fa-solid fa-earth-asia"></i> <span>Global Chat</span>'
 
-    this.card_list.append(btnGenAI, btnGlobal)
-    btnGenAI.onclick = async () => {
-      // if (this.isLocked) return
+    if (appConfig.GEN_AI_FEATURE) this.card_list.append(btnGenAI)
 
-      // if (userState.content?.role === "room") {
-      //   if (userState.content.isLocked) return
-      //   const room = userState.content as Room
-      //   if (room.key === KirAIRoom.id) return
-      // }
-      // adap.swipe(new Room({ data: KirAIRoom, users: [KirAIUser] }))
+    this.card_list.append(btnGlobal)
+    btnGenAI.onclick = async () => {
       if (this.isLocked) return
 
       const hasAIChat = db.c.find((ch) => ch.r.id === KirAIRoom.id)
@@ -216,6 +211,7 @@ export default class Chats implements PrimaryClass {
     this.writeIfEmpty()
   }
   update(s: { chat: IMessageF; users: IUserF[]; roomdata: IRoomDataF }): void {
+    if (s.roomdata.id === KirAIRoom.id) return
     let card = this.list.get(s.roomdata.id)
     if (!card) {
       card = new ChatBuilder({ data: s.roomdata, users: s.users, chat: s.chat, parent: this }).run()

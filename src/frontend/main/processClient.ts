@@ -166,6 +166,7 @@ class ProcessClient {
       const oldDB = dbchat.m.find((ch) => ch.id === s.chat.id)
       if (oldDB) {
         oldDB.text = s.chat.text
+        oldDB.timestamp = s.chat.timestamp
         oldDB.edited = s.chat.edited
       } else {
         dbchat.m.push(s.chat)

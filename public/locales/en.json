@@ -234,5 +234,6 @@
   "CONTACT_friend": "Friend List",
   "CONTACT_request": "Friend Requests",
   "INC_VOICE": "Incoming Voice Call",
-  "INC_VIDEO": "Incoming Video Call"
+  "INC_VIDEO": "Incoming Video Call",
+  "AI_RATE_LIMIT": "You have exceeded <strong>KirAI</strong>'s quota limit.<br/>Please wait <strong>{TIME}</strong> to chat with <strong>KirAI</strong> again."
 }
