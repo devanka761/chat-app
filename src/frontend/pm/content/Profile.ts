@@ -13,6 +13,7 @@ import FriendBuilder from "../props/friends/FriendBuilder"
 import adap from "../../main/adaptiveState"
 import VCall from "../parts/media/VCall"
 import Tab from "../parts/header/Tab"
+import { KirAIRoom } from "../../helper/AccountKirAI"
 
 export default class Profile implements PrimaryClass {
   readonly role: string
@@ -61,7 +62,7 @@ export default class Profile implements PrimaryClass {
     this.writeTab()
     this.writeWall()
     this.renActions()
-    this.renOptions()
+    if (this.user.id !== KirAIRoom.id) this.renOptions()
   }
   renImage(): void {
     let eimage = qutor(".img", this.wall)
@@ -118,6 +119,12 @@ export default class Profile implements PrimaryClass {
         this.isLocked = false
         return
       }
+      if (this.user.id === KirAIRoom.id) {
+        this.isLocked = true
+        await modal.alert(lang.CALL_NOT_USER)
+        this.isLocked = false
+        return
+      }
       if (this.user.isFriend !== 1) {
         this.isLocked = true
         await modal.alert(lang.PROF_ALR_NOFRIEND_1)
@@ -135,6 +142,12 @@ export default class Profile implements PrimaryClass {
         this.isLocked = false
         return
       }
+      if (this.user.id === KirAIRoom.id) {
+        this.isLocked = true
+        await modal.alert(lang.CALL_NOT_USER)
+        this.isLocked = false
+        return
+      }
       if (this.user.isFriend !== 1) {
         this.isLocked = true
         await modal.alert(lang.PROF_ALR_NOFRIEND_1)
@@ -143,6 +156,11 @@ export default class Profile implements PrimaryClass {
       }
       const videoCall = new VCall({ user: this.user, video: true })
       videoCall.call()
+    }
+    if (this.user.id === KirAIRoom.id) {
+      this.btnVoiceCall.remove()
+      this.btnVideoCall.remove()
+      return
     }
   }
   renActions(): void {

@@ -6,6 +6,7 @@ import { IChatB, IMessageKeyB } from "../types/db.types"
 import { IRepTempB } from "../types/validate.types"
 import { getUser } from "./profile.controller"
 import zender from "../main/zender"
+import { KirAIRoom, KirAIUser } from "../../frontend/helper/AccountKirAI"
 
 export function createGroup(uid: string, s: { name: string }): IRepTempB {
   const cdb = db.ref.c
@@ -216,6 +217,22 @@ export function getGlobalChats(uid: string): IRepTempB {
   const data: IChatsF = {
     u: users,
     r: convertGroup("696969"),
+    m: Object.keys(chatsdb).map((msgkey) => {
+      const rawData = chatsdb[msgkey]
+      return normalizeMessage(msgkey, rawData)
+    })
+  }
+
+  return { code: 200, data }
+}
+export function getAIChats(uid: string): IRepTempB {
+  const chatsdb = (db.fileGet(`ai${uid}`, "kirai") || {}) as IMessageKeyB
+
+  const users: IUserF[] = [KirAIUser, getUser(uid, uid)]
+
+  const data: IChatsF = {
+    u: users,
+    r: KirAIRoom,
     m: Object.keys(chatsdb).map((msgkey) => {
       const rawData = chatsdb[msgkey]
       return normalizeMessage(msgkey, rawData)

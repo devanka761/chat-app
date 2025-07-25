@@ -214,7 +214,7 @@ $errorbg: #3d2b31;
           }
           p::before {
             content: "\f574";
-            font-family: "Font Awesome 6 Pro";
+            font-family: "Font Awesome 7 Pro";
             margin-right: 5px;
             font-weight: 600;
             font-style: normal;
@@ -243,11 +243,13 @@ $errorbg: #3d2b31;
           }
         }
         .actions {
+          flex-shrink: 0;
           display: flex;
           justify-content: center;
           align-items: center;
           gap: 3px;
           .btn {
+            flex-shrink: 0;
             width: 20px;
             height: 20px;
             text-align: center;
@@ -255,7 +257,8 @@ $errorbg: #3d2b31;
           }
         }
         .textbox {
-          width: calc(100% - ((20px * 3) + (10px + 3px)));
+          flex-grow: 1;
+          // width: calc(100% - ((20px * 3) + (10px + 3px)));
           textarea {
             width: 100%;
             background-color: #00000000;
@@ -268,6 +271,7 @@ $errorbg: #3d2b31;
         }
       }
       .voice {
+        flex-shrink: 0;
         .btn {
           width: 34px;
           height: 34px;
@@ -491,7 +495,7 @@ $errorbg: #3d2b31;
               text-overflow: ellipsis;
               &::before {
                 content: "\f56d";
-                font-family: "Font Awesome 6 Pro";
+                font-family: "Font Awesome 7 Pro";
                 font-weight: 600;
                 margin-right: 5px;
               }
@@ -527,12 +531,12 @@ $errorbg: #3d2b31;
                 min-width: 18px;
                 .btn::after {
                   content: "\f04b";
-                  font-family: "Font Awesome 6 Pro";
+                  font-family: "Font Awesome 7 Pro";
                   font-weight: 600;
                 }
                 .btn.playing::after {
                   content: "\f04c";
-                  font-family: "Font Awesome 6 Pro";
+                  font-family: "Font Awesome 7 Pro";
                   font-weight: 600;
                 }
               }
@@ -595,7 +599,7 @@ $errorbg: #3d2b31;
               align-content: center;
               margin-right: 5px;
               &::before {
-                font-family: "Font Awesome 6 Pro";
+                font-family: "Font Awesome 7 Pro";
                 font-weight: 600;
                 font-size: 1em;
               }
@@ -662,17 +666,22 @@ $errorbg: #3d2b31;
               code {
                 font-size: 0.8rem;
                 font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
-                background: rgba($color: v.$black, $alpha: 0.25);
-                padding: 5px;
-                border-radius: 5px;
+                background: rgba($color: v.$black, $alpha: 0.2);
+                padding: 3px;
+                color: rgba($color: v.$darkcream, $alpha: 0.7);
+                border-radius: 3px;
               }
               pre {
-                background: rgba($color: v.$black, $alpha: 0.25);
+                line-height: 1.5;
+                margin: 4px 0;
+                background: rgba($color: v.$black, $alpha: 0.2);
                 padding: 10px;
+                border: 1px solid rgba($color: v.$black, $alpha: 0.1);
                 border-radius: 10px;
                 white-space: pre-wrap;
                 overflow-x: auto;
                 code {
+                  margin: 0 0;
                   padding: 0;
                   background: none;
                 }

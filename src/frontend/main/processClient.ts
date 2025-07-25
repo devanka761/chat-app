@@ -152,6 +152,7 @@ class ProcessClient {
   }
   // ignorefriend
   private sendmessage(s: IMessageUpdateF): void {
+    let isVisible = false
     let dbchat = db.c.find((k) => k.r.id === s.roomdata.id)
     if (!dbchat && s.roomdata.id === "696969") return
     if (!dbchat) {
@@ -166,6 +167,7 @@ class ProcessClient {
       const oldDB = dbchat.m.find((ch) => ch.id === s.chat.id)
       if (oldDB) {
         oldDB.text = s.chat.text
+        oldDB.timestamp = s.chat.timestamp
         oldDB.edited = s.chat.edited
       } else {
         dbchat.m.push(s.chat)
@@ -174,11 +176,13 @@ class ProcessClient {
     if (userState.content && userState.content.role === "room") {
       const room = userState.content as Room
       if (room.data.id === s.roomdata.id) {
+        isVisible = true
         room.update(s)
       }
     }
 
     if (userState.center && userState.center.role === "chats") {
+      isVisible = true
       const chatcenter = userState.center as Chats
       const roomdata = db.c.find((ch) => ch.r.id === s.roomdata.id)
       if (roomdata) {
@@ -193,6 +197,14 @@ class ProcessClient {
     if (s.chat.type === "call" && s.chat.duration != -2 && userState.center?.role === "calls") {
       const callcenter = userState.center as Calls
       callcenter.addToList({ message: s.chat, users: s.users })
+    }
+
+    if (!isVisible) {
+      notip({
+        ic: "message-dots",
+        a: s.roomdata.short,
+        b: lang.NOTIP_RECEIVE_MSG
+      })
     }
 
     userState.tab?.update("chats")

@@ -185,7 +185,8 @@
         background-color: rgba($color: v.$pm2, $alpha: 0.5);
       }
     }
-    .btn-global {
+    .btn-global,
+    .btn-genai {
       position: sticky;
       bottom: 10px;
       margin-top: 10px;

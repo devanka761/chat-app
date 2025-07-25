@@ -12,6 +12,7 @@ import { lang } from "../../../helper/lang"
 import VCall from "../media/VCall"
 import OptionRoomTabBuilder from "./OptionRoomTabBuilder"
 import setbadge from "../../../helper/setbadge"
+import { KirAIRoom } from "../../../helper/AccountKirAI"
 
 export default class RoomTab {
   readonly role: string
@@ -108,7 +109,7 @@ export default class RoomTab {
     if (this.btnVoice)
       this.btnVoice.onclick = async () => {
         if (this.isLocked) return
-        if (this.data.type !== "user") {
+        if (this.data.type !== "user" || this.data.id === KirAIRoom.id) {
           await modal.alert(lang.CALL_NOT_USER)
           this.isLocked = false
           return
@@ -138,7 +139,7 @@ export default class RoomTab {
     if (this.btnVideo)
       this.btnVideo.onclick = async () => {
         if (this.isLocked) return
-        if (this.data.type !== "user") {
+        if (this.data.type !== "user" || this.data.id === KirAIRoom.id) {
           await modal.alert(lang.CALL_NOT_USER)
           this.isLocked = false
           return
@@ -168,7 +169,9 @@ export default class RoomTab {
   }
   private userListener(): void {
     this.userParent.onclick = () => {
-      if (this.data.type === "user") {
+      if (this.data.id === KirAIRoom.id) {
+        return
+      } else if (this.data.type === "user") {
         const user = this.users.find((usr) => usr.id === this.data.id)
         const classBefore = this.room.classBefore?.role === "profile" ? this.room.classBefore.classBefore : this.room
         adap.swipe(new Profile({ user: user as IUserF, room: this.room, card: this.card, classBefore }))

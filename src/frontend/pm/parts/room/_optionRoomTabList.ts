@@ -17,11 +17,11 @@ export default [
     }
   },
   {
-    id: "room-tab-export",
+    id: "room-tab-clear",
     txt: "ROOM_OPT_TAB_CLEAR",
     c: "fa-solid fa-do-not-enter fa-fw",
     run: async (room: Room) => {
-      const text = room.data.type === "group" ? `Group/${room.data.id}` : `${db.me.username}/${room.data.short}`
+      const text = room.data.type === "group" ? `Group/${room.data.id}` : `Chat/${room.data.short}`
       const confDeleteA = await modal.confirm({
         msg: lang.ROOM_CLEAR_CONF
       })

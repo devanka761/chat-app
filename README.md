@@ -30,33 +30,59 @@ npm install
 1. Copy file `.env.example` to `.env`
 2. Edit file `.env` based on your preferences
 
+## CONFIG: PUBLIC
+`src/config/public.config.json`
+```javascript
+{
+  "GEN_AI_FEATURE": false,
+  // Enable AI Chat feature (powered by Google Generative AI)
+  // If true, edit GENAI_API_KEY inside `.env`
+
+  "AI_MODEL": "gemini-2.5-pro",
+  // Choose ai model only if GEN_AI_FEATURE is true
+  // See All Models: https://ai.google.dev/gemini-api/docs/models
+
+  "USE_OAUTH_GOOGLE": true,
+  // Enable Google OAuth login method
+  // If true, edit GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET inside `.env`
+
+  "USE_OAUTH_GITHUB": false,
+  // Enable GitHub OAuth login method
+  // If true, edit GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET inside `.env`
+
+  "USE_OAUTH_DISCORD": false,
+  // Enable Discord OAuth login method
+  // If true, edit DISCORD_CLIENT_ID and DISCORD_CLIENT_SECRET inside `.env`
+
+  "SAVE_VERSION": "Kirimin20250726",
+  // Sync users localstorage save version to the latest stable version. If outdated, old save file will be destroyed and generated a new one.
+}
+```
+
 ## CONFIG: SERVER
 `src/config/server.config.json`
 ```javascript
 {
   "webhook": false,
-  // No effect - Not currently used
+  // Send webhook about website log to discord
+  // If true, (1) edit DISCORD_BOT_TOKEN inside `.env`, If true, (2) setup `src/config/discord.config.json`
 
   "update": false,
   // Update app version and force users to reload the page after server restart
 }
 ```
 
-## CONFIG: PUBLIC
-`src/config/server.config.json`
+## CONFIG: DISCORD WEBHOOK
+`src/config/discord.config.json`
 ```javascript
 {
-  "USE_OAUTH_GOOGLE": true,
-  // Enable Google OAuth login method. If true, edit the client id and client secret inside `.env`.
+  // if webhook is true, put your channel id from your discord server
 
-  "USE_OAUTH_GITHUB": true,
-  // Enable GitHub OAuth login method. If true, edit the client id and client secret inside `.env`.
+  "AI_LEARN": "00000000000000",
+  // monitor how ai answers to the user input
 
-  "USE_OAUTH_DISCORD": true,
-  // Enable Discord OAuth login method. If true, edit the client id and client secret inside `.env`.
-
-  "SAVE_VERSION": "Kirimin20250620",
-  // Sync users localstorage save version to the latest stable version. If outdated, old save file will be destroyed and generated a new one.
+  "USER_LOG": "00000000000000"
+  // monitor user log (online/offline)
 }
 ```
 

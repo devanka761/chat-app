@@ -21,6 +21,7 @@ import Tab from "../parts/header/Tab"
 import Chats from "../center/Chats"
 import socketClient from "../../manager/socketClient"
 import adap from "../../main/adaptiveState"
+import sdate from "../../helper/sdate"
 
 export default class Room implements PrimaryClass {
   readonly role: string
@@ -93,25 +94,31 @@ export default class Room implements PrimaryClass {
     const collection = db.c
     const chats = collection.find((ch) => ch.r.id === this.data.id)
     if (chats) {
-      chats.m.forEach((ch) => {
-        if (ch.userid !== db.me.id && (!ch.readers || !ch.readers.find((usr) => usr === db.me.id))) {
-          if (!ch.readers) ch.readers = []
-          ch.readers.push(db.me.id)
-        }
-        const user: IUserF = ch.userid === db.me.id ? db.me : chats.u.find((usr) => usr.id === ch.userid) || noUser()
-        if (msgValidTypes.find((ity) => ity === ch.type)) {
-          this.mediaToLoad++
-        }
-        const message = new MessageBuilder(ch, user, this)
-        this.field.send(message)
-        if (ch.userid === db.me.id) {
-          if (this.data.type === "user" && ch.readers?.includes(this.data.id)) {
-            message.setStatus("read")
-          } else {
-            message.setStatus("sent")
+      chats.m
+        .sort((a, b) => {
+          if (a.timestamp < b.timestamp) return -1
+          if (a.timestamp > b.timestamp) return 1
+          return 0
+        })
+        .forEach((ch) => {
+          if (ch.userid !== db.me.id && (!ch.readers || !ch.readers.find((usr) => usr === db.me.id))) {
+            if (!ch.readers) ch.readers = []
+            ch.readers.push(db.me.id)
           }
-        }
-      })
+          const user: IUserF = ch.userid === db.me.id ? db.me : chats.u.find((usr) => usr.id === ch.userid) || noUser()
+          if (msgValidTypes.find((ity) => ity === ch.type)) {
+            this.mediaToLoad++
+          }
+          const message = new MessageBuilder(ch, user, this)
+          this.field.send(message)
+          if (ch.userid === db.me.id) {
+            if (this.data.type === "user" && ch.readers?.includes(this.data.id)) {
+              message.setStatus("read")
+            } else {
+              message.setStatus("sent")
+            }
+          }
+        })
       if (userState.center && userState.center.role === "chats") {
         const chatscenter = userState.center as Chats
         if (chatscenter) chatscenter.setUnread(this.data.id, 0)
@@ -151,10 +158,13 @@ export default class Room implements PrimaryClass {
         await modal.alert(lang[messageSent.msg]?.replace("{SIZE}", "2.5 MB") || lang.ERROR)
       }
       if (messageSent.code === 403) {
-        await modal.alert(lang.GRP_KICKED)
+        await modal.alert(lang[messageSent.msg] || lang.ERROR)
         this.isLocked = false
         adap.swipe()
         return
+      }
+      if (messageSent.code === 404) {
+        await modal.alert(lang[messageSent.msg]?.replace(/{TIME}/, sdate.remain(messageSent?.data?.ts)) || lang.ERROR)
       }
       this.isLocked = false
       return
@@ -261,8 +271,8 @@ export default class Room implements PrimaryClass {
   }
   update(s: IMessageUpdateF): void | Promise<void> {
     const ch = s.chat
-    const msg = this.field.list.get(s.chat.id)
-    if (msg && s.chat.type === "deleted") {
+    const msg = this.field.list.get(ch.id)
+    if (msg && ch.type === "deleted") {
       msg.deleted = true
       return
     }

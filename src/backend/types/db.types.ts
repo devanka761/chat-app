@@ -1,3 +1,4 @@
+import { Chat } from "@google/genai"
 import { MessageTypeF } from "../../frontend/types/db.types"
 import { TRoomTypeF } from "../../frontend/types/room.types"
 import { IUserTempB } from "./binder.types"
@@ -99,4 +100,10 @@ export type Databases = {
   p: { [key: string]: Post }
   v: { [key: string]: Call }
   k: { v?: number; g?: number }
+}
+
+export type AIChat = {
+  model: Chat
+  rate: number
+  ts: number
 }

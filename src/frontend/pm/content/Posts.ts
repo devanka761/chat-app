@@ -105,7 +105,8 @@ export default class Posts implements PrimaryClass {
 
     const posts: TPostsF = getPosts.data
     this.post_list = posts
-    posts.forEach((post) => this.renPost(post))
+    const filteredPosts = this.currFilter === "mine" ? this.post_list.filter((post) => post.user.id === db.me.id) : this.post_list
+    filteredPosts.forEach((post) => this.renPost(post))
     this.writeIfEmpty(posts)
     await modal.waittime(500)
     this.isLocked = false

@@ -165,7 +165,7 @@
   "CALL_ANOTHER": "User is on another call",
   "CALL_VIDEO_DEVELOPMENT": "This -Video Call- feature is currently under development<br/>Want to try -Voice Call- instead?",
   "CALL_INCALL":"You are currently in a voice call<br/>Please hangup current call to make a new call",
-  "CALL_NOT_USER":"Group calls is not ready yet.<br/>You can only make calls to fellow users.",
+  "CALL_NOT_USER":"You can only make calls to fellow users.",
   "INCOMING_DECLINE":"Decline",
   "INCOMING_ANSWER":"Answer",
   "INCOMING_IGNORE":"Ignore",
@@ -234,5 +234,6 @@
   "CONTACT_friend": "Friend List",
   "CONTACT_request": "Friend Requests",
   "INC_VOICE": "Incoming Voice Call",
-  "INC_VIDEO": "Incoming Video Call"
+  "INC_VIDEO": "Incoming Video Call",
+  "AI_RATE_LIMIT": "You have exceeded <strong>KirAI</strong>'s quota limit.<br/>Please wait <strong>{TIME}</strong> to chat with <strong>KirAI</strong> again."
 }

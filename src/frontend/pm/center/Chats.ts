@@ -1,3 +1,4 @@
+import appConfig from "../../../config/public.config.json"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import userState from "../../main/userState"
@@ -6,7 +7,7 @@ import { PrimaryClass } from "../../types/userState.types"
 import { IChatsF, IMessageF, IRoomDataF, IUserF } from "../../types/db.types"
 import ChatsAPI from "../props/chats/ChatsAPI"
 import ChatBuilder from "../props/chats/ChatBuilder"
-import { kel, epm } from "../../helper/kel"
+import { kel, epm, qutor } from "../../helper/kel"
 import { TChatsTypeF } from "../../types/room.types"
 import FolderCard from "../parts/chats/FolderCard"
 import FolderAPI from "../props/chats/FolderAPI"
@@ -14,7 +15,7 @@ import noMessage from "../../helper/noMessage"
 import xhr from "../../helper/xhr"
 import adap from "../../main/adaptiveState"
 import Room from "../content/Room"
-import Find from "./Find"
+import { KirAIRoom } from "../../helper/AccountKirAI"
 
 const typeOrder: { [key: string]: number } = {
   all: 1,
@@ -52,7 +53,7 @@ export default class Chats implements PrimaryClass {
       return 0
     })
     cdb
-      .filter((ch) => ch.r.type === "group" || (ch.m && ch.m.length >= 1))
+      .filter((ch) => ch.r.id !== KirAIRoom.id && (ch.r.type === "group" || (ch.m && ch.m.length >= 1)))
       .forEach((ch) => {
         const unread = ch.m.filter((ct) => {
           return ct.userid !== db.me.id && ct.type !== "deleted" && ct.type !== "call" && !ct.readers?.includes(db.me.id)
@@ -69,10 +70,35 @@ export default class Chats implements PrimaryClass {
     this.renderGlobalCard()
   }
   private renderGlobalCard(): void {
-    const card = kel("div", "btn btn-global")
-    card.innerHTML = '<i class="fa-solid fa-earth-asia"></i> <span>Global Chat</span>'
-    this.card_list.append(card)
-    card.onclick = async () => {
+    const btnGenAI = kel("div", "btn btn-genai")
+    btnGenAI.innerHTML = `<i class="fa-solid fa-sparkles"></i> <span>Kir<strong>AI</strong></span>`
+    const btnGlobal = kel("div", "btn btn-global")
+    btnGlobal.innerHTML = '<i class="fa-solid fa-earth-asia"></i> <span>Global Chat</span>'
+
+    if (appConfig.GEN_AI_FEATURE) this.card_list.append(btnGenAI)
+
+    this.card_list.append(btnGlobal)
+    btnGenAI.onclick = async () => {
+      if (this.isLocked) return
+
+      const hasAIChat = db.c.find((ch) => ch.r.id === KirAIRoom.id)
+      if (hasAIChat) {
+        this.setGlobalChats(hasAIChat)
+        this.isLocked = false
+        return
+      }
+
+      this.isLocked = true
+      const getAIChats = await modal.loading(xhr.get("/x/room/get-kirai"))
+      if (!getAIChats || !getAIChats.ok) {
+        await modal.alert(lang[getAIChats.msg] || lang.ERROR)
+        this.isLocked = false
+        return
+      }
+      this.isLocked = false
+      this.setGlobalChats(getAIChats.data)
+    }
+    btnGlobal.onclick = async () => {
       if (this.isLocked) return
 
       const hasGlobalChat = db.c.find((ch) => ch.r.id === "696969")
@@ -135,7 +161,8 @@ export default class Chats implements PrimaryClass {
         const findmore = kel("p", "btn btn-findmore", { e: `<i class="fa-solid fa-magnifying-glass"></i> <span>${lang.FIND_SEARCH}</span>` })
         findmore.onclick = () => {
           if (this.isLocked) return
-          adap.swipe(new Find())
+          const navFind = qutor(".nav-find")
+          if (navFind) navFind.click()
         }
         this.card_list.prepend(findmore)
       }
@@ -184,6 +211,7 @@ export default class Chats implements PrimaryClass {
     this.writeIfEmpty()
   }
   update(s: { chat: IMessageF; users: IUserF[]; roomdata: IRoomDataF }): void {
+    if (s.roomdata.id === KirAIRoom.id) return
     let card = this.list.get(s.roomdata.id)
     if (!card) {
       card = new ChatBuilder({ data: s.roomdata, users: s.users, chat: s.chat, parent: this }).run()

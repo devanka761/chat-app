@@ -1,12 +1,12 @@
 import { epm, kel } from "../../helper/kel"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
-import noAccount from "../../helper/noAccount"
 import userState from "../../main/userState"
 import db from "../../manager/db"
 import CallBuilder from "../props/media/CallBuilder"
 import { IMessageF, IUserF } from "../../types/db.types"
 import { PrimaryClass } from "../../types/userState.types"
+import noUser from "../../helper/noUser"
 
 export default class Calls implements PrimaryClass {
   private el: HTMLDivElement
@@ -48,7 +48,7 @@ export default class Calls implements PrimaryClass {
     this.writeIfEmpty(cdb)
   }
   addToList(s: { message: IMessageF; users: IUserF[] }): void {
-    const user = s.users.find((usr) => usr.id !== db.me.id) || noAccount()
+    const user = s.users.find((usr) => usr.id !== db.me.id) || noUser()
     const call = new CallBuilder({ chat: s.message, user, parent: this })
     this.card_list.prepend(call.html)
     this.writeIfEmpty([s])
