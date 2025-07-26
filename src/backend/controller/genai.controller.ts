@@ -17,9 +17,12 @@ import webhookSender from "../main/webhook"
 const ai = new GoogleGenAI({ apiKey: cfg.GENAI_API_KEY })
 
 function removeModels(): void {
-  Object.keys(AIChats).forEach((k) => {
-    if (Date.now() >= AIChats[k].ts && !db.ref.u[k].socket) delete AIChats[k]
-  })
+  const userModels = Object.keys(AIChats).filter((k) => Date.now() >= AIChats[k].ts && !db.ref.u[k].socket)
+
+  if (userModels.length >= 1) {
+    webhookSender.modelLog({ userids: userModels.join(", ") })
+    userModels.forEach((k) => delete AIChats[k])
+  }
 }
 
 export function startModelRemover(): void {

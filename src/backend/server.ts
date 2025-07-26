@@ -23,11 +23,14 @@ import { forceExitCall, terminateAllCalls } from "./controller/call.controller"
 import serverConfig from "../config/server.config.json"
 import { startModelRemover } from "./controller/genai.controller"
 import webhookSender from "./main/webhook"
-
+import logger from "./main/logger"
+console.clear()
+console.log("--------")
 if (!fs.existsSync("./dist")) fs.mkdirSync("./dist")
 if (!fs.existsSync("./dist/sessions")) {
   fs.mkdirSync("./dist/sessions")
-  console.log("Sessions Reloaded!")
+  logger.info("Sessions Reloaded!")
+  console.log("--------")
 }
 db.load()
 if (!db.ref.k.v) {
@@ -116,7 +119,7 @@ app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
     return
   }
 
-  console.error(err)
+  logger.error(err)
 
   res.status(500).json({
     ok: false,
@@ -128,8 +131,11 @@ app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
 
 const server = app.listen(PORT, () => {
   startModelRemover()
-  console.log(`ONLINE >> http://localhost:${PORT}`)
-  console.log(`APP >> http://localhost:${PORT}/app`)
+  console.log("--------")
+  logger.success(`HOMEPAGE >> http://localhost:${PORT}`)
+  logger.success(`APP >> http://localhost:${PORT}/app`)
+  logger.success("Done ✔✔✔")
+  console.log("")
 })
 
 const wss = new WebSocketServer({ server })
@@ -138,7 +144,7 @@ wss.on("connection", (ws, req) => {
   const { query } = parse(req.url!, true)
   const clientId = query.id?.toString()
   if (!clientId) {
-    console.log("❌ Connection rejected: no client ID")
+    logger.info("❌ Connection rejected: no client ID")
     ws.close()
     return
   }
@@ -146,18 +152,18 @@ wss.on("connection", (ws, req) => {
   const udb = db.ref.u
   const userExist = Object.keys(udb).find((k) => udb[k].socket === clientId)
   if (!userExist) {
-    console.log(`❌ Connection rejected: client with id ${clientId} is not found`)
+    logger.info(`❌ Connection rejected: client with id ${clientId} is not found`)
     ws.close()
     return
   }
 
   const client: TRelay = relay.add(clientId, ws)
-  console.log(`Connected     ${client.id}`)
+  logger.info(`Online   ${userExist} ${client.id}`)
 
   webhookSender.userLog({ userid: userExist, online: true })
 
   ws.on("error", (err: Error) => {
-    console.error(err)
+    logger.error(err)
   })
 
   ws.on("message", (data) => {
@@ -167,7 +173,7 @@ wss.on("connection", (ws, req) => {
       const msg = JSON.parse(data.toString())
       processSocketMessages({ ...msg, from: clientId, uid: userid })
     } catch (err) {
-      console.error("Failed to parse JSON:", err)
+      logger.error("Failed to parse JSON: " + err)
     }
   })
 
@@ -180,6 +186,6 @@ wss.on("connection", (ws, req) => {
     }
 
     relay.remove(client.id)
-    console.log(`Disconnected  ${client.id}`)
+    logger.info(`Offline  ${userExist} ${client.id}`)
   })
 })

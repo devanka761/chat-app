@@ -2,6 +2,7 @@ import { webhook } from "../../config/server.config.json"
 import { AI_LEARN, USER_LOG } from "../../config/discord.config.json"
 import cfg from "./cfg"
 import { KirAIUser } from "../../frontend/helper/AccountKirAI"
+import logger from "./logger"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function sendToDiscord(channel_id: string, message: any) {
@@ -14,7 +15,7 @@ function sendToDiscord(channel_id: string, message: any) {
     },
     body: JSON.stringify(message)
   }).catch((err) => {
-    console.error(err)
+    logger.error(err)
   })
 }
 
@@ -42,6 +43,16 @@ const webhookSender = {
         {
           description: `user **${s.userid}** ${s.online ? "online" : "offline"}`,
           color: colors[s.online ? "lime" : "red"]
+        }
+      ]
+    })
+  },
+  modelLog(s: { userids: string }) {
+    sendToDiscord(USER_LOG, {
+      embeds: [
+        {
+          description: `model **\`${s.userids}\`** destroyed`,
+          color: colors.yellow
         }
       ]
     })

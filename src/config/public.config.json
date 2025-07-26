@@ -1,6 +1,6 @@
 {
   "GEN_AI_FEATURE": false,
-  "AI_MODEL": "gemini-2.5-pro",
+  "AI_MODEL": "gemini-2.5-flash-lite",
   "USE_OAUTH_GOOGLE": true,
   "USE_OAUTH_GITHUB": false,
   "USE_OAUTH_DISCORD": false,

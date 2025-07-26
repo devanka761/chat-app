@@ -1,10 +1,25 @@
 import fs from "fs"
 import { Databases, IUserB } from "../types/db.types"
+import logger from "./logger"
 
 const dirpath: string = "./dist/db"
 const stgpath: string = "./dist/stg"
 
 const filefolders: string[] = ["room", "kirai"]
+
+const foldernames: { [key: string]: string } = {
+  room: "Chat Rooms",
+  kirai: "Kirimin AI"
+}
+
+const dbnames: { [key: string]: string } = {
+  u: "Users",
+  t: "Temporary Auth Datum",
+  c: "Chats",
+  p: "Posts",
+  v: "Calls",
+  k: "Kirimin Metadata"
+}
 
 class DevankaLocal {
   public ref: Databases
@@ -16,8 +31,9 @@ class DevankaLocal {
     if (!fs.existsSync(stgpath)) fs.mkdirSync(stgpath)
     for (const filefolder of filefolders) {
       if (!fs.existsSync(`${dirpath}/${filefolder}`)) fs.mkdirSync(`${dirpath}/${filefolder}`)
-      console.info(`Folder - ${filefolder} - Updated!`)
+      logger.success(`Folder Updated >> ${foldernames[filefolder]}`)
     }
+    console.log("--------")
     Object.keys(this.ref)
       .filter((file) => !["t"].includes(file))
       .forEach((file) => {
@@ -34,7 +50,7 @@ class DevankaLocal {
             if (this.ref[fileKey][k].zzz) delete this.ref[fileKey][k].zzz
           })
         }
-        console.info(`Data - ${fileKey} - Loaded!`)
+        logger.success(`Data Loaded >> ${dbnames[fileKey]}`)
         this.save(file)
       })
     this.checkGlobal()

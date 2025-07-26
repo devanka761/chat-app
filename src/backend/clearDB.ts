@@ -1,6 +1,7 @@
 import readline from "readline"
 import fs from "fs"
 import db from "./main/db"
+import logger from "./main/logger"
 
 const cleardatabase: { [key: string]: () => void } = {
   chat: () => {
@@ -12,7 +13,7 @@ const cleardatabase: { [key: string]: () => void } = {
     if (fs.existsSync("./dist/stg/room")) {
       fs.rmSync("./dist/stg/room", { recursive: true, force: true })
     }
-    console.log("DB Chat Cleared!")
+    logger.success("DB Chat Cleared!")
   }
 }
 
@@ -26,7 +27,7 @@ function askQuestion() {
     if (cleardatabase[dbname]) {
       cleardatabase[dbname]()
     } else {
-      console.log("DB " + dbname + " not found")
+      logger.error("DB " + dbname + " not found")
     }
     rl.close()
   })
