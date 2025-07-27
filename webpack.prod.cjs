@@ -87,7 +87,7 @@ module.exports = {
   },
   plugins,
   resolve: {
-    extensions: [".ts", ".js"]
+    extensions: [".ts", ".js", ".scss"]
   },
   module: {
     rules: [

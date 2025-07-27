@@ -121,6 +121,9 @@ export default class Chats implements PrimaryClass {
   }
   private setGlobalChats(data: IChatsF): void {
     if (!db.c.find((ch) => ch.r.id === data.r.id)) {
+      if (data.r.id === KirAIRoom.id && data.m.length < 1) {
+        data.m.push({ id: "-420", timestamp: Date.now(), userid: "420", text: lang.AI_INIT_MSG })
+      }
       db.c.push(data)
       this.update({
         chat: data.m[data.m.length - 1] || noMessage(),

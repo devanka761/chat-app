@@ -2,7 +2,6 @@ import { Chat } from "@google/genai"
 import { MessageTypeF } from "../../frontend/types/db.types"
 import { TRoomTypeF } from "../../frontend/types/room.types"
 import { IUserTempB } from "./binder.types"
-import { SivalKeyType } from "./validate.types"
 
 export interface TemporaryAuth {
   email: string
@@ -28,7 +27,7 @@ export interface IUserB {
   b?: number[]
   data: IUserTempB[]
   socket?: string
-  zzz?: SivalKeyType[]
+  zzz?: PushSubscription
   req?: string[]
   lu?: number
   ld?: number
@@ -99,7 +98,7 @@ export type Databases = {
   c: { [key: string]: IChatB }
   p: { [key: string]: Post }
   v: { [key: string]: Call }
-  k: { v?: number; g?: number }
+  k: { v?: number; g?: number; publicKey: string; privateKey: string }
 }
 
 export type AIChat = {

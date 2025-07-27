@@ -46,7 +46,8 @@ export function getMe(uid: string): IRepTempB {
   const data: IAccountB = {
     me: meData,
     socket: initSocketClient(uid),
-    v: db.ref.k.v
+    v: db.ref.k.v,
+    publicKey: db.ref.k.publicKey
   }
 
   const cdb = db.ref.c

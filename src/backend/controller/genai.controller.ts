@@ -20,7 +20,7 @@ function removeModels(): void {
   const userModels = Object.keys(AIChats).filter((k) => Date.now() >= AIChats[k].ts && !db.ref.u[k].socket)
 
   if (userModels.length >= 1) {
-    webhookSender.modelLog({ userids: userModels.join(", ") })
+    webhookSender.modelLog({ userids: userModels.join(" ") })
     userModels.forEach((k) => delete AIChats[k])
   }
 }
