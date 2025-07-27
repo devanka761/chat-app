@@ -1,3 +1,4 @@
+import { checkPushNotification } from "../helper/navigator"
 import xhr from "../helper/xhr"
 
 async function RegisterSW(): Promise<ServiceWorkerRegistration | null> {
@@ -10,7 +11,9 @@ async function RegisterSW(): Promise<ServiceWorkerRegistration | null> {
     })
 }
 
-export async function SetNotifications(publicKey: string): Promise<void> {
+export async function InitializeNotification(publicKey: string): Promise<void> {
+  const checkPerm = await checkPushNotification()
+  if (!checkPerm) return
   const swRegisterer = await RegisterSW()
   if (!swRegisterer) return
   navigator.serviceWorker.ready
@@ -30,4 +33,8 @@ export async function SetNotifications(publicKey: string): Promise<void> {
     .catch((err) => {
       console.error(err)
     })
+}
+
+export function SetNotifications(publicKey: string): void {
+  window.addEventListener("click", () => InitializeNotification(publicKey), { once: true })
 }

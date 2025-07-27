@@ -23,7 +23,7 @@ import { forceExitCall, terminateAllCalls } from "./controller/call.controller"
 import { startModelRemover } from "./controller/genai.controller"
 import webhookSender from "./main/webhook"
 import logger from "./main/logger"
-import getServerReady from "./main/prepare"
+import { getServerReady } from "./main/prepare"
 console.clear()
 console.log("--------")
 if (!fs.existsSync("./dist")) fs.mkdirSync("./dist")

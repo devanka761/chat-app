@@ -3,7 +3,7 @@ import serverConfig from "../../config/server.config.json"
 import db from "./db"
 import logger from "./logger"
 
-export default function getServerReady() {
+export function getServerReady(): void {
   db.load()
 
   if (!db.ref.k.v) {
@@ -26,4 +26,12 @@ export default function getServerReady() {
   }
   logger.success("Vapid Keys: Loaded")
   push.setVapidDetails("mailto:contact@devanka.id", db.ref.k.publicKey, db.ref.k.privateKey)
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function sendPushNotification(userid: string, content: any): void {
+  const subs = db.ref.u[userid].zzz
+  const client = db.ref.u[userid].socket
+  if (!subs || client) return
+  push.sendNotification(subs, JSON.stringify(content)).catch(logger.error)
 }

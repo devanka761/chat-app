@@ -1,12 +1,25 @@
-self.addEventListener("push", function (event) {
-  // @ts-expect-error not in typescript by default
-  const payload = event.data ? event.data.text() : "-"
+function receivePushNotification(event) {
+  const { tag, url, title, text } = event.data.json()
 
-  // @ts-expect-error not in typescript by default
-  event.waitUntil(
-    // @ts-expect-error not in typescript by default
-    self.registration.showNotification("Kirimin Messenger", {
-      body: payload
-    })
-  )
-})
+  const options = {
+    data: url,
+    body: text,
+    icon: "/assets/kirimin_icon.png",
+    vibrate: [200, 100, 200],
+    tag: tag,
+    // image: "/assets/kirimin_icon.png",
+    badge: "/assets/kirimin_icon.png",
+    actions: [{ action: "Detail", title: "Open" }]
+  }
+  // @ts-expect-error no default for typescript
+  event.waitUntil(self.registration.showNotification(title, options))
+}
+
+function openPushNotification(event) {
+  event.notification.close()
+  // @ts-expect-error no default for typescript
+  event.waitUntil(clients.openWindow(event.notification.data))
+}
+
+self.addEventListener("push", receivePushNotification)
+self.addEventListener("notificationclick", openPushNotification)

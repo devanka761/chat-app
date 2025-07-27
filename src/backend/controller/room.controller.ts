@@ -12,6 +12,7 @@ import { getUser } from "./profile.controller"
 import { getGlobalMembers } from "./group.controller"
 import { KirAIRoom } from "../../frontend/helper/AccountKirAI"
 import { clearAIChat, sendAIChat } from "./genai.controller"
+import { sendPushNotification } from "../main/prepare"
 
 export async function sendMessage(uid: string, room_id: string, room_type: TRoomTypeF, s: IWritterF): Promise<IRepTempB> {
   if (s.text) s.text = escapeWhiteSpace(s.text)
@@ -104,6 +105,15 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
     chat: chatData,
     roomdata: cdb[chatkey].t === "user" ? convertUser(room_id) : convertGroup(chatkey),
     users: users.map((usr) => getUser(uid, usr))
+  }
+
+  if (room_type === "user") {
+    sendPushNotification(room_id, {
+      title: `@${dataZender.roomdata.short}`,
+      text: `Kirimin - New Message`,
+      tag: "new-message",
+      url: `/app?chat=${room_id}`
+    })
   }
 
   const onlineUsers = room_id === "696969" ? getAllOnlineUsers() : users

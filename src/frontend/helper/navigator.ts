@@ -37,3 +37,13 @@ export function checkMedia(s: { audio?: boolean; video?: boolean }): Promise<boo
       })
   })
 }
+
+export async function checkPushNotification(): Promise<boolean> {
+  const isSupported = "serviceWorker" in navigator && !!PushManager
+  if (!isSupported) return false
+  return await Notification.requestPermission()
+    .then((res) => {
+      return res === "granted"
+    })
+    .catch(() => false)
+}

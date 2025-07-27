@@ -1,4 +1,5 @@
 import { Chat } from "@google/genai"
+import { PushSubscription } from "web-push"
 import { MessageTypeF } from "../../frontend/types/db.types"
 import { TRoomTypeF } from "../../frontend/types/room.types"
 import { IUserTempB } from "./binder.types"

@@ -4,6 +4,7 @@ import { rep } from "../main/helper"
 import { cdUser, isUser } from "../main/middlewares"
 import validate from "../main/validate"
 import db from "../main/db"
+import { PushSubscription } from "web-push"
 
 // set-username set-displayname set-bio set-img
 const router: Router = express.Router()
