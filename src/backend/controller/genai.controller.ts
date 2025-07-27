@@ -71,7 +71,7 @@ async function GetAIAnswer(uid: string, user_text: string, aichat: AIChat, chat_
     }
   })
   AIChats[uid].rate++
-  AIChats[uid].ts = Date.now() + 1000 * 60 * 60 * 2
+  AIChats[uid].ts = Date.now() + 1000 * 60 * 10
 
   const ai_text = aiAnswer.text || "**KirAI** Error"
 
