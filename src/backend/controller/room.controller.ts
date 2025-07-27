@@ -110,7 +110,7 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
   if (room_type === "user") {
     sendPushNotification(room_id, {
       title: `@${dataZender.roomdata.short}`,
-      text: `Kirimin - New Message`,
+      text: `Kirimin - New Message - @${dataZender.roomdata.short}`,
       tag: "new-message",
       url: `/app?chat=${room_id}`
     })

@@ -7,7 +7,7 @@ function compileServiceWorkers() {
   webpack({
     entry: "./src/frontend/sw.ts",
     output: {
-      path: path.resolve(__dirname, "../../public/bundle"),
+      path: path.resolve(__dirname, "../../public"),
       filename: "sw.js",
       clean: false
     },

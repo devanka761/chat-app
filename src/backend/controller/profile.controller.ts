@@ -88,7 +88,7 @@ export function addfriend(uid: string, s: { userid: string }): IRepTempB {
 
   sendPushNotification(s.userid, {
     title: `@${udb.uname}`,
-    text: `Kirimin - Friend Request`,
+    text: `Kirimin - Friend Request - @${udb.uname}`,
     tag: "new-friend-request",
     url: `/app?user=${s.userid}`
   })
@@ -152,7 +152,7 @@ export function acceptfriend(uid: string, s: { userid: string }): IRepTempB {
 
   sendPushNotification(s.userid, {
     title: `@${udb.uname}`,
-    text: `Kirimin - Request Accepted`,
+    text: `Kirimin - Request Accepted - @${udb.uname}`,
     tag: "new-friend-accepted",
     url: `/app?user=${s.userid}`
   })

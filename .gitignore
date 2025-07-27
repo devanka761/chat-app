@@ -4,6 +4,7 @@ package-lock.json
 .vscode
 .env
 public/bundle
+public/sw.js
 views
 dist
 ex
