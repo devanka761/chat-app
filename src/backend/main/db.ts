@@ -24,7 +24,7 @@ const dbnames: { [key: string]: string } = {
 class DevankaLocal {
   public ref: Databases
   constructor() {
-    this.ref = { u: {}, t: {}, c: {}, p: {}, v: {}, k: {} }
+    this.ref = { u: {}, t: {}, c: {}, p: {}, v: {}, k: { publicKey: "0", privateKey: "0" } }
   }
   load(): void {
     if (!fs.existsSync(dirpath)) fs.mkdirSync(dirpath)

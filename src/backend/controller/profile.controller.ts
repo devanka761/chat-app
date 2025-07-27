@@ -1,6 +1,7 @@
 import { IUserF } from "../../frontend/types/db.types"
 import db from "../main/db"
 import { convertUser } from "../main/helper"
+import { sendPushNotification } from "../main/prepare"
 import zender from "../main/zender"
 import { IRepTempB } from "../types/validate.types"
 
@@ -84,6 +85,13 @@ export function addfriend(uid: string, s: { userid: string }): IRepTempB {
   db.ref.u[s.userid].req?.push(uid)
   db.save("u")
   zender(uid, s.userid, "addfriend", { user: getUser(s.userid, uid) })
+
+  sendPushNotification(s.userid, {
+    title: `@${udb.uname}`,
+    text: `Kirimin - Friend Request`,
+    tag: "new-friend-request",
+    url: `/app?user=${s.userid}`
+  })
   return { code: 200, data: { user: getUser(uid, s.userid) } }
 }
 export function unfriend(uid: string, s: { userid: string }): IRepTempB {
@@ -141,6 +149,14 @@ export function acceptfriend(uid: string, s: { userid: string }): IRepTempB {
   db.save("u", "c")
 
   zender(uid, s.userid, "acceptfriend", { user: getUser(s.userid, uid) })
+
+  sendPushNotification(s.userid, {
+    title: `@${udb.uname}`,
+    text: `Kirimin - Request Accepted`,
+    tag: "new-friend-accepted",
+    url: `/app?user=${s.userid}`
+  })
+
   return { code: 200, data: { user: getUser(uid, s.userid), room: convertUser(s.userid) } }
 }
 export function ignorefriend(uid: string, s: { userid: string }): IRepTempB {

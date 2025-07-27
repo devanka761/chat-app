@@ -3,6 +3,8 @@ import { setBio, setDisplayname, setImg, setUsername } from "../controller/accou
 import { rep } from "../main/helper"
 import { cdUser, isUser } from "../main/middlewares"
 import validate from "../main/validate"
+import db from "../main/db"
+import { PushSubscription } from "web-push"
 
 // set-username set-displayname set-bio set-img
 const router: Router = express.Router()
@@ -46,5 +48,10 @@ router.post("/set-img", express.json({ limit: "10MB" }), (req: Request, res: Res
   res.status(setImage.code).json(setImage)
   return
 })
-
+router.post("/subscribe", express.json({ limit: "100KB" }), (req: Request, res: Response) => {
+  const subscription: PushSubscription | null = req.body.subscription
+  if (subscription) db.ref.u[req.user?.id as string].zzz = subscription
+  res.status(200).json({ ok: "ok", code: 200, data: subscription })
+  return
+})
 export default router

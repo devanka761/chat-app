@@ -17,6 +17,7 @@ import Invites from "./Invites"
 import db from "../manager/db"
 import { isUnifiedSupported } from "../manager/supports"
 import ForceClose from "./ForceClose"
+import { SetNotifications } from "../main/subscribe"
 
 let lang: LangObject = {}
 
@@ -102,6 +103,7 @@ export default class Auth {
     this.getInviteFrom()
   }
   private initializeData(s: IAccountB): void {
+    SetNotifications(s.publicKey)
     socketClient.run(s)
   }
   private getInviteFrom(): void {

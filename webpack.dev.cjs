@@ -1,7 +1,7 @@
 const path = require("path")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
-const { CleanWebpackPlugin } = require("clean-webpack-plugin")
+// const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 
 const appConfig = {
   entry: {
@@ -52,7 +52,7 @@ const appConfig = {
   }
 }
 const plugins = [
-  new CleanWebpackPlugin(),
+  // new CleanWebpackPlugin(),
   new MiniCssExtractPlugin({
     filename: "[name].css"
   })
@@ -83,7 +83,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "public/bundle"),
     filename: "[name].js",
-    clean: true
+    clean: false
   },
   plugins,
   resolve: {

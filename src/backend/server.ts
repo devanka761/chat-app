@@ -20,10 +20,10 @@ import relay from "./main/relay"
 import { parse } from "url"
 import processSocketMessages from "./controller/socket.controller"
 import { forceExitCall, terminateAllCalls } from "./controller/call.controller"
-import serverConfig from "../config/server.config.json"
 import { startModelRemover } from "./controller/genai.controller"
 import webhookSender from "./main/webhook"
 import logger from "./main/logger"
+import { getServerReady } from "./main/prepare"
 console.clear()
 console.log("--------")
 if (!fs.existsSync("./dist")) fs.mkdirSync("./dist")
@@ -32,16 +32,7 @@ if (!fs.existsSync("./dist/sessions")) {
   logger.info("Sessions Reloaded!")
   console.log("--------")
 }
-db.load()
-if (!db.ref.k.v) {
-  db.ref.k.v = 1
-  db.save("k")
-}
-
-if (serverConfig.update) {
-  db.ref.k.v++
-  db.save("k")
-}
+getServerReady()
 
 terminateAllCalls()
 

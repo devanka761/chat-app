@@ -5,6 +5,7 @@ export interface IAccountB {
   c?: IChatsF[]
   socket?: SocketDB
   v?: number
+  publicKey: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   peer?: any | null
 }

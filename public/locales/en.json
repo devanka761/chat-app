@@ -235,5 +235,6 @@
   "CONTACT_request": "Friend Requests",
   "INC_VOICE": "Incoming Voice Call",
   "INC_VIDEO": "Incoming Video Call",
-  "AI_RATE_LIMIT": "You have exceeded <strong>KirAI</strong>'s quota limit.<br/>Please wait <strong>{TIME}</strong> to chat with <strong>KirAI</strong> again."
+  "AI_RATE_LIMIT": "You have exceeded <strong>KirAI</strong>'s quota limit.<br/>Please wait <strong>{TIME}</strong> to chat with <strong>KirAI</strong> again.",
+  "AI_INIT_MSG": "Hi there! **KirAI (Kirimin AI)** here, ready to jump in and help! Ask me anything and I'll try my best to not not mess it up! One more thing, you only get `2 shots` every `10 minutes`."
 }
