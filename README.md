@@ -11,6 +11,7 @@
 6. User profile (username, displayname, bio, and profile picture)
 7. Public posts
 8. In-App Notifications
+9. Web Push Notifications
 
 ## INSTALL
 ### Via Fork/Clone

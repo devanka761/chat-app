@@ -12,8 +12,28 @@ export default [
     id: "room-tab-export",
     txt: "ROOM_OPT_TAB_EXPORT",
     c: "fa-solid fa-file-export fa-fw",
-    run: async (_room: Room) => {
-      modal.alert({ ic: "helmet-safety", msg: "UNDER DEVELOPMENT" })
+    run: async (room: Room) => {
+      const cdb = db.c.find((ch) => ch.r.id === room.data.id)?.m
+
+      if (cdb) {
+        const text = JSON.stringify(cdb)
+        const file = new Blob([text], { type: "application/json" })
+        const url = URL.createObjectURL(file)
+
+        const a = document.createElement("a")
+        a.href = url
+        a.download = `Chat-${room.data.id}.json`
+        a.click()
+        URL.revokeObjectURL(url)
+        a.remove()
+      }
+
+      // const text1 = JSON.stringify(this.mapdata);
+      // const text2 = JSON.stringify(this.finishedEvents);
+      // const file1 = new Blob([text1], { type: "application/json" });
+      // const file2 = new Blob([text2], { type: "application/json" });
+      // const texts = db
+      // modal.alert({ ic: "helmet-safety", msg: "UNDER DEVELOPMENT" })
     }
   },
   {

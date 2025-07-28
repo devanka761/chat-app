@@ -154,7 +154,7 @@ export default class Settings implements PrimaryClass {
           this.isLocked = false
           return
         }
-        await modal.alert("This -ChooseColorTheme- feature is currently under development")
+        await modal.alert({ ic: "helmet-safety", msg: 'This -ChooseColorTheme- feature is currently under development<br /><br />Contribute in the making of Light Color Theme:<br /><a href="https://github.com/devanka761/chat-app/tree/main/src/frontend/sass" target="_blank">https://github.com/devanka761/chat-app/tree/main/src/frontend/sass</a>' })
 
         this.isLocked = false
       }
