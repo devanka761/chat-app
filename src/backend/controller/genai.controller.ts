@@ -1,5 +1,6 @@
 import fs from "fs"
 import { GEN_AI_FEATURE, AI_MODEL } from "../../config/public.config.json"
+import { GenAIsystemInstruction } from "../../config/server.config.json"
 import { KirAIRoom, KirAIUser } from "../../frontend/helper/AccountKirAI"
 import { IMessageUpdateF } from "../../frontend/types/message.types"
 import AIChats from "../main/aichats"
@@ -43,7 +44,7 @@ function getModel(uid: string): AIChat {
       model: AI_MODEL,
       history: aihistory,
       config: {
-        systemInstruction: ["From now, your name is KirAI", "Answer as concisely as possible", "Website user and you are currently on is named Kirimin and you only know about the website documentation is at https://github.com/devanka761/chat-app"]
+        systemInstruction: GenAIsystemInstruction
       }
     })
     AIChats[uid] = {
@@ -67,7 +68,7 @@ async function GetAIAnswer(uid: string, user_text: string, aichat: AIChat, chat_
   const aiAnswer = await aichat.model.sendMessage({
     message: user_text.trim(),
     config: {
-      systemInstruction: ["From now, your name is KirAI", "Answer as concisely as possible", "Website user and you are currently on is named Kirimin and you only know about the website documentation is at https://github.com/devanka761/chat-app"]
+      systemInstruction: GenAIsystemInstruction
     }
   })
   AIChats[uid].rate++

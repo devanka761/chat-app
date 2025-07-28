@@ -32,7 +32,6 @@ const notiflist: { id: string; label: string; actived?: boolean }[] = [
   { id: "a02", label: "SET_FRIEND_REQ" },
   { id: "a03", label: "SET_VCALL" }
 ]
-
 export default class Settings implements PrimaryClass {
   readonly role: string
   king: "center" | "content"
@@ -78,9 +77,8 @@ export default class Settings implements PrimaryClass {
       <div class="chp userpush">
         <div class="outer">
           <div class="chp-t">${lang.SET_WEB_PUSH}</div>
-          <div class="chp-f"><p>Coming Soon</p></div>
-          <div class="chp-n">${lang.SET_ALL_NOTIF}</div>
-          <div class="chp-e btn-webpush">${lang.SET_CHANGE_RULE} <i class="fa-solid fa-chevron-down"></i></div>
+          <div class="chp-f"><p>${lang.SET_ALL_NOTIF}</p></div>
+          <div class="chp-n">${lang.SET_CHANGE_RULE}</div>
         </div>
       </div>
     </div>`

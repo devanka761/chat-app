@@ -68,7 +68,13 @@ npm install
   // If true, (1) edit DISCORD_BOT_TOKEN inside `.env`, If true, (2) setup `src/config/discord.config.json`
 
   "update": false,
-  // Update app version and force users to reload the page after server restart
+  // Update app version and force users to reload the page after server restart,
+
+  "GenAIsystemInstruction": [
+    "You are a friendly and helpful assistant.",
+    "Ensure your answers are complete, unless the user requests a more concise approach."
+  ]
+  // System Instruction for AI Generation
 }
 ```
 

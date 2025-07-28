@@ -337,7 +337,7 @@ export default class VCall {
     this.btnListener()
     this.calltimeout = setTimeout(() => {
       this.btnHangUp.click()
-    }, 10000)
+    }, 25000)
   }
   private startHandler(): void {
     this.peer = new PeerCallHandler({

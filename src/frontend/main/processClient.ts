@@ -42,11 +42,12 @@ class ProcessClient {
     if (userExist) return
     if (!db.me.req) db.me.req = []
     db.me.req.push(s.user)
-    notip({
-      ic: "face-sunglasses",
-      a: escapeHTML(user.username),
-      b: lang.NOTIP_RECIEVE_FRIEND_REQUESTS
-    })
+    if (userState.notif.a02 && userState.notif.a02 >= 1)
+      notip({
+        ic: "face-sunglasses",
+        a: escapeHTML(user.username),
+        b: lang.NOTIP_RECIEVE_FRIEND_REQUESTS
+      })
     if (!userState.center || (userState.center.role !== "friends" && userState.center.role !== "find")) {
       if (userState.tab) {
         const tab = userState.tab as Tab
@@ -107,11 +108,12 @@ class ProcessClient {
     const currUser = currChat?.u.find((usr) => usr.id === s.user.id)
     if (currChat && currUser) currUser.isFriend = user.isFriend
 
-    notip({
-      ic: "user-check",
-      a: escapeHTML(user.username),
-      b: lang.NOTIP_RECIEVE_FRIEND_ACCEPT
-    })
+    if (userState.notif.a02 && userState.notif.a02 >= 1)
+      notip({
+        ic: "user-check",
+        a: escapeHTML(user.username),
+        b: lang.NOTIP_RECIEVE_FRIEND_ACCEPT
+      })
 
     if (!userState.center || (userState.center.role !== "friends" && userState.center.role !== "find")) {
       if (userState.tab) {
@@ -199,7 +201,7 @@ class ProcessClient {
       callcenter.addToList({ message: s.chat, users: s.users })
     }
 
-    if (!isVisible) {
+    if (!isVisible && userState.notif.a01 && userState.notif.a01 >= 1) {
       notip({
         ic: "message-dots",
         a: s.roomdata.short,
