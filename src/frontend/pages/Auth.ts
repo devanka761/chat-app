@@ -72,6 +72,15 @@ export default class Auth {
     <div class="none"><i class="fa-solid fa-map"></i> <i class="fa-regular fa-map"></i> <i class="fa-light fa-map"></i> <i class="fa-thin fa-map"></i> <i class="fa-duotone fa-solid fa-map"></i> <i class="fa-duotone fa-regular fa-map"></i> <i class="fa-duotone fa-light fa-map"></i> <i class="fa-duotone fa-thin fa-map"></i> <i class="fa-sharp fa-solid fa-map"></i> <i class="fa-brands fa-font-awesome"></i> <i class="fa-sharp fa-regular fa-map"></i> <i class="fa-sharp fa-light fa-map"></i> <i class="fa-sharp fa-thin fa-map"></i> <i class="fa-sharp-duotone fa-solid fa-map"></i> <i class="fa-sharp-duotone fa-regular fa-map"></i> <i class="fa-sharp-duotone fa-light fa-map"></i> <i class="fa-sharp-duotone fa-thin fa-map"></i></div>`
   }
   private async checkUser(): Promise<void> {
+    const hasLang = klang.klang.read()
+    if (!hasLang) {
+      const newLang: string | null = await modal.select(SelectLang())
+
+      const definedLang = newLang as Languages
+      klang.klang.currLang = definedLang || "en"
+      klang.klang.save()
+    }
+
     await klang.klang.load()
     lang = klang.lang
 
