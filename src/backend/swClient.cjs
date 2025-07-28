@@ -1,6 +1,5 @@
-import path from "path"
-import webpack from "webpack"
-import logger from "./main/logger"
+const path = require("path")
+const webpack = require("webpack")
 
 function compileServiceWorkers() {
   console.log("compiling service worker")
@@ -44,7 +43,7 @@ function compileServiceWorkers() {
     }
   }).run((err, _) => {
     if (err) {
-      logger.error(err)
+      console.error(err)
       return
     }
     console.log("service worker compiled successfully")
