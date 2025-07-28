@@ -1,8 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
-  ],
-	"labels": ["dependencies"],
-	"assignees": ["devanka761"]
+  "extends": ["config:recommended"],
+  "labels": ["dependencies"],
+  "assignees": ["devanka761"],
+  "ignoreDeps": ["fluent-ffmpeg"]
 }
