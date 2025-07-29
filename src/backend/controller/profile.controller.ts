@@ -4,30 +4,28 @@ import { convertUser } from "../main/helper"
 import { sendPushNotification } from "../main/prepare"
 import zender from "../main/zender"
 import { IRepTempB } from "../types/validate.types"
-import noUser from "../../frontend/helper/noUser"
 
 function isFriend(uid: string, userid: string): number {
   const cdb = db.ref.c
   const isfriend = Object.values(cdb).find((ch) => ch.u.includes(uid) && ch.u.includes(userid) && ch.f === 1)
   if (isfriend) return 1
   const udb = db.ref.u
-  if (udb[userid].req?.find((usr) => usr === uid)) return 2
-  if (udb[uid].req?.find((usr) => usr === userid)) return 3
+  if (udb[userid]?.req?.find((usr) => usr === uid)) return 2
+  if (udb[uid]?.req?.find((usr) => usr === userid)) return 3
   return 0
 }
 
 export function getUser(uid: string, userid: string): IUserF {
   const udb = db.ref.u[userid]
-  if (!udb) return noUser()
   const data: IUserF = {
-    id: udb.id,
-    username: <string>udb.uname,
-    displayname: <string>udb.dname,
-    isFriend: isFriend(uid, userid)
+    id: udb?.id || "-1",
+    username: <string>udb?.uname || "Former Member",
+    displayname: <string>udb?.dname || "Former Member",
+    isFriend: isFriend(uid, userid) || 0
   }
-  if (udb.b) data.badges = udb.b
-  if (udb.bio) data.bio = udb.bio
-  if (udb.img) data.image = udb.img
+  if (udb?.b) data.badges = udb.b
+  if (udb?.bio) data.bio = udb.bio
+  if (udb?.img) data.image = udb.img
   return data
 }
 
