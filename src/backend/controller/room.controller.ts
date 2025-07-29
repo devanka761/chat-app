@@ -112,7 +112,7 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
       title: `@${dataZender.roomdata.short}`,
       text: `Kirimin - New Message - @${dataZender.roomdata.short}`,
       tag: "new-message",
-      url: `/app?chat=${room_id}`
+      url: `/app?chat=${uid}`
     })
   }
 

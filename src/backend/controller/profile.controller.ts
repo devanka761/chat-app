@@ -90,7 +90,7 @@ export function addfriend(uid: string, s: { userid: string }): IRepTempB {
     title: `@${mdb.uname}`,
     text: `Kirimin - Friend Request - @${mdb.uname}`,
     tag: "new-friend-request",
-    url: `/app?user=${s.userid}`
+    url: `/app?user=${uid}`
   })
   return { code: 200, data: { user: getUser(uid, s.userid) } }
 }
@@ -154,7 +154,7 @@ export function acceptfriend(uid: string, s: { userid: string }): IRepTempB {
     title: `@${mdb.uname}`,
     text: `Kirimin - Request Accepted - @${mdb.uname}`,
     tag: "new-friend-accepted",
-    url: `/app?user=${s.userid}`
+    url: `/app?user=${uid}`
   })
 
   return { code: 200, data: { user: getUser(uid, s.userid), room: convertUser(s.userid) } }
