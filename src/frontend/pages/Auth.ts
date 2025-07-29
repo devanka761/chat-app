@@ -18,6 +18,8 @@ import db from "../manager/db"
 import { isUnifiedSupported } from "../manager/supports"
 import ForceClose from "./ForceClose"
 import { SetNotifications } from "../main/subscribe"
+import Room from "../pm/content/Room"
+import { removeParams } from "../main/urlHistory"
 
 let lang: LangObject = {}
 
@@ -104,9 +106,8 @@ export default class Auth {
     const epm: HTMLDivElement = kel("div", "pm")
     eroot().append(epm)
     adap.setHeader(new HeaderBar())
-    const newcontent = isUser.data.isFirst ? new Account() : new Empty()
     adap.setCenter(new Chats())
-    adap.setContent(newcontent)
+    this.getChatRedirect(new Empty())
     adap.setTab(new Tab())
     adap.launch()
     this.getInviteFrom()
@@ -122,6 +123,21 @@ export default class Auth {
       if (db.c.find((ch) => ch.r.link === inviteId)) return
       new Invites({ link: inviteId })
     }
+  }
+  private getChatRedirect(newcontent: Account | Empty | Room): void {
+    const urlParams = new URLSearchParams(window.location.search)
+    const chatId = urlParams.get("chat")
+    if (chatId) {
+      const cdb = db.c.find((ch) => ch.r.id === chatId)
+      if (cdb) newcontent = new Room({ data: cdb.r, users: cdb.u })
+      removeParams("chat")
+    }
+    const isfirst = urlParams.get("first")
+    if (isfirst) {
+      newcontent = new Account()
+      removeParams("first")
+    }
+    adap.setContent(newcontent)
   }
   private writeForm(): void {
     auth_container = this.el

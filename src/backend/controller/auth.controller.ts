@@ -77,7 +77,7 @@ export function processUser(email: string, dbkey: string): IRepTempB {
   const provider: ValidProviders = "kirimin"
 
   const udb = db.ref.u
-  const data: { user: UserProcess } = { user: { data: { provider, email } } }
+  const data: { user: UserProcess; first?: boolean } = { user: { data: { provider, email } } }
   let ukey: string | undefined = Object.keys(udb).find((key) =>
     udb[key].data.find((snap) => {
       return snap.provider === provider && snap.email === email
@@ -86,6 +86,7 @@ export function processUser(email: string, dbkey: string): IRepTempB {
   if (!ukey) {
     ukey = "7" + rNumber(5).toString() + (Object.keys(udb).length + 1).toString()
     db.ref.u[ukey] = { id: ukey, data: [data.user.data], uname: `u${ukey}`, dname: `User ${ukey}` }
+    data.first = true
   }
   data.user.id = ukey
   data.user.data.id = ukey
@@ -101,7 +102,7 @@ export function processThirdParty(s: { user: IUserTempB; provider: string }): IR
     id: s.user.id,
     provider: s.provider as ValidProviders
   }
-  const data: { user: { id?: string; data: IUserTempB } } = { user: { data: userInfo } }
+  const data: { user: { id?: string; data: IUserTempB }; first?: boolean } = { user: { data: userInfo } }
 
   let ukey = Object.keys(udb).find((key) =>
     udb[key].data.find((snap) => {
@@ -111,6 +112,7 @@ export function processThirdParty(s: { user: IUserTempB; provider: string }): IR
   if (!ukey) {
     ukey = "7" + rNumber(5).toString() + (Object.keys(udb).length + 1).toString()
     db.ref.u[ukey] = { id: ukey, data: [data.user.data], uname: `u${ukey}`, dname: `User ${ukey}` }
+    data.first = true
   }
   data.user.id = ukey
   db.ref.u[ukey].data = [data.user.data]

@@ -4,6 +4,7 @@ import modal from "../helper/modal"
 import setbadge from "../helper/setbadge"
 import xhr from "../helper/xhr"
 import adap from "../main/adaptiveState"
+import { removeParams } from "../main/urlHistory"
 import userState from "../main/userState"
 import db from "../manager/db"
 import Chats from "../pm/center/Chats"
@@ -90,6 +91,7 @@ export default class Invites {
       await this.destroy()
       this.joinToGroup()
     }
+    removeParams("invite")
   }
   private async joinToGroup(): Promise<void> {
     this.isLocked = true

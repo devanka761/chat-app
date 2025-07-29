@@ -87,7 +87,8 @@ router.get("/:provider/callback", async (req: Request, res: Response) => {
       provider: userData.data.provider
     }
   }
-  res.redirect("/app")
+  const redirectUrl = "/app" + (verifyUser.data.first ? "?first=1" : "")
+  res.redirect(redirectUrl)
   return
 })
 

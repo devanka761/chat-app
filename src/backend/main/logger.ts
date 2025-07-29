@@ -36,7 +36,7 @@ class ConsoleLogger {
   }
 
   public error(content: string | Error | unknown): void {
-    console.log(`${new Date().toLocaleTimeString()} ❗️ [${this.origin.length > 25 ? this.origin.substring(0, 17) + "..." : this.origin}] ${content}`)
+    console.log(`${new Date().toLocaleTimeString()} ❗️ [${this.origin.length > 25 ? this.origin.substring(0, 17) + "..." : this.origin}]`, content)
   }
 
   public info(content: string): void {

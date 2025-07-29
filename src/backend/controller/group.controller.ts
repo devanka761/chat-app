@@ -190,6 +190,10 @@ export function joinGroup(uid: string, groupid: string, link: string): IRepTempB
   if (groupid === "696969" || link === "zzzzzz") return getGlobalChats(uid)
   if (gdb.u.find((usr) => usr === uid)) return { code: 200, data: getGroup(uid, groupid) }
 
+  if (db.ref.c[groupid].u.length >= 10) {
+    return { code: 404, msg: "GRPS_MEMBER_LIMIT" }
+  }
+
   db.ref.c[groupid].u.push(uid)
   db.save("c")
 

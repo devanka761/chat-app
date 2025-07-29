@@ -9,7 +9,7 @@
     "dev": "nodemon",
     "build": "echo Bundling Client && webpack --config webpack.prod.cjs && echo Client Done && node ./src/backend/swClient.cjs && echo Bundling Server && rm -rf ./dist/bundle && tsc && echo Server Done && echo Finished",
     "client:build": "webpack --config webpack.prod.cjs",
-    "dev:build": "rm -rf ./public/bundle && tsx ./src/backend/swClient.ts && webpack --config webpack.dev.cjs",
+    "dev:build": "rm -rf ./public/bundle && node ./src/backend/swClient.cjs && webpack --config webpack.dev.cjs",
     "server:build": "rm -rf ./dist/bundle && tsc",
     "dbclear": "tsx ./src/backend/clearDB.ts",
     "coba": "tsx ./ex/coba.ts"

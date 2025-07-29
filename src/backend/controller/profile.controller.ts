@@ -4,6 +4,7 @@ import { convertUser } from "../main/helper"
 import { sendPushNotification } from "../main/prepare"
 import zender from "../main/zender"
 import { IRepTempB } from "../types/validate.types"
+import noUser from "../../frontend/helper/noUser"
 
 function isFriend(uid: string, userid: string): number {
   const cdb = db.ref.c
@@ -17,6 +18,7 @@ function isFriend(uid: string, userid: string): number {
 
 export function getUser(uid: string, userid: string): IUserF {
   const udb = db.ref.u[userid]
+  if (!udb) return noUser()
   const data: IUserF = {
     id: udb.id,
     username: <string>udb.uname,
