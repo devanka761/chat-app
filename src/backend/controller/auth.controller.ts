@@ -11,7 +11,7 @@ import { IUserTempB, ValidProviders } from "../types/binder.types"
 import logger from "../main/logger"
 
 export function isUserLogged(uid?: string): IRepTempB {
-  if (!uid) return { code: 400 }
+  if (!uid) return { code: 401 }
   return haccount.getMe(uid)
 }
 
