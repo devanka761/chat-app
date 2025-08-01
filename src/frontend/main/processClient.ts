@@ -166,6 +166,8 @@ class ProcessClient {
     }
     dbchat = db.c.find((k) => k.r.id === s.roomdata.id)
     if (dbchat) {
+      const oldUsr = dbchat.u.find((usr) => usr.id === s.sender?.id)
+      if (!oldUsr && dbchat.r.id === "696969" && s.sender) dbchat.u.push(s.sender)
       const oldDB = dbchat.m.find((ch) => ch.id === s.chat.id)
       if (oldDB) {
         oldDB.text = s.chat.text

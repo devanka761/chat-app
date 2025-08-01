@@ -5,7 +5,7 @@ export const KirAIRoom: IRoomDataF = {
   long: "Kirimin AI",
   short: "kirai",
   type: "user",
-  badges: [5]
+  badges: [6]
 }
 export const KirAIUser: IUserF = {
   id: "420",
@@ -13,5 +13,5 @@ export const KirAIUser: IUserF = {
   displayname: "Kirimin AI",
   bio: "Kirimin Chat Bot",
   isFriend: 0,
-  badges: [5]
+  badges: [6]
 }

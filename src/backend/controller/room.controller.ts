@@ -117,7 +117,12 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
   }
 
   const onlineUsers = room_id === "696969" ? getAllOnlineUsers() : users
-  onlineUsers.forEach((usr) => zender(uid, usr, "sendmessage", dataZender))
+  onlineUsers.forEach((usr) =>
+    zender(uid, usr, "sendmessage", {
+      ...dataZender,
+      sender: getUser(usr, uid)
+    })
+  )
 
   return { code: 200, data: dataRep }
 }
@@ -164,7 +169,12 @@ export function editMessage(uid: string, chatkey: string, room_id: string, room_
     users: users.map((usr) => getUser(uid, usr))
   }
   const onlineUsers = room_id === "696969" ? getAllOnlineUsers() : users
-  onlineUsers.forEach((usr) => zender(uid, usr, "editmessage", dataZender))
+  onlineUsers.forEach((usr) =>
+    zender(uid, usr, "editmessage", {
+      ...dataZender,
+      sender: getUser(usr, uid)
+    })
+  )
 
   return { code: 200, data: dataRep }
 }
@@ -216,7 +226,12 @@ export function delMessage(uid: string, target: string, room: string, message_id
 
   const onlineUsers = target === "696969" ? getAllOnlineUsers() : users
 
-  onlineUsers.forEach((usr) => zender(uid, usr, "deletemessage", dataZender))
+  onlineUsers.forEach((usr) =>
+    zender(uid, usr, "deletemessage", {
+      ...dataZender,
+      sender: getUser(usr, uid)
+    })
+  )
 
   return { code: 200, data: dataRep }
 }

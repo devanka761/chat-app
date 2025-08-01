@@ -11,7 +11,16 @@ $bg: #3f464e;
   color: v.$cred;
   text-transform: uppercase;
 }
-
+.spill {
+  z-index: 98;
+  padding: 10px 20px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  background: v.$pm1;
+  position: fixed;
+  border-radius: 10px;
+  color: v.$px1;
+}
 .loading {
   z-index: 98;
   position: fixed;

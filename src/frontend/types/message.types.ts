@@ -25,4 +25,5 @@ export interface IMessageUpdateF {
   roomdata: IRoomDataF
   chat: IMessageF
   users: IUserF[]
+  sender?: IUserF
 }

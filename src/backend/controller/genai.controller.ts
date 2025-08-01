@@ -149,7 +149,7 @@ export function clearAIChat(uid: string): IRepTempB {
   if (!GEN_AI_FEATURE) return { code: 400 }
   const chatpath = `./dist/db/kirai/ai${uid}.json`
 
-  if (fs.existsSync(chatpath)) fs.rmSync(chatpath)
+  if (fs.existsSync(chatpath)) fs.writeFileSync(chatpath, JSON.stringify({}), "utf-8")
   if (AIChats[uid]) delete AIChats[uid]
 
   return { code: 200 }
