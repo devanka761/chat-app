@@ -1,12 +1,13 @@
 {
   "name": "mondin",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Chat App Written in TypeScript with Responsive Design",
   "main": "./dist/bundle/backend/server.js",
   "scripts": {
     "lint": "eslint",
     "start": "node .",
     "dev": "nodemon",
+    "dev:start": "nodemon",
     "build": "echo Bundling Client && webpack --config webpack.prod.cjs && echo Client Done && node ./src/backend/swClient.cjs && echo Bundling Server && rm -rf ./dist/bundle && tsc && echo Server Done && echo Finished",
     "client:build": "webpack --config webpack.prod.cjs",
     "dev:build": "rm -rf ./public/bundle && node ./src/backend/swClient.cjs && webpack --config webpack.dev.cjs",

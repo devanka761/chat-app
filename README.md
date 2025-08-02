@@ -1,4 +1,4 @@
-# CHAT APP - Kirimin v3.0.0
+# Chat App - Kirimin
 - Live Demo: [Kirimin](https://kirimin.devanka.id/)
 - Support Me: [Donasi Saweria](https://saweria.co/devanka)
 - Subscribe: YouTube [Devanka 761](https://www.youtube.com/@devanka761)

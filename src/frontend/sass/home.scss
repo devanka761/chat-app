@@ -72,8 +72,10 @@ body {
             &:last-child {
               margin-bottom: 0;
             }
-            &.joined {
+            &.anim {
               animation: popup_in 0.5s;
+            }
+            &.joined {
               background-color: v.$pm2;
               color: v.$white;
             }
