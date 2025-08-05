@@ -17,7 +17,7 @@ export function cdUser(req: Request, res: Response, next: NextFunction) {
   const uid = req.user?.id ? req.user.id : ip
 
   if (userCDs.has(uid) && userCDs.get(uid) > Date.now()) {
-    res.json({ ok: false, code: 429, msg: "TO_MANY_REQUEST" })
+    res.status(429).json({ ok: false, code: 429, msg: "TO_MANY_REQUEST" })
     return
   }
 
@@ -27,7 +27,7 @@ export function cdUser(req: Request, res: Response, next: NextFunction) {
 }
 export function isUser(req: Request, res: Response, next: NextFunction) {
   if (!req.user?.id || !db.ref.u[req.user.id].data) {
-    res.json({ code: 401, msg: "UNAUTHORIZED" })
+    res.status(401).json({ ok: false, code: 401, msg: "UNAUTHORIZED" })
     return
   }
   next()
