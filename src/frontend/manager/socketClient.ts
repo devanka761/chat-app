@@ -10,6 +10,9 @@ import peerConfiguration from "../main/peerConfig"
 import processClient from "../main/processClient"
 import userState from "../main/userState"
 import ForceClose from "../pages/ForceClose"
+import Empty from "../pm/content/Empty"
+import Group from "../pm/content/Group"
+import Room from "../pm/content/Room"
 import db from "./db"
 
 function socketError(err: Event) {
@@ -86,7 +89,18 @@ export class SocketClient {
     await modal.waittime(2200)
     if (userState.tab) userState.tab.update()
     if (userState.center) adap.swipe(userState.center, true)
-    if (userState.content) adap.swipe(userState.content, true)
+    if (userState.content) {
+      let setEmpty: boolean = false
+      if (userState.content.role === "room") {
+        const room = userState.content as Room
+        if (room.data.id === "696969" || room.data.id === "420") setEmpty = true
+      } else if (userState.content.role === "group") {
+        const group = userState.content as Group
+        if (group.group.id === "696969" || group.group.id === "420") setEmpty = true
+      }
+
+      adap.swipe(setEmpty ? new Empty() : userState.content, true)
+    }
     await modal.waittime(1100)
     if (this.locker) {
       this.locker.classList.remove("getready")
