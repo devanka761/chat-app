@@ -47,7 +47,7 @@ export function setGroupname(uid: string, s: { gname: string; id: string }): IRe
   const gkey = Object.keys(cdb).find((k) => k === s.id)
 
   if (!gkey) return { code: 404, msg: "GRPS_404" }
-  if (!cdb[gkey].o || cdb[gkey].o !== uid) return { code: 400, msg: "GRPS_OWNER_FEATURE" }
+  if (!cdb[gkey].o || cdb[gkey].o !== uid) return { code: 403, msg: "GRPS_OWNER_FEATURE" }
   if (cdb[gkey].lg && cdb[gkey].lg > Date.now()) {
     return { code: 429, msg: "GRPS_DNAME_COOLDOWN", data: { timestamp: cdb[gkey].lg } }
   }
@@ -69,7 +69,7 @@ export function setImg(uid: string, s: { img: string; name: string; id: string }
   const cdb = db.ref.c[gkey]
   if (!cdb) return { code: 404, msg: "GRPS_404" }
 
-  if (!cdb.o || cdb.o !== uid) return { code: 400, msg: "GRPS_OWNER_FEATURE" }
+  if (!cdb.o || cdb.o !== uid) return { code: 403, msg: "GRPS_OWNER_FEATURE" }
 
   const dataurl = decodeURIComponent(s.img)
   const buffer = Buffer.from(dataurl.split(",")[1], "base64")
@@ -97,7 +97,7 @@ export function resetLink(uid: string, s: { id: string }): IRepTempB {
   const { id } = s
   const cdb = db.ref.c[id]
   if (!cdb || cdb.t !== "group") return { code: 404, msg: "GRPS_404" }
-  if (cdb.o !== uid) return { code: 400 }
+  if (cdb.o !== uid) return { code: 403, msg: "GRPS_OWNER_FEATURE" }
   const invite_link = rNumber(1) + (Number(id) + rNumber(6)).toString(36).substring(1) + Date.now().toString(36)
   db.ref.c[id].l = invite_link
   db.save("c")
