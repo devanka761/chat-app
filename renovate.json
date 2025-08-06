@@ -6,8 +6,8 @@
   "ignoreDeps": ["fluent-ffmpeg"],
   "packageRules": [
     {
-      "depTypeList": ["devDependencies"],
-      "updateTypes": ["minor", "patch", "pin", "digest"],
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "addLabels": ["dev-dependencies"],
       "automerge": true,
       "enabled": true
