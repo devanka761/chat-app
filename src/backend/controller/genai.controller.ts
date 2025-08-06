@@ -21,13 +21,13 @@ function removeModels(): void {
   const userModels = Object.keys(AIChats).filter((k) => Date.now() >= AIChats[k].ts && !db.ref.u[k].socket)
 
   if (userModels.length >= 1) {
-    webhookSender.modelLog({ userids: userModels.join(" ") })
+    webhookSender.modelLog({ userids: userModels.map((model) => `Model ${model}`).join(", ") })
     userModels.forEach((k) => delete AIChats[k])
   }
 }
 
 export function startModelRemover(): void {
-  setInterval(removeModels, 1000 * 60 * 60 * 3)
+  setInterval(removeModels, 1000 * 60 * 60 * 2)
 }
 
 function getModel(uid: string): AIChat {
