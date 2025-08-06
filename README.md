@@ -13,6 +13,10 @@
 8. In-App Notifications
 9. Web Push Notifications
 
+## API DOCS
+Create your own **Kirimin Client**!
+[https://devanka761.github.io/kirimin-docs](https://devanka761.github.io/kirimin-docs)
+
 ## INSTALL
 ### Via Fork/Clone
 Install all dependencies with **NPM**
