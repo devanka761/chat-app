@@ -7,7 +7,6 @@
   "packageRules": [
     {
       "matchDepTypes": ["devDependencies"],
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "addLabels": ["dev-dependencies"],
       "automerge": true,
       "enabled": true
