@@ -48,10 +48,11 @@ const webhookSender = {
     })
   },
   modelLog(s: { userids: string }) {
-    sendToDiscord(USER_LOG, {
+    sendToDiscord(AI_LEARN, {
       embeds: [
         {
-          description: `model **\`${s.userids}\`** destroyed`,
+          title: "Models Destroyed",
+          description: `\`\`\`${s.userids}\`\`\``,
           color: colors.yellow
         }
       ]

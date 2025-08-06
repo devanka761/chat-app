@@ -1,6 +1,6 @@
 {
   "name": "mondin",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Chat App Written in TypeScript with Responsive Design",
   "main": "./dist/bundle/backend/server.js",
   "scripts": {
@@ -8,10 +8,10 @@
     "start": "node .",
     "dev": "nodemon",
     "dev:start": "nodemon",
-    "build": "echo Bundling Client && webpack --config webpack.prod.cjs && echo Client Done && node ./src/backend/swClient.cjs && echo Bundling Server && rm -rf ./dist/bundle && tsc && echo Server Done && echo Finished",
+    "build": "echo Bundling Frontend && webpack --config webpack.prod.cjs && echo Frontend Done && node ./src/backend/swClient.cjs && echo Compiling Backend && rm -rf ./dist/bundle && tsgo -p . --extendedDiagnostics && echo Backend Done && echo Finished",
     "client:build": "webpack --config webpack.prod.cjs",
     "dev:build": "rm -rf ./public/bundle && node ./src/backend/swClient.cjs && webpack --config webpack.dev.cjs",
-    "server:build": "rm -rf ./dist/bundle && tsc",
+    "server:build": "rm -rf ./dist/bundle && tsgo -p . --extendedDiagnostics",
     "dbclear": "tsx ./src/backend/clearDB.ts",
     "coba": "tsx ./ex/coba.ts"
   },
@@ -53,6 +53,7 @@
     "@types/session-file-store": "^1.2.5",
     "@types/web-push": "^3.6.4",
     "@types/ws": "^8.18.1",
+    "@typescript/native-preview": "^7.0.0-dev.20250805.1",
     "babel-loader": "^10.0.0",
     "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^7.1.2",
