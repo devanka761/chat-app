@@ -3,5 +3,14 @@
   "extends": ["config:recommended"],
   "labels": ["dependencies"],
   "assignees": ["devanka761"],
-  "ignoreDeps": ["fluent-ffmpeg"]
+  "ignoreDeps": ["fluent-ffmpeg"],
+  "packageRules": [
+    {
+      "depTypeList": ["devDependencies"],
+      "updateTypes": ["minor", "patch", "pin", "digest"],
+      "addLabels": ["dev-dependencies"],
+      "automerge": true,
+      "enabled": true
+    }
+  ]
 }
