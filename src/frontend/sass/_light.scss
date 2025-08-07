@@ -2,12 +2,15 @@
 $pyellow: #80700a;
 $black: #00000b;
 $pWhiteWall: #e0efe6;
+$pEarthWhite: #d1e9e3;
 $pMintWhite: #d0ddd0;
 $pLightGrey: #52575d;
 $pLightBlack: #41444b;
 $pDarkBlack: #323438;
+$pSoftBlack: #222427;
 $pSoftMintGreen: #659287;
 $pDarkMintGreen: #5f6f65;
+$pEarthMint: #d5eecd;
 
 html[data-theme="light"] {
   scrollbar-color: $pDarkMintGreen $pMintWhite;
@@ -214,7 +217,7 @@ html[data-theme="light"] {
     }
     .header-options {
       background-color: $pMintWhite;
-      box-shadow: 0 0 10px $black;
+      box-shadow: 0 0 10px $pDarkMintGreen;
       .btn {
         background-color: $pMintWhite;
         &:hover {
@@ -386,6 +389,337 @@ html[data-theme="light"] {
         a {
           color: w.$sred;
           border-bottom: 1px solid w.$sred;
+        }
+      }
+    }
+  }
+  // profile
+  .Profile {
+    background-color: $pMintWhite;
+    .top {
+      background-color: $pMintWhite;
+      box-shadow: 0 0 1px $pDarkMintGreen;
+    }
+    .wall {
+      .actions {
+        .btn {
+          border-color: $pDarkMintGreen;
+          background-color: $pWhiteWall;
+          i {
+            color: w.$sgreen;
+          }
+        }
+      }
+      .options {
+        .btn {
+          background-color: $pSoftBlack;
+          color: $pWhiteWall;
+        }
+        .sg {
+          i {
+            color: w.$cgreen;
+          }
+        }
+        .sb {
+          i {
+            color: w.$blurple;
+          }
+        }
+        .sr {
+          i {
+            color: w.$cred;
+          }
+        }
+        .note {
+          font-style: italic;
+          color: $pDarkBlack;
+        }
+      }
+    }
+  }
+  // room
+  .Room {
+    background-color: $pMintWhite;
+    .top {
+      background-color: $pMintWhite;
+      box-shadow: 0 0 1px $pDarkMintGreen;
+      .left {
+        background-color: $pMintWhite;
+        .user {
+          .names {
+            .dname {
+              color: $pDarkMintGreen;
+            }
+          }
+        }
+      }
+      .right {
+        background-color: $pMintWhite;
+      }
+      .options {
+        background-color: $pWhiteWall;
+        box-shadow: 0 0 10px $pDarkMintGreen;
+        .btn {
+          background-color: $pWhiteWall;
+          &:hover {
+            background-color: $pDarkMintGreen;
+            color: $pWhiteWall;
+          }
+        }
+      }
+    }
+    .bottom {
+      background-color: $pMintWhite;
+      box-shadow: 0 0 2px $pDarkMintGreen;
+      .embed {
+        .box {
+          background-color: $pWhiteWall;
+          border-left: 2px solid $pDarkMintGreen;
+          .left {
+            color: $pDarkMintGreen;
+          }
+        }
+      }
+      .embed.embed-edit {
+        .box {
+          border-color: $pDarkMintGreen;
+          .left {
+            color: $pDarkMintGreen;
+          }
+        }
+      }
+      .attach {
+        border-bottom: 1px solid rgba($color: $pDarkMintGreen, $alpha: 0.5);
+        .media {
+          .name {
+            color: $pDarkMintGreen;
+          }
+          .document {
+            color: $pDarkMintGreen;
+          }
+        }
+      }
+      .field {
+        .input {
+          .textbox {
+            textarea {
+              color: $pDarkBlack;
+            }
+          }
+        }
+        .voice {
+          .btn {
+            background-color: $pDarkMintGreen;
+            color: $pWhiteWall;
+          }
+        }
+      }
+      .recorder {
+        .record-status {
+          color: $pDarkBlack;
+        }
+        .timestamp {
+          color: $pDarkBlack;
+        }
+        .btn-cancel {
+          color: w.$sred;
+        }
+        .voice {
+          .btn {
+            background-color: w.$sgreen;
+            color: w.$white;
+            &.btn-spinning {
+              outline: dashed 3px w.$sgreen;
+            }
+          }
+        }
+      }
+    }
+    .mid {
+      .gotolast {
+        background-color: $pSoftMintGreen;
+        color: w.$white;
+        box-shadow: 0 0 5px $pDarkMintGreen;
+      }
+      .chatlist {
+        .card {
+          .optmenu {
+            background-color: rgba($color: $pEarthMint, $alpha: 0.6);
+            .btn {
+              &:hover {
+                background-color: rgba($color: $pDarkMintGreen, $alpha: 0.2);
+              }
+              &.opt-profile {
+                color: w.$sgreen;
+                &:hover {
+                  background-color: rgba($color: w.$sgreen, $alpha: 0.25);
+                }
+              }
+              &.opt-download {
+                color: $pyellow;
+                &:hover {
+                  background-color: rgba($color: $pyellow, $alpha: 0.15);
+                }
+              }
+              &.opt-delete,
+              &.opt-cancel {
+                color: w.$sred;
+                &:hover {
+                  background-color: rgba($color: w.$sred, $alpha: 0.15);
+                }
+              }
+            }
+          }
+          .field {
+            background: $pWhiteWall;
+            .sender {
+              color: $pDarkBlack;
+            }
+            .embed {
+              background-color: rgba($color: $pDarkMintGreen, $alpha: 0.1);
+              border-left: 3px solid $pDarkMintGreen;
+              color: $pDarkMintGreen;
+            }
+            .attach {
+              .document {
+                color: $pDarkMintGreen;
+                border: 1px solid $pDarkMintGreen;
+              }
+              .img {
+                background-color: $pDarkMintGreen;
+              }
+              .voice {
+                .range {
+                  input[type="range"] {
+                    background-color: w.$softwhite;
+                  }
+                  input[type="range"]::-webkit-slider-thumb {
+                    background: $pDarkBlack;
+                  }
+                  input[type="range"]::-ms-thumb {
+                    background: $pDarkBlack;
+                  }
+                  input[type="range"]::-moz-range-thumb {
+                    background: $pDarkBlack;
+                  }
+                  input[type="range"]:active::-webkit-slider-thumb {
+                    box-shadow: 0 0 0 5px $pDarkMintGreen;
+                  }
+                  input[type="range"]:active::-webkit-slider-thumb {
+                    outline: solid 2px $pDarkMintGreen;
+                  }
+                  input[type="range"]:active::-moz-range-thumb {
+                    box-shadow: 0 0 0 5px $pDarkMintGreen;
+                  }
+                }
+              }
+            }
+            .vc {
+              .vc-icon {
+                background-color: #90949d20;
+              }
+              .vc-message {
+                p:not(:first-child) {
+                  color: $pDarkBlack;
+                }
+              }
+              &.ct-missed {
+                color: w.$cred;
+              }
+              &.ct-rejected {
+                color: w.$cred;
+              }
+              &.ct-outgoing {
+                color: w.$cgreen;
+              }
+              &.ct-incoming {
+                color: w.$cgreen;
+              }
+              &.ct-now {
+                color: w.$yellow;
+              }
+            }
+            .text {
+              .msg {
+                code {
+                  color: rgba($color: $pyellow, $alpha: 0.7);
+                }
+              }
+              .edited {
+                color: $pLightBlack;
+              }
+              &.del {
+                color: $pLightGrey;
+              }
+            }
+            .time {
+              color: $pLightBlack;
+            }
+          }
+          &.me {
+            .field {
+              background: $pEarthWhite;
+            }
+          }
+          &:has(.optmenu) {
+            .field {
+              border-right: 2px solid $pSoftMintGreen;
+              border-left: none;
+            }
+            &.me {
+              .field {
+                border-right: none;
+                border-left: 2px solid $pSoftMintGreen;
+              }
+            }
+          }
+          &.error {
+            .field {
+              .time {
+                color: w.$cred;
+              }
+              .text p {
+                color: $pLightBlack;
+              }
+            }
+          }
+          &.highlight {
+            animation: bgTrans2 5s;
+          }
+        }
+        .preload {
+          i {
+            color: $pDarkMintGreen;
+          }
+        }
+      }
+    }
+  }
+  // invites
+  .invites {
+    background-color: rgba($color: $black, $alpha: 0.2);
+    .box {
+      background-color: $pMintWhite;
+      box-shadow: 0 0 10px $pDarkMintGreen;
+      .title {
+        p.name {
+          color: $pDarkBlack;
+        }
+        p.members {
+          i {
+            color: w.$sred;
+          }
+        }
+      }
+      .actions {
+        .btn {
+          border: 1px solid $pDarkMintGreen;
+          background-color: $pWhiteWall;
+          color: $pDarkBlack;
+          &:last-child {
+            color: $pWhiteWall;
+            background-color: $pDarkMintGreen;
+          }
         }
       }
     }
