@@ -1,0 +1,906 @@
+@use "./variables" as v;
+
+html[data-theme="light"] {
+  scrollbar-color: v.$pDarkMintGreen v.$pMintWhite;
+}
+
+[data-theme="light"] {
+  body {
+    background: v.$pWhiteWall;
+    color: v.$pDarkBlack;
+  }
+  input {
+    color: v.$pDarkBlack;
+  }
+  textarea {
+    color: v.$pDarkBlack;
+  }
+  a {
+    color: v.$pDarkMintGreen;
+  }
+  input[type="checkbox"] {
+    background-color: v.$pWhiteWall;
+    color: v.$pDarkMintGreen;
+  }
+  input[type="checkbox"]::before {
+    box-shadow: inset 1rem 1rem v.$pDarkMintGreen;
+    background-color: v.$pWhiteWall;
+  }
+  ::selection {
+    background: v.$pDarkMintGreen;
+    color: v.$pWhiteWall;
+  }
+  .spill {
+    background: v.$pSoftMintGreen;
+    color: v.$pWhiteWall;
+  }
+  .loading {
+    background-color: rgba($color: v.$black, $alpha: 0.25);
+    color: v.$pWhiteWall;
+    .box {
+      background-color: v.$pSoftMintGreen;
+    }
+  }
+
+  .modal {
+    background-color: rgba($color: v.$black, $alpha: 0.25);
+    color: v.$pDarkBlack;
+    .box {
+      background-color: v.$pMintWhite;
+      box-shadow: -3px 3px 5px v.$pDarkMintGreen;
+      .ic {
+        color: v.$pDarkMintGreen;
+      }
+      .inf {
+        a {
+          color: v.$pDarkMintGreen;
+        }
+        input[type="text"],
+        textarea {
+          background-color: v.$pWhiteWall;
+        }
+        .modal-radio-form {
+          .radio {
+            border: 1px solid v.$pDarkMintGreen;
+            label {
+              input[type="radio"] {
+                background-color: v.$pWhiteWall;
+                color: v.$pDarkMintGreen;
+              }
+              input[type="radio"]::before {
+                box-shadow: inset 1em 1em v.$pMintWhite;
+                background-color: v.$pDarkMintGreen;
+              }
+              input[type="radio"]:checked {
+                background-color: v.$pDarkMintGreen;
+              }
+            }
+          }
+        }
+        .radio:has(:checked) {
+          border-color: v.$pDarkMintGreen;
+          background-color: rgba($color: v.$pDarkMintGreen, $alpha: 0.2);
+        }
+      }
+      .acts {
+        .btn {
+          color: v.$pDarkBlack;
+          border: 1px solid v.$pDarkMintGreen;
+        }
+        .btn-cancel {
+          background-color: v.$pWhiteWall;
+        }
+        .btn-ok {
+          background-color: v.$pDarkMintGreen;
+          color: v.$pWhiteWall;
+        }
+      }
+      .act {
+        .btn-ok {
+          background-color: v.$pDarkMintGreen;
+          color: v.$pWhiteWall;
+        }
+      }
+    }
+  }
+  .Auth {
+    background-color: v.$pWhiteWall;
+    .none {
+      i {
+        color: #ffffff01;
+      }
+    }
+    .box {
+      background-color: v.$pMintWhite;
+      border: 1px solid v.$pDarkBlack;
+      .top {
+        background: v.$pLightBlack;
+        color: v.$pWhiteWall;
+      }
+      .form {
+        .field {
+          a {
+            color: v.$pDarkMintGreen;
+          }
+          .btn-lang {
+            border-bottom: 1px solid v.$pDarkBlack;
+          }
+          .labels {
+            .btn-help {
+              color: v.$pDarkMintGreen;
+            }
+          }
+          .inp {
+            input {
+              background-color: v.$pWhiteWall;
+              color: v.$pDarkBlack;
+              border: 1px solid v.$pWhiteWall;
+              &:focus {
+                border-color: v.$pDarkMintGreen;
+              }
+            }
+            .btn {
+              color: v.$pWhiteWall;
+              background-color: v.$pLightBlack;
+              &.btn-login {
+                background-color: v.$pDarkMintGreen;
+              }
+              &.btn-google {
+                color: v.$cred;
+              }
+              &.btn-discord {
+                color: v.$blurple;
+              }
+            }
+          }
+          .btn-headback {
+            color: v.$pDarkMintGreen;
+          }
+          .sm {
+            color: v.$pLightGrey;
+          }
+          .btn-start-over {
+            a {
+              color: v.$pDarkMintGreen;
+              border-bottom: 1px solid v.$pDarkMintGreen;
+            }
+          }
+        }
+      }
+    }
+  }
+  .ForceClose {
+    .box {
+      .msg {
+        &.msg-3 {
+          a {
+            background-color: v.$pDarkMintGreen;
+            color: v.$pWhiteWall;
+          }
+        }
+      }
+    }
+  }
+  .locker {
+    &.getready {
+      background-color: v.$pMintWhite;
+    }
+  }
+  .header {
+    background-color: v.$pWhiteWall;
+    .header-identification {
+      background-color: v.$pWhiteWall;
+    }
+    .header-options {
+      background-color: v.$pMintWhite;
+      box-shadow: 0 0 10px v.$pDarkMintGreen;
+      .btn {
+        background-color: v.$pMintWhite;
+        &:hover {
+          background-color: v.$pDarkMintGreen;
+          color: v.$pWhiteWall;
+        }
+      }
+    }
+  }
+  .nav {
+    background-color: v.$pMintWhite;
+    .box {
+      .btn {
+        &:hover {
+          background-color: v.$pDarkMintGreen;
+          color: v.$pWhiteWall;
+        }
+        &.selected {
+          background-color: v.$pWhiteWall;
+          color: v.$pDarkBlack;
+          border-bottom: 1px solid v.$pDarkMintGreen;
+          border-left: 1px solid v.$pDarkMintGreen;
+        }
+      }
+    }
+  }
+
+  .Chats {
+    background-color: v.$pWhiteWall;
+    .type-list {
+      .card {
+        border: 1px solid v.$pLightBlack;
+        i {
+          color: v.$pLightBlack;
+          &.num {
+            color: v.$pDarkMintGreen;
+          }
+        }
+        &.on {
+          border-color: v.$pDarkBlack;
+          background-color: v.$pDarkMintGreen;
+          i {
+            color: v.$pWhiteWall;
+          }
+        }
+      }
+    }
+    .search {
+      border-bottom: none;
+      input {
+        background-color: v.$pMintWhite;
+        color: v.$pDarkBlack;
+      }
+      .btn {
+        background-color: v.$pLightBlack;
+        color: v.$pWhiteWall;
+      }
+    }
+    .card-list {
+      .btn-findmore {
+        background-color: v.$pLightBlack;
+        color: v.$pWhiteWall;
+      }
+      .card {
+        .left {
+          .detail {
+            .last {
+              .call-icon {
+                &.y {
+                  color: v.$syellow;
+                }
+                &.g {
+                  color: v.$sgreen;
+                }
+                &.r {
+                  color: v.$sred;
+                }
+              }
+              .call-text {
+                color: v.$pDarkBlack;
+              }
+            }
+          }
+        }
+        .right {
+          .unread {
+            background-color: v.$pDarkMintGreen;
+            color: v.$pWhiteWall;
+          }
+        }
+        &:hover {
+          background-color: rgba($color: v.$pDarkMintGreen, $alpha: 0.2);
+        }
+      }
+      .btn-global,
+      .btn-genai {
+        background-color: v.$pLightBlack;
+        color: v.$pWhiteWall;
+      }
+    }
+  }
+  .Empty {
+    background-color: v.$pMintWhite;
+    .top {
+      background-color: v.$pMintWhite;
+      color: v.$pDarkBlack;
+    }
+    .desc {
+      color: v.$pDarkMintGreen;
+    }
+  }
+  .Account {
+    background-color: v.$pMintWhite;
+    .top {
+      background-color: v.$pMintWhite;
+      box-shadow: 0 0 1px v.$pDarkMintGreen;
+    }
+    .wall {
+      .chp {
+        .outer {
+          border: 1px solid v.$pLightBlack;
+          .chp-t {
+            background-color: v.$pWhiteWall;
+          }
+          .chp-e {
+            background-color: rgba($color: v.$pDarkMintGreen, $alpha: 0.75);
+            color: v.$pWhiteWall;
+            font-weight: normal;
+          }
+          .chp-n {
+            color: v.$pDarkMintGreen;
+          }
+        }
+      }
+      .userphoto {
+        .outer-img {
+          border: 1px solid v.$pDarkMintGreen;
+          .btn {
+            color: v.$pWhiteWall;
+          }
+        }
+      }
+      .groupmember {
+        .chp-u {
+          ul {
+            li {
+              .left {
+                .uname {
+                  .fa-user-crown {
+                    color: v.$pyellow;
+                  }
+                }
+              }
+              .btn-kick {
+                color: v.$sred;
+              }
+            }
+            li:has(:hover) {
+              background-color: rgba($color: v.$pDarkMintGreen, $alpha: 0.2);
+            }
+          }
+        }
+      }
+      .usersign {
+        a {
+          color: v.$sred;
+          border-bottom: 1px solid v.$sred;
+        }
+      }
+    }
+  }
+  .Profile {
+    background-color: v.$pMintWhite;
+    .top {
+      background-color: v.$pMintWhite;
+      box-shadow: 0 0 1px v.$pDarkMintGreen;
+    }
+    .wall {
+      .actions {
+        .btn {
+          border-color: v.$pDarkMintGreen;
+          background-color: v.$pWhiteWall;
+          i {
+            color: v.$sgreen;
+          }
+        }
+      }
+      .options {
+        .btn {
+          background-color: v.$pSoftBlack;
+          color: v.$pWhiteWall;
+        }
+        .sg {
+          i {
+            color: v.$cgreen;
+          }
+        }
+        .sb {
+          i {
+            color: v.$blurple;
+          }
+        }
+        .sr {
+          i {
+            color: v.$cred;
+          }
+        }
+        .note {
+          font-style: italic;
+          color: v.$pDarkBlack;
+        }
+      }
+    }
+  }
+  .Room {
+    background-color: v.$pMintWhite;
+    .top {
+      background-color: v.$pMintWhite;
+      box-shadow: 0 0 1px v.$pDarkMintGreen;
+      .left {
+        background-color: v.$pMintWhite;
+        .user {
+          .names {
+            .dname {
+              color: v.$pDarkMintGreen;
+            }
+          }
+        }
+      }
+      .right {
+        background-color: v.$pMintWhite;
+      }
+      .options {
+        background-color: v.$pWhiteWall;
+        box-shadow: 0 0 10px v.$pDarkMintGreen;
+        .btn {
+          background-color: v.$pWhiteWall;
+          &:hover {
+            background-color: v.$pDarkMintGreen;
+            color: v.$pWhiteWall;
+          }
+        }
+      }
+    }
+    .bottom {
+      background-color: v.$pMintWhite;
+      box-shadow: 0 0 2px v.$pDarkMintGreen;
+      .embed {
+        .box {
+          background-color: v.$pWhiteWall;
+          border-left: 2px solid v.$pDarkMintGreen;
+          .left {
+            color: v.$pDarkMintGreen;
+          }
+        }
+      }
+      .embed.embed-edit {
+        .box {
+          border-color: v.$pDarkMintGreen;
+          .left {
+            color: v.$pDarkMintGreen;
+          }
+        }
+      }
+      .attach {
+        border-bottom: 1px solid rgba($color: v.$pDarkMintGreen, $alpha: 0.5);
+        .media {
+          .name {
+            color: v.$pDarkMintGreen;
+          }
+          .document {
+            color: v.$pDarkMintGreen;
+          }
+        }
+      }
+      .field {
+        .input {
+          .textbox {
+            textarea {
+              color: v.$pDarkBlack;
+            }
+          }
+        }
+        .voice {
+          .btn {
+            background-color: v.$pDarkMintGreen;
+            color: v.$pWhiteWall;
+          }
+        }
+      }
+      .recorder {
+        .record-status {
+          color: v.$pDarkBlack;
+        }
+        .timestamp {
+          color: v.$pDarkBlack;
+        }
+        .btn-cancel {
+          color: v.$sred;
+        }
+        .voice {
+          .btn {
+            background-color: v.$sgreen;
+            color: v.$white;
+            &.btn-spinning {
+              outline: dashed 3px v.$sgreen;
+            }
+          }
+        }
+      }
+    }
+    .mid {
+      .gotolast {
+        background-color: v.$pSoftMintGreen;
+        color: v.$white;
+        box-shadow: 0 0 5px v.$pDarkMintGreen;
+      }
+      .chatlist {
+        .card {
+          .optmenu {
+            background-color: rgba($color: v.$pEarthMint, $alpha: 0.6);
+            .btn {
+              &:hover {
+                background-color: rgba($color: v.$pDarkMintGreen, $alpha: 0.2);
+              }
+              &.opt-profile {
+                color: v.$sgreen;
+                &:hover {
+                  background-color: rgba($color: v.$sgreen, $alpha: 0.25);
+                }
+              }
+              &.opt-download {
+                color: v.$pyellow;
+                &:hover {
+                  background-color: rgba($color: v.$pyellow, $alpha: 0.15);
+                }
+              }
+              &.opt-delete,
+              &.opt-cancel {
+                color: v.$sred;
+                &:hover {
+                  background-color: rgba($color: v.$sred, $alpha: 0.15);
+                }
+              }
+            }
+          }
+          .field {
+            background: v.$pWhiteWall;
+            .sender {
+              color: v.$pDarkBlack;
+            }
+            .embed {
+              background-color: rgba($color: v.$pDarkMintGreen, $alpha: 0.1);
+              border-left: 3px solid v.$pDarkMintGreen;
+              color: v.$pDarkMintGreen;
+            }
+            .attach {
+              .document {
+                color: v.$pDarkMintGreen;
+                border: 1px solid v.$pDarkMintGreen;
+              }
+              .img {
+                background-color: v.$pDarkMintGreen;
+              }
+              .voice {
+                .range {
+                  input[type="range"] {
+                    background-color: v.$softwhite;
+                  }
+                  input[type="range"]::-webkit-slider-thumb {
+                    background: v.$pDarkBlack;
+                  }
+                  input[type="range"]::-ms-thumb {
+                    background: v.$pDarkBlack;
+                  }
+                  input[type="range"]::-moz-range-thumb {
+                    background: v.$pDarkBlack;
+                  }
+                  input[type="range"]:active::-webkit-slider-thumb {
+                    box-shadow: 0 0 0 5px v.$pDarkMintGreen;
+                  }
+                  input[type="range"]:active::-webkit-slider-thumb {
+                    outline: solid 2px v.$pDarkMintGreen;
+                  }
+                  input[type="range"]:active::-moz-range-thumb {
+                    box-shadow: 0 0 0 5px v.$pDarkMintGreen;
+                  }
+                }
+              }
+            }
+            .vc {
+              background-color: rgba($color: v.$pDarkMintGreen, $alpha: 0.1);
+              .vc-icon {
+                background-color: rgba($color: v.$pDarkMintGreen, $alpha: 0.1);
+              }
+              .vc-message {
+                p:not(:first-child) {
+                  color: v.$pDarkBlack;
+                }
+              }
+              &.ct-missed {
+                color: v.$sred;
+              }
+              &.ct-rejected {
+                color: v.$sred;
+              }
+              &.ct-outgoing {
+                color: v.$sgreen;
+              }
+              &.ct-incoming {
+                color: v.$sgreen;
+              }
+              &.ct-now {
+                color: v.$syellow;
+              }
+            }
+            .text {
+              .msg {
+                code {
+                  color: rgba($color: v.$pyellow, $alpha: 0.7);
+                }
+              }
+              .edited {
+                color: v.$pLightBlack;
+              }
+              &.del {
+                color: v.$pLightGrey;
+              }
+            }
+            .time {
+              color: v.$pLightBlack;
+            }
+          }
+          &.me {
+            .field {
+              background: v.$pEarthWhite;
+            }
+          }
+          &:has(.optmenu) {
+            .field {
+              border-right: 2px solid v.$pSoftMintGreen;
+              border-left: none;
+            }
+            &.me {
+              .field {
+                border-right: none;
+                border-left: 2px solid v.$pSoftMintGreen;
+              }
+            }
+          }
+          &.error {
+            .field {
+              .time {
+                color: v.$cred;
+              }
+              .text p {
+                color: v.$pLightBlack;
+              }
+            }
+          }
+          &.highlight {
+            animation: bgTrans2 5s;
+          }
+        }
+        .preload {
+          i {
+            color: v.$pDarkMintGreen;
+          }
+        }
+      }
+    }
+  }
+  .invites {
+    background-color: rgba($color: v.$black, $alpha: 0.2);
+    .box {
+      background-color: v.$pMintWhite;
+      box-shadow: 0 0 10px v.$pDarkMintGreen;
+      .title {
+        p.name {
+          color: v.$pDarkBlack;
+        }
+        p.members {
+          i {
+            color: v.$sred;
+          }
+        }
+      }
+      .actions {
+        .btn {
+          border: 1px solid v.$pDarkMintGreen;
+          background-color: v.$pWhiteWall;
+          color: v.$pDarkBlack;
+          &:last-child {
+            color: v.$pWhiteWall;
+            background-color: v.$pDarkMintGreen;
+          }
+        }
+      }
+    }
+  }
+  .Posts {
+    background-color: v.$pMintWhite;
+    .top {
+      background-color: v.$pMintWhite;
+      box-shadow: 0 0 1px v.$pDarkMintGreen;
+    }
+    .wall {
+      .actions {
+        .btn-create {
+          background-color: v.$pDarkMintGreen;
+          color: v.$pWhiteWall;
+        }
+      }
+      .post-wait {
+        color: v.$pDarkBlack;
+      }
+      .card {
+        .media {
+          background-color: v.$pMintWhite;
+          box-shadow: 0 0 2px v.$pDarkMintGreen;
+        }
+        .options {
+          .opt-visitor {
+            .btn-likes {
+              &.liked {
+                i {
+                  color: v.$sred;
+                }
+              }
+            }
+          }
+          .opt-author {
+            .btn-delete {
+              color: v.$sred;
+            }
+          }
+        }
+      }
+    }
+    .comments {
+      .box {
+        box-shadow: 0 0 2px v.$pDarkMintGreen;
+        background-color: rgba($color: v.$pWhiteWall, $alpha: 0.8);
+        .comments-top {
+          background-color: v.$pWhiteWall;
+          box-shadow: 0 1px 1px rgba($color: v.$pDarkMintGreen, $alpha: 0.5);
+        }
+        .comments-bottom {
+          background-color: v.$pWhiteWall;
+          box-shadow: 0 -1px 1px rgba($color: v.$pDarkMintGreen, $alpha: 0.5);
+          .form {
+            .input {
+              background-color: #00000000;
+              color: v.$pDarkBlack;
+              &::placeholder {
+                color: v.$pLightGrey;
+              }
+            }
+            .btn {
+              background-color: v.$pDarkMintGreen;
+              color: v.$pWhiteWall;
+            }
+          }
+        }
+        .comments-mid {
+          background-color: rgba($color: v.$pWhiteWall, $alpha: 0.1);
+          .card {
+            &.process {
+              .data {
+                color: v.$sred;
+                &-user {
+                  .timestamp {
+                    color: v.$sred;
+                  }
+                }
+              }
+            }
+            .data {
+              &-user {
+                .timestamp {
+                  color: v.$pLightGrey;
+                }
+              }
+            }
+            &.me {
+              .cmt-actions {
+                color: v.$sred;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  .CreatePost {
+    background-color: v.$pMintWhite;
+    .top {
+      background-color: v.$pMintWhite;
+      box-shadow: 0 0 1px v.$pDarkMintGreen;
+    }
+    .bottom {
+      .field {
+        .btn-choose {
+          background-color: v.$pDarkMintGreen;
+          color: v.$white;
+        }
+        .preview {
+          background-color: v.$pMintWhite;
+          box-shadow: 0 0 2px v.$pDarkMintGreen;
+        }
+        textarea {
+          border: 1px solid v.$pMintWhite;
+          background-color: v.$pWhiteWall;
+          color: v.$pDarkBlack;
+          &:focus {
+            border-color: v.$pDarkMintGreen;
+          }
+        }
+      }
+      .actions {
+        .btn {
+          background-color: v.$pSoftBlack;
+          color: v.$white;
+          &.btn-submit {
+            background-color: v.$sgreen;
+            color: v.$white;
+            font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+  .call {
+    .background {
+      background-color: v.$pMintWhite;
+    }
+    .btn {
+      background-color: v.$pDarkMintGreen;
+      color: v.$white;
+    }
+    .top {
+      .detail {
+        .caller {
+          .ts {
+            color: v.$pLightGrey;
+            text-shadow: none;
+          }
+          .displayname {
+            text-shadow: none;
+          }
+        }
+      }
+      .act-info {
+        .card {
+          background-color: rgba($color: v.$pDarkMintGreen, $alpha: 0.7);
+          color: v.$pWhiteWall;
+        }
+      }
+    }
+    .bottom {
+      .act-list {
+        .call-act {
+          background-color: rgba($color: v.$pDarkMintGreen, $alpha: 0.5);
+          .btn {
+            color: v.$white;
+          }
+          .btn-hangup {
+            background-color: v.$sred;
+          }
+          .btn.active {
+            background-color: v.$white;
+            color: v.$sred;
+          }
+        }
+      }
+    }
+    &.minimized {
+      background-color: v.$pEarthMint;
+    }
+  }
+  .incoming {
+    background-color: rgba($color: v.$black, $alpha: 0.2);
+    color: v.$pDarkBlack;
+    .box {
+      background-color: v.$pMintWhite;
+      box-shadow: 0 0 10px v.$pDarkMintGreen;
+      border: none;
+      .callactions {
+        .btn {
+          color: v.$white;
+        }
+        .btn-decline {
+          background-color: v.$sred;
+        }
+        .btn-answer {
+          background-color: v.$sgreen;
+        }
+      }
+      .callaction {
+        .btn-ignore {
+          background-color: v.$pDarkBlack;
+          color: v.$cred;
+        }
+      }
+    }
+    &.ignored {
+      background-color: #00000000;
+    }
+  }
+}

@@ -72,6 +72,32 @@
     background-color: #00000000;
   }
 }
+@keyframes bgTrans2 {
+  0% {
+    background-color: #00000000;
+  }
+  20% {
+    background-color: rgba($color: #659287, $alpha: 0.5);
+  }
+  75% {
+    background-color: rgba($color: #659287, $alpha: 0.5);
+  }
+  80% {
+    background-color: rgba($color: #659287, $alpha: 0.3);
+  }
+  85% {
+    background-color: rgba($color: #659287, $alpha: 0.5);
+  }
+  90% {
+    background-color: rgba($color: #659287, $alpha: 0.3);
+  }
+  95% {
+    background-color: rgba($color: #659287, $alpha: 0.5);
+  }
+  100% {
+    background-color: #00000000;
+  }
+}
 
 @keyframes popup_in {
   0% {
@@ -204,5 +230,46 @@
   100% {
     opacity: 0;
     transform: translateX(100%);
+  }
+}
+@keyframes themeSpinIn {
+  0% {
+    opacity: 0;
+    transform: rotate(0);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes themeSpinOut {
+  0% {
+    opacity: 1;
+    transform: rotate(0);
+  }
+  80% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(720deg);
+  }
+}
+@keyframes themeIn {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+@keyframes themeOut {
+  0% {
+    width: 100%;
+  }
+  100% {
+    width: 0;
   }
 }

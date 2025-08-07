@@ -33,8 +33,7 @@ export function sendPushNotification(userid: string, content: any): void {
   const subs = db.ref.u[userid].zzz
   const client = db.ref.u[userid].socket
   if (!subs || client) return
-  push.sendNotification(subs, JSON.stringify(content)).catch((err) => {
-    logger.error(err)
+  push.sendNotification(subs, JSON.stringify(content)).catch((_) => {
     delete db.ref.u[userid].zzz
     db.save("u")
   })

@@ -35,7 +35,7 @@ export default class Posts implements PrimaryClass {
   private preloading: HTMLDivElement
   private btnFilter: HTMLDivElement
   private currFilter: PostFilter
-  private post_list?: TPostsF | null
+  public post_list?: TPostsF | null
   constructor() {
     this.king = "content"
     this.role = "posts"

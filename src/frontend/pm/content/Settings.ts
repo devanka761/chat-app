@@ -5,6 +5,7 @@ import { epm, kel, qutor } from "../../helper/kel"
 import { klang, lang } from "../../helper/lang"
 import { Languages } from "../../types/helper.types"
 import adap from "../../main/adaptiveState"
+import { changeColorTheme } from "../../manager/colortheme"
 
 function SelectLang() {
   return {
@@ -23,7 +24,7 @@ function SelectColor() {
     msg: lang.SET_CHOOSE_COLOR,
     items: [
       { id: "dark", label: lang.SET_COLOR_DARK, activated: userState.color === "dark" },
-      { id: "en", label: lang.SET_COLOR_LIGHT, activated: userState.color === "light" }
+      { id: "light", label: lang.SET_COLOR_LIGHT, activated: userState.color === "light" }
     ]
   }
 }
@@ -86,13 +87,17 @@ export default class Settings implements PrimaryClass {
     this.ecolor = qutor(".usercolor .outer .chp-f p", this.el) as HTMLParagraphElement
     this.btnBack = this.el.querySelector(".btn-back") as HTMLDivElement
   }
-  writeSettings() {
+  renderLanguages(): void {
     if (this.elang) {
       this.elang.innerHTML = SelectLang().items.find((k) => k.activated)?.label || "English"
     }
+  }
+  renderColors(): void {
     if (this.ecolor) {
       this.ecolor.innerHTML = SelectColor().items.find((k) => k.activated)?.label || lang.SET_COLOR_DARK
     }
+  }
+  renderNotifications(): void {
     const enotif = this.el.querySelector(".usernotif .outer .chp-f")
 
     notiflist.forEach((nf) => {
@@ -111,6 +116,11 @@ export default class Settings implements PrimaryClass {
       ncard.append(inp)
       if (enotif) enotif.append(ncard)
     })
+  }
+  writeSettings(): void {
+    this.renderLanguages()
+    this.renderColors()
+    this.renderNotifications()
   }
   btnListener() {
     this.btnBack.onclick = () => adap.swipe(this.classBefore)
@@ -150,12 +160,14 @@ export default class Settings implements PrimaryClass {
         this.isLocked = true
 
         const selColor = await modal.select(SelectColor())
-        if (!selColor) {
+        if (!selColor || selColor === userState.color) {
           this.isLocked = false
           return
         }
-        await modal.alert({ ic: "helmet-safety", msg: 'This -ChooseColorTheme- feature is currently under development<br /><br />Contribute in the making of Light Color Theme:<br /><a href="https://github.com/devanka761/chat-app/tree/main/src/frontend/sass" target="_blank">https://github.com/devanka761/chat-app/tree/main/src/frontend/sass</a>' })
-
+        userState.color = selColor === "light" ? "light" : "dark"
+        userState.save()
+        this.renderColors()
+        await changeColorTheme(userState.color)
         this.isLocked = false
       }
     const btnWebpush = qutor(".btn-webpush", this.el)

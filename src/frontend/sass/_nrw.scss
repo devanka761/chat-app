@@ -25,7 +25,8 @@
     }
   }
   .nav {
-    width: calc(100% - 30px);
+    width: max-content;
+    max-width: calc(100% - 30px);
     height: fit-content;
     padding: 0;
     top: auto;
@@ -45,6 +46,7 @@
       gap: 5px;
       background-color: v.$px2;
       border-radius: 15px;
+      overflow-x: auto;
       .btn {
         flex-shrink: 0;
         padding: 10px;
@@ -97,6 +99,28 @@
     padding-bottom: 95px;
     .type-list {
       padding: 20px 10px;
+    }
+  }
+
+  [data-theme="light"] {
+    .header {
+      background-color: v.$pWhiteWall;
+      .header-identification {
+        background-color: v.$pWhiteWall;
+      }
+    }
+    .nav {
+      background-color: #00000000;
+      .box {
+        background-color: v.$pMintWhite;
+        box-shadow: 0 -1px 1px rgba($color: v.$pDarkMintGreen, $alpha: 0.75);
+        .btn {
+          &.selected {
+            background-color: v.$pWhiteWall;
+            color: v.$pDarkMintGreen;
+          }
+        }
+      }
     }
   }
 }
