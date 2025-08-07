@@ -25,7 +25,8 @@
     }
   }
   .nav {
-    width: calc(100% - 30px);
+    width: fit-content;
+    max-width: calc(100% - 30px);
     height: fit-content;
     padding: 0;
     top: auto;

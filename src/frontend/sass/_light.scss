@@ -1,0 +1,393 @@
+@use "./variables" as w;
+$pyellow: #80700a;
+$black: #00000b;
+$pWhiteWall: #e0efe6;
+$pMintWhite: #d0ddd0;
+$pLightGrey: #52575d;
+$pLightBlack: #41444b;
+$pDarkBlack: #323438;
+$pSoftMintGreen: #659287;
+$pDarkMintGreen: #5f6f65;
+
+html[data-theme="light"] {
+  scrollbar-color: $pDarkMintGreen $pMintWhite;
+}
+
+[data-theme="light"] {
+  // main
+  body {
+    background: $pWhiteWall;
+    color: $pDarkBlack;
+  }
+  input {
+    color: $pDarkBlack;
+  }
+  textarea {
+    color: $pDarkBlack;
+  }
+  a {
+    color: $pDarkMintGreen;
+  }
+  input[type="checkbox"] {
+    background-color: $pWhiteWall;
+    color: $pDarkMintGreen;
+  }
+  input[type="checkbox"]::before {
+    box-shadow: inset 1rem 1rem $pDarkMintGreen;
+    background-color: $pWhiteWall;
+  }
+  ::selection {
+    background: $pDarkMintGreen;
+    color: $pWhiteWall;
+  }
+  // properties
+  .spill {
+    background: $pSoftMintGreen;
+    color: $pWhiteWall;
+  }
+  .loading {
+    background-color: rgba($color: $black, $alpha: 0.25);
+    color: $pWhiteWall;
+    .box {
+      background-color: $pSoftMintGreen;
+    }
+  }
+
+  .waiting {
+    background-color: rgba($color: $black, $alpha: 0.25);
+    .box {
+      background-color: $pMintWhite;
+      box-shadow: 0 0 10px $pDarkBlack;
+    }
+  }
+  .modal {
+    background-color: rgba($color: $black, $alpha: 0.25);
+    color: $pDarkBlack;
+    .box {
+      background-color: $pMintWhite;
+      box-shadow: -3px 3px 5px $pDarkMintGreen;
+      .ic {
+        color: $pDarkMintGreen;
+      }
+      .inf {
+        a {
+          color: $pDarkMintGreen;
+        }
+        input[type="text"],
+        textarea {
+          background-color: $pWhiteWall;
+        }
+        .modal-radio-form {
+          .radio {
+            border: 1px solid $pDarkMintGreen;
+            label {
+              input[type="radio"] {
+                background-color: $pWhiteWall;
+                color: $pDarkMintGreen;
+              }
+              input[type="radio"]::before {
+                box-shadow: inset 1em 1em $pMintWhite;
+                background-color: $pDarkMintGreen;
+              }
+              input[type="radio"]:checked {
+                background-color: $pDarkMintGreen;
+              }
+            }
+          }
+        }
+        .radio:has(:checked) {
+          border-color: $pDarkMintGreen;
+          background-color: rgba($color: $pDarkMintGreen, $alpha: 0.2);
+        }
+      }
+      .acts {
+        .btn {
+          color: $pDarkBlack;
+          border: 1px solid $pDarkMintGreen;
+        }
+        .btn-cancel {
+          background-color: $pWhiteWall;
+        }
+        .btn-ok {
+          background-color: $pDarkMintGreen;
+          color: $pWhiteWall;
+        }
+      }
+      .act {
+        .btn-ok {
+          background-color: $pDarkMintGreen;
+          color: $pWhiteWall;
+        }
+      }
+    }
+  }
+  // auth
+  .Auth {
+    background-color: $pWhiteWall;
+    .none {
+      i {
+        color: #ffffff01;
+      }
+    }
+    .box {
+      background-color: $pMintWhite;
+      border: 1px solid $pDarkBlack;
+      .top {
+        background: $pLightBlack;
+        color: $pWhiteWall;
+      }
+      .form {
+        .field {
+          a {
+            color: $pDarkMintGreen;
+          }
+          .btn-lang {
+            border-bottom: 1px solid $pDarkBlack;
+          }
+          .labels {
+            .btn-help {
+              color: $pDarkMintGreen;
+            }
+          }
+          .inp {
+            input {
+              background-color: $pWhiteWall;
+              color: $pDarkBlack;
+              border: 1px solid $pWhiteWall;
+              &:focus {
+                border-color: $pDarkMintGreen;
+              }
+            }
+            .btn {
+              color: $pWhiteWall;
+              background-color: $pLightBlack;
+              &.btn-login {
+                background-color: $pDarkMintGreen;
+              }
+              &.btn-google {
+                color: w.$cred;
+              }
+              &.btn-discord {
+                color: w.$blurple;
+              }
+            }
+          }
+          .btn-headback {
+            color: $pDarkMintGreen;
+          }
+          .sm {
+            color: $pLightGrey;
+          }
+          .btn-start-over {
+            a {
+              color: $pDarkMintGreen;
+              border-bottom: 1px solid $pDarkMintGreen;
+            }
+          }
+        }
+      }
+    }
+  }
+  // forceclose
+  .ForceClose {
+    .box {
+      .msg {
+        &.msg-3 {
+          a {
+            background-color: $pDarkMintGreen;
+            color: $pWhiteWall;
+          }
+        }
+      }
+    }
+  }
+  .locker {
+    &.getready {
+      background-color: $pMintWhite;
+    }
+  }
+  // header
+  .header {
+    background-color: $pWhiteWall;
+    .header-identification {
+      background-color: $pWhiteWall;
+    }
+    .header-options {
+      background-color: $pMintWhite;
+      box-shadow: 0 0 10px $black;
+      .btn {
+        background-color: $pMintWhite;
+        &:hover {
+          background-color: $pDarkMintGreen;
+          color: $pWhiteWall;
+        }
+      }
+    }
+  }
+  // tab
+  .nav {
+    background-color: $pMintWhite;
+    .box {
+      .btn {
+        &:hover {
+          background-color: $pDarkMintGreen;
+          color: $pWhiteWall;
+        }
+        &.selected {
+          background-color: $pWhiteWall;
+          color: $pDarkBlack;
+          border-bottom: 1px solid $pDarkMintGreen;
+          border-left: 1px solid $pDarkMintGreen;
+        }
+      }
+    }
+  }
+
+  // chats
+  .Chats {
+    background-color: $pWhiteWall;
+    .type-list {
+      .card {
+        border: 1px solid $pLightBlack;
+        i {
+          color: $pLightBlack;
+          &.num {
+            color: $pDarkMintGreen;
+          }
+        }
+        &.on {
+          border-color: $pDarkBlack;
+          background-color: $pDarkMintGreen;
+          i {
+            color: $pWhiteWall;
+          }
+        }
+      }
+    }
+    .search {
+      border-bottom: none;
+      input {
+        background-color: $pMintWhite;
+        color: $pDarkBlack;
+      }
+      .btn {
+        background-color: $pLightBlack;
+        color: $pWhiteWall;
+      }
+    }
+    .card-list {
+      .btn-findmore {
+        background-color: $pLightBlack;
+        color: $pWhiteWall;
+      }
+      .card {
+        .left {
+          .detail {
+            .last {
+              .call-icon {
+                &.y {
+                  color: w.$syellow;
+                }
+                &.g {
+                  color: w.$sgreen;
+                }
+                &.r {
+                  color: w.$sred;
+                }
+              }
+              .call-text {
+                color: $pDarkBlack;
+              }
+            }
+          }
+        }
+        .right {
+          .unread {
+            background-color: $pDarkMintGreen;
+            color: $pWhiteWall;
+          }
+        }
+        &:hover {
+          background-color: rgba($color: $pDarkMintGreen, $alpha: 0.2);
+        }
+      }
+      .btn-global,
+      .btn-genai {
+        background-color: $pLightBlack;
+        color: $pWhiteWall;
+      }
+    }
+  }
+  // empty
+  .Empty {
+    background-color: $pMintWhite;
+    .top {
+      background-color: $pMintWhite;
+      color: $pDarkBlack;
+    }
+    .desc {
+      color: $pDarkMintGreen;
+    }
+  }
+  // account
+  .Account {
+    background-color: $pMintWhite;
+    .top {
+      background-color: $pMintWhite;
+      box-shadow: 0 0 1px $pDarkMintGreen;
+    }
+    .wall {
+      .chp {
+        .outer {
+          border: 1px solid $pLightBlack;
+          .chp-t {
+            background-color: $pWhiteWall;
+          }
+          .chp-e {
+            background-color: rgba($color: $pDarkMintGreen, $alpha: 0.75);
+            color: $pWhiteWall;
+            font-weight: normal;
+          }
+          .chp-n {
+            color: $pDarkMintGreen;
+          }
+        }
+      }
+      .userphoto {
+        .outer-img {
+          border: 1px solid $pDarkMintGreen;
+          .btn {
+            color: $pWhiteWall;
+          }
+        }
+      }
+      .groupmember {
+        .chp-u {
+          ul {
+            li {
+              .left {
+                .uname {
+                  .fa-user-crown {
+                    color: $pyellow;
+                  }
+                }
+              }
+              .btn-kick {
+                color: w.$sred;
+              }
+            }
+            li:has(:hover) {
+              background-color: rgba($color: $pDarkMintGreen, $alpha: 0.2);
+            }
+          }
+        }
+      }
+      .usersign {
+        a {
+          color: w.$sred;
+          border-bottom: 1px solid w.$sred;
+        }
+      }
+    }
+  }
+}
