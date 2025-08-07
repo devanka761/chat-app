@@ -232,3 +232,44 @@
     transform: translateX(100%);
   }
 }
+@keyframes themeSpinIn {
+  0% {
+    opacity: 0;
+    transform: rotate(0);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes themeSpinOut {
+  0% {
+    opacity: 1;
+    transform: rotate(0);
+  }
+  80% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(720deg);
+  }
+}
+@keyframes themeIn {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+@keyframes themeOut {
+  0% {
+    width: 100%;
+  }
+  100% {
+    width: 0;
+  }
+}

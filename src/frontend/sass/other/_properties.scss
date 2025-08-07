@@ -56,41 +56,6 @@ $bg: #3f464e;
   }
 }
 
-.waiting {
-  z-index: 98;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #1e1f2280;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  .box {
-    text-align: center;
-    padding: 20px;
-    width: calc(100% - 40px);
-    min-height: 200px;
-    max-height: calc(100% - 40px);
-    max-width: 500px;
-    background-color: $bg;
-    border-radius: 10px;
-    box-shadow: 0 0 10px v.$black;
-    animation: popup_in 0.5s;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    p {
-      font-size: 1.5em;
-    }
-  }
-  &.out {
-    .box {
-      animation: popup_out 0.5s forwards;
-    }
-  }
-}
 .modal {
   z-index: 98;
   position: fixed;
@@ -473,6 +438,35 @@ $bg: #3f464e;
       .box {
         animation: slide_up_out 0.25s forwards;
       }
+    }
+  }
+}
+.themeChanger {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: v.$px1;
+  color: v.$softwhite;
+  animation: themeIn 1s ease;
+  .changer-icon {
+    animation: themeSpinIn 1s ease;
+  }
+  &.theme-light {
+    background-color: v.$pWhiteWall;
+    color: v.$pDarkBlack;
+  }
+  &.out {
+    left: auto;
+    right: 0;
+    animation: themeOut 1s ease forwards;
+    .changer-icon {
+      animation: themeSpinOut 1s ease forwards;
     }
   }
 }

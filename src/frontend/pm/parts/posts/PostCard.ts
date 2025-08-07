@@ -140,6 +140,9 @@ export default class PostCard {
           return
         }
         this.el.remove()
+        if (this.parent.post_list) {
+          this.parent.post_list = this.parent.post_list.filter((card) => card.id !== this.post.id)
+        }
       }
   }
   private setLike(): void {
