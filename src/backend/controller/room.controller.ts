@@ -134,6 +134,7 @@ export function editMessage(uid: string, chatkey: string, room_id: string, room_
   if (!cdb) return { code: 400 }
 
   const dbOld = (db.fileGet(chatkey, "room") || {}) as IMessageKeyB
+  if (dbOld[s.edit].u !== uid) return { code: 404 }
 
   if (!dbOld[s.edit]) return { code: 400 }
   if ((!dbOld[s.edit].ty || dbOld[s.edit].ty === "text") && (!s.text || s.text.length < 1)) {
@@ -193,6 +194,7 @@ export function delMessage(uid: string, target: string, room: string, message_id
   const roomkey = chatkey as string
   const dbOld = (db.fileGet(roomkey, "room") || {}) as IMessageKeyB
   if (!dbOld[message_id]) return { code: 400 }
+  if (dbOld[message_id].u !== uid && !db.ref.u[uid].b?.includes(1)) return { code: 404 }
 
   dbOld[message_id].d = true
   dbOld[message_id].txt = "deleted"

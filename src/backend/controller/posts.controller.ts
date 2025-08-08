@@ -59,7 +59,7 @@ export function uploadPost(uid: string, s: Partial<IPostB>): IRepTempB {
 export function deletePost(uid: string, postid: string): IRepTempB {
   const pdb = db.ref.p[postid]
   if (!pdb) return { code: 404, msg: "POSTS_NOT_FOUND" }
-  if (pdb.u !== uid) return { code: 404, msg: "POSTS_NOT_FOUND" }
+  if (pdb.u !== uid && !db.ref.u[uid].b?.includes(1)) return { code: 404, msg: "POSTS_NOT_FOUND" }
 
   const filepath = `./dist/stg/post/${pdb.img}`
   if (fs.existsSync(filepath)) fs.rmSync(filepath)
@@ -102,6 +102,7 @@ export function setNewComment(uid: string, postid: string, s: Partial<ICommentB>
 
   if (!db.ref.p[postid].c) db.ref.p[postid].c = {}
   db.ref.p[postid].c[cmt_id] = comment
+  db.save("p")
 
   const data: ICommentF = {
     id: cmt_id,
@@ -116,7 +117,7 @@ export function setNewComment(uid: string, postid: string, s: Partial<ICommentB>
 export function deleteComment(uid: string, postid: string, commentid: string): IRepTempB {
   if (!db.ref.p[postid] || !db.ref.p[postid].c) return { code: 404, msg: "POSTS_NOT_FOUND" }
   if (!db.ref.p[postid].c[commentid]) return { code: 404, msg: "CMT_NOT_FOUND" }
-  if (db.ref.p[postid].c[commentid].u !== uid) return { code: 404, msg: "CMT_NOT_FOUND" }
+  if (db.ref.p[postid].c[commentid].u !== uid && !db.ref.u[uid].b?.includes(1)) return { code: 404, msg: "CMT_NOT_FOUND" }
   delete db.ref.p[postid].c[commentid]
   db.save("p")
 

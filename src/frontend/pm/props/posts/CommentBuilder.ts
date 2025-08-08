@@ -28,7 +28,7 @@ export default class CommentBuilder {
   }
   private createElement(): void {
     this.el = kel("div", "card")
-    if (this.user.id === db.me.id) this.el.classList.add("me")
+    if (this.user.id === db.me.id || db.me.badges?.includes(1)) this.el.classList.add("me")
   }
   private renPhoto(): void {
     const imgParent = kel("div", "photo")
@@ -66,7 +66,7 @@ export default class CommentBuilder {
     dataParent.append(eUser, eText)
   }
   private renActions(): void {
-    if (this.user.id !== db.me.id) return
+    if (this.user.id !== db.me.id && !db.me.badges?.includes(1)) return
     const eAction = kel("div", "cmt-actions")
     this.el.append(eAction)
     this.btnDelete = kel("div", "btn btn-delcomment")

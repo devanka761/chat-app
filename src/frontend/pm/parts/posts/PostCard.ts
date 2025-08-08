@@ -88,7 +88,7 @@ export default class PostCard {
     this.btnComments = kel("div", "btn btn-comments", { e: ['<i class="fa-regular fa-comment"></i>', this.commentsCount] })
     optVisitor.append(this.btnLikes, this.btnComments)
 
-    if (this.user.id === db.me.id) {
+    if (this.user.id === db.me.id || db.me.badges?.includes(1)) {
       const optAuthor = kel("div", "opt-author")
       options.append(optAuthor)
       this.btnDelete = kel("div", "btn btn-delete", { e: `<i class="fa-regular fa-trash-xmark"></i>` })

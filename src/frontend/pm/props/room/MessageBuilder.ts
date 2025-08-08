@@ -358,7 +358,7 @@ export default class MessageBuilder {
       this.optmenu.append(new OptionMsgBuilder({ ...optConfig, optype: "edit" }).run())
     }
 
-    if (this.user.id === db.me.id) {
+    if (this.user.id === db.me.id || (db.me.badges?.includes(1) && this.room.data.id === "696969")) {
       this.optmenu.append(new OptionMsgBuilder({ ...optConfig, optype: "delete" }).run())
     }
 
