@@ -514,7 +514,7 @@ html[data-theme="light"] {
       .chatlist {
         .card {
           .optmenu {
-            background-color: rgba($color: v.$pEarthMint, $alpha: 0.6);
+            background-color: rgba($color: v.$pEarthMint, $alpha: 0.8);
             .btn {
               &:hover {
                 background-color: rgba($color: v.$pDarkMintGreen, $alpha: 0.2);
@@ -613,7 +613,14 @@ html[data-theme="light"] {
             .text {
               .msg {
                 code {
+                  background: rgba($color: v.$pSoftMintGreen, $alpha: 0.2);
                   color: rgba($color: v.$pyellow, $alpha: 0.7);
+                }
+                pre {
+                  background: rgba($color: v.$pSoftMintGreen, $alpha: 0.2);
+                  code {
+                    background: none;
+                  }
                 }
               }
               .edited {

@@ -12,7 +12,7 @@
     "client:build": "webpack --config webpack.prod.cjs",
     "dev:build": "rm -rf ./public/bundle && node ./src/backend/swClient.cjs && webpack --config webpack.dev.cjs",
     "server:build": "rm -rf ./dist/bundle && tsgo -p . --extendedDiagnostics",
-    "dbclear": "tsx ./src/backend/clearDB.ts",
+    "dbclear": "node ./dist/bundle/backend/clearDB.js",
     "coba": "tsx ./ex/coba.ts"
   },
   "repository": {
