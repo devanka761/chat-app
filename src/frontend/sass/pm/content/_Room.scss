@@ -693,6 +693,30 @@ $errorbg: #3d2b31;
                 display: block;
                 margin: 0 auto;
               }
+              &.jedots {
+                .dot {
+                  position: relative;
+                  margin-left: auto;
+                  margin-right: auto;
+                  animation: jump 2s infinite;
+                  display: inline-block;
+                  background-color: v.$softwhite;
+                  width: 10px;
+                  height: 10px;
+                  border-radius: 50%;
+                  margin-right: 5px;
+                  opacity: 0.5;
+                  &.dot-1 {
+                    animation-delay: 200ms;
+                  }
+                  &.dot-2 {
+                    animation-delay: 400ms;
+                  }
+                  &.dot-3 {
+                    animation-delay: 600ms;
+                  }
+                }
+              }
             }
             .edited {
               color: v.$swhite;
@@ -751,7 +775,7 @@ $errorbg: #3d2b31;
             .time {
               color: v.$cred;
             }
-            .text p {
+            .text {
               color: v.$softwhite;
             }
           }

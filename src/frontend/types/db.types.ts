@@ -30,7 +30,7 @@ export interface IUserF {
   image?: string
   isFriend?: number
 }
-export type MessageTypeF = "text" | "image" | "video" | "audio" | "file" | "deleted" | "call" | "voice"
+export type MessageTypeF = "text" | "image" | "video" | "audio" | "file" | "deleted" | "call" | "voice" | "think"
 
 export type CallTypeF = "incoming" | "outgoing" | "rejected" | "missed" | "now"
 // > 0, > 0, -1, 0, -2

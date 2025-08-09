@@ -89,12 +89,15 @@ async function GetAIAnswer(uid: string, user_text: string, aichat: AIChat, chat_
     users: [KirAIUser, getUser(uid, uid)]
   }
 
-  zender(KirAIUser.id, uid, "sendmessage", data)
-  webhookSender.genai({ userid: KirAIUser.id, chatid: chat_id, text: ai_text })
   const chatsdb = (db.fileGet(`ai${uid}`, "kirai") || {}) as IMessageKeyB
 
   chatsdb["ai" + chat_id] = minimizeMessage(KirAIUser.id, newchat)
   db.fileSet(`ai${uid}`, "kirai", chatsdb)
+
+  await new Promise((resolve) => setTimeout(resolve, 1000))
+
+  zender(KirAIUser.id, uid, "sendmessage", data)
+  webhookSender.genai({ userid: KirAIUser.id, chatid: chat_id, text: ai_text })
 }
 
 export function sendAIChat(uid: string, user_text?: string): IRepTempB {
@@ -117,6 +120,7 @@ export function sendAIChat(uid: string, user_text?: string): IRepTempB {
       userid: KirAIUser.id,
       reply: chat_id,
       id: "ai" + chat_id,
+      type: "think",
       timestamp: Date.now(),
       text: "⌛ ⌛ 🚀 🚀"
     },

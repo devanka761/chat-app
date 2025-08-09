@@ -273,3 +273,19 @@
     width: 0;
   }
 }
+@keyframes jump {
+  0% {
+    opacity: 0.5;
+    bottom: 0px;
+  }
+  40% {
+    bottom: 5px;
+  }
+  60% {
+    opacity: 1;
+    bottom: 0px;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}

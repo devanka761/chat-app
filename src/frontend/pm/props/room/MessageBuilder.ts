@@ -235,7 +235,10 @@ export default class MessageBuilder {
     }
     if (this.s.edited) this.textEdidted.innerHTML = `(${lang.CONTENT_EDITED})`
     if (this.s.text) {
-      if (this.user.id === KirAIRoom.id) {
+      if (this.s.type === "think") {
+        this.textMessage.classList.add("jedots")
+        this.textMessage.innerHTML = `<span class="dot dot-1"></span><span class="dot dot-2"></span><span class="dot dot-3"></span>`
+      } else if (this.user.id === KirAIRoom.id) {
         this.textMessage.innerHTML = marked.use({ renderer, gfm: true, breaks: true }).parse(escapeHTML(this.s.text)).toString()
       } else {
         this.textMessage.innerText = escapeWhiteSpace(this.s.text)

@@ -1,5 +1,6 @@
 @use "./variables" as v;
 
+$errorbg: #3d2b31;
 html[data-theme="light"] {
   scrollbar-color: v.$pDarkMintGreen v.$pMintWhite;
 }
@@ -622,6 +623,11 @@ html[data-theme="light"] {
                     background: none;
                   }
                 }
+                &.jedots {
+                  .dot {
+                    background-color: v.$pLightBlack;
+                  }
+                }
               }
               .edited {
                 color: v.$pLightBlack;
@@ -653,11 +659,12 @@ html[data-theme="light"] {
           }
           &.error {
             .field {
+              background-color: $errorbg;
               .time {
                 color: v.$cred;
               }
-              .text p {
-                color: v.$pLightBlack;
+              .text {
+                color: v.$softwhite;
               }
             }
           }
