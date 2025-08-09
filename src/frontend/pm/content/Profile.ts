@@ -98,7 +98,10 @@ export default class Profile implements PrimaryClass {
     p.innerText = this.user.bio || lang.ACC_NOBIO
   }
   btnListener(): void {
-    this.btnBack.onclick = () => adap.swipe(this.classBefore)
+    this.btnBack.onclick = () => {
+      if (this.isLocked) return
+      adap.swipe(this.classBefore)
+    }
     this.btnChat.onclick = () => {
       const roomDetail: IRoomDataF = {
         id: this.user.id,

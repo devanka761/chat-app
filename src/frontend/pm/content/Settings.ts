@@ -123,7 +123,10 @@ export default class Settings implements PrimaryClass {
     this.renderNotifications()
   }
   btnListener() {
-    this.btnBack.onclick = () => adap.swipe(this.classBefore)
+    this.btnBack.onclick = () => {
+      if (this.isLocked) return
+      adap.swipe(this.classBefore)
+    }
     const btnLang = qutor(".btn-lang", this.el)
     if (btnLang)
       btnLang.onclick = async () => {

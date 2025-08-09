@@ -66,7 +66,10 @@ export default class Group implements PrimaryClass {
     this.renLeave()
   }
   private btnListener(): void {
-    this.btnBack.onclick = () => adap.swipe(this.classBefore)
+    this.btnBack.onclick = () => {
+      if (this.isLocked) return
+      adap.swipe(this.classBefore)
+    }
     this.imgListener()
     this.gnameListener()
     this.inviteListener()

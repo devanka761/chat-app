@@ -92,7 +92,10 @@ export default class RoomTab {
     }
   }
   private btnListener(): void {
-    this.btnBack.onclick = () => adap.swipe(this.classBefore)
+    this.btnBack.onclick = () => {
+      if (this.isLocked || this.room.isLocked) return
+      adap.swipe(this.classBefore)
+    }
 
     this.btnMore.onclick = () => {
       if (this.options) return

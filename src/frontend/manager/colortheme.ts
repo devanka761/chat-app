@@ -11,5 +11,5 @@ export async function changeColorTheme(color: "dark" | "light"): Promise<void> {
   themeChanger.classList.add("out")
   await new Promise((resolve) => setTimeout(resolve, 1000))
   themeChanger.remove()
-  await new Promise((resolve) => setTimeout(resolve, 500))
+  await new Promise((resolve) => setTimeout(resolve, 100))
 }

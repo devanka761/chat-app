@@ -86,8 +86,14 @@ export default class CreatePost implements PrimaryClass {
     inp.remove()
   }
   private btnListener(): void {
-    this.btnBack.onclick = () => adap.swipe(this.classBefore)
-    this.btnCancel.onclick = () => adap.swipe(this.classBefore)
+    this.btnBack.onclick = () => {
+      if (this.isLocked) return
+      adap.swipe(this.classBefore)
+    }
+    this.btnCancel.onclick = () => {
+      if (this.isLocked) return
+      adap.swipe(this.classBefore)
+    }
     this.btnSubmit.onclick = () => this.uploadPost()
     this.btnChooser.onclick = () => this.fileChooser()
   }

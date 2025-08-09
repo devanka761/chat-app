@@ -47,7 +47,10 @@ export default class Account implements PrimaryClass {
     this.renUserSignIn()
   }
   private btnListener(): void {
-    this.btnBack.onclick = () => adap.swipe(this.classBefore)
+    this.btnBack.onclick = () => {
+      if (this.isLocked) return
+      adap.swipe(this.classBefore)
+    }
     this.imgListener()
     this.unameListener()
     this.dnameListener()
