@@ -27,13 +27,6 @@ export default [
         URL.revokeObjectURL(url)
         a.remove()
       }
-
-      // const text1 = JSON.stringify(this.mapdata);
-      // const text2 = JSON.stringify(this.finishedEvents);
-      // const file1 = new Blob([text1], { type: "application/json" });
-      // const file2 = new Blob([text2], { type: "application/json" });
-      // const texts = db
-      // modal.alert({ ic: "helmet-safety", msg: "UNDER DEVELOPMENT" })
     }
   },
   {
@@ -50,7 +43,7 @@ export default [
         msg: lang.ROOM_CLEAR_TYPE.replace("{TEXT}", text),
         okx: lang.ROOM_OPT_TAB_CLEAR.toUpperCase()
       })
-      if (!confDeleteB || confDeleteB !== text) {
+      if (!confDeleteB || confDeleteB.toLowerCase() !== text.toLowerCase()) {
         await modal.alert(lang.ROOM_CLEAR_CANCELED)
         return
       }
@@ -59,6 +52,7 @@ export default [
         await modal.alert(lang[historyCleared.msg] || lang.ERROR)
         return
       }
+      room.hideGotolast()
       const cdb = db.c.find((k) => k.r.id === room.data.id)
       if (cdb) cdb.m = []
       if (userState.center && userState.center.role === "chats") {

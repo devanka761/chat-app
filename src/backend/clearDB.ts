@@ -17,7 +17,8 @@ async function clearChats(): Promise<void> {
   const privates = chats.filter((k) => cdb[k].t === "user")
   await waittime(3000)
   console.log("--------")
-  logger.success(`Found ${chats.length} chat rooms`)
+  logger.success(`Found '${chats.length}' chat rooms`)
+  await waittime(150)
   logger.success(`With '${groups.length}' Groups and '${privates.length}' DMs`)
   const roompath = "./dist/stg/room"
   const dbpath = "./dist/db/room"
@@ -27,10 +28,13 @@ async function clearChats(): Promise<void> {
   if (groups.length >= 1) {
     console.log("--------")
     logger.info("Deleting Group")
+    await waittime(150)
     logger.info("I = Group Image")
+    await waittime(150)
     logger.info("M = Media File")
+    await waittime(150)
     logger.info("F = Fully Deleted")
-    await waittime()
+    await waittime(3000)
     console.log("--------")
     for (let i = 0; i < groups.length; i++) {
       const key = cdb[groups[i]].c
@@ -43,17 +47,20 @@ async function clearChats(): Promise<void> {
       if (fs.existsSync(roompath) || key || fs.existsSync(mediapath)) {
         fs.rmSync(mediapath, { recursive: true, force: true })
         logger.info(`[${curIdx}/${groups.length}] ${groups[i]} - M`)
+        await waittime(100)
       }
 
       if (fs.existsSync(grouppath) && cdb[groups[i]].i && fs.existsSync(`${grouppath}/${cdb[groups[i]].i}`)) {
         fs.rmSync(`${grouppath}/${cdb[groups[i]].i}`, { recursive: true, force: true })
         logger.info(`[${curIdx}/${groups.length}] ${groups[i]} - I`)
+        await waittime(100)
       }
 
       const chatpath = `./dist/db/room/${key}.json`
       if (fs.existsSync(dbpath) && key && fs.existsSync(chatpath)) {
         fs.rmSync(chatpath, { recursive: true, force: true })
         logger.info(`[${curIdx}/${groups.length}] ${groups[i]} - F`)
+        await waittime(100)
       }
       delete db.ref.c[groups[i]]
       await waittime(100)
@@ -63,9 +70,11 @@ async function clearChats(): Promise<void> {
   if (privates.length >= 1) {
     console.log("--------")
     logger.info("Deleting Private DMs")
+    await waittime(150)
     logger.info("M = Media File")
+    await waittime(150)
     logger.info("F = Fully Deleted")
-    await waittime()
+    await waittime(3000)
     console.log("--------")
     for (let i = 0; i < privates.length; i++) {
       const key = cdb[privates[i]].c
@@ -79,12 +88,14 @@ async function clearChats(): Promise<void> {
       if (fs.existsSync(roompath) || key || fs.existsSync(mediapath)) {
         fs.rmSync(mediapath, { recursive: true, force: true })
         logger.info(`[${curIdx}/${privates.length}] ${nameKey} - M`)
+        await waittime(100)
       }
 
       const chatpath = `./dist/db/room/${key}.json`
       if (fs.existsSync(dbpath) && key && fs.existsSync(chatpath)) {
         fs.rmSync(chatpath, { recursive: true, force: true })
         logger.info(`[${curIdx}/${privates.length}] ${nameKey} - F`)
+        await waittime(100)
       }
       delete db.ref.c[privates[i]]
       await waittime(100)
@@ -173,7 +184,7 @@ async function clearUsers(): Promise<void> {
   const uids = Object.keys(udb)
   uids.forEach((k) => (permaUsers[k] = false))
   console.log("--------")
-  logger.success(`Found ${uids.length} users`)
+  logger.success(`Found '${uids.length}' users`)
   await waittime(500)
   console.log("--------")
   logger.info("Checking Global Posts Participants")
@@ -193,8 +204,9 @@ async function clearUsers(): Promise<void> {
     }
   })
   console.log("--------")
-  logger.success(`Found ${posters.length} Posts`)
-  logger.success(`Found ${comments.length} Comments`)
+  logger.success(`Found '${posters.length}' Posts`)
+  await waittime(150)
+  logger.success(`Found '${comments.length}' Comments`)
   await waittime(500)
   console.log("--------")
   logger.info("Checking Global Chat Participants")
@@ -205,8 +217,18 @@ async function clearUsers(): Promise<void> {
   if (cdb && cdb.c) {
     const dbchat: IMessageKeyB = db.fileGet(cdb.c, "room") || {}
     const chatObj = Object.keys(dbchat)
-    chatObj.forEach((k) => (permaUsers[dbchat[k].u] = true))
-    logger.success(`Found ${chatObj.length} Messages`)
+    logger.success(`Found '${chatObj.length}' Messages`)
+    await waittime(500)
+    console.log("--------")
+    logger.info("Removing Deleted Messages")
+    await waittime(3000)
+    const deletedMsgs = Object.keys(dbchat).filter((k) => dbchat[k].ty && dbchat[k].ty === "deleted")
+    deletedMsgs.forEach((k) => delete dbchat[k])
+    console.log("--------")
+    logger.success(`Removed '${deletedMsgs.length}' Deleted Messages`)
+    db.fileSet(cdb.c, "room", dbchat)
+
+    Object.keys(dbchat).forEach((k) => (permaUsers[dbchat[k].u] = true))
   } else {
     logger.success(`Skipped: Global Chat has no participant`)
   }
@@ -217,34 +239,34 @@ async function clearUsers(): Promise<void> {
   console.log("--------")
   const nonDormant = Object.keys(permaUsers).filter((user) => permaUsers[user] === true)
   const dormantUsers = Object.keys(permaUsers).filter((user) => permaUsers[user] !== true)
-  logger.success(`Excluded: ${nonDormant.length}/${uids.length} Non-Dormant Accounts`)
-  logger.success(`Included: ${dormantUsers.length}/${uids.length} Dormant Accounts`)
+  logger.success(`Excluded: '${nonDormant.length}' Non-Dormant Accounts`)
+  await waittime(150)
+  logger.success(`Included: '${dormantUsers.length}' Dormant Accounts`)
 
-  await waittime(500)
-  console.log("--------")
-  logger.info(`Deleting ${dormantUsers.length} Dormant Accounts`)
-  await waittime()
-  console.log("--------")
-  for (let i = 0; i < dormantUsers.length; i++) {
-    const user = db.ref.u[dormantUsers[i]]
-    const username = user.uname
-    delete db.ref.u[dormantUsers[i]]
-    const idx = (i + 1).toString()
-    const strLength = dormantUsers.length.toString().length
-    const curDormant = idx.padStart(strLength, "0")
-    logger.info(`[ ${curDormant}/${dormantUsers.length} ] ${username} - ${dormantUsers[i]}`)
-    await waittime(25)
+  if (dormantUsers.length >= 1) {
+    await waittime(500)
+    console.log("--------")
+    logger.info(`Deleting '${dormantUsers.length}' Dormant Accounts`)
+    await waittime(3000)
+    console.log("--------")
+    for (let i = 0; i < dormantUsers.length; i++) {
+      const user = db.ref.u[dormantUsers[i]]
+      const username = user.uname
+      delete db.ref.u[dormantUsers[i]]
+      const idx = (i + 1).toString()
+      const strLength = dormantUsers.length.toString().length
+      const curDormant = idx.padStart(strLength, "0")
+      logger.info(`[ ${curDormant}/${dormantUsers.length} ] ${username} - ${dormantUsers[i]}`)
+      await waittime(25)
+    }
   }
   await waittime(500)
   db.save("u")
   console.log("--------")
-  logger.success(`${dormantUsers.length} Accounts Deleted`)
+  logger.success(`'${dormantUsers.length}' Accounts Deleted`)
   await waittime(2000)
   console.log("--------")
-  console.log(" ")
-  console.log(" ")
   logger.success("DONE!")
-  console.log(" ")
   console.log(" ")
   await waittime(2000)
 }

@@ -80,6 +80,7 @@ async function GetAIAnswer(uid: string, user_text: string, aichat: AIChat, chat_
     userid: KirAIUser.id,
     reply: chat_id,
     id: "ai" + chat_id,
+    type: "text",
     timestamp: Date.now(),
     text: ai_text
   }
