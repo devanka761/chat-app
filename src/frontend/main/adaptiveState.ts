@@ -1,3 +1,4 @@
+import { lang } from "../helper/lang"
 import swiper from "../manager/swiper"
 import Empty from "../pm/content/Empty"
 import HeaderBar from "../pm/parts/header/HeaderBar"
@@ -103,8 +104,16 @@ class AdaptiveState {
       swiper([newer], [older], instant)
     }
 
-    if (newer.king === "center") this.lastcenter = newer
+    if (newer.king === "center") {
+      this.lastcenter = newer
+      if (userState.header) userState.header.AppName = lang[`APP_${newer.role.toUpperCase()}`]
+      console.log(newer.role)
+      if (userState.tab) userState.tab.enable(newer.role)
+    }
     if (newer.king === "content") this.lastcontent = newer
+  }
+  get narrow(): boolean {
+    return this.isNarrow
   }
   private init(): void {
     if (this.isNarrow) {

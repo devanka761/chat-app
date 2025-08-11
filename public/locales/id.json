@@ -21,6 +21,7 @@
   "IMG_ERR": "Gambarnya ga bisa ditampilin",
   "ERROR_TEXT_LENGTH": "Maksimal panjang teks yang dapat dikirim adalah di bawah {TEXT_LENGTH} karakter",
   "FILENAME_LENGTH": "Pastikan nama file yang akan dikirim kurang dari 100 karakter",
+  "APP_FIND": "Temukan",
   "APP_SEARCH": "Temukan",
   "APP_CHATS": "Pesan",
   "APP_FRIENDS": "Teman",

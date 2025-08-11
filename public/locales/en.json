@@ -21,6 +21,7 @@
   "IMG_ERR": "This image cannot be displayed",
   "ERROR_TEXT_LENGTH": "The maximum length of the text that can be sent must be under {TEXT_LENGTH} characters",
   "FILENAME_LENGTH": "Filename must be less than 100 characters",
+  "APP_FIND": "Search",
   "APP_SEARCH": "Search",
   "APP_CHATS": "Chats",
   "APP_FRIENDS": "Friends",

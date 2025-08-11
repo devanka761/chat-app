@@ -4,7 +4,6 @@ import modal from "../../../helper/modal"
 import userState from "../../../main/userState"
 import db from "../../../manager/db"
 import { PrimaryClass } from "../../../types/userState.types"
-import HeaderBar from "./HeaderBar"
 import _navlist from "./_navlist"
 
 export default class Tab implements PrimaryClass {
@@ -42,18 +41,12 @@ export default class Tab implements PrimaryClass {
         if (userState.center?.isLocked) return
         if (userState.content?.isLocked) return
         btn.run()
-        if (!btn.noactive) {
-          this.el.querySelectorAll(".selected").forEach((elod) => elod.classList.remove("selected"))
-          elnav.classList.add("selected")
-          const headerbar = userState.header as HeaderBar
-          headerbar.AppName = lang[btn.txt]
-        }
         this.isLocked = false
       }
     })
   }
   enable(role: string): void {
-    const currnav = this.box.querySelector(`.btn nav-${role}`)
+    const currnav = this.box.querySelector(`.btn.nav-${role}`)
     if (currnav) {
       this.box.querySelectorAll(".selected").forEach((elod) => elod.classList.remove("selected"))
       currnav.classList.add("selected")
