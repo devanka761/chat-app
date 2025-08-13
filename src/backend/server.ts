@@ -24,6 +24,7 @@ import { startModelRemover } from "./controller/genai.controller"
 import webhookSender from "./main/webhook"
 import logger from "./main/logger"
 import { getServerReady } from "./main/prepare"
+import { version } from "../config/version.json"
 console.clear()
 console.log("--------")
 if (!fs.existsSync("./dist")) fs.mkdirSync("./dist")
@@ -86,7 +87,7 @@ app.get("/core-api", (req: Request, res: Response) => {
 })
 
 app.get("/", (req: Request, res: Response) => {
-  res.render("home")
+  res.render("home", { version })
   return
 })
 

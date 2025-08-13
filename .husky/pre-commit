@@ -1,0 +1,46 @@
+# Check Prettier
+npm run check ||
+(
+    echo 'Prettier Check Failed. Run npm run format, add changes and try commit again';
+    false;
+)
+
+# Check ESLint
+npm run lint ||
+(
+    echo "ESLint Check Failed. Make the required changes listed above, add changes and try to commit again";
+    false;
+)
+
+# Check tsconfig
+npm run type-check || 
+(
+    echo "Failed type check. Make the changes require above, add changes and try to commit again";
+    false;
+)
+
+npm run build ||
+(
+    echo "Your build failed, view the errors above"
+    false;
+)
+
+npm --no-git-tag-version version patch ||
+{
+    echo "Patching version failed #1"
+    false;
+}
+
+echo "{ \"version\": \""$(node -p "require('./package.json').version")"\" }" > src/config/version.json ||
+{
+    echo "Patching version failed #2"
+    false;
+}
+
+git add . ||
+{
+    echo "Patching version failed #3"
+    false;
+}
+
+echo "Success Commit"

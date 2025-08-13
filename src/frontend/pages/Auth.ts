@@ -20,6 +20,7 @@ import ForceClose from "./ForceClose"
 import { SetNotifications } from "../main/subscribe"
 import Room from "../pm/content/Room"
 import { removeParams } from "../main/urlHistory"
+import { version } from "../../config/version.json"
 
 let lang: LangObject = {}
 
@@ -66,6 +67,7 @@ export default class Auth {
       </div>
       <div class="title">
         <h1>KIRIMIN MESSENGER</h1>
+        <h2>v${version}</h2>
       </div>
       <div class="splash-loader">
         <p><i class="fa-solid fa-circle-notch fa-spin"></i> Initializing ...</p>
