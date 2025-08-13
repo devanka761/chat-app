@@ -10,6 +10,7 @@ import noMessage from "../../../helper/noMessage"
 import Room from "../../content/Room"
 import adap from "../../../main/adaptiveState"
 import Invites from "../../../pages/Invites"
+import About from "../../content/About"
 
 export default [
   {
@@ -72,6 +73,14 @@ export default [
     c: "fa-solid fa-gear fa-fw",
     run: async () => {
       adap.swipe(new Settings())
+    }
+  },
+  {
+    id: "about",
+    txt: "APP_ABOUT",
+    c: "fa-solid fa-wrench-simple fa-fw",
+    run: async () => {
+      adap.swipe(new About())
     }
   }
 ]

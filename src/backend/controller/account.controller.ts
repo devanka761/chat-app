@@ -8,6 +8,7 @@ import { IRepTempB } from "../types/validate.types"
 import { IAccountB } from "../types/account.types"
 import { PEER_CONFIG } from "../../config/peer.config.json"
 import relay from "../main/relay"
+import { version } from "../../config/version.json"
 
 function initSocketClient(uid: string): SocketDB {
   const id = rUid()
@@ -47,6 +48,7 @@ export function getMe(uid: string): IRepTempB {
     me: meData,
     socket: initSocketClient(uid),
     v: db.ref.k.v,
+    package: version,
     publicKey: db.ref.k.publicKey
   }
 

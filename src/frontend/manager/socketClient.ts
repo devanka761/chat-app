@@ -14,6 +14,7 @@ import Empty from "../pm/content/Empty"
 import Group from "../pm/content/Group"
 import Room from "../pm/content/Room"
 import db from "./db"
+import packageVersion from "../../config/version.json"
 
 function socketError(err: Event) {
   console.error(err)
@@ -68,7 +69,7 @@ export class SocketClient {
     const reconnectUser = await xhr.get("/x/auth/isUser")
 
     // if (!reconnectUser) return await this.reconnect()
-    if (reconnectUser.data?.v && reconnectUser.data.v !== db.version) {
+    if ((reconnectUser.data?.v && reconnectUser.data.v !== db.version) || (reconnectUser.data?.package && reconnectUser.data.package !== packageVersion.version)) {
       await modal.waittime(4200)
       new ForceClose({
         msg_1: '<i class="fa-duotone fa-solid fa-sign-posts-wrench"></i>',
