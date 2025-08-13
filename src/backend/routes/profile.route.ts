@@ -1,5 +1,5 @@
 import express, { Request, Response, Router } from "express"
-import { acceptfriend, addfriend, cancelfriend, ignorefriend, searchUser, unfriend } from "../controller/profile.controller"
+import { acceptfriend, addfriend, badgesEdit, cancelfriend, ignorefriend, searchUser, unfriend } from "../controller/profile.controller"
 import { rep } from "../main/helper"
 import { cdUser, isUser } from "../main/middlewares"
 import validate from "../main/validate"
@@ -60,5 +60,10 @@ router.get("/search/:search_id", (req: Request, res: Response) => {
   res.status(setfriend.code).json(setfriend)
   return
 })
-
+router.post("/badges/:userid", (req: Request, res: Response) => {
+  const { userid } = req.params
+  const setnewbadges = rep(badgesEdit(req.user?.id as string, userid, req.body.badges))
+  res.status(setnewbadges.code).json(setnewbadges)
+  return
+})
 export default router

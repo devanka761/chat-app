@@ -107,7 +107,6 @@ class AdaptiveState {
     if (newer.king === "center") {
       this.lastcenter = newer
       if (userState.header) userState.header.AppName = lang[`APP_${newer.role.toUpperCase()}`]
-      console.log(newer.role)
       if (userState.tab) userState.tab.enable(newer.role)
     }
     if (newer.king === "content") this.lastcontent = newer

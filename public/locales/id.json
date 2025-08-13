@@ -80,6 +80,7 @@
   "ACC_CHOOSE_LANG_DONE": "Halaman perlu direfresh untuk menerapkan perubahan",
   "ACC_ABOUT": "Tentang",
   "ACC_LOGOUT": "Yakin nih mau logout sekarang?",
+  "ACC_UPGRADED": "<strong>SELAMAT!</strong><br/>Akun kamu sekarang punya tanda baru nih!</br>--------</br><code>{BADGES}</code>",
   "FIND_RANDOM": "Temukan pengguna secara acak",
   "FIND_ID": "Cari berdasarkan Username/ID",
   "FIND_START": "Mulai",

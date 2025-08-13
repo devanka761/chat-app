@@ -78,6 +78,7 @@
   "ACC_FILE_LIMIT": "Your file exceeded the upload size limit of {SIZE}",
   "ACC_ABOUT": "About",
   "ACC_LOGOUT": "Are you sure want to log out now?",
+  "ACC_UPGRADED": "<strong>CONGRATULATION!</strong><br/>Your account is now having new bages!</br>--------</br><code>{BADGES}</code>",
   "FIND_RANDOM": "Find random user",
   "FIND_ID": "Find by Username/ID",
   "FIND_START": "Start Now",

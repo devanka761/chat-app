@@ -170,3 +170,22 @@ export function ignorefriend(uid: string, s: { userid: string }): IRepTempB {
   zender(uid, s.userid, "ignorefriend", { user: getUser(s.userid, uid) })
   return { code: 200, data: { user: getUser(uid, s.userid) } }
 }
+
+export function badgesEdit(uid: string, userid: string, badges: number[]): IRepTempB {
+  if (badges instanceof Array === false) return { code: 400 }
+  if (!db.ref.u[uid] || !db.ref.u[uid].b || !db.ref.u[uid].b.find((badge) => badge === 1)) {
+    return { code: 403, msg: "FORBIDDEN" }
+  }
+  if (!db.ref.u[userid]) return { code: 404 }
+  const validBadge = [2, 3, 4, 5]
+  badges = badges.filter((badge) => validBadge.find((validBadge) => validBadge === badge))
+  if (badges.length < 1) {
+    if (db.ref.u[userid].b) delete db.ref.u[userid].b
+  } else {
+    if (!db.ref.u[userid].b) db.ref.u[userid].b = []
+    db.ref.u[userid].b = badges
+  }
+  db.save("u")
+  zender(uid, userid, "newbadges", { badges })
+  return { code: 200, data: { badges } }
+}

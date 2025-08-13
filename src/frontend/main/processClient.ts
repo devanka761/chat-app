@@ -4,6 +4,7 @@ import { lang } from "../helper/lang"
 import modal from "../helper/modal"
 import noMessage from "../helper/noMessage"
 import notip from "../helper/notip"
+import { localeBadge } from "../helper/setbadge"
 import db from "../manager/db"
 import negotiator from "../manager/negotiator"
 import ForceClose from "../pages/ForceClose"
@@ -440,6 +441,19 @@ class ProcessClient {
       notip({ ic: "signal-slash", a: s.user.username, b: lang.CALL_OFFLINE, c: "4" })
       vcall.destroy()
       modal.alert({ ic: "signal-slash", msg: lang.CALL_OFFLINE })
+    }
+  }
+  private newbadges(s: IZender): void {
+    const badges = s.badges as number[]
+    db.me.badges = badges
+
+    if (badges.length >= 1) {
+      const badge_text = badges.map((badge) => localeBadge[badge.toString()][1]).join(" - ")
+      const alert_text = lang.ACC_UPGRADED.replace("{BADGES}", badge_text)
+      modal.alert({
+        ic: "badge-check",
+        msg: alert_text
+      })
     }
   }
   run(type: string, data: IZender): void {

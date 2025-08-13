@@ -81,6 +81,39 @@ export default class Profile implements PrimaryClass {
     if (!this.wall.contains(euname)) this.wall.append(euname)
     euname.innerHTML = this.user.username
     if (this.user.badges) setbadge(euname, this.user.badges)
+    euname.onclick = async () => {
+      if (this.isLocked) return
+      if (!db.me.badges?.includes(1)) return
+      this.isLocked = true
+      const badgeEdit = await modal.prompt({
+        msg: "Set Badge",
+        val: this.user.badges?.join(", ") || "",
+        pholder: "Type Badges Here: 1, 2, 3, 4, and or 5"
+      })
+      if (!badgeEdit) {
+        this.isLocked = false
+        return
+      }
+      if (badgeEdit.replace(/\s/g, "") === this.user.badges?.join(",")) {
+        this.isLocked = false
+        return
+      }
+      const sendNewBadges = await modal.loading(
+        xhr.post(`/x/profile/badges/${this.user.id}`, {
+          badges: badgeEdit
+            .replace(/\s/g, "")
+            .split(",")
+            .map((badge) => Number(badge))
+        })
+      )
+      if (!sendNewBadges || !sendNewBadges.ok) {
+        await modal.alert(lang[sendNewBadges.msg] || lang.ERROR)
+        this.isLocked = false
+        return
+      }
+      this.user.badges = sendNewBadges.data.badges
+      this.isLocked = false
+    }
   }
   renDname(): void {
     let edname = qutor(".displayname", this.wall)

@@ -4,7 +4,7 @@
   "description": "Chat App Written in TypeScript with Responsive Design",
   "main": "./dist/bundle/backend/server.js",
   "scripts": {
-    "lint": "eslint",
+    "lint": "eslint && tsgo --noEmit",
     "start": "node .",
     "dev": "nodemon",
     "dev:start": "nodemon",

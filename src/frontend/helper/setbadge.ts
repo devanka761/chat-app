@@ -1,7 +1,7 @@
 import { createBadge, moveBadge, removeBadge } from "../main/spillBadge"
 import { kel } from "./kel"
 
-const localeBadge: { [key: string]: [string, string] } = {
+export const localeBadge: { [key: string]: [string, string] } = {
   "1": ["dev", "DEVELOPER"],
   "2": ["staff", "STAFF"],
   "3": ["mod", "MODERATOR"],
