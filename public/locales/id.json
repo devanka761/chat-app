@@ -242,5 +242,5 @@
   "INC_VOICE": "Panggilan Suara Masuk",
   "INC_VIDEO": "Panggilan Video Masuk",
   "AI_RATE_LIMIT": "Kamu saat ini sudah melebihi batas kuota <strong>KirAI</strong>.<br/>Silakan tunggu <strong>{TIME}</strong> untuk dapat mengobrol bersama <strong>KirAI</strong> kembali.",
-  "AI_INIT_MSG": "Halo, aku **KirAI (Kirimin AI)** siap bantuin kamu! Tanyain apa aja, nanti aku coba jawab semampuku! Oh ya, sayang sekali kamu cuma punya kuota `2 kali permintaan` setiap `10 menit`."
+  "AI_INIT_MSG": "Halo, aku **KirAI (Kirimin AI)**, sebuah asisten ***jutek*** yang siap bantuin kamu! Tanyain apa aja, nanti aku coba jawab semampuku kalo lagi ga males. Oh ya, sayang sekali kamu cuma punya kuota `2 kali permintaan` setiap `10 menit`."
 }

@@ -127,11 +127,38 @@ body {
         }
       }
     }
+    &#packages {
+      background-color: v.$px1;
+      padding: 20px;
+      color: v.$softwhite;
+      .box {
+        max-width: 800px;
+        margin: 0 auto;
+        p {
+          text-align: center;
+        }
+        .cre {
+          margin-top: 0.5rem;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          align-items: center;
+          gap: 10px;
+          a {
+            font-size: 0.75rem;
+            display: block;
+            text-decoration: none;
+            padding: 3px 5px;
+            border-radius: 5px;
+            background-color: v.$pm2;
+          }
+        }
+      }
+    }
     &#footer {
       background-color: v.$px25;
       color: v.$softwhite;
       .links {
-        background-color: v.$px1;
         padding: 20px;
         display: flex;
         flex-wrap: wrap;
@@ -146,6 +173,7 @@ body {
         }
       }
       .author {
+        background-color: v.$px1;
         padding: 20px;
         font-size: 14px;
         p {

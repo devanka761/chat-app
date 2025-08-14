@@ -1,7 +1,22 @@
 const path = require("path")
+const fs = require("fs")
 const webpack = require("webpack")
+const curPackage = require("../../package.json")
 
-function compileServiceWorkers() {
+function writeDeps() {
+  const depList = {
+    dependencies: Object.keys(curPackage.dependencies),
+    devDependencies: Object.keys(curPackage.devDependencies),
+    others: [
+      { id: "cerbot", url: "https://github.com/certbot/certbot#readme" },
+      { id: "coturn", url: "https://github.com/coturn/coturn#readme" }
+    ]
+  }
+  fs.writeFileSync("./dist/db/deps.json", JSON.stringify(depList), "utf-8")
+}
+
+async function compileServiceWorkers() {
+  writeDeps()
   console.log("compiling service worker")
   webpack({
     entry: "./src/frontend/sw.ts",

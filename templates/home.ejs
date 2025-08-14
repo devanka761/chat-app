@@ -123,6 +123,30 @@
             </div>
           </div>
         </section>
+        <section class="sect" id="packages">
+          <div class="box">
+            <p><strong>Packages</strong></p>
+            <div class="cre">
+              <% for (const dep of dependencies) { %>
+                <a class="dep" href="https://www.npmjs.com/package/<%= dep %>" target="_blank"><%= dep %></a>
+              <% } %>
+            </div>
+            <br />
+            <p><strong>Development Packages</strong></p>
+            <div class="cre">
+              <% for (const dep of devDependencies) { %>
+                <a class="dep" href="https://www.npmjs.com/package/<%= dep %>" target="_blank"><%= dep %></a>
+              <% } %>
+            </div>
+            <br />
+            <p><strong>Others</strong></p>
+            <div class="cre">
+              <% for (const dep of others) { %>
+                <a class="dep" href="<%= dep.url %>" target="_blank"><%= dep.id %></a>
+              <% } %>
+            </div>
+          </div>
+        </section>
         <section class="sect" id="footer">
           <div class="links">
             <a href="https://github.com/devanka761" target="_blank"><i class="fa-brands fa-github"></i> devanka761</a>
