@@ -25,7 +25,9 @@ import webhookSender from "./main/webhook"
 import logger from "./main/logger"
 import { getServerReady } from "./main/prepare"
 import { version } from "../config/version.json"
-import deps from "../../dist/db/deps.json"
+
+const deps = JSON.parse(fs.readFileSync("./dist/db/deps.json", "utf-8") || "{}")
+
 console.clear()
 console.log("--------")
 if (!fs.existsSync("./dist")) fs.mkdirSync("./dist")
