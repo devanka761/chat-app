@@ -1,7 +1,8 @@
 # Chat App - Kirimin
-- Live Demo: [Kirimin](https://kirimin.devanka.id/)
-- Support Me: [Donasi Saweria](https://saweria.co/devanka)
+- Live Demo: [Kirimin Messenger](https://kirimin.devanka.id/)
 - Subscribe: YouTube [Devanka 761](https://www.youtube.com/@devanka761)
+- Join Discord: [Codemate Resort](https://devanka.id/discord)
+
 ## FEATURES
 1. Private, group, and global chats
 2. Support for text, image, video, audio, and other documents
@@ -125,5 +126,5 @@ npm run start
 ```shell
 pm2 start npm --name "my-chat-app" -- start && pm2 restart "my-chat-app" --max-memory-restart 8G
 ```
-> [!NOTE]
+> [!TIP]
 > Units can be K(ilobyte), M(egabyte), G(igabyte)

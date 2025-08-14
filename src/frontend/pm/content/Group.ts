@@ -190,6 +190,7 @@ export default class Group implements PrimaryClass {
     }
   }
   private renMembers(): void {
+    if (this.group.id === "696969") return
     let chp = qutor(".chp.groupmember", this.wall)
     if (!chp) {
       chp = kel("div", "chp groupmember")
@@ -224,9 +225,11 @@ export default class Group implements PrimaryClass {
   }
   private renMemberTitle(): void {
     if (!this.membersTitle) return
+    if (this.group.id === "696969") return
     this.membersTitle.innerHTML = `Members ${this.users.length}/10`
   }
   private renMemberNew(usr: IUserF): void {
+    if (this.group.id === "696969") return
     const member = new Member({ group: this.group, user: usr, parent: this })
     this.members.add(member)
     if (!this.ul) return
