@@ -36,28 +36,28 @@ npm install
 `src/config/public.config.json`
 ```javascript
 {
-  "GEN_AI_FEATURE": false,
   // Enable AI Chat feature (powered by Google Generative AI)
   // If true, edit GENAI_API_KEY inside `.env`
+  "GEN_AI_FEATURE": false,
 
-  "AI_MODEL": "gemini-2.5-pro",
   // Choose ai model only if GEN_AI_FEATURE is true
   // See All Models: https://ai.google.dev/gemini-api/docs/models
+  "AI_MODEL": "gemini-2.5-pro",
 
-  "USE_OAUTH_GOOGLE": true,
   // Enable Google OAuth login method
   // If true, edit GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET inside `.env`
+  "USE_OAUTH_GOOGLE": true,
 
-  "USE_OAUTH_GITHUB": false,
   // Enable GitHub OAuth login method
   // If true, edit GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET inside `.env`
+  "USE_OAUTH_GITHUB": false,
 
-  "USE_OAUTH_DISCORD": false,
   // Enable Discord OAuth login method
   // If true, edit DISCORD_CLIENT_ID and DISCORD_CLIENT_SECRET inside `.env`
+  "USE_OAUTH_DISCORD": false,
 
-  "SAVE_VERSION": "Kirimin20250726",
   // Sync users localstorage save version to the latest stable version. If outdated, old save file will be destroyed and generated a new one.
+  "SAVE_VERSION": "Kirimin20250726",
 }
 ```
 
@@ -65,18 +65,31 @@ npm install
 `src/config/server.config.json`
 ```javascript
 {
-  "webhook": false,
   // Send webhook about website log to discord
   // If true, (1) edit DISCORD_BOT_TOKEN inside `.env`, If true, (2) setup `src/config/discord.config.json`
+  "webhook": false,
 
-  "update": false,
   // Update app version and force users to reload the page after server restart,
+  "update": false,
 
-  "GenAIsystemInstruction": [
-    "You are a friendly and helpful assistant.",
-    "Ensure your answers are complete, unless the user requests a more concise approach."
-  ]
-  // System Instruction for AI Generation
+  // generation config
+  "GenAIConfig": {
+
+    // Value that controls the degree of randomness in token selection
+    "temperature": 1,
+
+    // Tokens are selected from the most to least probable until the sum of their probabilities equals this value
+    "topP": 0.95,
+
+    // For each token selection step, the `top_k` tokens with the highest probabilities are sampled. Then tokens are further filtered based on `top_p` with the final token selected using temperature sampling.
+    "topK": 50,
+
+    // Maximum number of tokens that can be generated in the response
+    "maxOutputTokens": 65536,
+
+    // Instructions for the model to steer it toward better performance
+    "systemInstruction": "You are a friendly and helpful assistant. Ensure your answers are complete, unless the user requests a more concise approach."
+  }
 }
 ```
 
@@ -86,11 +99,11 @@ npm install
 {
   // if webhook is true, put your channel id from your discord server
 
-  "AI_LEARN": "00000000000000",
   // monitor how ai answers to the user input
+  "AI_LEARN": "00000000000000",
 
-  "USER_LOG": "00000000000000"
   // monitor user log (online/offline)
+  "USER_LOG": "00000000000000"
 }
 ```
 

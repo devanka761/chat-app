@@ -1,6 +1,6 @@
 import fs from "fs"
 import { GEN_AI_FEATURE, AI_MODEL } from "../../config/public.config.json"
-import { GenAIsystemInstruction } from "../../config/server.config.json"
+import { GenAIConfig } from "../../config/server.config.json"
 import { KirAIRoom, KirAIUser } from "../../frontend/helper/AccountKirAI"
 import { IMessageUpdateF } from "../../frontend/types/message.types"
 import AIChats from "../main/aichats"
@@ -43,9 +43,7 @@ function getModel(uid: string): AIChat {
     const model = ai.chats.create({
       model: AI_MODEL,
       history: aihistory,
-      config: {
-        systemInstruction: GenAIsystemInstruction
-      }
+      config: GenAIConfig
     })
     AIChats[uid] = {
       model,
@@ -66,10 +64,7 @@ function transformChatToHistory(messages: IMessageF[]): Content[] {
 }
 async function GetAIAnswer(uid: string, user_text: string, aichat: AIChat, chat_id: string) {
   const aiAnswer = await aichat.model.sendMessage({
-    message: user_text.trim(),
-    config: {
-      systemInstruction: GenAIsystemInstruction
-    }
+    message: user_text.trim()
   })
   AIChats[uid].rate++
   AIChats[uid].ts = Date.now() + 1000 * 60 * 10
