@@ -664,26 +664,21 @@ $errorbg: #3d2b31;
                 }
               }
               code {
+                line-height: 1.5;
                 font-size: 0.8rem;
                 font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
                 background: rgba($color: v.$black, $alpha: 0.2);
                 padding: 3px;
-                color: rgba($color: v.$darkcream, $alpha: 0.7);
                 border-radius: 3px;
+                scrollbar-width: thin;
+              }
+              :not(pre) code {
+                color: rgba($color: v.$darkcream, $alpha: 0.7);
               }
               pre {
-                line-height: 1.5;
-                margin: 4px 0;
-                background: rgba($color: v.$black, $alpha: 0.2);
-                padding: 10px;
-                border: 1px solid rgba($color: v.$black, $alpha: 0.1);
-                border-radius: 10px;
-                white-space: pre-wrap;
-                overflow-x: auto;
                 code {
-                  margin: 0 0;
-                  padding: 0;
-                  background: none;
+                  padding: 10px;
+                  border-radius: 10px;
                 }
               }
               img,

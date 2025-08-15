@@ -15,7 +15,7 @@ class UserState {
   private currMedia: VCall | null
   private currIncoming: Incoming | null
   public locked: UserLocked
-  private saveKey: string
+  readonly saveKey: string
   constructor() {
     this.color = "dark"
     this.notif = { a01: 1, a02: 1, a03: 1 }

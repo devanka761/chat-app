@@ -1,8 +1,10 @@
+@use "sass:meta";
 @use "./variables" as v;
 
 $errorbg: #3d2b31;
 html[data-theme="light"] {
   scrollbar-color: v.$pDarkMintGreen v.$pMintWhite;
+  @include meta.load-css("highlight.js/scss/vs");
 }
 
 [data-theme="light"] {
@@ -615,13 +617,9 @@ html[data-theme="light"] {
               .msg {
                 code {
                   background: rgba($color: v.$pSoftMintGreen, $alpha: 0.2);
-                  color: rgba($color: v.$pyellow, $alpha: 0.7);
                 }
-                pre {
-                  background: rgba($color: v.$pSoftMintGreen, $alpha: 0.2);
-                  code {
-                    background: none;
-                  }
+                :not(pre) code {
+                  color: rgba($color: v.$pyellow, $alpha: 1);
                 }
                 &.jedots {
                   .dot {

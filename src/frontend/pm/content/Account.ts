@@ -213,7 +213,7 @@ export default class Account implements PrimaryClass {
   }
   private renUserSignIn(): void {
     this.btnLogout = kel("a", "logout")
-    this.btnLogout.href = "/x/auth/logout"
+    this.btnLogout.href = "/logout"
     this.btnLogout.innerHTML = `LOG OUT`
     const p = kel("p", null, { e: this.btnLogout })
     const chp = kel("div", "chp usersign", { e: p })
@@ -379,6 +379,7 @@ export default class Account implements PrimaryClass {
         this.isLocked = false
         return
       }
+      window.localStorage.removeItem(userState.saveKey)
       await modal.loading(xhr.get("/x/auth/logout"))
       this.isLocked = false
       window.location.href = "/x/auth/logout"
