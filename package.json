@@ -60,7 +60,7 @@
     "@types/express-session": "^1.18.2",
     "@types/fluent-ffmpeg": "^2.1.27",
     "@types/node": "^24.0.3",
-    "@types/nodemailer": "^6.4.17",
+    "@types/nodemailer": "^7.0.0",
     "@types/session-file-store": "^1.2.5",
     "@types/web-push": "^3.6.4",
     "@types/ws": "^8.18.1",
