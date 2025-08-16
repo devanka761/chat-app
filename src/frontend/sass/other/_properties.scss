@@ -268,6 +268,9 @@ $bg: #3f464e;
         word-break: break-all;
         word-break: break-word;
         hyphens: auto;
+        max-height: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
   }

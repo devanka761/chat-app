@@ -239,7 +239,7 @@ export default class MessageBuilder {
         this.textMessage.classList.add("jedots")
         this.textMessage.innerHTML = `<span class="dot dot-1"></span><span class="dot dot-2"></span><span class="dot dot-3"></span>`
       } else if (this.user.id === KirAIRoom.id) {
-        this.textMessage.innerHTML = marked.use({ renderer, gfm: true, breaks: true }).parse(escapeHTML(this.s.text)).toString()
+        this.textMessage.innerHTML = marked.use({ renderer, gfm: true, breaks: true }).parse(this.s.text).toString()
       } else {
         this.textMessage.innerText = escapeWhiteSpace(this.s.text)
       }
@@ -382,7 +382,7 @@ export default class MessageBuilder {
   }
   clickListener(...args: MessageOptionType[]): void {
     this.el.onclick = (e) => {
-      if (this.room.data.id === KirAIRoom.id) return
+      if (this.room.data.id === KirAIRoom.id) args = ["copy"]
       const { target } = e
       if (target instanceof Node) {
         if (this.optmenu?.contains(target)) return

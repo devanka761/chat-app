@@ -47,55 +47,52 @@
   }
 }
 @keyframes bgTrans {
-  0% {
-    background-color: #00000000;
-  }
   20% {
-    background-color: rgba($color: v.$pm1, $alpha: 0.5);
+    background-color: rgba($color: v.$darkcream, $alpha: 0.5);
   }
-  75% {
-    background-color: rgba($color: v.$pm1, $alpha: 0.5);
+  60% {
+    background-color: rgba($color: v.$darkcream, $alpha: 0.5);
   }
-  80% {
-    background-color: rgba($color: v.$pm1, $alpha: 0.3);
+  68% {
+    background-color: rgba($color: v.$darkcream, $alpha: 0.3);
   }
-  85% {
-    background-color: rgba($color: v.$pm1, $alpha: 0.5);
+  76% {
+    background-color: rgba($color: v.$darkcream, $alpha: 0.5);
   }
-  90% {
-    background-color: rgba($color: v.$pm1, $alpha: 0.3);
+  84% {
+    background-color: rgba($color: v.$darkcream, $alpha: 0.3);
   }
-  95% {
-    background-color: rgba($color: v.$pm1, $alpha: 0.5);
-  }
-  100% {
-    background-color: #00000000;
+  92% {
+    background-color: rgba($color: v.$darkcream, $alpha: 0.5);
   }
 }
 @keyframes bgTrans2 {
-  0% {
-    background-color: #00000000;
-  }
   20% {
-    background-color: rgba($color: #659287, $alpha: 0.5);
+    background-color: rgba($color: v.$yellow, $alpha: 0.5);
+    box-shadow: 0 0 10px v.$pDarkMintGreen;
   }
-  75% {
-    background-color: rgba($color: #659287, $alpha: 0.5);
+  60% {
+    background-color: rgba($color: v.$yellow, $alpha: 0.5);
+    box-shadow: 0 0 10px v.$pDarkMintGreen;
   }
-  80% {
-    background-color: rgba($color: #659287, $alpha: 0.3);
+  68% {
+    background-color: rgba($color: v.$yellow, $alpha: 0.3);
+    box-shadow: 0 0 10px v.$pDarkMintGreen;
   }
-  85% {
-    background-color: rgba($color: #659287, $alpha: 0.5);
+  76% {
+    background-color: rgba($color: v.$yellow, $alpha: 0.5);
+    box-shadow: 0 0 10px v.$pDarkMintGreen;
   }
-  90% {
-    background-color: rgba($color: #659287, $alpha: 0.3);
+  84% {
+    background-color: rgba($color: v.$yellow, $alpha: 0.3);
+    box-shadow: 0 0 10px v.$pDarkMintGreen;
   }
-  95% {
-    background-color: rgba($color: #659287, $alpha: 0.5);
+  92% {
+    background-color: rgba($color: v.$yellow, $alpha: 0.5);
+    box-shadow: 0 0 10px v.$pDarkMintGreen;
   }
   100% {
-    background-color: #00000000;
+    box-shadow: 0 0 10px #00000000;
   }
 }
 

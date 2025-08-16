@@ -28,7 +28,6 @@ import { version } from "../config/version.json"
 
 const deps = JSON.parse(fs.readFileSync("./dist/db/deps.json", "utf-8") || "{}")
 
-console.clear()
 console.log("--------")
 if (!fs.existsSync("./dist")) fs.mkdirSync("./dist")
 if (!fs.existsSync("./dist/sessions")) {

@@ -712,6 +712,9 @@ $errorbg: #3d2b31;
                   }
                 }
               }
+              &:not(:has(*)) {
+                line-height: 1.5;
+              }
             }
             .edited {
               color: v.$swhite;
@@ -782,7 +785,9 @@ $errorbg: #3d2b31;
           margin-top: 3px;
         }
         &.highlight {
-          animation: bgTrans 5s;
+          .field {
+            animation: bgTrans 3s;
+          }
         }
       }
       .preload {

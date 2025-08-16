@@ -667,7 +667,9 @@ html[data-theme="light"] {
             }
           }
           &.highlight {
-            animation: bgTrans2 5s;
+            .field {
+              animation: bgTrans2 3s;
+            }
           }
         }
         .preload {

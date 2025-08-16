@@ -7,7 +7,7 @@ export const localeBadge: { [key: string]: [string, string] } = {
   "3": ["mod", "MODERATOR"],
   "4": ["dono", "LOYAL DONATOR"],
   "5": ["wl", "WHITELISTED VERIFIED"],
-  "6": ["bot", "Artificial Intelligence"]
+  "6": ["ai bot", "ARTIFICIAL INTELLIGENCE"]
 }
 function parseBadge(n: number | string): HTMLElement {
   if (typeof n === "number") n = n.toString()
