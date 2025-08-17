@@ -9,11 +9,17 @@ import zender from "../main/zender"
 import { IRepTempB } from "../types/validate.types"
 import { Content, GoogleGenAI } from "@google/genai"
 import { getUser } from "./profile.controller"
-import { AIChat, IMessageKeyB } from "../types/db.types"
+import { AIChat, IMessageB, IMessageKeyB } from "../types/db.types"
 import db from "../main/db"
 import { minimizeMessage, normalizeMessage } from "../main/helper"
-import { IMessageF } from "../../frontend/types/db.types"
+import { IMessageF, IRoomDataF, IUserF } from "../../frontend/types/db.types"
 import webhookSender from "../main/webhook"
+
+type FormatFromGlobal = {
+  room: IRoomDataF
+  users: IUserF[]
+  chat_id: string
+}
 
 const ai = new GoogleGenAI({ apiKey: cfg.GENAI_API_KEY })
 
@@ -62,12 +68,12 @@ function transformChatToHistory(messages: IMessageF[]): Content[] {
     }
   })
 }
-async function GetAIAnswer(uid: string, user_text: string, aichat: AIChat, chat_id: string) {
+async function GetAIAnswer(uid: string, user_text: string, aichat: AIChat, chat_id: string, gid: string, fmt?: FormatFromGlobal) {
   const aiAnswer = await aichat.model.sendMessage({
     message: user_text.trim()
   })
-  AIChats[uid].rate++
-  AIChats[uid].ts = Date.now() + 1000 * 60 * 10
+  AIChats[gid].rate++
+  AIChats[gid].ts = Date.now() + 1000 * 60 * 10
 
   const ai_text = aiAnswer.text || "**KirAI** Error"
 
@@ -81,24 +87,35 @@ async function GetAIAnswer(uid: string, user_text: string, aichat: AIChat, chat_
   }
   const data: IMessageUpdateF = {
     chat: newchat,
-    roomdata: KirAIRoom,
-    users: [KirAIUser, getUser(uid, uid)]
+    roomdata: fmt?.room || KirAIRoom,
+    users: fmt?.users || [KirAIUser, getUser(uid, uid)],
+    sender: KirAIUser
   }
 
-  const chatsdb = (db.fileGet(`ai${uid}`, "kirai") || {}) as IMessageKeyB
+  const chatsdb = (db.fileGet(`ai${gid}`, "kirai") || {}) as IMessageKeyB
 
-  chatsdb["ai" + chat_id] = minimizeMessage(KirAIUser.id, newchat)
-  db.fileSet(`ai${uid}`, "kirai", chatsdb)
+  const minimizedMessage = minimizeMessage(KirAIUser.id, newchat)
+
+  chatsdb["ai" + chat_id] = minimizedMessage
+  db.fileSet(`ai${gid}`, "kirai", chatsdb)
+
+  if (fmt?.room.id === "696969") saveToGroup("ai" + chat_id, minimizedMessage)
 
   await new Promise((resolve) => setTimeout(resolve, 1000))
 
-  zender(KirAIUser.id, uid, "sendmessage", data)
+  const users = fmt && fmt.users ? fmt.users.map((usr) => usr.id) : [uid]
+  users.forEach((usr) => {
+    zender(KirAIUser.id, usr, "sendmessage", data)
+  })
+
   webhookSender.genai({ userid: KirAIUser.id, chatid: chat_id, text: ai_text })
 }
 
-export function sendAIChat(uid: string, user_text?: string): IRepTempB {
+export function sendAIChat(uid: string, user_text?: string, fmt?: FormatFromGlobal): IRepTempB {
   if (!GEN_AI_FEATURE) return { code: 400 }
-  const myRate = AIChats[uid]
+  const gid = fmt?.room.id || uid
+
+  const myRate = AIChats[gid]
   if (myRate && myRate.rate >= 2) {
     if (myRate.ts >= Date.now()) {
       return { code: 404, msg: "AI_RATE_LIMIT", data: { ts: myRate.ts } }
@@ -109,19 +126,24 @@ export function sendAIChat(uid: string, user_text?: string): IRepTempB {
   if (!user_text || user_text.trim().length < 1) return { code: 400 }
   user_text = user_text.trim()
 
-  const chat_id = "m" + Date.now().toString(36)
+  const chat_id = fmt?.chat_id || "m" + Date.now().toString(36)
 
-  zender(KirAIUser.id, uid, "sendmessage", {
-    chat: {
-      userid: KirAIUser.id,
-      reply: chat_id,
-      id: "ai" + chat_id,
-      type: "think",
-      timestamp: Date.now(),
-      text: "⌛ ⌛ 🚀 🚀"
-    },
-    roomdata: KirAIRoom,
-    users: [KirAIUser, getUser(uid, uid)]
+  const users: string[] = fmt && fmt.users ? fmt.users.map((usr) => usr.id) : [uid]
+
+  users.forEach((usr) => {
+    zender(KirAIUser.id, usr, "sendmessage", {
+      chat: {
+        userid: KirAIUser.id,
+        reply: chat_id,
+        id: "ai" + chat_id,
+        type: "think",
+        timestamp: Date.now(),
+        text: "⌛ ⌛ 🚀 🚀"
+      },
+      roomdata: fmt?.room || KirAIRoom,
+      users: fmt?.users || [KirAIUser, getUser(usr, usr)],
+      sender: KirAIUser
+    })
   })
 
   const newchat = {
@@ -132,15 +154,15 @@ export function sendAIChat(uid: string, user_text?: string): IRepTempB {
   }
   const data: IMessageUpdateF = {
     chat: newchat,
-    roomdata: KirAIRoom,
-    users: [KirAIUser, getUser(uid, uid)]
+    roomdata: fmt?.room || KirAIRoom,
+    users: fmt?.users || [KirAIUser, getUser(uid, uid)]
   }
-  const chatsdb = (db.fileGet(`ai${uid}`, "kirai") || {}) as IMessageKeyB
+  const chatsdb = (db.fileGet(`ai${gid}`, "kirai") || {}) as IMessageKeyB
 
   chatsdb[chat_id] = minimizeMessage(uid, newchat)
-  db.fileSet(`ai${uid}`, "kirai", chatsdb)
+  db.fileSet(`ai${gid}`, "kirai", chatsdb)
   webhookSender.genai({ userid: uid, chatid: chat_id, text: user_text })
-  GetAIAnswer(uid, user_text, getModel(uid), chat_id)
+  GetAIAnswer(uid, user_text, getModel(gid), chat_id, gid, fmt)
 
   return { code: 200, data }
 }
@@ -153,4 +175,27 @@ export function clearAIChat(uid: string): IRepTempB {
   if (AIChats[uid]) delete AIChats[uid]
 
   return { code: 200 }
+}
+
+export function isMentionedAI(room_id: string, text?: string): string | null {
+  if (!text) return null
+  if (room_id !== "696969") return null
+  if (text.split(" ")[0].toLowerCase() === "@kirai") {
+    return text.replace(/@kirai/i, "").trim()
+  }
+  return null
+}
+
+export function sendGlobalAI(uid: string, text: string, chat_id: string, room: IRoomDataF, users: IUserF[]): IRepTempB {
+  return sendAIChat(uid, text, {
+    room,
+    users,
+    chat_id
+  })
+}
+
+function saveToGroup(chat_id: string, chat_message: IMessageB) {
+  const dbold = db.fileGet("696969", "room") || {}
+  dbold[chat_id] = chat_message
+  db.fileSet("696969", "room", dbold)
 }

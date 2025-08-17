@@ -8,7 +8,6 @@ import { UserProcess } from "../types/db.types"
 import * as haccount from "./account.controller"
 import { IRepTempB, SivalKeyType } from "../types/validate.types"
 import { IUserTempB, ValidProviders } from "../types/binder.types"
-import logger from "../main/logger"
 
 export function isUserLogged(uid?: string): IRepTempB {
   if (!uid) return { code: 401, msg: "UNAUTHORIZED" }
@@ -153,7 +152,7 @@ function sendEmailCode(emailIndex: number, user_email: string, gen_code: string)
       html: email_file
     })
     .catch((err) => {
-      logger.error(err)
+      console.error(err)
     })
     .finally(() => {
       transport.close()

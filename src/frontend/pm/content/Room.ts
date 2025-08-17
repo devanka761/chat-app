@@ -22,6 +22,7 @@ import Chats from "../center/Chats"
 import socketClient from "../../manager/socketClient"
 import adap from "../../main/adaptiveState"
 import sdate from "../../helper/sdate"
+import { KirAIUser } from "../../helper/AccountKirAI"
 
 export default class Room implements PrimaryClass {
   readonly role: string
@@ -105,7 +106,7 @@ export default class Room implements PrimaryClass {
             if (!ch.readers) ch.readers = []
             ch.readers.push(db.me.id)
           }
-          const user: IUserF = ch.userid === db.me.id ? db.me : chats.u.find((usr) => usr.id === ch.userid) || noUser()
+          const user: IUserF = ch.userid === db.me.id ? db.me : chats.u.find((usr) => usr.id === ch.userid) || (ch.userid === KirAIUser.id ? KirAIUser : noUser())
           if (msgValidTypes.find((ity) => ity === ch.type)) {
             this.mediaToLoad++
           }

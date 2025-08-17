@@ -756,14 +756,12 @@ $errorbg: #3d2b31;
         }
         &:has(.optmenu) {
           .field {
-            border-left: none;
-            border-right: 2px solid v.$darkcream;
+            box-shadow: 2px 0 0 0 v.$darkcream;
             transform: translateX(0);
           }
           &.me {
             .field {
-              border-right: none;
-              border-left: 2px solid v.$darkcream;
+              box-shadow: -2px 0 0 0 v.$darkcream;
             }
           }
         }

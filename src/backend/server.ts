@@ -113,7 +113,7 @@ app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
     return
   }
 
-  logger.error(err)
+  console.error(err)
 
   res.status(500).json({
     ok: false,
@@ -157,7 +157,7 @@ wss.on("connection", (ws, req) => {
   webhookSender.userLog({ userid: userExist, online: true })
 
   ws.on("error", (err: Error) => {
-    logger.error(err)
+    console.error(err)
   })
 
   ws.on("message", (data) => {
@@ -167,7 +167,7 @@ wss.on("connection", (ws, req) => {
       const msg = JSON.parse(data.toString())
       processSocketMessages({ ...msg, from: clientId, uid: userid })
     } catch (err) {
-      logger.error("Failed to parse JSON: " + err)
+      console.error("Failed to parse JSON: " + err)
     }
   })
 

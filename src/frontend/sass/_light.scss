@@ -645,13 +645,11 @@ html[data-theme="light"] {
           }
           &:has(.optmenu) {
             .field {
-              border-right: 2px solid v.$pSoftMintGreen;
-              border-left: none;
+              box-shadow: 2px 0 0 0 v.$pSoftMintGreen;
             }
             &.me {
               .field {
-                border-right: none;
-                border-left: 2px solid v.$pSoftMintGreen;
+                box-shadow: -2px 0 0 0 v.$pSoftMintGreen;
               }
             }
           }

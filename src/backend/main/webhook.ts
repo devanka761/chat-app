@@ -2,7 +2,6 @@ import { webhook } from "../../config/server.config.json"
 import { AI_LEARN, USER_LOG } from "../../config/discord.config.json"
 import cfg from "./cfg"
 import { KirAIUser } from "../../frontend/helper/AccountKirAI"
-import logger from "./logger"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function sendToDiscord(channel_id: string, message: any) {
@@ -15,7 +14,7 @@ function sendToDiscord(channel_id: string, message: any) {
     },
     body: JSON.stringify(message)
   }).catch((err) => {
-    logger.error(err)
+    console.error(err)
   })
 }
 

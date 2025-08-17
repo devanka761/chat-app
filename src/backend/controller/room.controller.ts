@@ -11,7 +11,7 @@ import zender from "../main/zender"
 import { getUser } from "./profile.controller"
 import { getGlobalMembers } from "./group.controller"
 import { KirAIRoom } from "../../frontend/helper/AccountKirAI"
-import { clearAIChat, sendAIChat } from "./genai.controller"
+import { clearAIChat, isMentionedAI, sendAIChat, sendGlobalAI } from "./genai.controller"
 import { sendPushNotification } from "../main/prepare"
 
 export async function sendMessage(uid: string, room_id: string, room_type: TRoomTypeF, s: IWritterF): Promise<IRepTempB> {
@@ -50,7 +50,9 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
   const dbOld = (db.fileGet(chatkey, "room") || {}) as IMessageKeyB
   const newChat: IMessageTempF = convertMessage(uid, s)
 
-  if (s.type) {
+  const aiPrompt = isMentionedAI(room_id, s.text)
+
+  if (s.type && !aiPrompt) {
     newChat.type = s.type
     if (msgValidTypes.find((vt) => vt === s.type)) {
       const dataurl = decodeURIComponent(s.filesrc as string)
@@ -87,13 +89,27 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
     }
   }
 
+  if (aiPrompt) {
+    delete newChat.reply
+  }
+
   const chat_id = "c" + Date.now().toString(36)
+  const users = room_id === "696969" ? getGlobalMembers(uid, dbOld) : cdb[chatkey].u
+
+  if (aiPrompt) {
+    const globalAIChat = sendGlobalAI(
+      uid,
+      aiPrompt,
+      chat_id,
+      convertGroup(chatkey),
+      users.map((usr) => getUser(KirAIRoom.id, usr))
+    )
+    if (!globalAIChat.ok) return globalAIChat
+  }
   newChat.timestamp = Date.now()
 
   dbOld[chat_id] = minimizeMessage(uid, newChat)
   db.fileSet(chatkey, "room", dbOld)
-
-  const users = room_id === "696969" ? getGlobalMembers(uid, dbOld) : cdb[chatkey].u
 
   const chatData = { ...newChat, id: chat_id }
   const dataZender = {

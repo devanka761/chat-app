@@ -14,7 +14,7 @@ import { IWritterF, MessageOptionType } from "../../../types/message.types"
 import { TStatusIcon, TStatusText } from "../../../types/room.types"
 import OptionMsgBuilder from "./OptionMsgBuilder"
 import AudioBuilder from "./AudioBuilder"
-import { escapeHTML, escapeWhiteSpace, renderer } from "../../../helper/escaper"
+import { escapeWhiteSpace, renderer } from "../../../helper/escaper"
 import CallMsgBuilder from "./CallMsgBuilder"
 import { KirAIRoom } from "../../../helper/AccountKirAI"
 
@@ -382,7 +382,7 @@ export default class MessageBuilder {
   }
   clickListener(...args: MessageOptionType[]): void {
     this.el.onclick = (e) => {
-      if (this.room.data.id === KirAIRoom.id) args = ["copy"]
+      if (this.room.data.id === KirAIRoom.id || this.s.userid === KirAIRoom.id) args = ["copy"]
       const { target } = e
       if (target instanceof Node) {
         if (this.optmenu?.contains(target)) return
@@ -428,7 +428,7 @@ export default class MessageBuilder {
   setText(txt: string): void {
     this.s.text = txt
     if (this.user.id === KirAIRoom.id) {
-      this.textMessage.innerHTML = marked.use({ renderer, gfm: true, breaks: true }).parse(escapeHTML(this.s.text)).toString()
+      this.textMessage.innerHTML = marked.use({ renderer, gfm: true, breaks: true }).parse(this.s.text).toString()
     } else {
       this.textMessage.innerText = escapeWhiteSpace(this.s.text)
     }
