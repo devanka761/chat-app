@@ -26,9 +26,9 @@ const sdate = {
     const sameday = sdate.sameday(Date.now(), ts)
     return sameday ? sdate.time(ts) : sdate.date(ts)
   },
-  remain(expiryTime: number): string | null {
+  remain(expiryTime: number, isFull?: boolean): string | null {
     const remaining = expiryTime - Date.now()
-    return remaining > 0 ? sdate.durrTime(remaining) : null
+    return remaining > 0 ? sdate.durrTime(remaining, isFull) : null
   },
   datetime(ts: number = Date.now(), pq = null): string {
     return this.date(ts) + (pq ? " " + pq + " " : " ") + this.time(ts)
@@ -59,7 +59,7 @@ const sdate = {
 
     return `${lang.SDATE_JUSTNOW}`
   },
-  durrTime(ms: number): string {
+  durrTime(ms: number, isFull?: boolean): string {
     const totalSeconds = Math.floor(ms / 1000)
     const days = Math.floor(totalSeconds / 3600 / 24)
     const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600)
@@ -68,16 +68,16 @@ const sdate = {
 
     let result = ""
     if (days > 0) {
-      result += `${days}${lang.SDATE_sDAYS} `
+      result += `${days}${isFull ? " " + lang.SDATE_DAYS : lang.SDATE_sDAYS} `
     }
     if (hours > 0) {
-      result += `${hours}${lang.SDATE_sHOURS} `
+      result += `${hours}${isFull ? " " + lang.SDATE_HOURS : lang.SDATE_sHOURS} `
     }
     if (minutes > 0) {
-      result += `${minutes}${lang.SDATE_sMINUTES} `
+      result += `${minutes}${isFull ? " " + lang.SDATE_MINUTES : lang.SDATE_sMINUTES} `
     }
     if (seconds > 0 || result === "") {
-      result += `${seconds}${lang.SDATE_sSECONDS}`
+      result += `${seconds}${isFull ? " " + lang.SDATE_SECONDS : lang.SDATE_sSECONDS}`
     }
     return result.trim()
   },

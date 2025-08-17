@@ -140,6 +140,7 @@
   "CONTENT_YOU_DELETED": "Kamu menghapus pesan ini",
   "CONTENT_EDIT_EXPIRED": "Kamu ga bisa edit pesan yang udah terkirim lebih dari 15 menit.",
   "CONTENT_RESEND": "Kirim Ulang Pesan?",
+  "CONTENT_EDIT_AICHAT": "Gabisa edit/hapus pesan yang menggunakan fitur <strong>@KirAI</strong>",
   "POST_DELETE_MSG": "Beneran mau hapus postingan ini?",
   "POST_NO_FILE": "Silakan pilih foto/gambar untuk diunggah",
   "POST_COMMENT_TITLE": "Komentar",

@@ -130,22 +130,6 @@ export function sendAIChat(uid: string, user_text?: string, fmt?: FormatFromGlob
 
   const users: string[] = fmt && fmt.users ? fmt.users.map((usr) => usr.id) : [uid]
 
-  users.forEach((usr) => {
-    zender(KirAIUser.id, usr, "sendmessage", {
-      chat: {
-        userid: KirAIUser.id,
-        reply: chat_id,
-        id: "ai" + chat_id,
-        type: "think",
-        timestamp: Date.now(),
-        text: "⌛ ⌛ 🚀 🚀"
-      },
-      roomdata: fmt?.room || KirAIRoom,
-      users: fmt?.users || [KirAIUser, getUser(usr, usr)],
-      sender: KirAIUser
-    })
-  })
-
   const newchat = {
     userid: uid,
     id: chat_id,
@@ -162,7 +146,27 @@ export function sendAIChat(uid: string, user_text?: string, fmt?: FormatFromGlob
   chatsdb[chat_id] = minimizeMessage(uid, newchat)
   db.fileSet(`ai${gid}`, "kirai", chatsdb)
   webhookSender.genai({ userid: uid, chatid: chat_id, text: user_text })
-  GetAIAnswer(uid, user_text, getModel(gid), chat_id, gid, fmt)
+
+  if (fmt) {
+    setTimeout(() => {
+      users.forEach((usr) => {
+        zender(KirAIUser.id, usr, "sendmessage", {
+          chat: {
+            userid: KirAIUser.id,
+            reply: chat_id,
+            id: "ai" + chat_id,
+            type: "think",
+            timestamp: Date.now(),
+            text: "⌛ ⌛ 🚀 🚀"
+          },
+          roomdata: fmt?.room || KirAIRoom,
+          users: fmt?.users || [KirAIUser, getUser(usr, usr)],
+          sender: KirAIUser
+        })
+      })
+      GetAIAnswer(uid, user_text, getModel(gid), chat_id, gid, fmt)
+    }, 1000)
+  }
 
   return { code: 200, data }
 }
@@ -172,7 +176,13 @@ export function clearAIChat(uid: string): IRepTempB {
   const chatpath = `./dist/db/kirai/ai${uid}.json`
 
   if (fs.existsSync(chatpath)) fs.writeFileSync(chatpath, JSON.stringify({}), "utf-8")
-  if (AIChats[uid]) delete AIChats[uid]
+  if (AIChats[uid]) {
+    AIChats[uid].model = ai.chats.create({
+      model: AI_MODEL,
+      history: [],
+      config: GenAIConfig
+    })
+  }
 
   return { code: 200 }
 }

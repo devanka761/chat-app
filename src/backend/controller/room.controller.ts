@@ -4,7 +4,7 @@ import db from "../main/db"
 import { TRoomTypeF } from "../../frontend/types/room.types"
 import { IWritterF } from "../../frontend/types/message.types"
 import { IRepTempB } from "../types/validate.types"
-import { convertGroup, convertMessage, convertUser, escapeWhiteSpace, minimizeMessage, msgNotValid, msgValidTypes, normalizeMessage } from "../main/helper"
+import { convertGroup, convertMessage, convertUser, escapeWhiteSpace, minimizeMessage, msgNotValid, msgValidTypes, normalizeMessage, rep } from "../main/helper"
 import { IMessageTempF } from "../../frontend/types/db.types"
 import { IMessageKeyB } from "../types/db.types"
 import zender from "../main/zender"
@@ -96,20 +96,27 @@ export async function sendMessage(uid: string, room_id: string, room_type: TRoom
   const chat_id = "c" + Date.now().toString(36)
   const users = room_id === "696969" ? getGlobalMembers(uid, dbOld) : cdb[chatkey].u
 
-  if (aiPrompt) {
-    const globalAIChat = sendGlobalAI(
-      uid,
-      aiPrompt,
-      chat_id,
-      convertGroup(chatkey),
-      users.map((usr) => getUser(KirAIRoom.id, usr))
-    )
-    if (!globalAIChat.ok) return globalAIChat
-  }
-  newChat.timestamp = Date.now()
-
   dbOld[chat_id] = minimizeMessage(uid, newChat)
   db.fileSet(chatkey, "room", dbOld)
+
+  if (aiPrompt) {
+    const globalAIChat = rep(
+      sendGlobalAI(
+        uid,
+        aiPrompt,
+        chat_id,
+        convertGroup(chatkey),
+        users.map((usr) => getUser(KirAIRoom.id, usr))
+      )
+    )
+    if (!globalAIChat.ok) {
+      const sentDbOld = db.fileGet(chatkey, "room")
+      delete sentDbOld[chat_id]
+      db.fileSet(chatkey, "room", sentDbOld)
+      return globalAIChat
+    }
+  }
+  newChat.timestamp = Date.now()
 
   const chatData = { ...newChat, id: chat_id }
   const dataZender = {
@@ -150,9 +157,14 @@ export function editMessage(uid: string, chatkey: string, room_id: string, room_
   if (!cdb) return { code: 400 }
 
   const dbOld = (db.fileGet(chatkey, "room") || {}) as IMessageKeyB
+  if (!dbOld[s.edit]) return { code: 400 }
+
   if (dbOld[s.edit].u !== uid) return { code: 404 }
 
-  if (!dbOld[s.edit]) return { code: 400 }
+  if (isMentionedAI(room_id, dbOld[s.edit].txt)) {
+    return { code: 404, msg: "CONTENT_EDIT_AICHAT" }
+  }
+
   if ((!dbOld[s.edit].ty || dbOld[s.edit].ty === "text") && (!s.text || s.text.length < 1)) {
     return { code: 404, msg: "CONTENT_EMPTY" }
   }
@@ -211,6 +223,11 @@ export function delMessage(uid: string, target: string, room: string, message_id
   const dbOld = (db.fileGet(roomkey, "room") || {}) as IMessageKeyB
   if (!dbOld[message_id]) return { code: 400 }
   if (dbOld[message_id].u !== uid && !db.ref.u[uid].b?.includes(1)) return { code: 404 }
+
+  const aiPrompt = isMentionedAI(target, dbOld[message_id].txt)
+  if (aiPrompt) {
+    return { code: 404, msg: "CONTENT_EDIT_AICHAT" }
+  }
 
   dbOld[message_id].d = true
   dbOld[message_id].txt = "deleted"
@@ -279,7 +296,7 @@ export function clearHistory(uid: string, room_type: string, room_id: string): I
   if (!ckey) return { code: 400 }
 
   if (room_type === "group" && cdb[ckey].o !== uid) return { code: 403, msg: "GRPS_OWNER_FEATURE" }
-  if (room_id === "696969") return { code: 403, msg: "GRPS_OWNER_FEATURE" }
+  // if (room_id === "696969") return { code: 403, msg: "GRPS_OWNER_FEATURE" }
   if (!cdb[ckey].c) return { code: 200 }
 
   const roompath = "./dist/stg/room"
@@ -301,6 +318,8 @@ export function clearHistory(uid: string, room_type: string, room_id: string): I
 
   db.fileSet(cdb[ckey].c, "room", {})
   db.save("c")
+
+  if (room_id === "696969") clearAIChat("696969")
 
   return { code: 200 }
 }

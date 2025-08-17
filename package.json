@@ -1,6 +1,6 @@
 {
   "name": "mondin",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "Chat App Written in TypeScript with Responsive Design",
   "main": "./dist/bundle/backend/server.js",
   "scripts": {

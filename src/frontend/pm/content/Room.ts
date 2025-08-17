@@ -165,7 +165,7 @@ export default class Room implements PrimaryClass {
         return
       }
       if (messageSent.code === 404) {
-        await modal.alert(lang[messageSent.msg]?.replace(/{TIME}/, sdate.remain(messageSent?.data?.ts)) || lang.ERROR)
+        await modal.alert(lang[messageSent.msg]?.replace(/{TIME}/, sdate.remain(messageSent?.data?.ts, true)) || lang.ERROR)
       }
       this.isLocked = false
       return

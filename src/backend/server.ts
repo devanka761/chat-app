@@ -129,7 +129,6 @@ const server = app.listen(PORT, () => {
   logger.success(`HOMEPAGE >> http://localhost:${PORT}`)
   logger.success(`APP >> http://localhost:${PORT}/app`)
   logger.success("Done ✔✔✔")
-  console.log("")
 })
 
 const wss = new WebSocketServer({ server })

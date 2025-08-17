@@ -138,6 +138,7 @@
   "CONTENT_YOU_DELETED": "You deleted this message",
   "CONTENT_EDIT_EXPIRED": "You cannot edit messages that have been sent for more than 15 minutes.",
   "CONTENT_RESEND": "Resend?",
+  "CONTENT_EDIT_AICHAT": "You cannot edit/delete messages that have featured <strong>@KirAI</strong>",
   "POST_COMMENT_TITLE": "Comments",
   "POST_DELETE_MSG": "Delete this post?",
   "POST_NO_FILE": "Please choose a picture to post",

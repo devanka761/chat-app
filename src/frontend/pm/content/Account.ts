@@ -297,7 +297,7 @@ export default class Account implements PrimaryClass {
         }
         const setUname = await modal.loading(xhr.post("/x/account/set-username", { uname: getUname }))
         if (!setUname || !setUname.ok) {
-          await modal.alert(lang[setUname.msg]?.replace(/{TIMESTAMP}/, sdate.remain(setUname?.data?.timestamp)) || lang.ERROR)
+          await modal.alert(lang[setUname.msg]?.replace(/{TIMESTAMP}/, sdate.remain(setUname?.data?.timestamp, true)) || lang.ERROR)
           this.isLocked = false
           return
         }
@@ -328,7 +328,7 @@ export default class Account implements PrimaryClass {
         }
         const setDname = await modal.loading(xhr.post("/x/account/set-displayname", { dname: getDname }))
         if (!setDname || !setDname.ok) {
-          await modal.alert(lang[setDname.msg]?.replace(/{TIMESTAMP}/, sdate.remain(setDname?.data?.timestamp)) || lang.ERROR)
+          await modal.alert(lang[setDname.msg]?.replace(/{TIMESTAMP}/, sdate.remain(setDname?.data?.timestamp, true)) || lang.ERROR)
           this.isLocked = false
           return
         }
@@ -360,7 +360,7 @@ export default class Account implements PrimaryClass {
         }
         const setBio = await modal.loading(xhr.post("/x/account/set-bio", { bio: getBio }))
         if (!setBio || !setBio.ok) {
-          await modal.alert(lang[setBio.msg]?.replace(/{TIMESTAMP}/, sdate.remain(setBio?.data?.timestamp)) || lang.ERROR)
+          await modal.alert(lang[setBio.msg]?.replace(/{TIMESTAMP}/, sdate.remain(setBio?.data?.timestamp, true)) || lang.ERROR)
           this.isLocked = false
           return
         }

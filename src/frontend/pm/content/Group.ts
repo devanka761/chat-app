@@ -344,7 +344,7 @@ export default class Group implements PrimaryClass {
         }
         const setGname = await modal.loading(xhr.post("/x/group/set-groupname", { gname: getUname, id: this.group.id }))
         if (!setGname.ok) {
-          await modal.alert(lang[setGname.msg]?.replace(/{TIMESTAMP}/, sdate.remain(setGname?.data?.timestamp)) || lang.ERROR)
+          await modal.alert(lang[setGname.msg]?.replace(/{TIMESTAMP}/, sdate.remain(setGname?.data?.timestamp, true)) || lang.ERROR)
           this.isLocked = false
           return
         }
