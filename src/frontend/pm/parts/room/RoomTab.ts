@@ -23,7 +23,6 @@ export default class RoomTab {
   private top: HTMLDivElement
   private right: HTMLDivElement
   private left: HTMLDivElement
-  private img: HTMLImageElement
   private displayName?: HTMLParagraphElement | null
   private userName: HTMLParagraphElement
   private userParent: HTMLDivElement
@@ -46,11 +45,14 @@ export default class RoomTab {
   private createLeft(): void {
     this.btnBack = kel("div", "btn btn-back", { e: '<i class="fa-solid fa-arrow-left"></i>' })
     const folder = this.data.type === "user" ? "user" : "group"
-    this.img = new Image()
-    this.img.onerror = () => (this.img.src = `/assets/${folder}.jpg`)
-    this.img.alt = this.data.short
-    this.img.src = this.data.image ? `/file/${folder}/${this.data.image}` : `/assets/${folder}.jpg`
-    const imgParent = kel("div", "img", { e: this.img })
+    const img = new Image()
+    img.onerror = () => {
+      console.log("image error")
+      img.src = `/assets/${folder}.jpg`
+    }
+    img.alt = this.data.short
+    img.src = this.data.image ? `/file/${folder}/${this.data.image}` : `/assets/${folder}.jpg`
+    const imgParent = kel("div", "img", { e: img })
 
     this.userName = kel("p", "uname")
     const namesParent = kel("div", "names", { e: [this.userName] })
@@ -85,10 +87,10 @@ export default class RoomTab {
 
     if (this.data.image) {
       const folder = this.data.type === "user" ? "user" : "group"
-      this.img = new Image()
-      this.img.onerror = () => (this.img.src = `/assets/${folder}.jpg`)
-      this.img.alt = this.data.short
-      this.img.src = this.data.image ? `/file/${folder}/${this.data.image}` : `/assets/${folder}.jpg`
+      const img = new Image()
+      img.onerror = () => (img.src = `/assets/${folder}.jpg`)
+      img.alt = this.data.short
+      img.src = this.data.image ? `/file/${folder}/${this.data.image}` : `/assets/${folder}.jpg`
     }
   }
   private btnListener(): void {

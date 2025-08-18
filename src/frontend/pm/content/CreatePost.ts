@@ -65,7 +65,8 @@ export default class CreatePost implements PrimaryClass {
   }
   private growTextArea(): void {
     this.textarea.style.height = "auto"
-    this.textarea.style.height = this.textarea.scrollHeight + "px"
+    const newHeight = this.textarea.scrollHeight < 100 ? this.textarea.scrollHeight : 100
+    this.textarea.style.height = newHeight + "px"
   }
   private fileChooser(): void {
     const inp = kel("input")

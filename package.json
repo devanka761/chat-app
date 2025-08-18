@@ -1,6 +1,6 @@
 {
   "name": "mondin",
-  "version": "3.1.2",
+  "version": "3.1.3",
   "description": "Chat App Written in TypeScript with Responsive Design",
   "main": "./dist/bundle/backend/server.js",
   "scripts": {
@@ -80,7 +80,6 @@
     "sass-loader": "^16.0.5",
     "style-loader": "^4.0.0",
     "ts-loader": "^9.5.2",
-    "ts-node": "^10.9.2",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.34.1",

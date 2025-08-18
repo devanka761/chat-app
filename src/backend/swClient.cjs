@@ -9,7 +9,8 @@ function writeDeps() {
     devDependencies: Object.keys(curPackage.devDependencies),
     others: [
       { id: "cerbot", url: "https://github.com/certbot/certbot#readme" },
-      { id: "coturn", url: "https://github.com/coturn/coturn#readme" }
+      { id: "coturn", url: "https://github.com/coturn/coturn#readme" },
+      { id: "ffmpeg", url: "https://ffmpeg.org" }
     ]
   }
   fs.writeFileSync("./dist/db/deps.json", JSON.stringify(depList), "utf-8")
