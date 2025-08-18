@@ -147,8 +147,8 @@ export function sendAIChat(uid: string, user_text?: string, fmt?: FormatFromGlob
   db.fileSet(`ai${gid}`, "kirai", chatsdb)
   webhookSender.genai({ userid: uid, chatid: chat_id, text: user_text })
 
-  if (fmt) {
-    setTimeout(() => {
+  setTimeout(
+    () => {
       users.forEach((usr) => {
         zender(KirAIUser.id, usr, "sendmessage", {
           chat: {
@@ -165,8 +165,9 @@ export function sendAIChat(uid: string, user_text?: string, fmt?: FormatFromGlob
         })
       })
       GetAIAnswer(uid, user_text, getModel(gid), chat_id, gid, fmt)
-    }, 1000)
-  }
+    },
+    fmt ? 1000 : 100
+  )
 
   return { code: 200, data }
 }
