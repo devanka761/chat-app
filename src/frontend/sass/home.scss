@@ -179,6 +179,10 @@ body {
         p {
           line-height: 1.5;
           text-align: center;
+          .license {
+            text-decoration: none;
+            font-weight: 500;
+          }
         }
       }
     }

@@ -1,9 +1,10 @@
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0"
 import fs from "fs"
-import express, { Application, NextFunction, Request, Response } from "express"
-import { WebSocketServer } from "ws"
+import express, { NextFunction, Request, Response } from "express"
+import expressWs from "express-ws"
 import session from "express-session"
 import SessionFileStore, { FileStore } from "session-file-store"
+import socketRouter from "./routes/socket.route"
 import authRouter from "./routes/auth.route"
 import accountRouter from "./routes/account.route"
 import profileRouter from "./routes/profile.route"
@@ -13,15 +14,9 @@ import fileRouter from "./routes/file.route"
 import inviteRouter from "./routes/invite.route"
 import postsRouter from "./routes/posts.route"
 import cfg from "./main/cfg"
-import db from "./main/db"
 import { sessionUserBinder } from "./main/binder"
-import { TRelay } from "./types/relay.types"
-import relay from "./main/relay"
-import { parse } from "url"
-import processSocketMessages from "./controller/socket.controller"
-import { forceExitCall, terminateAllCalls } from "./controller/call.controller"
+import { terminateAllCalls } from "./controller/call.controller"
 import { startModelRemover } from "./controller/genai.controller"
-import webhookSender from "./main/webhook"
 import logger from "./main/logger"
 import { getServerReady } from "./main/prepare"
 import { version } from "../config/version.json"
@@ -39,7 +34,7 @@ getServerReady()
 
 terminateAllCalls()
 
-const app: Application = express()
+const { app } = expressWs(express())
 
 const SessionFileStorage: FileStore = SessionFileStore(session)
 
@@ -60,6 +55,7 @@ app.set("view engine", "ejs")
 
 const PORT: number = cfg.APP_PORT as number
 
+socketRouter(app)
 app.use("/x/auth", authRouter)
 app.use("/x/account", accountRouter)
 app.use("/x/profile", profileRouter)
@@ -83,11 +79,6 @@ app.get("/privacy", (req: Request, res: Response) => {
   return
 })
 
-app.get("/core-api", (req: Request, res: Response) => {
-  res.json({ ok: true, code: 200, msg: "COMING SOON!", data: { status: "This Page Is Under Maintenance" } })
-  return
-})
-
 app.get("/", (req: Request, res: Response) => {
   res.render("home", { version, ...deps })
   return
@@ -103,7 +94,10 @@ app.use("/", (req: Request, res: Response) => {
   return
 })
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  if (res.headersSent) {
+    return next(err)
+  }
   if (err.type === "entity.too.large") {
     res.status(413).json({
       ok: false,
@@ -123,62 +117,16 @@ app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
   return
 })
 
-const server = app.listen(PORT, () => {
+app.listen(PORT, () => {
   startModelRemover()
   console.log("--------")
   logger.success(`HOMEPAGE >> http://localhost:${PORT}`)
   logger.success(`APP >> http://localhost:${PORT}/app`)
-  logger.success("Done ✔✔✔")
-})
-
-const wss = new WebSocketServer({ server })
-
-wss.on("connection", (ws, req) => {
-  const { query } = parse(req.url!, true)
-  const clientId = query.id?.toString()
-  if (!clientId) {
-    logger.info("❌ Connection rejected: no client ID")
-    ws.close()
-    return
-  }
-
-  const udb = db.ref.u
-  const userExist = Object.keys(udb).find((k) => udb[k].socket === clientId)
-  if (!userExist) {
-    logger.info(`❌ Connection rejected: client with id ${clientId} is not found`)
-    ws.close()
-    return
-  }
-
-  const client: TRelay = relay.add(clientId, ws)
-  logger.info(`Online   ${userExist} ${client.id}`)
-
-  webhookSender.userLog({ userid: userExist, online: true })
-
-  ws.on("error", (err: Error) => {
-    console.error(err)
-  })
-
-  ws.on("message", (data) => {
-    const userid = Object.keys(db.ref.u).find((k) => db.ref.u[k].socket === client.id)
-    if (!userid) return
-    try {
-      const msg = JSON.parse(data.toString())
-      processSocketMessages({ ...msg, from: clientId, uid: userid })
-    } catch (err) {
-      console.error("Failed to parse JSON: " + err)
-    }
-  })
-
-  ws.on("close", () => {
-    webhookSender.userLog({ userid: userExist, online: false })
-    const userid = Object.keys(db.ref.u).find((k) => db.ref.u[k].socket === client.id)
-    if (userid) {
-      delete db.ref.u[userid].socket
-      forceExitCall(userid)
-    }
-
-    relay.remove(client.id)
-    logger.info(`Offline  ${userExist} ${client.id}`)
-  })
+  logger.success("Running ✔✔✔")
+  console.log(" ")
+  console.log(" ")
+  console.log("Kirimin Chat App is licensed under")
+  console.log("The GNU General Public License v3.0")
+  console.log(" ")
+  console.log("https://www.gnu.org/licenses/gpl-3.0.html#license-text")
 })

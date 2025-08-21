@@ -7,6 +7,7 @@ import notip from "../helper/notip"
 import { localeBadge } from "../helper/setbadge"
 import db from "../manager/db"
 import negotiator from "../manager/negotiator"
+import socketClient from "../manager/socketClient"
 import ForceClose from "../pages/ForceClose"
 import Calls from "../pm/center/Calls"
 import Chats from "../pm/center/Chats"
@@ -23,11 +24,12 @@ import userState from "./userState"
 
 class ProcessClient {
   private newLoggedIn(): void {
-    // <i class="fa-solid fa-user-secret"></i>
     new ForceClose({
       msg_1: '<i class="fa-duotone fa-light fa-user-secret"></i>',
       msg_2: lang.CLOUD_SAME_TIME
     })
+    socketClient.isExited = 1
+    socketClient.close()
   }
   private addfriend(s: { user: IUserF }): void {
     const user = s.user
@@ -303,6 +305,14 @@ class ProcessClient {
         if (msg.json.user.id === db.me.id) {
           msg.setStatus("read")
         }
+      })
+    }
+    if (userState.center && userState.center.role === "chats" && cdb) {
+      const chatCenter = userState.center as Chats
+      chatCenter.update({
+        chat: cdb.m[cdb.m.length - 1],
+        users: cdb.u,
+        roomdata: cdb.r
       })
     }
     userState.tab?.update("chats")

@@ -125,23 +125,23 @@
         </section>
         <section class="sect" id="packages">
           <div class="box">
-            <p><strong>Packages</strong></p>
+            <p><strong>Production Packages</strong></p>
             <div class="cre">
-              <% for (const dep of dependencies) { %>
+              <% for (const dep of prodPackages) { %>
                 <a class="dep" href="https://www.npmjs.com/package/<%= dep %>" target="_blank"><%= dep %></a>
               <% } %>
             </div>
             <br />
             <p><strong>Development Packages</strong></p>
             <div class="cre">
-              <% for (const dep of devDependencies) { %>
+              <% for (const dep of devPackages) { %>
                 <a class="dep" href="https://www.npmjs.com/package/<%= dep %>" target="_blank"><%= dep %></a>
               <% } %>
             </div>
             <br />
-            <p><strong>Others</strong></p>
+            <p><strong>System-level Packages</strong></p>
             <div class="cre">
-              <% for (const dep of others) { %>
+              <% for (const dep of sysPackages) { %>
                 <a class="dep" href="<%= dep.url %>" target="_blank"><%= dep.id %></a>
               <% } %>
             </div>
@@ -156,7 +156,9 @@
             <a href="mailto:contact@devanka.id" target="_blank"><i class="fa-solid fa-envelope"></i> contact@devanka.id</a>
           </div>
           <div class="author">
-            <p><i class="fa-duotone fa-copyright"></i> Devanka761 - Personal</p>
+            <p><i class="fa-duotone fa-copyright"></i> <%= new Date().getFullYear().toString() %> Devanka761</p>
+            <br/>
+            <p>Licensed Under <a href="https://www.gnu.org/licenses/gpl-3.0.html#license-text" target="_blank" class="license">The GNU General Public License v3.0</a></p>
             <br/>
             <p>Jl. Kalimantan X No. 157<br/>Sumber Sari, Jember, Jawa Timur - 68121</p>
           </div>

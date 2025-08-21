@@ -5,9 +5,9 @@ const curPackage = require("../../package.json")
 
 function writeDeps() {
   const depList = {
-    dependencies: Object.keys(curPackage.dependencies),
-    devDependencies: Object.keys(curPackage.devDependencies),
-    others: [
+    prodPackages: Object.keys(curPackage.dependencies),
+    devPackages: Object.keys(curPackage.devDependencies),
+    sysPackages: [
       { id: "cerbot", url: "https://github.com/certbot/certbot#readme" },
       { id: "coturn", url: "https://github.com/coturn/coturn#readme" },
       { id: "ffmpeg", url: "https://ffmpeg.org" }

@@ -33,12 +33,13 @@ export class SocketClient {
   id?: string
   host?: string
   attemp: number
+  isExited: number = 0
   private locker?: HTMLDivElement
   constructor() {
     this.attemp = 0
   }
   private start(): void {
-    this.ws = new WebSocket(`ws${window.location.protocol === "https:" ? "s" : ""}://${this.host}?id=${this.id}`)
+    this.ws = new WebSocket(`ws${window.location.protocol === "https:" ? "s" : ""}://${this.host}/socket?id=${this.id}`)
 
     this.ws.addEventListener("error", socketError)
     this.ws.addEventListener("message", socketMessage)
@@ -129,6 +130,7 @@ export class SocketClient {
     qutor(".modal .btn-cancel")?.click()
     if (userState.media) userState.media.destroy()
     if (userState.incoming) userState.incoming.destroy()
+    if (this.isExited >= 1) return
     this.reconnect()
   }
 

@@ -46,10 +46,7 @@ export default class RoomTab {
     this.btnBack = kel("div", "btn btn-back", { e: '<i class="fa-solid fa-arrow-left"></i>' })
     const folder = this.data.type === "user" ? "user" : "group"
     const img = new Image()
-    img.onerror = () => {
-      console.log("image error")
-      img.src = `/assets/${folder}.jpg`
-    }
+    img.onerror = () => (img.src = `/assets/${folder}.jpg`)
     img.alt = this.data.short
     img.src = this.data.image ? `/file/${folder}/${this.data.image}` : `/assets/${folder}.jpg`
     const imgParent = kel("div", "img", { e: img })
