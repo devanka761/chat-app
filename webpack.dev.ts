@@ -1,7 +1,8 @@
-const path = require("path")
-const HtmlWebpackPlugin = require("html-webpack-plugin")
-const MiniCssExtractPlugin = require("mini-css-extract-plugin")
-const { CleanWebpackPlugin } = require("clean-webpack-plugin")
+import path from "path"
+import { Configuration } from "webpack"
+import HtmlWebpackPlugin from "html-webpack-plugin"
+import MiniCssExtractPlugin from "mini-css-extract-plugin"
+import { CleanWebpackPlugin } from "clean-webpack-plugin"
 
 const appConfig = {
   entry: {
@@ -51,13 +52,14 @@ const appConfig = {
     }
   }
 }
-const plugins = [
+const plugins: (CleanWebpackPlugin | MiniCssExtractPlugin | HtmlWebpackPlugin)[] = [
   new CleanWebpackPlugin(),
   new MiniCssExtractPlugin({
-    filename: "[name]-[contenthash].css"
+    filename: "[name].css"
   })
 ]
-Object.values(appConfig.entries).forEach((entryInfo, entryName) => {
+
+Object.values(appConfig.entries).forEach((entryInfo, _entryName) => {
   plugins.push(
     new HtmlWebpackPlugin({
       title: entryInfo.title,
@@ -72,22 +74,19 @@ Object.values(appConfig.entries).forEach((entryInfo, entryName) => {
   )
 })
 
-const entry = Object.keys(appConfig.entry).reduce((entries, entry, entryName) => {
-  entries[entry] = appConfig.entry[entry]
-  return entries
-}, {})
+const entry = appConfig.entry
 
-module.exports = {
-  mode: "production",
+const config: Configuration = {
+  mode: "development",
   entry,
   output: {
     path: path.resolve(__dirname, "public/bundle"),
-    filename: "[name]-[contenthash].js",
+    filename: "[name].js",
     clean: true
   },
   plugins,
   resolve: {
-    extensions: [".ts", ".js", ".scss"]
+    extensions: [".tsx", ".ts", ".js", ".scss"]
   },
   module: {
     rules: [
@@ -97,20 +96,7 @@ module.exports = {
         use: {
           loader: "babel-loader",
           options: {
-            presets: [
-              [
-                "@babel/preset-env",
-                {
-                  targets: {
-                    firefox: "60",
-                    chrome: "58",
-                    safari: "10",
-                    edge: "18"
-                  }
-                }
-              ],
-              "@babel/preset-typescript"
-            ]
+            presets: ["@babel/preset-typescript"]
           }
         }
       },
@@ -119,5 +105,8 @@ module.exports = {
         use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"]
       }
     ]
-  }
+  },
+  watch: true
 }
+
+export default config

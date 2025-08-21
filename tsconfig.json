@@ -19,5 +19,5 @@
     "removeComments": true
   },
   "include": ["src/backend/**/*"],
-  "exclude": ["node_modules/*", "dist/**/*", "public/**/*"]
+  "exclude": ["node_modules/*", "dist/**/*", "public/**/*", "src/backend/swClient.ts", "src/backend/clearDB.ts"]
 }

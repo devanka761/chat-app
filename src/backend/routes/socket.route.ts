@@ -12,7 +12,7 @@ import { forceExitCall } from "../controller/call.controller"
 function router(app: Application) {
   app.ws("/socket", (ws: WebSocket, req: Request) => {
     const { id: clientId } = req.query
-    // console.log(clientId)
+
     const udb = db.ref.u[req.user?.id || "null"]
     if (!clientId || !udb) {
       logger.info("❌ Connection rejected: no client ID")
@@ -31,8 +31,13 @@ function router(app: Application) {
 
     webhookSender.userLog({ userid: udb.id, online: true })
 
-    ws.on("error", (err: Error) => {
-      console.error(err)
+    ws.on("message", (data: RawData) => {
+      try {
+        const msg = JSON.parse(data.toString())
+        processSocketMessages({ ...msg, from: clientId, uid: udb.id })
+      } catch (err) {
+        console.error("Failed to parse JSON.", err)
+      }
     })
 
     ws.on("close", () => {
@@ -44,13 +49,8 @@ function router(app: Application) {
       logger.info(`Offline  ${udb.id} ${client.id}`)
     })
 
-    ws.on("message", (data: RawData) => {
-      try {
-        const msg = JSON.parse(data.toString())
-        processSocketMessages({ ...msg, from: clientId, uid: udb.id })
-      } catch (err) {
-        console.error("Failed to parse JSON.", err)
-      }
+    ws.on("error", (err: Error) => {
+      console.error(err)
     })
   })
 }

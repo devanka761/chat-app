@@ -1,9 +1,9 @@
-const path = require("path")
-const fs = require("fs")
-const webpack = require("webpack")
-const curPackage = require("../../package.json")
+import path from "path"
+import fs from "fs"
+import webpack from "webpack"
 
 function writeDeps() {
+  const curPackage = JSON.parse(fs.readFileSync("./package.json", "utf-8"))
   const depList = {
     prodPackages: Object.keys(curPackage.dependencies),
     devPackages: Object.keys(curPackage.devDependencies),
@@ -19,7 +19,7 @@ function writeDeps() {
 async function compileServiceWorkers() {
   writeDeps()
   console.log("compiling service worker")
-  webpack({
+  const wp = webpack({
     entry: "./src/frontend/sw.ts",
     output: {
       path: path.resolve(__dirname, "../../public"),
@@ -42,7 +42,6 @@ async function compileServiceWorkers() {
                   "@babel/preset-env",
                   {
                     targets: {
-                      ie: "11",
                       firefox: "60",
                       chrome: "58",
                       safari: "10",
@@ -57,7 +56,12 @@ async function compileServiceWorkers() {
         }
       ]
     }
-  }).run((err, _) => {
+  })
+  if (!wp) {
+    console.log("service worker failed to compile")
+    return
+  }
+  wp.run((err, _) => {
     if (err) {
       console.error(err)
       return
