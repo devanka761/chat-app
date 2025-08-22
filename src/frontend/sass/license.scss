@@ -22,7 +22,6 @@ body {
   color: $cl;
   padding: 0;
   margin: 0;
-  font-size: 18px;
 }
 
 main {
@@ -48,13 +47,13 @@ h5,
 pre {
   line-height: 1.5;
 }
-p {
+p,
+li {
   text-align: justify;
   text-align-last: left;
 }
 li {
   margin-top: 0.5rem;
-  text-align: left;
 }
 
 .center {
@@ -63,7 +62,7 @@ li {
 }
 
 pre {
-  font-size: 1rem;
+  font-size: 0.8rem;
   font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
   white-space: pre;
   overflow: auto;
