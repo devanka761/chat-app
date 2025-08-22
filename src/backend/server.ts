@@ -80,15 +80,6 @@ app.get("/legal/:legal_text", (req: Request, res: Response, next: NextFunction) 
   return next()
 })
 
-// app.get("/terms", (req: Request, res: Response) => {
-//   res.render("terms")
-//   return
-// })
-// app.get("/privacy", (req: Request, res: Response) => {
-//   res.render("privacy")
-//   return
-// })
-
 app.get("/", (req: Request, res: Response) => {
   return res.render("home", { version, ...deps })
 })
