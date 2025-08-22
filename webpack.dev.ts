@@ -11,6 +11,7 @@ const appConfig = {
     invite: "./src/frontend/invite.ts",
     privacy: "./src/frontend/legal.ts",
     terms: "./src/frontend/legal.ts",
+    license: "./src/frontend/license.ts",
     404: "./src/frontend/404.ts"
   },
   entries: {
@@ -43,6 +44,12 @@ const appConfig = {
       filename: "terms.ejs",
       template: "terms.ejs",
       chunks: ["terms"]
+    },
+    license: {
+      title: "license",
+      filename: "license.ejs",
+      template: "license.ejs",
+      chunks: ["license"]
     },
     404: {
       title: "404",

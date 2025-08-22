@@ -59,7 +59,7 @@
   "AUTH_ERR_04": "Kode yang kamu kirimkan tidak cocok dengan akun manapun",
   "AUTH_ERR_05": "Kode yang kamu kirim telah kadaluarsa.<br/>Silakan ulangi proses login dari awal.",
   "AUTH_ERR_RTO": "Koneksi kamu tidak stabil, coba hubungkan kembali?",
-  "AUTH_NOTICE": "Dengan membuat akun maka kamu setuju dengan <a href=\"/terms\" target=\"_blank\">Syarat dan Ketentuan</a> beserta <a href=\"/privacy\" target=\"_blank\">Kebijakan Privasi</a> yang berlaku",
+  "AUTH_NOTICE": "Dengan membuat akun maka kamu setuju dengan <a href=\"/legal/terms\" target=\"_blank\">Syarat dan Ketentuan</a> beserta <a href=\"/legal/privacy\" target=\"_blank\">Kebijakan Privasi</a> yang berlaku",
   "EMPTY_WELCOME": "Pilih chat untuk memulai",
   "ACC_ONLY_YOU": "pengguna lain ga bisa lihat info ini",
   "ACC_USERNAME": "Username baru",

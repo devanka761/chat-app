@@ -59,7 +59,7 @@
   "AUTH_ERR_04": "The code you sent doesn't match any account",
   "AUTH_ERR_05": "The code you sent has expired.<br/>Please generate new code by relogin.",
   "AUTH_ERR_RTO": "Your network is unstable, reconnect?",
-  "AUTH_NOTICE": "By registering, you agree and accept the <a href=\"/terms\" target=\"_blank\">Terms & Conditions</a> and  <a href=\"/privacy\" target=\"_blank\">Privacy Policy</a>",
+  "AUTH_NOTICE": "By registering, you agree and accept the <a href=\"/legal/terms\" target=\"_blank\">Terms & Conditions</a> and  <a href=\"/legal/privacy\" target=\"_blank\">Privacy Policy</a>",
   "EMPTY_WELCOME": "Select a chat to start messaging",
   "ACC_ONLY_YOU": "other users cannot see this information",
   "ACC_USERNAME": "New username",

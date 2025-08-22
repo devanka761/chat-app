@@ -67,55 +67,57 @@ app.use("/file", fileRouter)
 app.use("/invite", inviteRouter)
 
 app.get("/app", (req: Request, res: Response) => {
-  res.render("app")
-  return
+  return res.render("app")
 })
 
-app.get("/terms", (req: Request, res: Response) => {
-  res.render("terms")
-  return
+const legals = ["privacy", "terms", "license"]
+
+app.get("/legal/:legal_text", (req: Request, res: Response, next: NextFunction) => {
+  const { legal_text } = req.params
+
+  if (legals.find((legal) => legal === legal_text)) return res.render(legal_text)
+
+  return next()
 })
-app.get("/privacy", (req: Request, res: Response) => {
-  res.render("privacy")
-  return
-})
+
+// app.get("/terms", (req: Request, res: Response) => {
+//   res.render("terms")
+//   return
+// })
+// app.get("/privacy", (req: Request, res: Response) => {
+//   res.render("privacy")
+//   return
+// })
 
 app.get("/", (req: Request, res: Response) => {
-  res.render("home", { version, ...deps })
-  return
+  return res.render("home", { version, ...deps })
 })
 
 app.use("/", (req: Request, res: Response) => {
   const isJsonRequest = req.headers.accept?.includes("application/json") || req.headers["x-requested-with"] === "XMLHttpRequest"
   if (req.method.toLowerCase() === "get" && !isJsonRequest) {
-    res.status(404).render("404")
-    return
+    return res.status(404).render("404")
   }
-  res.status(404).json({ ok: false, code: 404, msg: "Your requested data is not found", error: "Not Found" })
-  return
+  return res.status(404).json({ ok: false, code: 404, msg: "Your requested data is not found", error: "Not Found" })
 })
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  if (res.headersSent) {
-    return next(err)
-  }
+  if (res.headersSent) return next(err)
   if (err.type === "entity.too.large") {
-    res.status(413).json({
+    return res.status(413).json({
       ok: false,
       code: 413,
       msg: "CONTENT_TOO_LARGE"
     })
-    return
   }
 
   console.error(err)
 
-  res.status(500).json({
+  return res.status(500).json({
     ok: false,
     code: 500,
     msg: "ERROR"
   })
-  return
 })
 
 app.listen(PORT, () => {

@@ -1,6 +1,4 @@
 import { Instance, WebSocketWithHeartbeat } from "express-ws"
-// import ws, { RawData, WebSocket } from "ws"
-// import * as wws from "ws"
 import logger from "../main/logger"
 import db from "../main/db"
 import { TRelay } from "../types/relay.types"

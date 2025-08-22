@@ -55,8 +55,7 @@ body {
         margin-left: 2em;
         li {
           line-height: 1.5;
-          text-align: justify;
-          text-align-last: left;
+          text-align: left;
           &::marker {
             color: v.$pm1;
           }

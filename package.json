@@ -1,6 +1,6 @@
 {
   "name": "kirimin-chat-app",
-  "version": "3.1.7",
+  "version": "3.1.8",
   "description": "Chat App Written in TypeScript with Responsive Design",
   "main": "./dist/bundle/backend/server.js",
   "scripts": {
@@ -13,10 +13,10 @@
     "dev:build": "tsx ./node_modules/webpack/bin/webpack.js --config webpack.dev.ts",
     "server:build": "rm -rf ./dist/bundle && tsgo -p . --extendedDiagnostics",
     "dbclear": "tsx ./src/backend/clearDB.ts",
-    "format": "tsx ./node_modules/prettier/bin/prettier.cjs --write .",
-    "check": "tsx ./node_modules/prettier/bin/prettier.cjs --check .",
+    "format": "prettier --write .",
+    "check": "prettier --check .",
     "type-check": "tsgo -p . --pretty --noEmit",
-    "lint": "npx --node-options=\"--experimental-strip-types\" eslint --flag unstable_native_nodejs_ts_config --ext ts --ext tsx --ext js",
+    "lint": "eslint --ext ts --ext tsx --ext js",
     "prepare": "husky"
   },
   "husky": {
