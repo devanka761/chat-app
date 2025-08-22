@@ -34,7 +34,8 @@ getServerReady()
 
 terminateAllCalls()
 
-const { app } = expressWs(express())
+const server = expressWs(express())
+const { app } = server
 
 const SessionFileStorage: FileStore = SessionFileStore(session)
 
@@ -55,7 +56,7 @@ app.set("view engine", "ejs")
 
 const PORT: number = cfg.APP_PORT as number
 
-socketRouter(app)
+socketRouter(server)
 app.use("/x/auth", authRouter)
 app.use("/x/account", accountRouter)
 app.use("/x/profile", profileRouter)
