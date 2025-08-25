@@ -127,7 +127,7 @@ body {
           width: 100%;
           height: fit-content;
           overflow-x: hidden;
-          padding: 20px;
+          padding: 20px 0;
           scrollbar-width: thin;
           .card {
             position: relative;
@@ -203,6 +203,8 @@ body {
               .text {
                 text-align: left;
                 .msg {
+                  font-size: 15.2px;
+                  line-height: 1.5;
                   word-break: break-all;
                   word-break: break-word;
                   hyphens: auto;
@@ -212,40 +214,6 @@ body {
                   -webkit-user-select: text;
                   -moz-user-select: text;
                   -ms-user-select: text;
-                  ul,
-                  ol {
-                    margin-left: 1.5rem;
-                    li {
-                      ::marker {
-                        margin-right: 1rem;
-                      }
-                    }
-                  }
-                  code {
-                    line-height: 1.5;
-                    font-size: 0.8rem;
-                    font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
-                    background: rgba($color: v.$black, $alpha: 0.2);
-                    padding: 3px;
-                    border-radius: 3px;
-                    scrollbar-width: thin;
-                  }
-                  :not(pre) code {
-                    color: rgba($color: v.$darkcream, $alpha: 0.7);
-                  }
-                  pre {
-                    code {
-                      padding: 10px;
-                      border-radius: 10px;
-                    }
-                  }
-                  img,
-                  video {
-                    max-width: 100%;
-                    max-height: 300px;
-                    display: block;
-                    margin: 0 auto;
-                  }
                 }
               }
               .time {

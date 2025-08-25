@@ -4,9 +4,13 @@ import nav from "./helper/nav"
 nav()
 
 function removeHistory(): void {
-  window.onscroll = () => {
-    window.history.replaceState({}, "", window.location.pathname)
-  }
+  window.addEventListener(
+    "scroll",
+    () => {
+      window.history.replaceState({}, "", window.location.pathname)
+    },
+    { once: true }
+  )
 }
 
 function showPreview(): void {
