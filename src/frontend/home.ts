@@ -3,6 +3,28 @@ import nav from "./helper/nav"
 
 nav()
 
+function removeHistory(): void {
+  window.onscroll = () => {
+    window.history.replaceState({}, "", window.location.pathname)
+  }
+}
+
+function showPreview(): void {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !entry.target.classList.contains("show")) {
+          entry.target.classList.add("show")
+          observer.unobserve(entry.target)
+        }
+      })
+    },
+    { threshold: 1 }
+  )
+  const elements = document.querySelectorAll(".chat-card")
+  elements.forEach((el) => observer.observe(el))
+}
+
 let pwaInstaller: BeforeInstallPromptEvent | null = null
 let PWA_READY: boolean = false
 
@@ -61,5 +83,7 @@ function setOnResize(): void {
   })
 }
 
+showPreview()
+removeHistory()
 setPWA()
 setOnResize()

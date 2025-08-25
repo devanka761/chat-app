@@ -2,6 +2,20 @@
 @use "./main";
 @use "./other/nav";
 
+@keyframes popup {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  80% {
+    transform: scale(1.025);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 .app {
   width: 100%;
   height: 100%;
@@ -72,9 +86,6 @@ body {
             &:last-child {
               margin-bottom: 0;
             }
-            &.anim {
-              animation: popup_in 0.5s;
-            }
             &.joined {
               background-color: v.$pm2;
               color: v.$white;
@@ -112,17 +123,179 @@ body {
       .box {
         max-width: 800px;
         margin: 0 auto;
-        .cre {
-          img {
-            padding: 40px 0;
-            display: block;
-            margin: 0 auto;
+        .chatlist {
+          width: 100%;
+          height: fit-content;
+          overflow-x: hidden;
+          padding: 20px;
+          scrollbar-width: thin;
+          .card {
+            position: relative;
+            width: 100%;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 10px;
+            visibility: hidden;
+            .avatar {
+              flex-shrink: 0;
+              min-width: 40px;
+              cursor: pointer;
+              img {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                object-fit: cover;
+                -o-object-fit: cover;
+                object-position: cover;
+                -o-object-position: center;
+              }
+            }
+            .field {
+              margin-left: 0;
+              margin-right: auto;
+              width: fit-content;
+              max-width: calc(100% - (40px + 40px));
+              padding: 10px;
+              border-radius: 10px;
+              background: v.$px2;
+              overflow: hidden;
+              .chp {
+                max-width: 425px;
+                margin-bottom: 3px;
+                &:last-child {
+                  margin-bottom: 0;
+                }
+              }
+              .sender {
+                font-weight: bold;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                cursor: pointer;
+                color: v.$softwhite;
+                font-size: 0.8em;
+                &::before {
+                  content: "~";
+                  margin-right: 3px;
+                }
+                &:has(.sw) {
+                  font-weight: normal;
+                }
+              }
+              .embed {
+                padding: 5px;
+                border-left: 3px solid v.$yellow;
+                background-color: #00000020;
+                border-top-left-radius: 10px;
+                border-bottom-left-radius: 10px;
+                color: v.$yellow;
+                font-size: 0.8em;
+                cursor: pointer;
+                .name,
+                .msg {
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                }
+              }
+              .text {
+                text-align: left;
+                .msg {
+                  word-break: break-all;
+                  word-break: break-word;
+                  hyphens: auto;
+                  user-select: text;
+                  -webkit-tap-highlight-color: #b42751;
+                  -webkit-touch-callout: #b42751;
+                  -webkit-user-select: text;
+                  -moz-user-select: text;
+                  -ms-user-select: text;
+                  ul,
+                  ol {
+                    margin-left: 1.5rem;
+                    li {
+                      ::marker {
+                        margin-right: 1rem;
+                      }
+                    }
+                  }
+                  code {
+                    line-height: 1.5;
+                    font-size: 0.8rem;
+                    font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
+                    background: rgba($color: v.$black, $alpha: 0.2);
+                    padding: 3px;
+                    border-radius: 3px;
+                    scrollbar-width: thin;
+                  }
+                  :not(pre) code {
+                    color: rgba($color: v.$darkcream, $alpha: 0.7);
+                  }
+                  pre {
+                    code {
+                      padding: 10px;
+                      border-radius: 10px;
+                    }
+                  }
+                  img,
+                  video {
+                    max-width: 100%;
+                    max-height: 300px;
+                    display: block;
+                    margin: 0 auto;
+                  }
+                }
+              }
+              .time {
+                display: flex;
+                justify-content: end;
+                align-items: center;
+                gap: 10px;
+                text-align: right;
+                font-size: 0.8em;
+                color: v.$softwhite;
+              }
+            }
+            &:has(.avatar) {
+              .optmenu {
+                left: 55px;
+              }
+            }
+            &.me {
+              .field {
+                max-width: calc(100% - (40px + 40px));
+                margin-left: auto;
+                margin-right: 0;
+                background: v.$pm2;
+              }
+            }
+            &:first-child {
+              margin-top: 0;
+            }
+            &.show {
+              visibility: visible;
+              animation: popup 0.5s ease;
+            }
           }
-          p {
-            padding: 10px 0;
-            line-height: 2;
-            text-align: justify;
-            text-align-last: center;
+          .preload {
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.2em;
+            i {
+              color: v.$pm1;
+              font-size: 1.3em;
+            }
+          }
+          &.asset-loading {
+            .card {
+              opacity: 0.025;
+            }
           }
         }
       }

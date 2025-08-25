@@ -3,6 +3,7 @@ package-lock.json
 
 .vscode
 .env
+.prettierrc.mjs
 public/bundle
 public/sw.js
 views

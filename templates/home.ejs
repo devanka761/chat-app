@@ -119,8 +119,40 @@
         </section>
         <section class="sect" id="credits">
           <div class="box">
-            <div class="cre">
-              <p>This webapp was made for educational purposes only. Written in <a href="https://www.typescriptlang.org" target="_blank">TypeScript</a> and uses <a href="https://nodejs.org" target="_blank">Node.js</a>, <a href="https://expressjs.com" target="_blank">Express</a>, <a href="https://github.com/coturn/coturn" target="_blank">Corturn</a>, <a href="https://nodemailer.com" target="_blank">Nodemailer</a>, <a href="https://sass-lang.com" target="_blank">SASS</a>, and <a href="https://webpack.js.org" target="_blank">Webpack</a>. Running on <a href="https://ubuntu.com/server" target="_blank">Ubuntu</a> and uses <a href="https://git-scm.com" target="_blank">Git</a> to control its version. All problems can be reported via email <a href="mailto:contact@devanka.id">contact@devanka.id</a> or direct message on <a href="https://devanka.id/discord">Discord</a>.</p>
+            <div class="chatlist">
+              <div class="chat-card card me">
+                <div class="field">
+                  <div class="chp text">
+                    <div class="msg">What is this webapp built for? What technologies and frameworks did you use?</div>
+                  </div>
+                  <div class="chp time">
+                    <div class="ts"><%= new Date(Date.now() - (1000 * 60 * 1.5)).toLocaleTimeString(navigator.language, { hour: "2-digit", minute: "2-digit" }) %></div>
+                    <div class="status">
+                      <i class="fa-regular fa-check-double"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="chat-card card devanka">
+                <div class="avatar">
+                  <img alt="devanka" src="/assets/user.jpg" />
+                </div>
+                <div class="field">
+                  <div class="chp sender">devanka761</div>
+                  <div class="chp embed">
+                    <div class="name">You</div>
+                    <div class="msg">What is this webapp built for? What technologies and frameworks did you use?</div>
+                  </div>
+                  <div class="chp text">
+                    <div class="msg">
+                      <p>This webapp was made for educational purposes only. Written in <a href="https://www.typescriptlang.org" target="_blank">TypeScript</a> and uses <a href="https://nodejs.org" target="_blank">Node.js</a>, <a href="https://expressjs.com" target="_blank">Express</a>, <a href="https://github.com/coturn/coturn" target="_blank">Corturn</a>, <a href="https://nodemailer.com" target="_blank">Nodemailer</a>, <a href="https://sass-lang.com" target="_blank">SASS</a>, and <a href="https://webpack.js.org" target="_blank">Webpack</a>. Running on <a href="https://ubuntu.com/server" target="_blank">Ubuntu</a> and uses <a href="https://git-scm.com" target="_blank">Git</a> to control its version. All problems can be reported via email <a href="mailto:contact@devanka.id" target="_blank">contact@devanka.id</a> or direct message on <a href="https://devanka.id/discord" target="_blank">Discord</a>.</p>
+                    </div>
+                  </div>
+                  <div class="chp time">
+                    <div class="ts"><%= new Date(Date.now()).toLocaleTimeString(navigator.language, { hour: "2-digit", minute: "2-digit" }) %></div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
