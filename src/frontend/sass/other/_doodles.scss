@@ -1,0 +1,78 @@
+:root {
+  --cell: 88px;
+  --icon: 22px;
+  --alpha: 0.3;
+  --tilt: 20;
+  --accent-h: 210;
+  --accent-s: 16%;
+  --accent-l: 40%;
+}
+@media (max-width: 480px) {
+  :root {
+    --cell: 72px;
+    --icon: 18px;
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --cell: 96px;
+    --icon: 24px;
+  }
+}
+.doodle-pattern {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  filter: blur(0.1px);
+}
+
+.doodle-grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--cell));
+  grid-auto-rows: var(--cell);
+  justify-content: center;
+  align-content: center;
+  gap: 0px;
+  opacity: 1;
+}
+
+.doodle-item {
+  display: grid;
+  place-items: center;
+  width: var(--cell);
+  height: var(--cell);
+  transform: rotate(var(--r, 0deg));
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+  opacity: var(--alpha);
+}
+
+.doodle-item i {
+  font-size: var(--icon);
+  line-height: 1;
+  color: hsl(var(--accent-h), var(--accent-s), var(--accent-l));
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .doodle-item {
+    animation: float 10s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0) rotate(var(--r, 0deg));
+    }
+    50% {
+      transform: translateY(-3px) rotate(calc(var(--r, 0deg) * 1));
+    }
+  }
+}
+
+.doodle-pattern.parallax .doodle-grid {
+  transition: transform 0.2s ease-out;
+}

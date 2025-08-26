@@ -1,5 +1,6 @@
 import "./sass/home.scss"
 import nav from "./helper/nav"
+import Doodles from "./pm/props/chats/DoodlesAPI"
 
 nav()
 
@@ -14,6 +15,16 @@ function removeHistory(): void {
 }
 
 function showPreview(): void {
+  const eroot = document.getElementById("main")
+
+  if (eroot) {
+    new Doodles({
+      root: eroot,
+      fillRatio: 0.65,
+      strength: 50
+    })
+  }
+
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {

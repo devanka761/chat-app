@@ -9,6 +9,7 @@ import { PeerCallHandler } from "../../../manager/Peer"
 import getPeerStream from "../../../manager/peerStream"
 import socketClient from "../../../manager/socketClient"
 import { IUserF } from "../../../types/db.types"
+import Doodles from "../../props/chats/DoodlesAPI"
 
 export default class VCall {
   isLocked: boolean
@@ -36,6 +37,7 @@ export default class VCall {
   callinterval: ReturnType<typeof setInterval> | null
   private startTime: number
   private videoCall: boolean
+  private doodle: Doodles
   constructor(s: { user: IUserF; video?: boolean }) {
     this.user = s.user
     this.isLocked = false
@@ -60,6 +62,7 @@ export default class VCall {
     const profile_picture = kel("div", "profpic", { e: img })
     const bg = kel("div", "background", { e: profile_picture })
     this.el.append(bg)
+    this.doodle = new Doodles({ root: bg, fillRatio: 0.65, strength: 12 })
   }
   writeTab(): void {
     const tab = kel("div", "top")
@@ -311,6 +314,7 @@ export default class VCall {
     }
   }
   async destroy(): Promise<void> {
+    this.doodle.end()
     this.clearTime()
     this.off()
     if (this.el) this.el.remove()

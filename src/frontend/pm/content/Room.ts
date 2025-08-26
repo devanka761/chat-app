@@ -23,6 +23,7 @@ import socketClient from "../../manager/socketClient"
 import adap from "../../main/adaptiveState"
 import sdate from "../../helper/sdate"
 import { KirAIUser } from "../../helper/AccountKirAI"
+import Doodles from "../props/chats/DoodlesAPI"
 
 export default class Room implements PrimaryClass {
   readonly role: string
@@ -47,6 +48,7 @@ export default class Room implements PrimaryClass {
   private btnBack: HTMLDivElement
   classBefore?: PrimaryClass
   private gotolast: HTMLDivElement
+  private doodle: Doodles
   constructor(s: { data: IRoomDataF; users: IUserF[]; chats?: IChatsF; card?: FriendBuilder; classBefore?: PrimaryClass }) {
     this.king = "content"
     this.role = "room"
@@ -92,6 +94,11 @@ export default class Room implements PrimaryClass {
   }
   private writeField(): void {
     this.field.run(this.middle)
+    this.doodle = new Doodles({
+      root: this.middle,
+      fillRatio: 1,
+      strength: 30
+    })
     const collection = db.c
     const chats = collection.find((ch) => ch.r.id === this.data.id)
     if (chats) {
@@ -312,6 +319,7 @@ export default class Room implements PrimaryClass {
   async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
     if (!instant) await modal.waittime()
+    this.doodle.end()
     this.isLocked = false
     this.el.remove()
     this.field.list.entries.forEach((ch) => {

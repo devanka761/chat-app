@@ -1,6 +1,7 @@
 @use "./variables" as v;
 @use "./main";
 @use "./other/nav";
+@use "./other/doodles";
 
 @keyframes popup {
   0% {
@@ -31,7 +32,6 @@ body {
 
 .main {
   width: 100%;
-  height: 100%;
   .sect {
     &#home {
       position: relative;

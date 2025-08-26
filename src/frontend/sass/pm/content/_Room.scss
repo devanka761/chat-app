@@ -15,7 +15,7 @@ $errorbg: #3d2b31;
   background-color: v.$px25;
   .top {
     position: absolute;
-    z-index: 1;
+    z-index: 2;
     top: 0;
     left: 0;
     background-color: v.$px2;
@@ -121,6 +121,7 @@ $errorbg: #3d2b31;
   }
   .bottom {
     position: absolute;
+    z-index: 3;
     bottom: 0;
     left: 0;
     width: 100%;
@@ -335,7 +336,7 @@ $errorbg: #3d2b31;
     width: 100%;
     height: calc(100% - (60px + $btmheight));
     .gotolast {
-      z-index: 1;
+      z-index: 2;
       position: absolute;
       right: 35px;
       bottom: 25px;
@@ -364,6 +365,7 @@ $errorbg: #3d2b31;
       overflow-x: hidden;
       padding: 20px;
       scrollbar-width: thin;
+      z-index: 1;
       .card {
         position: relative;
         width: 100%;

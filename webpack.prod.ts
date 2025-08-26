@@ -111,10 +111,10 @@ const config: Configuration = {
                 "@babel/preset-env",
                 {
                   targets: {
-                    firefox: "60",
-                    chrome: "58",
-                    safari: "10",
-                    edge: "18"
+                    firefox: "69",
+                    chrome: "64",
+                    safari: "13",
+                    edge: "79"
                   }
                 }
               ],
