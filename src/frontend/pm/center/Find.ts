@@ -8,6 +8,7 @@ import FindAPI from "../props/find/FindAPI"
 import FriendBuilder from "../props/friends/FriendBuilder"
 import { IUserF } from "../../types/db.types"
 import { PrimaryClass } from "../../types/userState.types"
+import waittime from "../../helper/waittime"
 
 export default class Find implements PrimaryClass {
   readonly role: string
@@ -41,7 +42,7 @@ export default class Find implements PrimaryClass {
     if (inp) this.focus(inp)
   }
   async focus(inp: HTMLInputElement) {
-    await modal.waittime(500)
+    await waittime(500)
     inp.readOnly = true
     inp.focus()
     setTimeout(() => {
@@ -75,7 +76,7 @@ export default class Find implements PrimaryClass {
   private async searchUser(search_id: string, cardlist: HTMLDivElement): Promise<void> {
     const eloading = kel("div", "card", { e: `<div class="getload"><div class="spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div>LOADING</div>` })
     cardlist.prepend(eloading)
-    await modal.waittime(1000)
+    await waittime(1000)
     const searchResult = await xhr.get(`/x/profile/search/${search_id}`)
     eloading.remove()
     if (!searchResult || !searchResult.ok) {
@@ -107,7 +108,7 @@ export default class Find implements PrimaryClass {
   update(): void | Promise<void> {}
   async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    if (!instant) await modal.waittime()
+    if (!instant) await waittime()
     this.isLocked = false
     this.el.remove()
     this.list.entries.forEach((usr) => this.list.remove(usr.id))

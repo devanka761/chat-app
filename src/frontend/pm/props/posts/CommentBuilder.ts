@@ -3,6 +3,7 @@ import { lang } from "../../../helper/lang"
 import modal from "../../../helper/modal"
 import sdate from "../../../helper/sdate"
 import setbadge from "../../../helper/setbadge"
+import waittime from "../../../helper/waittime"
 import xhr from "../../../helper/xhr"
 import adap from "../../../main/adaptiveState"
 import db from "../../../manager/db"
@@ -88,7 +89,7 @@ export default class CommentBuilder {
         }
         this.el.classList.add("process")
         const deletedComment = await xhr.post(`/x/posts/comment/delete/${this.parent.post.id}/${this.comment.id}`)
-        await modal.waittime(1000)
+        await waittime(1000)
         this.el.classList.remove("process")
         if (!deletedComment || !deletedComment.ok) {
           await modal.alert(lang[deletedComment.msg] || lang.ERROR)

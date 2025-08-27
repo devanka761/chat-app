@@ -7,6 +7,7 @@ import db from "../../../manager/db"
 import getVoiceRecorder from "../../../manager/voiceRecorder"
 import MessageWritter from "../../props/room/MessageWritter"
 import Room from "../../content/Room"
+import waittime from "../../../helper/waittime"
 
 export default class RoomRecorder {
   readonly role: string
@@ -103,7 +104,7 @@ export default class RoomRecorder {
   }
   private async destroyMedia(): Promise<void> {
     if (this.mediaStream) {
-      await modal.waittime(1000)
+      await waittime(1000)
       this.mediaStream.getTracks().forEach((track) => track.stop())
     }
     this.mediaRecorder = null
@@ -129,7 +130,7 @@ export default class RoomRecorder {
     }
   }
   async send(blob: Blob): Promise<void> {
-    await modal.waittime(2000)
+    await waittime(2000)
     this.destroyMedia()
     if (!blob) return this.close()
     const filesrc: string | null = await new Promise((resolve) => {
@@ -181,7 +182,7 @@ export default class RoomRecorder {
       return
     }
     if (this.permTry <= 1) {
-      await modal.waittime(500)
+      await waittime(500)
       this.isLocked = false
       this.permTry = 2
       return this.init()

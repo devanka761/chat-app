@@ -3,6 +3,7 @@ import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
 import sdate from "../../helper/sdate"
 import setbadge from "../../helper/setbadge"
+import waittime from "../../helper/waittime"
 import xhr from "../../helper/xhr"
 import adap from "../../main/adaptiveState"
 import userState from "../../main/userState"
@@ -388,7 +389,7 @@ export default class Account implements PrimaryClass {
   update(): void | Promise<void> {}
   async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    if (!instant) await modal.waittime()
+    if (!instant) await waittime()
     this.isLocked = false
     this.el.remove()
   }

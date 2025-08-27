@@ -9,6 +9,7 @@ import PostCard from "../parts/posts/PostCard"
 import { IPostF, TPostsF } from "../../types/posts.types"
 import CreatePost from "./CreatePost"
 import db from "../../manager/db"
+import waittime from "../../helper/waittime"
 
 type PostFilter = "all" | "mine"
 
@@ -108,7 +109,7 @@ export default class Posts implements PrimaryClass {
     const filteredPosts = this.currFilter === "mine" ? this.post_list.filter((post) => post.user.id === db.me.id) : this.post_list
     filteredPosts.forEach((post) => this.renPost(post))
     this.writeIfEmpty(posts)
-    await modal.waittime(500)
+    await waittime(500)
     this.isLocked = false
   }
   private renPost(post: IPostF): void {
@@ -133,7 +134,7 @@ export default class Posts implements PrimaryClass {
   update(): void {}
   async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    if (!instant) await modal.waittime()
+    if (!instant) await waittime()
     this.isLocked = false
     this.el.remove()
   }

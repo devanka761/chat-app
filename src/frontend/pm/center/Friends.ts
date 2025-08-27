@@ -1,6 +1,5 @@
 import { epm, kel } from "../../helper/kel"
 import { lang } from "../../helper/lang"
-import modal from "../../helper/modal"
 import noUser from "../../helper/noUser"
 import userState from "../../main/userState"
 import db from "../../manager/db"
@@ -11,6 +10,7 @@ import { IRoomDataF, IUserF } from "../../types/db.types"
 import { TFriendsTypeF } from "../../types/room.types"
 import { PrimaryClass } from "../../types/userState.types"
 import ContactCard from "../parts/friends/ContactCard"
+import waittime from "../../helper/waittime"
 
 const typeOrder: { [key: string]: number } = {
   friend: 2,
@@ -129,7 +129,7 @@ export default class Friends implements PrimaryClass {
   }
   async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    if (!instant) await modal.waittime()
+    if (!instant) await waittime()
     this.isLocked = false
     this.el.remove()
     this.list.entries.forEach((ch) => {

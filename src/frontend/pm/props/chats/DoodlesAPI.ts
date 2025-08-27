@@ -1,7 +1,10 @@
+import waittime from "../../../helper/waittime"
+
 type DoodleConfig = {
   root: HTMLElement
   fillRatio: number
   strength: number
+  delay?: number
 }
 type ComputedGrid = {
   cols: number
@@ -34,7 +37,7 @@ export default class Doodles {
     const rows = Math.ceil(rect.height / cell)
     return { cols, rows, cell }
   }
-  private buildGrid() {
+  private buildGrid(): void {
     this.el.innerHTML = ""
     const { cols, rows } = this.computeGrid(this.el)
     const grid = document.createElement("div")
@@ -98,12 +101,16 @@ export default class Doodles {
     this.config.root.onpointermove = null
     this.el.remove()
   }
-  private run(): this {
+  async start(): Promise<void> {
+    if (this.config.delay) await waittime(this.config.delay)
     this.createElement()
     this.config.root.append(this.el)
     this.buildGrid()
     this.onResize()
     this.onPointerMove()
+  }
+  private run(): this {
+    this.start()
     return this
   }
 }

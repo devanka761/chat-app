@@ -3,6 +3,7 @@ import { lang } from "../../../helper/lang"
 import modal from "../../../helper/modal"
 import sdate from "../../../helper/sdate"
 import setbadge from "../../../helper/setbadge"
+import waittime from "../../../helper/waittime"
 import userState from "../../../main/userState"
 import negotiator from "../../../manager/negotiator"
 import { PeerCallHandler } from "../../../manager/Peer"
@@ -62,7 +63,7 @@ export default class VCall {
     const profile_picture = kel("div", "profpic", { e: img })
     const bg = kel("div", "background", { e: profile_picture })
     this.el.append(bg)
-    this.doodle = new Doodles({ root: bg, fillRatio: 0.65, strength: 12 })
+    this.doodle = new Doodles({ root: bg, fillRatio: 0.65, strength: 12, delay: 2000 })
   }
   writeTab(): void {
     const tab = kel("div", "top")
@@ -237,18 +238,18 @@ export default class VCall {
         this.destroy()
       } else if (this.btnMinimize.contains(target)) {
         this.el.classList.add("out")
-        await modal.waittime(500)
+        await waittime(500)
         epm().classList.add("movedown")
         this.el.classList.remove("out")
         this.el.classList.add("minimized")
-        await modal.waittime(500)
+        await waittime(500)
         epm().classList.remove("movedown")
         epm().classList.add("oncall")
       } else if (this.el.classList.contains("minimized")) {
         this.el.classList.add("out")
         epm().classList.remove("oncall")
         epm().classList.add("moveup")
-        await modal.waittime(500)
+        await waittime(500)
         this.el.classList.remove("out", "minimized")
         epm().classList.remove("moveup")
       }

@@ -1,7 +1,7 @@
 import { epm, kel } from "../../../helper/kel"
 import { lang } from "../../../helper/lang"
-import modal from "../../../helper/modal"
 import setbadge from "../../../helper/setbadge"
+import waittime from "../../../helper/waittime"
 import userState from "../../../main/userState"
 import socketClient from "../../../manager/socketClient"
 import { IUserF } from "../../../types/db.types"
@@ -83,7 +83,7 @@ export default class Incoming {
       if (e.target instanceof Node === false) return
       if (this.btnIgnore.contains(e.target)) {
         this.el.classList.add("out")
-        await modal.waittime(190)
+        await waittime(190)
         this.el.classList.remove("out")
         this.el.classList.add("ignored")
       } else if (this.btnAnswer.contains(e.target)) {
@@ -96,7 +96,7 @@ export default class Incoming {
       } else {
         if (this.el.classList.contains("ignored")) {
           this.el.classList.add("out")
-          await modal.waittime(190)
+          await waittime(190)
           this.el.classList.remove("out")
           this.el.classList.remove("ignored")
         }

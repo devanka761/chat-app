@@ -6,6 +6,7 @@ import { klang, lang } from "../../helper/lang"
 import { Languages } from "../../types/helper.types"
 import adap from "../../main/adaptiveState"
 import { changeColorTheme } from "../../manager/colortheme"
+import waittime from "../../helper/waittime"
 
 function SelectLang() {
   return {
@@ -185,7 +186,7 @@ export default class Settings implements PrimaryClass {
   update(): void | Promise<void> {}
   async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    if (!instant) await modal.waittime()
+    if (!instant) await waittime()
     this.isLocked = false
     this.el.remove()
   }

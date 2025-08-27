@@ -1,7 +1,6 @@
 import { marked } from "marked"
 import { kel } from "../../../helper/kel"
 import { lang } from "../../../helper/lang"
-import modal from "../../../helper/modal"
 import { copyToClipboard } from "../../../helper/navigator"
 import notip from "../../../helper/notip"
 import sdate from "../../../helper/sdate"
@@ -17,6 +16,7 @@ import AudioBuilder from "./AudioBuilder"
 import { escapeWhiteSpace, renderer } from "../../../helper/escaper"
 import CallMsgBuilder from "./CallMsgBuilder"
 import { KirAIRoom } from "../../../helper/AccountKirAI"
+import waittime from "../../../helper/waittime"
 
 const statusIcon: TStatusIcon = {
   pending: '<i class="fa-duotone fa-solid fa-spinner-third fa-spin"></i>',
@@ -372,7 +372,7 @@ export default class MessageBuilder {
     this.optLocked = true
     if (this.optmenu && this.el.contains(this.optmenu)) {
       this.optmenu.classList.add("out")
-      await modal.waittime(200)
+      await waittime(200)
       this.el.removeChild(this.optmenu)
       this.el.removeAttribute("style")
       this.room.field.html.removeAttribute("style")
@@ -446,7 +446,7 @@ export default class MessageBuilder {
   async highlight(): Promise<void> {
     if (this.el.classList.contains("highlight")) return
     this.el.classList.add("highlight")
-    await modal.waittime(5000, 5)
+    await waittime(5000, 5)
     this.el.classList.remove("highlight")
   }
   async copyText(): Promise<boolean> {
@@ -465,7 +465,7 @@ export default class MessageBuilder {
     document.body.append(a)
     a.click()
 
-    await modal.waittime(2000)
+    await waittime(2000)
     document.body.removeChild(a)
     a.remove()
   }

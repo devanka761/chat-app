@@ -14,6 +14,7 @@ import adap from "../../main/adaptiveState"
 import VCall from "../parts/media/VCall"
 import Tab from "../parts/header/Tab"
 import { KirAIRoom } from "../../helper/AccountKirAI"
+import waittime from "../../helper/waittime"
 
 export default class Profile implements PrimaryClass {
   readonly role: string
@@ -238,7 +239,7 @@ export default class Profile implements PrimaryClass {
     }
 
     eoption.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`
-    await modal.waittime(1000)
+    await waittime(1000)
     const setreq = await xhr.post(`/x/profile/${ref}`, { userid: this.user.id })
     if (!setreq?.data?.user) {
       this.renOptions()
@@ -323,7 +324,7 @@ export default class Profile implements PrimaryClass {
   update(): void | Promise<void> {}
   async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    if (!instant) await modal.waittime()
+    if (!instant) await waittime()
     this.isLocked = false
     this.el.remove()
   }

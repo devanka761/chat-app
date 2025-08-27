@@ -16,6 +16,7 @@ import Empty from "./Empty"
 import Room from "./Room"
 import { copyToClipboard } from "../../helper/navigator"
 import notip from "../../helper/notip"
+import waittime from "../../helper/waittime"
 
 export default class Group implements PrimaryClass {
   readonly role: string
@@ -425,7 +426,7 @@ export default class Group implements PrimaryClass {
   update(): void | Promise<void> {}
   async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    if (!instant) await modal.waittime()
+    if (!instant) await waittime()
     this.isLocked = false
     this.el.remove()
   }

@@ -1,12 +1,12 @@
 import { epm, kel, qutor } from "../../helper/kel"
 import { lang } from "../../helper/lang"
-import modal from "../../helper/modal"
 import adap from "../../main/adaptiveState"
 import userState from "../../main/userState"
 import ________ from "../../pages/about.json"
 import { PrimaryClass } from "../../types/userState.types"
 import packageVersion from "../../../config/version.json"
 import db from "../../manager/db"
+import waittime from "../../helper/waittime"
 
 const updateUrl = "aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2RldmFua2E3NjEvY2hhdC1hcHAvcmVmcy9oZWFkcy9tYWluL3NyYy9mcm9udGVuZC9wYWdlcy9hYm91dC5qc29u"
 
@@ -211,7 +211,7 @@ export default class About implements PrimaryClass {
   update(): void {}
   async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    if (!instant) await modal.waittime()
+    if (!instant) await waittime()
     this.isLocked = false
     this.el.remove()
   }

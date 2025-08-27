@@ -16,6 +16,7 @@ import xhr from "../../helper/xhr"
 import adap from "../../main/adaptiveState"
 import Room from "../content/Room"
 import { KirAIRoom } from "../../helper/AccountKirAI"
+import waittime from "../../helper/waittime"
 
 const typeOrder: { [key: string]: number } = {
   all: 1,
@@ -236,7 +237,7 @@ export default class Chats implements PrimaryClass {
   }
   async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    if (!instant) await modal.waittime()
+    if (!instant) await waittime()
     this.isLocked = false
     this.el.remove()
     this.list.entries.forEach((ch) => {

@@ -2,6 +2,7 @@ import { eroot, kel } from "../helper/kel"
 import { lang } from "../helper/lang"
 import modal from "../helper/modal"
 import setbadge from "../helper/setbadge"
+import waittime from "../helper/waittime"
 import xhr from "../helper/xhr"
 import adap from "../main/adaptiveState"
 import { removeParams } from "../main/urlHistory"
@@ -51,7 +52,6 @@ export default class Invites {
     eroot().append(this.el)
   }
   async getGroup(): Promise<void> {
-    // await modal.waittime(2000)
     const groupInvite = await xhr.get(`/invite/${this.link}`)
     this.isLocked = false
     if (!groupInvite || !groupInvite.ok) {
@@ -119,7 +119,7 @@ export default class Invites {
   async destroy(): Promise<void> {
     this.isLocked = true
     this.el.classList.add("out")
-    await modal.waittime()
+    await waittime()
     this.isLocked = false
     this.el.remove()
   }

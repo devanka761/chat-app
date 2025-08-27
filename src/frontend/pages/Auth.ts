@@ -21,6 +21,7 @@ import { SetNotifications } from "../main/subscribe"
 import Room from "../pm/content/Room"
 import { removeParams } from "../main/urlHistory"
 import packageVersion from "../../config/version.json"
+import waittime from "../helper/waittime"
 
 let lang: LangObject = {}
 
@@ -244,7 +245,7 @@ class SignEmail {
   }
   async destroy(): Promise<void> {
     this.el.classList.add("out")
-    await modal.waittime(500, 5)
+    await waittime(500, 5)
     this.isLocked = false
     this.el.remove()
   }
@@ -358,7 +359,7 @@ class SignCode {
   }
   async destroy(): Promise<void> {
     this.el.classList.add("out")
-    await modal.waittime(500, 5)
+    await waittime(500, 5)
     this.isLocked = false
     this.el.remove()
   }

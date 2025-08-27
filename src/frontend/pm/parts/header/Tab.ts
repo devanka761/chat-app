@@ -1,6 +1,6 @@
 import { epm, kel } from "../../../helper/kel"
 import { lang } from "../../../helper/lang"
-import modal from "../../../helper/modal"
+import waittime from "../../../helper/waittime"
 import userState from "../../../main/userState"
 import db from "../../../manager/db"
 import { PrimaryClass } from "../../../types/userState.types"
@@ -78,7 +78,7 @@ export default class Tab implements PrimaryClass {
   }
   async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    if (!instant) await modal.waittime()
+    if (!instant) await waittime()
     this.isLocked = false
     this.el.remove()
   }

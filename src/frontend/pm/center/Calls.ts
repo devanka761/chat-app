@@ -1,12 +1,12 @@
 import { epm, kel } from "../../helper/kel"
 import { lang } from "../../helper/lang"
-import modal from "../../helper/modal"
 import userState from "../../main/userState"
 import db from "../../manager/db"
 import CallBuilder from "../props/media/CallBuilder"
 import { IMessageF, IUserF } from "../../types/db.types"
 import { PrimaryClass } from "../../types/userState.types"
 import noUser from "../../helper/noUser"
+import waittime from "../../helper/waittime"
 
 export default class Calls implements PrimaryClass {
   private el: HTMLDivElement
@@ -66,7 +66,7 @@ export default class Calls implements PrimaryClass {
   update(): void {}
   async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    if (!instant) await modal.waittime()
+    if (!instant) await waittime()
     this.isLocked = false
     this.el.remove()
   }

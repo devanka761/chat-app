@@ -1,6 +1,7 @@
 import { epm, kel } from "../../helper/kel"
 import { lang } from "../../helper/lang"
 import modal from "../../helper/modal"
+import waittime from "../../helper/waittime"
 import xhr from "../../helper/xhr"
 import adap from "../../main/adaptiveState"
 import userState from "../../main/userState"
@@ -161,14 +162,14 @@ export default class CreatePost implements PrimaryClass {
       this.isLocked = false
       return
     }
-    await modal.loading(modal.waittime(2000), lang.FINISHING)
+    await modal.loading(waittime(2000), lang.FINISHING)
     this.isLocked = false
     adap.swipe(this.classBefore)
   }
   update(): void {}
   async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    if (!instant) await modal.waittime()
+    if (!instant) await waittime()
     this.ifile = null
     this.iname = null
     this.isLocked = false

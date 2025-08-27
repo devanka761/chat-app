@@ -1,6 +1,6 @@
 import { kel } from "../../../helper/kel"
 import { lang } from "../../../helper/lang"
-import modal from "../../../helper/modal"
+import waittime from "../../../helper/waittime"
 import userState from "../../../main/userState"
 import optionlist from "./_optionRoomTabList"
 import RoomTab from "./RoomTab"
@@ -35,7 +35,7 @@ export default class OptionRoomTabBuilder {
         this.isLocked = false
       }
     })
-    await modal.waittime(250)
+    await waittime(250)
     this.isLocked = false
     this.clickListener()
   }
@@ -48,7 +48,7 @@ export default class OptionRoomTabBuilder {
   async close(): Promise<void> {
     this.isLocked = true
     this.el.classList.add("out")
-    await modal.waittime(250)
+    await waittime(250)
     this.isLocked = false
     this.top.removeChild(this.el)
     this.el.remove()

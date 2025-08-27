@@ -1,6 +1,6 @@
 import { epm, kel, qutor } from "../../../helper/kel"
 import { lang } from "../../../helper/lang"
-import modal from "../../../helper/modal"
+import waittime from "../../../helper/waittime"
 import userState from "../../../main/userState"
 import { PrimaryClass } from "../../../types/userState.types"
 import _navlist from "./_navlist"
@@ -61,7 +61,7 @@ export default class HeaderBar implements PrimaryClass {
   }
   async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
-    if (!instant) await modal.waittime()
+    if (!instant) await waittime()
     this.isLocked = false
     this.el.remove()
   }

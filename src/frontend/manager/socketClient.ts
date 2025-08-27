@@ -2,7 +2,6 @@ import { IAccountB } from "../../backend/types/account.types"
 import { IZender } from "../../backend/types/validate.types"
 import { eroot, kel, qutor } from "../helper/kel"
 import { lang } from "../helper/lang"
-import modal from "../helper/modal"
 import notip from "../helper/notip"
 import xhr from "../helper/xhr"
 import adap from "../main/adaptiveState"
@@ -15,6 +14,7 @@ import Group from "../pm/content/Group"
 import Room from "../pm/content/Room"
 import db from "./db"
 import packageVersion from "../../config/version.json"
+import waittime from "../helper/waittime"
 
 function socketError(err: Event) {
   console.error(err)
@@ -63,7 +63,7 @@ export class SocketClient {
     }
     if (this.attemp <= 1) {
       notip({ ic: "plug-circle-xmark", a: "DISCONNECTED", c: "4" })
-      await modal.waittime(5000)
+      await waittime(5000)
     }
     if (this.attemp <= 3) notip({ ic: "circle-notch fa-spin", a: `RECONNECTING #${this.attemp}`, c: "5" })
 
@@ -71,7 +71,7 @@ export class SocketClient {
 
     // if (!reconnectUser) return await this.reconnect()
     if ((reconnectUser.data?.v && reconnectUser.data.v !== db.version) || (reconnectUser.data?.package && reconnectUser.data.package !== packageVersion.version)) {
-      await modal.waittime(4200)
+      await waittime(4200)
       new ForceClose({
         msg_1: '<i class="fa-duotone fa-solid fa-sign-posts-wrench"></i>',
         msg_2: lang.CLOUD_OUTDATED,
@@ -82,13 +82,13 @@ export class SocketClient {
     }
 
     if (!reconnectUser.ok) {
-      await modal.waittime(4200)
+      await waittime(4200)
       return await this.reconnect()
     }
     this.run(reconnectUser.data)
     this.attemp = 0
     if (this.locker) this.locker.classList.add("getready")
-    await modal.waittime(2200)
+    await waittime(2200)
     if (userState.tab) userState.tab.update()
     if (userState.center) adap.swipe(userState.center, true)
     if (userState.content) {
@@ -103,12 +103,12 @@ export class SocketClient {
 
       adap.swipe(setEmpty ? new Empty() : userState.content, true)
     }
-    await modal.waittime(1100)
+    await waittime(1100)
     if (this.locker) {
       this.locker.classList.remove("getready")
       this.locker.classList.add("out")
     }
-    await modal.waittime(1100)
+    await waittime(1100)
     this.unlockAll()
     notip({ ic: "plug-circle-check", a: "CONNECTED", c: "1" })
   }

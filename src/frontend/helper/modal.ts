@@ -2,12 +2,9 @@ import { ModalAlert, ModalConfirm, ModalPrompt, ModalSelect } from "../types/hel
 import { IRepB } from "../../backend/types/validate.types"
 import * as klang from "./lang"
 import { kel, eroot, qutor } from "./kel"
+import waittime from "./waittime"
 
 const modal = {
-  async waittime(ts: number = 500, tsa: number = 5): Promise<void> {
-    const ms: number = ts - tsa || 0
-    return new Promise((resolve) => setTimeout(resolve, ms))
-  },
   async loading(newfunc: Promise<object | string | number | void>, msg: string = "LOADING"): Promise<IRepB> {
     const el = kel("div", "loading", {
       e: kel("div", "box", {
@@ -16,18 +13,18 @@ const modal = {
     })
     eroot().append(el)
 
-    await this.waittime()
+    await waittime()
 
     return await newfunc
       .then(async (res) => {
         el.classList.add("out")
-        await this.waittime(500, 5)
+        await waittime(500, 5)
         el.remove()
         return res
       })
       .catch(async (err) => {
         el.classList.add("out")
-        await this.waittime(500, 5)
+        await waittime(500, 5)
         el.remove()
         return err
       })
@@ -74,7 +71,7 @@ const modal = {
       if (btn)
         btn.onclick = async (): Promise<void> => {
           el.classList.add("out")
-          await this.waittime(500, 5)
+          await waittime(500, 5)
           el.remove()
           resolve(false)
           if (s.ok) s.ok()
@@ -120,7 +117,7 @@ const modal = {
         qutor(".box .inf", el)?.append(img)
         img.onerror = async () => {
           el.classList.add("out")
-          await this.waittime()
+          await waittime()
           el.remove()
           return resolve(await this.alert({ msg: lang.IMG_ERR, ic: "image-slash" }))
         }
@@ -136,7 +133,7 @@ const modal = {
       if (btnOk)
         btnOk.onclick = async () => {
           el.classList.add("out")
-          await this.waittime(500, 5)
+          await waittime(500, 5)
           el.remove()
           resolve(true)
           if (s.ok) s.ok()
@@ -144,7 +141,7 @@ const modal = {
       if (btnCancel)
         btnCancel.onclick = async () => {
           el.classList.add("out")
-          await this.waittime(500, 5)
+          await waittime(500, 5)
           el.remove()
           resolve(false)
           if (s.cancel) s.cancel()
@@ -218,7 +215,7 @@ const modal = {
       if (btnOk)
         btnOk.onclick = async () => {
           el.classList.add("out")
-          await this.waittime()
+          await waittime()
           el.remove()
           resolve(inp.value)
           if (s.ok) s.ok()
@@ -226,7 +223,7 @@ const modal = {
       if (btnCancel)
         btnCancel.onclick = async () => {
           el.classList.add("out")
-          await this.waittime()
+          await waittime()
           el.remove()
           resolve(null)
           if (s.cancel) s.cancel()
@@ -303,7 +300,7 @@ const modal = {
           const formData = new FormData(form)
           formData.forEach((val) => (data = val.toString()))
           el.classList.add("out")
-          await this.waittime()
+          await waittime()
           el.remove()
           resolve(data)
           if (s.ok) s.ok()
@@ -311,7 +308,7 @@ const modal = {
       if (btnCancel)
         btnCancel.onclick = async () => {
           el.classList.add("out")
-          await this.waittime()
+          await waittime()
           el.remove()
           resolve(null)
           if (s.cancel) s.cancel()

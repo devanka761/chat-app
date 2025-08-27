@@ -1,6 +1,7 @@
 import { kel } from "../../../helper/kel"
 import { lang } from "../../../helper/lang"
 import modal from "../../../helper/modal"
+import waittime from "../../../helper/waittime"
 import xhr from "../../../helper/xhr"
 import db from "../../../manager/db"
 import { ICommentF, IPostF, TCommentsF } from "../../../types/posts.types"
@@ -148,7 +149,7 @@ export default class Comments {
   async destroy(instant?: boolean): Promise<void> {
     this.el.classList.add("out")
     this.el.onclick = null
-    if (!instant) await modal.waittime()
+    if (!instant) await waittime()
     this.el.remove()
   }
   run(): this {

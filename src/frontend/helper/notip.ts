@@ -1,8 +1,5 @@
 import { kel, eroot } from "./kel"
-
-function waittime(ms = 495) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
+import waittime from "./waittime"
 
 let nindex = 0
 let ndone = 0

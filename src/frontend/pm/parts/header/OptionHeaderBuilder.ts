@@ -1,6 +1,6 @@
 import { kel } from "../../../helper/kel"
 import { lang } from "../../../helper/lang"
-import modal from "../../../helper/modal"
+import waittime from "../../../helper/waittime"
 import userState from "../../../main/userState"
 import { PrimaryClass } from "../../../types/userState.types"
 import _optionlist from "./_optionlist"
@@ -40,7 +40,7 @@ export default class OptionHeaderBuilder {
         this.isLocked = false
       }
     })
-    await modal.waittime(250)
+    await waittime(250)
     this.isLocked = false
     this.clickListener()
   }
@@ -53,7 +53,7 @@ export default class OptionHeaderBuilder {
   async close(): Promise<void> {
     this.isLocked = true
     this.el.classList.add("out")
-    await modal.waittime(250)
+    await waittime(250)
     this.isLocked = false
     this.header.closeOption()
   }

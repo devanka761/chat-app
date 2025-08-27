@@ -1,6 +1,5 @@
 import { kel } from "../../../helper/kel"
 import { lang } from "../../../helper/lang"
-import modal from "../../../helper/modal"
 import db from "../../../manager/db"
 import Room from "../../content/Room"
 import ReplyBuilder from "../../props/room/ReplyBuilder"
@@ -8,6 +7,7 @@ import AttachmentBuilder from "../../props/room/AttachmentBuilder"
 import EditBuilder from "../../props/room/EditBuilder"
 import MessageWritter from "../../props/room/MessageWritter"
 import { KirAIRoom } from "../../../helper/AccountKirAI"
+import waittime from "../../../helper/waittime"
 
 export default class RoomForm {
   readonly role: string
@@ -201,12 +201,12 @@ export default class RoomForm {
   }
   private async focus(): Promise<void> {
     this.textarea.readOnly = true
-    await modal.waittime(20)
+    await waittime(20)
     this.textarea.focus()
     this.textarea.readOnly = false
   }
   private async firstFocus() {
-    await modal.waittime(580)
+    await waittime(580)
     this.focus()
   }
   close(): void {
