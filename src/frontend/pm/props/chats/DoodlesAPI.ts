@@ -16,8 +16,9 @@ const ICON_LIST: string[] = ["fa-jelly-fill fa-regular fa-music", "fa-jelly-fill
 
 let restartBuild: ReturnType<typeof setTimeout> | null = null
 export default class Doodles {
-  private resizeObserver: ResizeObserver
+  private resizeObserver: ResizeObserver | null = null
   private el: HTMLDivElement = document.createElement("div")
+  private isDestroyed: boolean = false
   constructor(private config: DoodleConfig) {
     this.run()
   }
@@ -97,12 +98,14 @@ export default class Doodles {
     }
   }
   end(): void {
-    this.resizeObserver.disconnect()
+    this.isDestroyed = true
+    if (this.resizeObserver) this.resizeObserver.disconnect()
     this.config.root.onpointermove = null
-    this.el.remove()
+    if (this.el) this.el.remove()
   }
   async start(): Promise<void> {
     if (this.config.delay) await waittime(this.config.delay)
+    if (this.isDestroyed) return
     this.createElement()
     this.config.root.append(this.el)
     this.buildGrid()
