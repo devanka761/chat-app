@@ -9,20 +9,20 @@ const router: Router = express.Router()
 
 router.use(express.json({ limit: "100KB" }))
 
-router.get("/isUser", (req: Request, res: Response) => {
-  const isLogged = rep(isUserLogged(req.user?.id))
+router.get("/isUser", async (req: Request, res: Response) => {
+  const isLogged = rep(await isUserLogged(req.user?.id))
   res.status(isLogged.code).json(isLogged)
   return
 })
 
-router.post("/sign-in", (req: Request, res: Response) => {
-  const signIn = rep(authLogin(req.body))
+router.post("/sign-in", async (req: Request, res: Response) => {
+  const signIn = rep(await authLogin(req.body))
   res.status(signIn.code).json(signIn)
   return
 })
 
-router.post("/verify", (req: Request, res: Response) => {
-  const verifyUser = rep(authVerify(req.body))
+router.post("/verify", async (req: Request, res: Response) => {
+  const verifyUser = rep(await authVerify(req.body))
   if (!verifyUser.ok) {
     res.status(verifyUser.code).json(verifyUser)
     return
@@ -92,13 +92,13 @@ router.get("/:provider/callback", async (req: Request, res: Response) => {
   return
 })
 
-router.get("/:provider", cdUser, (req: Request, res: Response) => {
+router.get("/:provider", cdUser, async (req: Request, res: Response) => {
   const { provider } = req.params
   if (!isProviderValid(provider)) {
     res.status(400).json({ ok: false, code: 400 })
     return
   }
-  res.redirect(getOAuthUrl(provider as "github" | "google" | "discord"))
+  res.redirect(await getOAuthUrl(provider as "github" | "google" | "discord"))
   return
 })
 

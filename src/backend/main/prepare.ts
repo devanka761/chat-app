@@ -2,30 +2,45 @@ import push from "web-push"
 import serverConfig from "../../config/server.config.json"
 import db from "./db"
 import logger from "./logger"
+import Metadata, { IMetadata, IMetadataDocument } from "../models/Metadata.Model"
+import { Document, UpdateQuery } from "mongoose"
 
-export function getServerReady(): void {
-  db.load()
+export async function getServerReady(): Promise<void> {
+  const filter = { id: "761" }
 
-  if (!db.ref.k.v) {
-    db.ref.k.v = 1
-    db.save("k")
+  const hasMetadata: IMetadata = (await Metadata.findOne(filter)) || {}
+
+  const updatePayload: UpdateQuery<Document<IMetadataDocument>> = {
+    $setOnInsert: {
+      id: "761"
+    },
+    $set: {
+      groups: hasMetadata.groups || 0,
+      version: hasMetadata.version || 0
+    }
   }
 
   if (serverConfig.update) {
-    db.ref.k.v++
-    db.save("k")
+    updatePayload.$set.version++
   }
 
-  console.log("--------")
-  if (!db.ref.k.privateKey || !db.ref.k.publicKey || db.ref.k.publicKey.length < 16 || db.ref.k.privateKey.length < 16) {
+  if (hasMetadata.publicKey && hasMetadata.privateKey) {
+    updatePayload.$set.publicKey = hasMetadata.publicKey
+    updatePayload.$set.privateKey = hasMetadata.privateKey
+  } else {
     logger.info("Vapid Keys: Regenerated")
     const vapidKeys = push.generateVAPIDKeys()
-    db.ref.k.publicKey = vapidKeys.publicKey
-    db.ref.k.privateKey = vapidKeys.privateKey
-    db.save("k")
+    updatePayload.$set.publicKey = vapidKeys.publicKey
+    updatePayload.$set.privateKey = vapidKeys.privateKey
   }
+
+  await Metadata.findOneAndUpdate(filter, updatePayload, {
+    upsert: true,
+    new: true,
+    setDefaultsOnInsert: true
+  })
   logger.success("Vapid Keys: Loaded")
-  push.setVapidDetails("mailto:contact@devanka.id", db.ref.k.publicKey, db.ref.k.privateKey)
+  push.setVapidDetails("mailto:contact@devanka.id", updatePayload.$set.publicKey, updatePayload.$set.privateKey)
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

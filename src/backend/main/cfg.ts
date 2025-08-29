@@ -18,6 +18,8 @@ const cfg = {
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET as string,
   GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID as string,
   GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET as string,
-  GENAI_API_KEY: process.env.GENAI_API_KEY as string
+  GENAI_API_KEY: process.env.GENAI_API_KEY as string,
+  DB_URI: process.env.DB_URI as string,
+  DB_NAME: process.env.DB_NAME as string
 }
 export default cfg

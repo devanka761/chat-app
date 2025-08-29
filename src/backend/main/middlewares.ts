@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express"
-import db from "./db"
+import Account from "../models/Account.Model"
 
 const userCDs = new Map()
 
@@ -26,7 +26,9 @@ export function cdUser(req: Request, res: Response, next: NextFunction) {
   next()
 }
 export function isUser(req: Request, res: Response, next: NextFunction) {
-  if (!req.user?.id || !db.ref.u[req.user.id].data) {
+  const accountExists = Account.findOne({ where: { id: req.user?.id } })
+
+  if (!req.user?.id || !accountExists) {
     res.status(401).json({ ok: false, code: 401, msg: "UNAUTHORIZED" })
     return
   }
