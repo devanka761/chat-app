@@ -1,24 +1,6 @@
 import { model, Model, Schema, ToObjectOptions } from "mongoose"
-import { PushSubscription } from "web-push"
+import { IAccount } from "../types/account.types"
 
-export enum IAccountProvider {
-  "github" = "github",
-  "google" = "google",
-  "discord" = "discord",
-  "kirimin" = "kirimin"
-}
-
-export interface IAccountData {
-  id: string
-  email: string
-  provider: IAccountProvider
-}
-
-export interface IAccount {
-  id: string
-  data: IAccountData[]
-  push: PushSubscription
-}
 export interface IAccountDocument extends IAccount, Document {
   toJSON(options?: ToObjectOptions): IAccount
 }
@@ -27,16 +9,18 @@ export type IAccountModel = Model<IAccountDocument>
 
 const schema = new Schema({
   id: { type: String, required: true },
-  data: [
-    {
-      id: { type: String, required: true },
-      email: { type: String, required: true },
-      provider: { type: String, required: true }
-    }
-  ],
-  push: { type: Object }
+  data: {
+    type: [
+      {
+        id: { type: String, required: true },
+        email: { type: String, required: true },
+        provider: { type: String, required: true }
+      }
+    ],
+    required: true
+  }
 })
 
-const Account: IAccountModel = model<IAccountDocument>("Account", schema)
+const Account: IAccountModel = model<IAccountDocument, IAccountModel>("Account", schema)
 
 export default Account
