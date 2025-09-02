@@ -33,7 +33,7 @@ export interface IAccount {
 
 export interface IAccountTemp {
   id?: string
-  data?: Partial<IAccountData>
+  data: Partial<IAccountData>
 }
 
 export interface IAccountCookie {

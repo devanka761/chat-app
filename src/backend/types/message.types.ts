@@ -16,6 +16,7 @@ export enum MessageType {
 
 export interface IMessage {
   id: string
+  roomId: string
   user: string
   ts: number
   readers?: string[]

@@ -1,113 +1,119 @@
-import db from "../main/db"
 import { convertUser, normalizeMessage } from "../main/helper"
 import zender from "../main/zender"
-import { Call, IMessageB, IMessageKeyB } from "../types/db.types"
+import Call from "../models/Call.Model"
+import Chat from "../models/Chat.Model"
+import Message from "../models/Message.Model"
+import { CallType, ICall } from "../types/call.types"
 import { getUser } from "./profile.controller"
 
-function setToMessage(callKey: string, data: Call): boolean {
-  const cdb = db.ref.c
-  const usr1 = data.o
-  const usr2 = data.u.find((usr) => usr.id !== usr1)?.id
+async function setToMessage(callKey: string, data: ICall): Promise<boolean> {
+  const usr1 = data.owner
+  const usr2 = data.users.find((usr) => usr.id !== usr1)?.id
   if (!usr1 || !usr2) return false
-  const chatkey = Object.keys(cdb).find((k) => {
-    return cdb[k].t === "user" && cdb[k].u.find((usr) => usr === usr1) && cdb[k].u.find((usr) => usr === usr2)
-  })
-  if (!chatkey) return false
-  if (!cdb[chatkey].f) return false
-  if (!cdb[chatkey].c) db.ref.c[chatkey].c = chatkey
-  const dbOld = (db.fileGet(chatkey, "room") || {}) as IMessageKeyB
-  const newChat: IMessageB = {
-    ts: Date.now(),
-    u: usr1,
-    vc: 0,
-    ty: "call",
-    dur: data.st >= 1 ? Date.now() - data.st : data.st,
-    w: [usr2]
-  }
 
-  const updateType = dbOld[callKey] ? "editmessage" : "sendmessage"
+  const chat = await Chat.findOne({ type: "user", users: { $all: [usr1, usr2] }, friend: true })
+  if (!chat) return false
 
-  dbOld[callKey] = newChat
-  db.fileSet(chatkey, "room", dbOld)
-  const chatData = { ...normalizeMessage(callKey, dbOld[callKey]) }
+  const messageExists = await Message.findOne({ id: callKey, roomId: chat.id })
+
+  const message = await Message.findOneAndUpdate(
+    {
+      id: callKey,
+      roomId: chat.id
+    },
+    {
+      $set: {
+        ts: Date.now(),
+        user: usr1,
+        roomId: chat.id,
+        call: CallType.Voice,
+        type: "call",
+        duration: data.startAt >= 1 ? Date.now() - data.startAt : data.startAt,
+        readers: [usr2]
+      }
+    },
+    {
+      upsert: true,
+      new: true
+    }
+  )
+
+  const updateType = messageExists ? "editmessage" : "sendmessage"
+
+  const chatData = { ...normalizeMessage(callKey, message.toJSON()) }
 
   zender(usr1, usr1, updateType, {
     chat: chatData,
-    roomdata: convertUser(usr2),
-    users: cdb[chatkey].u.map((usr) => getUser(usr1, usr)),
+    roomdata: await convertUser(usr2),
+    users: await Promise.all(chat.users.map(async (usr) => await getUser(usr1, usr))),
     force: true
   })
   zender(usr1, usr2, updateType, {
     chat: chatData,
-    roomdata: convertUser(usr1),
-    users: cdb[chatkey].u.map((usr) => getUser(usr2, usr))
+    roomdata: await convertUser(usr1),
+    users: await Promise.all(chat.users.map(async (usr) => await getUser(usr2, usr)))
   })
   return true
 }
 
-export function forceExitCall(uid: string): void {
-  const vdb = db.ref.v
-  const callKeys = Object.keys(vdb).filter((k) => {
-    return vdb[k].u.find((usr) => usr.id === uid)
-  })
-  if (callKeys.length < 1) return
-  callKeys.forEach((k) => {
-    setToMessage(k, vdb[k])
-    const usr = vdb[k].u.find((usr) => usr.id !== uid)?.id
-    if (usr) zender(uid, usr, "hangup", { user: getUser(usr, uid) })
-    delete db.ref.v[k]
-    db.save("v")
+export async function forceExitCall(uid: string): Promise<void> {
+  const calls = await Call.find({ users: uid })
+  if (!calls || calls.length < 1) return
+
+  calls.forEach(async (call) => {
+    setToMessage(call.id, call)
+    const usr = call.users.find((usr) => usr.id !== uid)?.id
+    if (usr) zender(uid, usr, "hangup", { user: await getUser(usr, uid) })
+
+    await call.deleteOne()
   })
 }
 
-export function createCallKey(uid: string, targetid: string): string | null {
-  const vdb = db.ref.v
-  const hasKey = Object.keys(vdb).find((k) => vdb[k].u.find((usr) => usr.id === uid))
-  if (hasKey) return null
-  const callKey = Date.now().toString(34)
-  db.ref.v[callKey] = {
-    o: uid,
-    t: 0,
-    st: 0,
-    u: [
-      { id: uid, j: true },
-      { id: targetid as string, j: false }
-    ]
-  }
-  const canSend = setToMessage(callKey, { ...db.ref.v[callKey], st: -2 })
-  if (!canSend) {
-    delete db.ref.v[callKey]
-    return null
-  }
+export async function createCallKey(uid: string, targetid: string): Promise<string | null> {
+  const callExists = await Call.findOne({ users: { $all: [{ id: uid }, { id: targetid }] } })
+  if (callExists) return null
 
-  db.save("v")
+  const callKey = Date.now().toString(34)
+  const call = new Call({
+    id: callKey,
+    owner: uid,
+    users: [
+      { id: uid, joined: true },
+      { id: targetid, joined: false }
+    ],
+    startAt: 0,
+    type: CallType.Voice
+  })
+
+  const canSend = await setToMessage(callKey, call)
+  if (!canSend) return null
+
+  await call.save()
+
   return callKey
 }
 
-export function createAnswer(uid: string, senderid: string, callKey: string): boolean {
-  const vdb = db.ref.v
-  const hasKey = Object.keys(vdb).find((k) => vdb[k].u.find((usr) => usr.id === uid && usr.j === true))
-  if (hasKey) return false
-  if (!vdb[callKey]) return false
-  const noCall = !vdb[callKey].u.find((usr) => usr.id === uid) || !vdb[callKey].u.find((usr) => usr.id === senderid)
+export async function createAnswer(uid: string, senderid: string, callKey: string): Promise<boolean> {
+  const call = await Call.findOne({ id: callKey, users: [{ id: uid, joined: true }] })
+  if (!call) return false
+
+  const noCall = !call.users.find((usr) => usr.id === uid) || !call.users.find((usr) => usr.id === senderid)
   if (noCall) return false
-  db.ref.v[callKey].st = Date.now()
-  const userCall = db.ref.v[callKey].u.find((usr) => usr.id === uid)
-  if (!userCall) return false
-  userCall.j = true
-  db.save("v")
+
+  await call.updateOne({ $set: { startAt: Date.now(), users: call.users.map((usr) => ({ id: usr.id, joined: true })) } })
 
   return true
 }
 
-export function rejectCall(uid: string, senderid: string, callKey: string): void {
-  const vdb = db.ref.v
-  if (!vdb[callKey]) return
-  db.ref.v[callKey].st = -1
-  db.save("v")
+export async function rejectCall(uid: string, senderid: string, callKey: string): Promise<void> {
+  const call = await Call.findOne({ id: callKey, users: { $all: [{ id: uid }, { id: senderid }] } })
+  if (!call) return
+
+  await call.updateOne({ $set: { startAt: -1 } })
 }
 
-export function terminateAllCalls(): void {
-  const vdb = db.ref.v
-  Object.keys(vdb).forEach((k) => forceExitCall(vdb[k].o))
+export async function terminateAllCalls(): Promise<void> {
+  const calls = await Call.find().lean()
+
+  calls.forEach(async (call) => await forceExitCall(call.owner))
 }

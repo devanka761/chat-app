@@ -190,7 +190,7 @@ async function clearUsers(): Promise<void> {
   logger.info("Checking Global Posts Participants")
   await waittime(3000)
   const posters = Object.keys(pdb)
-  const comments = []
+  const comments: string[] = []
   posters.forEach((k) => {
     permaUsers[pdb[k].u] = true
     if (pdb[k].c) {

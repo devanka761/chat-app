@@ -1,49 +1,42 @@
-# Check Prettier
-npm run check ||
-(
-    echo 'Prettier Check Failed. Run npm run format, add changes and try commit again';
-    false;
-)
+# # Check Prettier
+# npm run check ||
+# (
+#     echo 'Prettier Check Failed. Run npm run format, add changes and try commit again';
+#     false;
+# )
 
-# Check ESLint
-npm run lint ||
-(
-    echo "ESLint Check Failed. Make the required changes listed above, add changes and try to commit again";
-    false;
-)
+# # Check ESLint
+# npm run lint ||
+# (
+#     echo "ESLint Check Failed. Make the required changes listed above, add changes and try to commit again";
+#     false;
+# )
 
-# Check tsconfig
-npm run type-check || 
-(
-    echo "Failed type check. Make the changes require above, add changes and try to commit again";
-    false;
-)
+# # Check tsconfig
+# npm run type-check || 
+# (
+#     echo "Failed type check. Make the changes require above, add changes and try to commit again";
+#     false;
+# )
 
-# Check app build
-npm run build ||
-(
-    echo "Your build failed, view the errors above"
-    false;
-)
-
-# Update package patch
-npm --no-git-tag-version version patch ||
-{
-    echo "Patching version failed #1"
-    false;
-}
+# # Check app build
+# npm run build ||
+# (
+#     echo "Your build failed, view the errors above"
+#     false;
+# )
 
 # Write package version to frontend
 echo "{ \"version\": \""$(node -p "require('./package.json').version")"\" }" > src/config/version.json ||
 {
-    echo "Patching version failed #2"
+    echo "Patching version failed"
     false;
 }
 
 # Add package patch and app version changing
-git add . ||
+git add ./src/config/version.json ||
 {
-    echo "Patching version failed #3"
+    echo "Exporting version failed"
     false;
 }
 

@@ -10,7 +10,7 @@ export type IAuthModel = Model<IAuthDocument>
 const schema = new Schema({
   email: { type: String, required: true },
   otp: {
-    code: { type: String || Number, required: true },
+    code: { type: Number, required: true },
     expiry: { type: Number, required: true }
   },
   rate: { type: Number, required: true },

@@ -4,32 +4,48 @@ import { convertUser } from "../main/helper"
 import { sendPushNotification } from "../main/prepare"
 import zender from "../main/zender"
 import { IRepTempB } from "../types/validate.types"
+import User from "../models/User.Model"
+import Chat from "../models/Chat.Model"
 
-function isFriend(uid: string, userid: string): number {
-  const cdb = db.ref.c
-  const isfriend = Object.values(cdb).find((ch) => ch.u.includes(uid) && ch.u.includes(userid) && ch.f === 1)
+async function isFriend(uid: string, userid: string): Promise<number> {
+  const isfriend = await Chat.findOne({
+    users: { $all: [uid, userid] },
+    type: "user",
+    friend: true
+  })
   if (isfriend) return 1
-  const udb = db.ref.u
-  if (udb[userid]?.req?.find((usr) => usr === uid)) return 2
-  if (udb[uid]?.req?.find((usr) => usr === userid)) return 3
+  const targetUser = await User.findOne({ id: userid }, { req: 1 })
+  if (targetUser?.req?.includes(uid)) return 2 // They sent me a request
+  const me = await User.findOne({ id: uid }, { req: 1 })
+  if (me?.req?.includes(userid)) return 3 // I sent them a request
   return 0
 }
+export const userKeys = "id username displayname badges image bio"
+export async function getUser(uid: string, userid: string): Promise<IUserF> {
+  const userDoc = await User.findOne({ id: userid })
 
-export function getUser(uid: string, userid: string): IUserF {
-  const udb = db.ref.u[userid]
-  const data: IUserF = {
-    id: udb?.id || "-1",
-    username: <string>udb?.uname || "Former Member",
-    displayname: <string>udb?.dname || "Former Member",
-    isFriend: isFriend(uid, userid) || 0
+  if (!userDoc) {
+    return {
+      id: userid || "-1",
+      username: "Former Member",
+      displayname: "Former Member",
+      isFriend: 0
+    }
   }
-  if (udb?.b) data.badges = udb.b
-  if (udb?.bio) data.bio = udb.bio
-  if (udb?.img) data.image = udb.img
+
+  const data: IUserF = {
+    id: userDoc.id,
+    username: userDoc.username,
+    displayname: userDoc.displayname,
+    isFriend: await isFriend(uid, userid)
+  }
+  if (userDoc.badges) data.badges = userDoc.badges
+  if (userDoc.bio) data.bio = userDoc.bio
+  if (userDoc.image) data.image = userDoc.image
   return data
 }
 
-export function searchUser(uid: string, userid: string): IRepTempB {
+export async function searchUser(uid: string, userid: string): Promise<IRepTempB> {
   userid = userid.toLowerCase()
   if (userid === "user" || userid === "user7") return searchRandom(uid)
   const udb = db.ref.u
@@ -51,7 +67,7 @@ function userRandom(users: string[]): string {
   return users[Math.floor(Math.random() * users.length)]
 }
 
-function searchRandom(uid: string): IRepTempB {
+async function searchRandom(uid: string): Promise<IRepTempB> {
   const udb = db.ref.u
   const users = Object.values(udb)
     .filter((usr) => {
@@ -71,11 +87,11 @@ function searchRandom(uid: string): IRepTempB {
   return { code: 200, data: { users: userlist } }
 }
 
-export function addfriend(uid: string, s: { userid: string }): IRepTempB {
+export async function addfriend(uid: string, s: { userid: string }): Promise<IRepTempB> {
   const udb = db.ref.u[s.userid]
   if (!udb) return { code: 404 }
   const mdb = db.ref.u[uid]
-  const isfriend = isFriend(uid, s.userid)
+  const isfriend = await isFriend(uid, s.userid)
   if (isfriend === 1) return { code: 200, data: { user: getUser(uid, s.userid) } }
   if (mdb.req?.includes(s.userid)) return acceptfriend(uid, s)
   if (udb.req?.includes(uid)) return { code: 200, data: { user: getUser(uid, s.userid) } }
@@ -94,7 +110,7 @@ export function addfriend(uid: string, s: { userid: string }): IRepTempB {
   })
   return { code: 200, data: { user: getUser(uid, s.userid) } }
 }
-export function unfriend(uid: string, s: { userid: string }): IRepTempB {
+export async function unfriend(uid: string, s: { userid: string }): Promise<IRepTempB> {
   const udb = db.ref.u[s.userid]
   if (!udb) return { code: 404 }
   if (udb.req?.includes(uid)) db.ref.u[s.userid].req = udb.req.filter((k) => k !== uid)
@@ -111,7 +127,7 @@ export function unfriend(uid: string, s: { userid: string }): IRepTempB {
   zender(uid, s.userid, "unfriend", { user: getUser(s.userid, uid) })
   return { code: 200, data: { user: getUser(uid, s.userid) } }
 }
-export function cancelfriend(uid: string, s: { userid: string }): IRepTempB {
+export async function cancelfriend(uid: string, s: { userid: string }): Promise<IRepTempB> {
   const udb = db.ref.u[s.userid]
   if (!udb) return { code: 404 }
   if (!udb.req || !udb.req.includes(uid)) return { code: 200, data: { user: getUser(uid, s.userid) } }
@@ -121,11 +137,11 @@ export function cancelfriend(uid: string, s: { userid: string }): IRepTempB {
   zender(uid, s.userid, "cancelfriend", { user: getUser(s.userid, uid) })
   return { code: 200, data: { user: getUser(uid, s.userid) } }
 }
-export function acceptfriend(uid: string, s: { userid: string }): IRepTempB {
+export async function acceptfriend(uid: string, s: { userid: string }): Promise<IRepTempB> {
   if (uid === s.userid) return { code: 400 }
   const udb = db.ref.u[s.userid]
   if (!udb) return { code: 404 }
-  const isfriend = isFriend(uid, s.userid)
+  const isfriend = await isFriend(uid, s.userid)
   if (isfriend === 1) return { code: 200, data: { user: getUser(uid, s.userid) } }
   if (udb.req?.includes(uid)) db.ref.u[s.userid].req = udb.req.filter((k) => k !== uid)
   const mdb = db.ref.u[uid]
@@ -159,7 +175,7 @@ export function acceptfriend(uid: string, s: { userid: string }): IRepTempB {
 
   return { code: 200, data: { user: getUser(uid, s.userid), room: convertUser(s.userid) } }
 }
-export function ignorefriend(uid: string, s: { userid: string }): IRepTempB {
+export async function ignorefriend(uid: string, s: { userid: string }): Promise<IRepTempB> {
   const udb = db.ref.u[s.userid]
   if (!udb) return { code: 404 }
   if (udb.req?.includes(uid)) db.ref.u[s.userid].req = udb.req.filter((key) => key !== uid)

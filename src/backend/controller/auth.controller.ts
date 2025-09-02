@@ -1,121 +1,158 @@
 import fs from "fs"
 import nodemailer, { Transporter } from "nodemailer"
-import db from "../main/db"
-import { isProd, rNumber } from "../main/helper"
+import { isProd, rNumber, rUid } from "../main/helper"
 import validate from "../main/validate"
 import cfg from "../main/cfg"
-import { UserProcess } from "../types/db.types"
 import * as haccount from "./account.controller"
 import { IRepTempB, SivalKeyType } from "../types/validate.types"
-import { IUserTempB, ValidProviders } from "../types/binder.types"
+import Auth from "../models/Auth.Model"
+import { AccountProvider, IAccountData, IAccountProvider, IAccountTemp } from "../types/account.types"
+import Account from "../models/Account.Model"
+import User from "../models/User.Model"
 
-export function isUserLogged(uid?: string): IRepTempB {
+export async function isUserLogged(uid?: string): Promise<IRepTempB> {
   if (!uid) return { code: 401, msg: "UNAUTHORIZED" }
-  return haccount.getMe(uid)
+  return await haccount.getMe(uid)
 }
 
-export function authLogin(s: SivalKeyType): IRepTempB {
+export async function authLogin(s: SivalKeyType): Promise<IRepTempB> {
   if (!validate(["email"], s)) return { code: 400 }
-  s.email = s.email.toString().toLowerCase()
+  const email = s.email.toString().toLowerCase()
   const mailValid = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g
-  if (!s.email.match(mailValid)) return { code: 400, msg: "AUTH_ERR_02" }
+  if (!email.match(mailValid)) return { code: 400, msg: "AUTH_ERR_02" }
 
-  const oldEmailKey = Object.keys(db.ref.t).find((key) => db.ref.t[key].email == s.email)
-  const tempid = oldEmailKey ? oldEmailKey : "u" + Date.now().toString(32)
+  const existingAuth = await Auth.findOne({ email: email })
+
+  if (existingAuth && (existingAuth.rate >= 3 || (existingAuth.cd || 0) >= 3)) {
+    if (existingAuth.rate >= 3) {
+      setTimeout(async () => {
+        await Auth.deleteOne({ email: email })
+      }, 1000 * 30)
+    }
+    return { code: 429, msg: "AUTH_RATE_LIMIT" }
+  }
 
   const gencode: number = rNumber(6)
-  if (!db.ref.t[tempid])
-    db.ref.t[tempid] = {
-      email: s.email,
-      otp: { code: gencode.toString(), expiry: <number>(Date.now() + 1000 * 60 * 10) },
-      rate: 0
-    }
-  if (db.ref.t[tempid].rate >= 2) {
-    setTimeout(() => {
-      delete db.ref.t[tempid]
-    }, 1000 * 30)
-  }
-  if (db.ref.t[tempid].rate >= 3 || (db.ref.t[tempid].cd || 0) >= 3) return { code: 429, msg: "AUTH_RATE_LIMIT" }
-  db.ref.t[tempid].email = s.email
-  db.ref.t[tempid].otp = { code: gencode, expiry: Date.now() + 1000 * 60 * 10 }
-  db.ref.t[tempid].rate = db.ref.t[tempid].rate + 1
+  const expiry = Date.now() + 1000 * 60 * 10
+
+  await Auth.findOneAndUpdate(
+    { email: email },
+    {
+      $set: {
+        email: email,
+        otp: { code: gencode, expiry: expiry }
+      },
+      $inc: { rate: 1 },
+      $setOnInsert: { cd: 0 }
+    },
+    { upsert: true }
+  )
 
   if (isProd) {
-    emailCode(s.email, gencode.toString())
+    emailCode(email, gencode.toString())
   } else {
-    db.save("t")
+    console.log(`[DEV] OTP for ${email} is: ${gencode}`)
   }
-  return { code: 200, msg: "OK", data: { email: s.email } }
+  return { code: 200, msg: "OK", data: { email: email } }
 }
 
-export function authVerify(s: SivalKeyType): IRepTempB {
+export async function authVerify(s: SivalKeyType): Promise<IRepTempB> {
   if (!validate(["email", "code"], s)) return { code: 404 }
-  s.email = s.email.toString().toLowerCase()
+  const email = s.email.toString().toLowerCase()
   const mailValid = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g
-  if (!s.email.match(mailValid)) return { code: 404, msg: "AUTH_ERR_02" }
-  s.code = Number(s.code)
+  if (!email.match(mailValid)) return { code: 404, msg: "AUTH_ERR_02" }
+  const code = Number(s.code)
 
-  const tdb = db.ref.t
-  const dbkey = Object.keys(tdb).find((key) => tdb[key].email == s.email)
-  if (!dbkey) return { code: 400, msg: "AUTH_ERR_04" }
-  if ((tdb[dbkey].cd || 0) >= 3) {
-    setTimeout(() => {
-      delete db.ref.t[dbkey]
-    }, 1000 * 10)
-  }
-  if ((tdb[dbkey].cd || 0) >= 4) return { code: 429, msg: "AUTH_RATE_LIMIT" }
-  db.ref.t[dbkey].cd = (db.ref.t[dbkey].cd || 0) + 1
+  const authDoc = await Auth.findOne({ email })
+  if (!authDoc) return { code: 400, msg: "AUTH_ERR_04" }
 
-  if (tdb[dbkey].otp.code !== s.code) return { code: 400, msg: "AUTH_ERR_04" }
-  if (<number>tdb[dbkey].otp.expiry < Date.now()) return { code: 400, msg: "AUTH_ERR_05", data: { restart: 1 } }
+  if ((authDoc.cd || 0) >= 4) return { code: 429, msg: "AUTH_RATE_LIMIT" }
+  authDoc.cd = (authDoc.cd || 0) + 1
+  await authDoc.save()
 
-  return processUser(s.email, dbkey)
+  if (authDoc.otp.code !== code) return { code: 400, msg: "AUTH_ERR_04" }
+  if (authDoc.otp.expiry < Date.now()) return { code: 400, msg: "AUTH_ERR_05", data: { restart: 1 } }
+
+  return await processUser(email)
 }
 
-export function processUser(email: string, dbkey: string): IRepTempB {
-  const provider: ValidProviders = "kirimin"
+export async function processUser(email: string): Promise<IRepTempB> {
+  const provider: AccountProvider = AccountProvider.Kirimin
 
-  const udb = db.ref.u
-  const data: { user: UserProcess; first?: boolean } = { user: { data: { provider, email } } }
-  let ukey: string | undefined = Object.keys(udb).find((key) =>
-    udb[key].data.find((snap) => {
-      return snap.provider === provider && snap.email === email
+  const account = await Account.findOne({
+    "data.email": email,
+    "data.provider": provider
+  })
+
+  const data: { user: IAccountTemp; first?: boolean } = {
+    user: { data: { provider, email } }
+  }
+
+  let ukey: string
+
+  if (account) {
+    ukey = account.id
+  } else {
+    ukey = rUid()
+    const newUser = new User({
+      id: ukey,
+      username: `u${ukey}`,
+      displayName: `User ${ukey}`
     })
-  )
-  if (!ukey) {
-    ukey = "7" + rNumber(5).toString() + (Object.keys(udb).length + 1).toString()
-    db.ref.u[ukey] = { id: ukey, data: [data.user.data], uname: `u${ukey}`, dname: `User ${ukey}` }
+
+    const newAccount = new Account({
+      id: ukey,
+      data: [
+        {
+          id: ukey,
+          email: email,
+          provider: provider
+        }
+      ]
+    })
+
+    await Promise.all([newUser.save(), newAccount.save()])
+
     data.first = true
   }
+
   data.user.id = ukey
   data.user.data.id = ukey
-  delete db.ref.t[dbkey]
-  db.save("u")
+
+  await Auth.deleteOne({ email: email })
+
   return { code: 200, data: data }
 }
 
-export function processThirdParty(s: { user: IUserTempB; provider: string }): IRepTempB {
-  const udb = db.ref.u
-  const userInfo: IUserTempB = {
+export async function processThirdParty(s: { user: IAccountData; provider: IAccountProvider | AccountProvider }): Promise<IRepTempB> {
+  const userInfo: IAccountData = {
     email: s.user.email,
     id: s.user.id,
-    provider: s.provider as ValidProviders
+    provider: s.provider
   }
-  const data: { user: { id?: string; data: IUserTempB }; first?: boolean } = { user: { data: userInfo } }
 
-  let ukey = Object.keys(udb).find((key) =>
-    udb[key].data.find((snap) => {
-      return snap.provider === userInfo.provider && snap.id === userInfo.id
-    })
-  )
-  if (!ukey) {
-    ukey = "7" + rNumber(5).toString() + (Object.keys(udb).length + 1).toString()
-    db.ref.u[ukey] = { id: ukey, data: [data.user.data], uname: `u${ukey}`, dname: `User ${ukey}` }
+  const data: { user: IAccountTemp; first?: boolean } = { user: { data: userInfo } }
+
+  const account = await Account.findOne({
+    "data.provider": userInfo.provider,
+    "data.id": userInfo.id
+  })
+
+  let ukey: string
+
+  if (account) {
+    ukey = account.id
+  } else {
+    ukey = rUid()
+
+    const newUser = new User({ id: ukey, username: `u${ukey}`, displayName: `User ${ukey}` })
+    const newAccount = new Account({ id: ukey, data: [userInfo as IAccountData] })
+
+    await Promise.all([newUser.save(), newAccount.save()])
     data.first = true
   }
+
   data.user.id = ukey
-  db.ref.u[ukey].data = [data.user.data]
-  db.save("u")
   return { code: 200, data: data }
 }
 const emailQueue: { index: number; done: number } = { index: 0, done: 0 }

@@ -7,12 +7,12 @@ import { createAnswer, createCallKey, forceExitCall, rejectCall } from "./call.c
 import { getUser } from "./profile.controller"
 
 const socketMessage: TSocketHandlerB = {
-  calls: (uid, from, data) => {
+  calls: async (uid, from, data) => {
     if (!data.to) return
     const udb = db.ref.u[data.to as string]
     if (!udb) return
     if (data.type === "offer") {
-      const callKey = createCallKey(uid, data.to as string)
+      const callKey = await createCallKey(uid, data.to as string)
       if (!callKey) return
       data.callKey = callKey
     } else if (data.type === "answer") {
@@ -37,8 +37,8 @@ const socketMessage: TSocketHandlerB = {
       target.socket.send(JSON.stringify({ ...data, user }))
     }
   },
-  offer: (uid, from, data) => {
-    forceExitCall(uid)
+  offer: async (uid, from, data) => {
+    await forceExitCall(uid)
     socketMessage.calls(uid, from, data)
   },
   answer: (uid, from, data) => {

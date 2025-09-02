@@ -11,7 +11,7 @@ const schema = new Schema({
   id: { type: String, required: true },
   image: { type: String },
   username: { type: String, required: true },
-  displayName: { type: String, required: true },
+  displayname: { type: String, required: true },
   bio: { type: String },
   badges: { type: [Number] },
   socket: { type: String },

@@ -9,6 +9,7 @@ export type IMessageModel = Model<IMessageDocument>
 
 const schema = new Schema({
   id: { type: String, required: true },
+  roomId: { type: String, required: true },
   user: { type: String, required: true },
   ts: { type: Number, required: true },
   readers: { type: [String] },

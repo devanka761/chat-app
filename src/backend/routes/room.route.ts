@@ -36,13 +36,13 @@ router.post("/clear/:room_type/:room_id", express.json({ limit: "100KB" }), (req
   res.status(clearroom.code).json(clearroom)
   return
 })
-router.get("/get-global", express.json({ limit: "100KB" }), (req: Request, res: Response) => {
-  const globalchat = rep(getGlobalChats(req.user?.id as string))
+router.get("/get-global", express.json({ limit: "100KB" }), async (req: Request, res: Response) => {
+  const globalchat = rep(await getGlobalChats(req.user?.id as string))
 
   res.status(globalchat.code).json(globalchat)
 })
-router.get("/get-kirai", express.json({ limit: "100KB" }), (req: Request, res: Response) => {
-  const aiChats = rep(getAIChats(req.user?.id as string))
+router.get("/get-kirai", express.json({ limit: "100KB" }), async (req: Request, res: Response) => {
+  const aiChats = rep(await getAIChats(req.user?.id as string))
 
   res.status(aiChats.code).json(aiChats)
 })

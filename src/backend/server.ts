@@ -11,7 +11,7 @@ const PORT: number = cfg.APP_PORT as number
 
 async function startServer() {
   await getServerReady()
-  // await terminateAllCalls()
+  await terminateAllCalls()
   app.listen(PORT, () => {
     startModelRemover()
     console.log("--------")

@@ -1,5 +1,5 @@
 import { type WebSocket } from "ws"
-import { IUserSessionB } from "./types/binder.types"
+import { IAccountCookie } from "./types/account.types"
 
 declare module "express-ws" {
   interface WebSocketWithHeartbeat extends WebSocket {
@@ -9,19 +9,13 @@ declare module "express-ws" {
 
 declare module "express-session" {
   interface SessionData {
-    user?: {
-      id: string
-      data: IUserSessionB
-    }
+    user?: IAccountCookie
   }
 }
 
 declare module "express" {
   interface Request {
-    user?: {
-      id: string
-      data: IUserSessionB
-    }
+    user?: IAccountCookie
   }
 }
 

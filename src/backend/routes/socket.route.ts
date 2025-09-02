@@ -1,19 +1,19 @@
 import { Instance, WebSocketWithHeartbeat } from "express-ws"
 import logger from "../main/logger"
-import db from "../main/db"
 import { TRelay } from "../types/relay.types"
 import relay from "../main/relay"
 import webhookSender from "../main/webhook"
 import processSocketMessages from "../controller/socket.controller"
 import { forceExitCall } from "../controller/call.controller"
+import User from "../models/User.Model"
 
 function router(server: Instance) {
   const { app, getWss } = server
-  app.ws("/socket", (wsClient, req) => {
+  app.ws("/socket", async (wsClient, req) => {
     const ws = wsClient as WebSocketWithHeartbeat
     const { id: clientId } = req.query
 
-    const udb = db.ref.u[req.user?.id || "null"]
+    const udb = await User.findOne({ id: req.user?.id || "null" })
     if (!clientId || !udb) {
       logger.info("❌ Connection rejected: no client ID")
       ws.close()
@@ -41,9 +41,11 @@ function router(server: Instance) {
       }
     })
 
-    ws.on("close", () => {
+    ws.on("close", async () => {
       webhookSender.userLog({ userid: udb.id, online: false })
-      if (udb.socket === clientId) delete db.ref.u[udb.id].socket
+      if (udb.socket === clientId) {
+        await User.updateOne({ id: udb.id }, { $unset: { socket: "" } })
+      }
       forceExitCall(udb.id)
 
       relay.remove(clientId)

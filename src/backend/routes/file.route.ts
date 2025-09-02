@@ -27,9 +27,9 @@ router.get("/user/:imgsrc", (req: Request, res: Response) => {
   res.sendStatus(404)
   return
 })
-router.get("/group/:imgsrc", (req: Request, res: Response) => {
+router.get("/group/:imgsrc", async (req: Request, res: Response) => {
   const { imgsrc } = req.params
-  const file = groupFile(<string>req.user?.id, imgsrc)
+  const file = await groupFile(<string>req.user?.id, imgsrc)
   if (file) {
     res.sendFile(file, { root: "./" })
     return
@@ -37,13 +37,13 @@ router.get("/group/:imgsrc", (req: Request, res: Response) => {
   res.sendStatus(404)
   return
 })
-router.get("/media/:roomtype/:roomid/:filename", (req: Request, res: Response) => {
+router.get("/media/:roomtype/:roomid/:filename", async (req: Request, res: Response) => {
   const { roomid, roomtype, filename } = req.params
   if (roomtype !== "user" && roomtype !== "group") {
     res.sendStatus(404)
     return
   }
-  const file = roomFile(<string>req.user?.id, roomtype, roomid, filename)
+  const file = await roomFile(<string>req.user?.id, roomtype, roomid, filename)
   if (file) {
     res.sendFile(file, { root: "./" })
     return
@@ -51,9 +51,9 @@ router.get("/media/:roomtype/:roomid/:filename", (req: Request, res: Response) =
   res.sendStatus(404)
   return
 })
-router.get("/post/:postid/:postimg", (req: Request, res: Response) => {
+router.get("/post/:postid/:postimg", async (req: Request, res: Response) => {
   const { postid, postimg } = req.params
-  const file = postFile(postid, postimg)
+  const file = await postFile(postid, postimg)
   if (file) {
     res.sendFile(file, { root: "./" })
     return

@@ -15,6 +15,6 @@ const schema = new Schema({
   ts: { type: Number, required: true }
 })
 
-const Comment: ICommentModel = model<ICommentDocument, ICommentModel>("Comment", schema)
+const PostComment: ICommentModel = model<ICommentDocument, ICommentModel>("Comment", schema)
 
-export default Comment
+export default PostComment

@@ -3,7 +3,7 @@ import { authLogin, authVerify, isUserLogged, processThirdParty } from "../contr
 import { rep } from "../main/helper"
 import { cdUser } from "../main/middlewares"
 import { getOAuthUrl, getOAuthUser, isProviderValid } from "../controller/oauth.controller"
-import { IUserCookieB } from "../types/binder.types"
+import { IAccountCookie } from "../types/account.types"
 
 const router: Router = express.Router()
 
@@ -27,7 +27,7 @@ router.post("/verify", async (req: Request, res: Response) => {
     res.status(verifyUser.code).json(verifyUser)
     return
   }
-  const userData = verifyUser.data.user as IUserCookieB
+  const userData = verifyUser.data.user as IAccountCookie
   if (verifyUser.code === 200 && userData) {
     req.user = {
       id: userData.id.toString(),
@@ -69,7 +69,7 @@ router.get("/:provider/callback", async (req: Request, res: Response) => {
     return
   }
   const verifyUser = rep(
-    processThirdParty({
+    await processThirdParty({
       user: user.data,
       provider: user.provider
     })
@@ -78,7 +78,7 @@ router.get("/:provider/callback", async (req: Request, res: Response) => {
     res.status(verifyUser.code).json(verifyUser)
     return
   }
-  const userData = verifyUser.data.user as IUserCookieB
+  const userData = verifyUser.data.user as IAccountCookie
   req.user = {
     id: userData.id,
     data: {

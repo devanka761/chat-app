@@ -3,8 +3,9 @@ import cfg from "./cfg"
 import { IRepB, IRepTempB } from "../types/validate.types"
 import { IWritterF } from "../../frontend/types/message.types"
 import { IMessageF, IMessageTempF, IRoomDataF } from "../../frontend/types/db.types"
-import { IMessageB } from "../types/db.types"
-import db from "./db"
+import User from "../models/User.Model"
+import Chat from "../models/Chat.Model"
+import { IMessage } from "../types/message.types"
 
 export const peerKey: string = crypto.randomBytes(16).toString("hex")
 
@@ -91,56 +92,56 @@ export function convertMessage(uid: string, s: IWritterF): IMessageTempF {
     source: s.filesrc
   }
 }
-export function normalizeMessage(message_id: string, s: IMessageB): IMessageF {
+export function normalizeMessage(message_id: string, s: IMessage): IMessageF {
   return {
     id: message_id,
-    userid: s.u,
+    userid: s.user,
     timestamp: s.ts,
-    type: s.d ? "deleted" : s.ty,
-    text: s.txt,
-    reply: s.r,
-    edited: s.e,
-    source: s.i,
-    readers: s.w,
-    duration: s.dur
+    type: s.deleted ? "deleted" : s.type,
+    text: s.text,
+    reply: s.replyTo,
+    edited: s.edited,
+    source: s.source,
+    readers: s.readers,
+    duration: s.duration
   }
 }
-export function minimizeMessage(uid: string, s: IMessageTempF): IMessageB {
-  const co: IMessageB = { u: uid, ts: s.timestamp }
-  if (s.text) co.txt = s.text
-  if (s.edited) co.e = s.edited
-  if (s.reply) co.r = s.reply
+export function minimizeMessage(uid: string, roomId: string, id: string, s: IMessageTempF): IMessage {
+  const co: IMessage = { user: uid, ts: s.timestamp, id, roomId }
+  if (s.text) co.text = s.text
+  if (s.edited) co.edited = s.edited
+  if (s.reply) co.replyTo = s.reply
   if (msgValidTypes.find((vt) => vt === s.type) && s.source) {
-    co.ty = s.type
-    co.i = s.source
+    co.type = s.type
+    co.source = s.source
   } else if (s.type === "voice") {
-    co.ty = "voice"
+    co.type = "voice"
   }
   return co
 }
 
-export function convertUser(user_id: string): IRoomDataF {
-  const user = db.ref.u[user_id]
+export async function convertUser(user_id: string): Promise<IRoomDataF> {
+  const user = await User.findOne({ id: user_id })
   return {
     id: user_id,
-    short: user.uname,
-    long: user.dname,
-    image: user.img,
-    badges: user.b,
+    short: user?.username || "unamed",
+    long: user?.displayname || "unamed",
+    image: user?.image,
+    badges: user?.badges,
     type: "user"
   }
 }
-export function convertGroup(group_id: string): IRoomDataF {
-  const group = db.ref.c[group_id]
+export async function convertGroup(group_id: string): Promise<IRoomDataF> {
+  const group = await Chat.findOne({ id: group_id })
   return {
-    owner: group.o,
+    owner: group?.owner,
     id: group_id,
-    long: group.n || "unamed",
-    short: group.n || "unamed",
-    badges: group.b,
-    image: group.i,
-    type: "group",
-    link: group.l
+    long: group?.name || "unamed",
+    short: group?.name || "unamed",
+    badges: group?.badges,
+    image: group?.image,
+    link: group?.link,
+    type: "group"
   }
 }
 

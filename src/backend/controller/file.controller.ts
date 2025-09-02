@@ -1,30 +1,43 @@
 import fs from "fs"
-import db from "../main/db"
 import { TRoomTypeF } from "../../frontend/types/room.types"
+import Chat from "../models/Chat.Model"
+import Post from "../models/Post.Model"
 
 export function userFile(imgsrc: string): string | null {
   if (!fs.existsSync(`./dist/stg/user/${imgsrc}`)) return null
   return `./dist/stg/user/${imgsrc}`
 }
-export function groupFile(uid: string, imgsrc: string): string | null {
+export async function groupFile(uid: string, imgsrc: string): Promise<string | null> {
   const groupid = imgsrc.split("_")[0]
-  const cdb = db.ref.c[groupid]
-  if (!cdb) return null
+  const groupExists = Chat.findOne({ id: groupid })
+  if (!groupExists) return null
   // if (!cdb.u.find((usr) => usr === uid)) return null
 
   if (!fs.existsSync(`./dist/stg/group/${imgsrc}`)) return null
   return `./dist/stg/group/${imgsrc}`
 }
 
-export function roomFile(uid: string, roomtype: TRoomTypeF, roomid: string, filename: string): string | null {
-  const cdb = db.ref.c
+export async function roomFile(uid: string, roomtype: TRoomTypeF, roomid: string, filename: string): Promise<string | null> {
+  let roomkey: string | null = null
 
-  const roomkey =
-    roomtype === "user"
-      ? Object.keys(cdb).find((k) => {
-          return cdb[k].t === "user" && cdb[k].u.find((usr) => usr === uid) && cdb[k].u.find((usr) => usr === roomid)
-        })
-      : Object.keys(cdb).find((k) => roomid === "696969" || (cdb[k].t === "group" && k === roomid && cdb[k].u.find((usr) => usr === uid)))
+  if (roomtype === "user") {
+    const chat = await Chat.findOne({
+      type: "user",
+      users: { $all: [uid, roomid] }
+    }).lean()
+    if (chat) roomkey = chat.id
+  } else {
+    if (roomid === "696969") {
+      roomkey = "696969"
+    } else {
+      const chat = await Chat.findOne({
+        id: roomid,
+        type: "group",
+        users: uid
+      }).lean()
+      if (chat) roomkey = chat.id
+    }
+  }
 
   if (!roomkey) return null
   if (!fs.existsSync(`./dist/stg/room/${roomkey}`)) return null
@@ -37,9 +50,9 @@ export function langFile(langid: string) {
   return langpath
 }
 
-export function postFile(postid: string, filename: string): string | null {
-  const pdb = db.ref.p[postid]
-  if (!pdb || pdb.img !== filename) return null
+export async function postFile(postid: string, filename: string): Promise<string | null> {
+  const postExists = await Post.findOne({ id: postid })
+  if (!postExists) return null
 
   const filepath = `./dist/stg/post/${filename}`
   if (!fs.existsSync(filepath)) return null

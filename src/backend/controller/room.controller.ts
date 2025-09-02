@@ -13,6 +13,10 @@ import { getGlobalMembers } from "./group.controller"
 import { KirAIRoom } from "../../frontend/helper/AccountKirAI"
 import { clearAIChat, isMentionedAI, sendAIChat, sendGlobalAI } from "./genai.controller"
 import { sendPushNotification } from "../main/prepare"
+import Chat, { IChatDocument, IChatModel } from "../models/Chat.Model"
+import Message from "../models/Message.Model"
+import { Document, Model } from "mongoose"
+import { ChatType, IChat, IChatType } from "../types/chat.types"
 
 export async function sendMessage(uid: string, room_id: string, room_type: TRoomTypeF, s: IWritterF): Promise<IRepTempB> {
   if (s.text) s.text = escapeWhiteSpace(s.text)
@@ -283,43 +287,41 @@ function getAllOnlineUsers(): string[] {
   return usr
 }
 
-export function clearHistory(uid: string, room_type: string, room_id: string): IRepTempB {
-  if (room_id === KirAIRoom.id) return clearAIChat(uid)
-  const cdb = db.ref.c
-  const ckey =
-    room_type === "user"
-      ? Object.keys(cdb).find((k) => {
-          return cdb[k].t === "user" && cdb[k].u.find((usr) => usr === uid) && cdb[k].u.find((usr) => usr === room_id)
-        })
-      : Object.keys(cdb).find((k) => room_id === "696969" || (cdb[k].t === "group" && k === room_id && cdb[k].u.find((usr) => usr === uid)))
+export async function clearHistory(uid: string, room_type: ChatType | IChatType, room_id: string): Promise<IRepTempB> {
+  if (room_id === "696969") return { code: 403, msg: "GRPS_OWNER_FEATURE" }
+  if (room_id === KirAIRoom.id) return await clearAIChat(uid)
 
-  if (!ckey) return { code: 400 }
+  let room
+  if (room_type === ChatType.User) {
+    room = await Chat.findOne({
+      type: "user",
+      users: { $all: [uid, room_id] }
+    })
+  } else {
+    room = await Chat.findOne({
+      type: "group",
+      id: room_id,
+      owner: uid
+    })
+  }
+  if (!room) return { code: 404, msg: "GRPS_404" }
 
-  if (room_type === "group" && cdb[ckey].o !== uid) return { code: 403, msg: "GRPS_OWNER_FEATURE" }
-  // if (room_id === "696969") return { code: 403, msg: "GRPS_OWNER_FEATURE" }
-  if (!cdb[ckey].c) return { code: 200 }
+  if (room.type === "group" && room.owner !== uid) return { code: 403, msg: "GRPS_OWNER_FEATURE" }
+  if (room.id === "696969") return { code: 403, msg: "GRPS_OWNER_FEATURE" }
 
   const roompath = "./dist/stg/room"
-  const mediapath = `${roompath}/${cdb[ckey].c}`
-  const dbpath = "./dist/db/room"
-  const chatpath = `./dist/db/room/${cdb[ckey].c}.json`
+  const mediapath = `${roompath}/${room.key}`
 
-  if (fs.existsSync(roompath) || cdb[ckey].c || fs.existsSync(mediapath)) {
+  if (fs.existsSync(roompath) || fs.existsSync(mediapath)) {
     fs.rmSync(mediapath, { recursive: true, force: true })
   }
 
-  if (fs.existsSync(dbpath) && cdb[ckey].c && fs.existsSync(chatpath)) {
-    fs.rmSync(chatpath, { recursive: true, force: true })
-  }
+  await Message.deleteMany({ roomId: room.id })
 
-  cdb[ckey].u.forEach((usr) => {
-    zender(uid, usr, "clearhistory", { roomid: cdb[ckey].t === "user" ? uid : ckey })
+  room.users.forEach((usr) => {
+    zender(uid, usr, "clearhistory", { roomid: room.type === "user" ? uid : room.id })
   })
-
-  db.fileSet(cdb[ckey].c, "room", {})
-  db.save("c")
-
-  if (room_id === "696969") clearAIChat("696969")
+  if (room_id === "696969") await clearAIChat("696969")
 
   return { code: 200 }
 }

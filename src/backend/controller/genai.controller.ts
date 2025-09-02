@@ -1,4 +1,3 @@
-import fs from "fs"
 import { GEN_AI_FEATURE, AI_MODEL } from "../../config/public.config.json"
 import { GenAIConfig } from "../../config/server.config.json"
 import { KirAIRoom, KirAIUser } from "../../frontend/helper/AccountKirAI"
@@ -9,11 +8,12 @@ import zender from "../main/zender"
 import { IRepTempB } from "../types/validate.types"
 import { Content, GoogleGenAI } from "@google/genai"
 import { getUser } from "./profile.controller"
-import { AIChat, IMessageB, IMessageKeyB } from "../types/db.types"
-import db from "../main/db"
+import { AIChat } from "../types/db.types"
 import { minimizeMessage, normalizeMessage } from "../main/helper"
 import { IMessageF, IRoomDataF, IUserF } from "../../frontend/types/db.types"
 import webhookSender from "../main/webhook"
+import Message from "../models/Message.Model"
+import { IMessage } from "../types/message.types"
 
 type FormatFromGlobal = {
   room: IRoomDataF
@@ -24,7 +24,7 @@ type FormatFromGlobal = {
 const ai = new GoogleGenAI({ apiKey: cfg.GENAI_API_KEY })
 
 function removeModels(): void {
-  const userModels = Object.keys(AIChats).filter((k) => Date.now() >= AIChats[k].ts && !db.ref.u[k].socket)
+  const userModels = Object.keys(AIChats).filter((k) => Date.now() >= AIChats[k].ts)
 
   if (userModels.length >= 1) {
     webhookSender.modelLog({ userids: userModels.map((model) => `Model ${model}`).join(", ") })
@@ -36,11 +36,11 @@ export function startModelRemover(): void {
   setInterval(removeModels, 1000 * 60 * 60 * 2)
 }
 
-function getModel(uid: string): AIChat {
-  const chatsdb = (db.fileGet(`ai${uid}`, "kirai") || {}) as IMessageKeyB
-  const messages = Object.keys(chatsdb).map((msgkey) => {
-    const rawData = chatsdb[msgkey]
-    return normalizeMessage(msgkey, rawData)
+async function getModel(uid: string): Promise<AIChat> {
+  const chatsdb = await Message.find({ roomId: `ai${uid}` }).lean()
+
+  const messages = chatsdb.map((msg) => {
+    return normalizeMessage(msg.id, msg.toJSON())
   })
 
   const aihistory = transformChatToHistory(messages)
@@ -88,16 +88,14 @@ async function GetAIAnswer(uid: string, user_text: string, aichat: AIChat, chat_
   const data: IMessageUpdateF = {
     chat: newchat,
     roomdata: fmt?.room || KirAIRoom,
-    users: fmt?.users || [KirAIUser, getUser(uid, uid)],
+    users: fmt?.users || [KirAIUser, await getUser(uid, uid)],
     sender: KirAIUser
   }
 
-  const chatsdb = (db.fileGet(`ai${gid}`, "kirai") || {}) as IMessageKeyB
+  const minimizedMessage = minimizeMessage(KirAIUser.id, `ai${gid}`, `ai${chat_id}`, newchat)
 
-  const minimizedMessage = minimizeMessage(KirAIUser.id, newchat)
-
-  chatsdb["ai" + chat_id] = minimizedMessage
-  db.fileSet(`ai${gid}`, "kirai", chatsdb)
+  const message = new Message(minimizedMessage)
+  await message.save()
 
   if (fmt?.room.id === "696969") saveToGroup("ai" + chat_id, minimizedMessage)
 
@@ -111,7 +109,7 @@ async function GetAIAnswer(uid: string, user_text: string, aichat: AIChat, chat_
   webhookSender.genai({ userid: KirAIUser.id, chatid: chat_id, text: ai_text })
 }
 
-export function sendAIChat(uid: string, user_text?: string, fmt?: FormatFromGlobal): IRepTempB {
+export async function sendAIChat(uid: string, user_text?: string, fmt?: FormatFromGlobal): Promise<IRepTempB> {
   if (!GEN_AI_FEATURE) return { code: 400 }
   const gid = fmt?.room.id || uid
 
@@ -130,7 +128,7 @@ export function sendAIChat(uid: string, user_text?: string, fmt?: FormatFromGlob
 
   const users: string[] = fmt && fmt.users ? fmt.users.map((usr) => usr.id) : [uid]
 
-  const newchat = {
+  const newchat: IMessageF = {
     userid: uid,
     id: chat_id,
     timestamp: Date.now(),
@@ -139,16 +137,17 @@ export function sendAIChat(uid: string, user_text?: string, fmt?: FormatFromGlob
   const data: IMessageUpdateF = {
     chat: newchat,
     roomdata: fmt?.room || KirAIRoom,
-    users: fmt?.users || [KirAIUser, getUser(uid, uid)]
+    users: fmt?.users || [KirAIUser, await getUser(uid, uid)]
   }
-  const chatsdb = (db.fileGet(`ai${gid}`, "kirai") || {}) as IMessageKeyB
+  const minimizedMessage = minimizeMessage(uid, `ai${gid}`, chat_id, newchat)
 
-  chatsdb[chat_id] = minimizeMessage(uid, newchat)
-  db.fileSet(`ai${gid}`, "kirai", chatsdb)
+  const message = new Message(minimizedMessage)
+  await message.save()
+
   webhookSender.genai({ userid: uid, chatid: chat_id, text: user_text })
 
   setTimeout(
-    () => {
+    async () => {
       users.forEach((usr) => {
         zender(KirAIUser.id, usr, "sendmessage", {
           chat: {
@@ -164,7 +163,7 @@ export function sendAIChat(uid: string, user_text?: string, fmt?: FormatFromGlob
           sender: KirAIUser
         })
       })
-      GetAIAnswer(uid, user_text, getModel(gid), chat_id, gid, fmt)
+      GetAIAnswer(uid, user_text, await getModel(gid), chat_id, gid, fmt)
     },
     fmt ? 1000 : 100
   )
@@ -172,11 +171,10 @@ export function sendAIChat(uid: string, user_text?: string, fmt?: FormatFromGlob
   return { code: 200, data }
 }
 
-export function clearAIChat(uid: string): IRepTempB {
+export async function clearAIChat(uid: string): Promise<IRepTempB> {
   if (!GEN_AI_FEATURE) return { code: 400 }
-  const chatpath = `./dist/db/kirai/ai${uid}.json`
+  await Message.deleteMany({ roomId: `ai${uid}` })
 
-  if (fs.existsSync(chatpath)) fs.writeFileSync(chatpath, JSON.stringify({}), "utf-8")
   if (AIChats[uid]) {
     AIChats[uid].model = ai.chats.create({
       model: AI_MODEL,
@@ -184,7 +182,6 @@ export function clearAIChat(uid: string): IRepTempB {
       config: GenAIConfig
     })
   }
-
   return { code: 200 }
 }
 
@@ -197,16 +194,18 @@ export function isMentionedAI(room_id: string, text?: string): string | null {
   return null
 }
 
-export function sendGlobalAI(uid: string, text: string, chat_id: string, room: IRoomDataF, users: IUserF[]): IRepTempB {
-  return sendAIChat(uid, text, {
+export async function sendGlobalAI(uid: string, text: string, chat_id: string, room: IRoomDataF, users: IUserF[]): Promise<IRepTempB> {
+  return await sendAIChat(uid, text, {
     room,
     users,
     chat_id
   })
 }
 
-function saveToGroup(chat_id: string, chat_message: IMessageB) {
-  const dbold = db.fileGet("696969", "room") || {}
-  dbold[chat_id] = chat_message
-  db.fileSet("696969", "room", dbold)
+async function saveToGroup(chat_id: string, chat_message: IMessage): Promise<void> {
+  const message = new Message({
+    ...chat_message,
+    roomId: chat_id
+  })
+  await message.save()
 }
