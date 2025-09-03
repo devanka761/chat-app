@@ -91,6 +91,9 @@ export function setUsername(uid: string, s: { uname: string }): IRepTempB {
   if (dvnkzName.find((usr) => usr === s.uname)) return { code: 400, msg: "ACC_FAIL_CLAIMED" }
   if (s.uname === udb.uname) return { code: 200, data: { text: s.uname } }
 
+  const otherUsernames = Object.keys(db.ref.u).map((k) => db.ref.u[k].uname.toLowerCase())
+  if (otherUsernames.find((usr) => usr === s.uname.toLowerCase())) return { code: 400, msg: "ACC_FAIL_CLAIMED" }
+
   db.ref.u[uid].uname = s.uname
   db.ref.u[uid].lu = Date.now() + 1000 * 60 * 60 * 24 * 7
   db.save("u")

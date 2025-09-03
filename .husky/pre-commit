@@ -26,24 +26,24 @@ npm run build ||
     false;
 )
 
-# Update package patch
-npm --no-git-tag-version version patch ||
-{
-    echo "Patching version failed #1"
-    false;
-}
+# # Update package patch
+# npm --no-git-tag-version version patch ||
+# {
+#     echo "Patching version failed #1"
+#     false;
+# }
 
 # Write package version to frontend
 echo "{ \"version\": \""$(node -p "require('./package.json').version")"\" }" > src/config/version.json ||
 {
-    echo "Patching version failed #2"
+    echo "Patching version failed"
     false;
 }
 
 # Add package patch and app version changing
 git add . ||
 {
-    echo "Patching version failed #3"
+    echo "Adding version failed"
     false;
 }
 
