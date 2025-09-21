@@ -1,5 +1,5 @@
 # Chat App - Kirimin
-- Live Demo: [Kirimin Messenger](https://kirimin.devanka.id/)
+- Live Demo: [Kirimin Chat App](https://kirimin.devanka.id/)
 - Subscribe: YouTube [Devanka 761](https://www.youtube.com/@devanka761)
 - Join Discord: [Codemate Resort](https://devanka.id/discord)
 

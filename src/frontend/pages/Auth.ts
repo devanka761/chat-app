@@ -67,7 +67,7 @@ export default class Auth {
         <img src="/assets/kirimin_icon.png" alt="KIRIMIN" />
       </div>
       <div class="title">
-        <h1>KIRIMIN MESSENGER</h1>
+        <h1>KIRIMIN CHAT APP</h1>
         <h2>v${packageVersion.version}</h2>
       </div>
       <div class="splash-loader">
