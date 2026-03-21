@@ -49,6 +49,7 @@
     "nodemailer": "^7.0.3",
     "session-file-store": "^1.5.0",
     "web-push": "^3.6.7",
+    "webfont-awesome-pro": "1.2.7",
     "webrtc-adapter": "^9.0.3"
   },
   "devDependencies": {

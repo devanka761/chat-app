@@ -1,3 +1,4 @@
+import "webfont-awesome-pro/scss/allstyles.scss"
 import "./sass/home.scss"
 import nav from "./helper/nav"
 import Doodles from "./pm/props/chats/DoodlesAPI"

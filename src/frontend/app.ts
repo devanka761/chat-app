@@ -1,3 +1,4 @@
+import "webfont-awesome-pro/scss/allstyles.scss"
 import "./sass/app.scss"
 
 import Init from "./main/init"
