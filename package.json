@@ -71,7 +71,7 @@
     "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^7.1.2",
     "eslint": "^9.29.0",
-    "globals": "^16.2.0",
+    "globals": "^17.0.0",
     "html-webpack-plugin": "^5.6.3",
     "husky": "^9.1.7",
     "mini-css-extract-plugin": "^2.9.2",
